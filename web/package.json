@@ -1,0 +1,21 @@
+{
+  "name": "randphyqugea",
+  "version": "1.0.0",
+  "description": "A Random Physics Question Generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/richie-rich90454/RandPhyQuGeA.git"
+  },
+  "keywords": [],
+  "author": "richie-rich90454",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/richie-rich90454/RandPhyQuGeA/issues"
+  },
+  "homepage": "https://github.com/richie-rich90454/RandPhyQuGeA#readme"
+}
