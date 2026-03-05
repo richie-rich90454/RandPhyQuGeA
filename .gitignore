@@ -1,0 +1,114 @@
+# C++ build outputs
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+*.exp
+*.pdb
+*.ilk
+
+# WASM outputs
+*.wasm
+*.js
+*.wasm.map
+*.wasm.d.ts
+*.wasm.d.cts
+*.wasm.d.mts
+
+# Emscripten generated files
+*.wasm
+*.js
+*.html
+*.worker.js
+*.wasm.map
+
+# Python build script artifacts
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyd
+*.pyo
+*.so
+.Python
+env/
+venv/
+.env
+.python-version
+__pycache__/
+
+# TypeScript / Node
+node_modules/
+package-lock.json
+*.tsbuildinfo
+*.js.map
+web/*.js     # Compiled TypeScript (keep if you want to track compiled output)
+web/*.js.map
+
+# Visual Studio 2022/2026
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.vcxproj.user.local
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+Debug/
+Release/
+x64/
+x86/
+*.ipch
+*.iobj
+*.ipdb
+*.tlog
+*.log
+*.lastbuildstate
+*.manifest
+
+# Visual Studio Code
+.vscode/
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Build directories
+build/
+bin/
+obj/
+out/
+dist/
+output/
+
+# IDE directories
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Project-specific
+cpp/temp/
+web/temp/
+questions.db
+*.log
+*.tmp
+
+# Keep your source
+!**/*.cpp
+!**/*.h
+!**/*.hpp
+!web/index.html
+!web/*.css
+!web/*.ts
+!build.py
+!LICENSE
+!README.md
