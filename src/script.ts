@@ -1,5 +1,5 @@
 // src/script.ts
-import { Question, GenerateOptions, GeneratorRegistry, AppSettings, MentalSession, SeededRandom } from "./types.js";
+import { Question, GenerateOptions, GeneratorRegistry, AppSettings, MentalSession, GeneratorFn } from "./types.js";
 /**
  * Main entry point: initializes DOM event listeners, manages mode switching,
  * topic selection, answer checking, mental mode timer, and settings persistence.
@@ -49,8 +49,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 	let skipQuestionBtn=document.getElementById("skip-question")as HTMLButtonElement|null;
 	let mentalProgressBar=document.getElementById("mental-progress-bar")as HTMLDivElement|null;
 	let statisticsPanel=document.getElementById("statistics-panel")as HTMLDivElement|null;
-	let accuracyStat=document.getElementById("accuracy-stat")as HTMLSpanElement|null;
-	let avgTimeStat=document.getElementById("avg-time-stat")as HTMLSpanElement|null;
+	// let accuracyStat=document.getElementById("accuracy-stat")as HTMLSpanElement|null;
+	// let avgTimeStat=document.getElementById("avg-time-stat")as HTMLSpanElement|null;
 	let questionArea=document.getElementById("question-area")as HTMLDivElement|null;
 	let currentTopicSpan=document.getElementById("current-topic")as HTMLDivElement|null;
 	let resultsDiv=document.getElementById("answer-results")as HTMLDivElement|null;
@@ -444,8 +444,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 	}
 	if (themeToggle) themeToggle.addEventListener("click",()=>{
 		let newTheme=document.documentElement.classList.contains("dark")?"light":"dark";
-		settings.theme=newTheme;
-		applyTheme(newTheme);
+		settings.theme=newTheme as 'light'|'dark';
+		applyTheme(settings.theme);
 		saveSettings();
 	});
 	if (settingsBtn && settingsModal) settingsBtn.addEventListener("click",()=>settingsModal.classList.add("show"));
@@ -453,7 +453,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 	if (settingsSave && settingsModal){
 		settingsSave.addEventListener("click",()=>{
 			let themeSel=document.getElementById("settings-theme")as HTMLSelectElement|null;
-			if (themeSel) settings.theme=themeSel.value as any;
+			if (themeSel) settings.theme=themeSel.value as 'light'|'dark'|'system';
 			let defaultModeSel=document.getElementById("settings-default-mode")as HTMLSelectElement|null;
 			if (defaultModeSel) settings.defaultMode=defaultModeSel.value as any;
 			let autoCont=document.getElementById("settings-auto-continue")as HTMLInputElement|null;
@@ -577,6 +577,5 @@ document.addEventListener("DOMContentLoaded",()=>{
 	loadSettings();
 	initTopics();
 	if (!localStorage.getItem("onboardingSeen") && onboardingOverlay) onboardingOverlay.classList.add("show");
-	// Expose registerGenerator globally for modules to call
 	(window as any).registerPhysicsGenerator=registerGenerator;
 });
