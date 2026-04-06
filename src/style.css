@@ -271,6 +271,8 @@ body {
 }
 .toolbar-section {
 	flex: 1;
+	min-width: 0;
+	overflow: hidden;
 }
 .toolbar-title {
 	font-size: 1.2dvh;
@@ -297,25 +299,39 @@ body {
 	margin-left: auto;
 	flex-shrink: 0;
 }
+/* CRITICAL FIX: Topic pills container - horizontal scroll on all devices, especially portrait */
 .topic-pills-container {
 	display: flex;
-	flex-wrap: wrap;
+	flex-wrap: nowrap;
 	gap: 0.9dvh;
-	padding-right: var(--spacing-xs);
-	max-height: 18dvh;
-	overflow-y: auto;
-	padding-right: 1.5dvh;
-	padding-top: 0.6dvh;
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: thin;
 	padding-bottom: 0.6dvh;
+	margin-bottom: 0.3dvh;
+	width: 100%;
+}
+.topic-pills-container::-webkit-scrollbar {
+	height: 0.6dvh;
+}
+.topic-pills-container::-webkit-scrollbar-track {
+	background: var(--surface-alt);
+	border-radius: var(--radius-full);
+}
+.topic-pills-container::-webkit-scrollbar-thumb {
+	background: var(--border-strong);
+	border-radius: var(--radius-full);
 }
 .topic-pill {
-	padding: 0.3dvh var(--spacing-sm);
+	flex-shrink: 0;
+	padding: 0.4dvh 1.2dvh;
 	background: var(--surface);
 	border: 0.15dvh solid var(--border);
 	border-radius: var(--radius-full);
 	cursor: pointer;
 	transition: all var(--transition-normal), background-color 0.3s ease, border-color 0.3s ease;
-	font-size: 1.2dvh;
+	font-size: 1.3dvh;
 	color: var(--text-primary);
 	display: flex;
 	align-items: center;
@@ -1057,42 +1073,28 @@ input[type="checkbox"]:hover {
 		transform: translateX(0);
 	}
 }
-@media (max-width: 102.4dvh) {
-	.answer-section {
-		grid-template-columns: 1fr;
-	}
-	.toolbar-row-bottom {
-		flex-direction: column;
-		align-items: stretch;
-	}
-	#single-controls {
-		flex-wrap: wrap;
-	}
-	.auto-controls {
-		margin-left: 0;
-		border-left: none;
-		padding-left: 0;
+/* ========== FULL MOBILE OPTIMIZATION - FIXED TOPIC PILLS OVERFLOW ========== */
+/* All portrait devices: force horizontal scroll for topic pills */
+@media (orientation: portrait) {
+	.toolbar-section {
 		width: 100%;
-		justify-content: flex-start;
+		overflow: visible;
 	}
-}
-@media (orientation: landscape) and (max-height: 50dvh) {
 	.topic-pills-container {
-		max-height: 25dvh;
+		display: flex;
+		flex-wrap: nowrap !important;
+		overflow-x: auto !important;
+		overflow-y: hidden !important;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: thin;
+		padding-bottom: 0.8dvh;
+		margin-bottom: 0.5dvh;
+		gap: 1dvh;
 	}
-	.question-display {
-		min-height: 10dvh;
-	}
-	.answer-input {
-		min-height: 8dvh;
-	}
-}
-@media (max-width: 76.8dvh), (orientation: portrait) and (max-width: 102.4dvh) {
-	.app-content {
-		padding: var(--spacing-md);
-	}
-	.control-toolbar {
-		padding: var(--spacing-xs);
+	.topic-pill {
+		flex-shrink: 0;
+		font-size: 1.4dvh;
+		padding: 0.5dvh 1.4dvh;
 	}
 	.toolbar-row-top {
 		flex-direction: column;
@@ -1105,6 +1107,14 @@ input[type="checkbox"]:hover {
 	.utility-buttons {
 		margin-left: 0;
 		justify-content: flex-end;
+		margin-top: 0.5dvh;
+	}
+	.app-content {
+		padding: var(--spacing-md);
+	}
+	.answer-section {
+		grid-template-columns: 1fr;
+		gap: var(--spacing-md);
 	}
 	.card-header {
 		padding: var(--spacing-sm);
@@ -1121,49 +1131,98 @@ input[type="checkbox"]:hover {
 		text-align: center;
 		font-size: 1.2dvh;
 	}
-	.topic-pills-container {
-		flex-wrap: nowrap;
-		overflow-x: auto;
-		padding-bottom: var(--spacing-xs);
-		-webkit-overflow-scrolling: touch;
+	.mental-stats {
+		flex-wrap: wrap;
 	}
-	.topic-pills-container::after {
-		content: "";
-		flex: 0 0 var(--spacing-sm);
+	.mental-extra-controls {
+		flex-wrap: wrap;
 	}
 }
-@media (max-width: 48dvh) {
-	html {
-		font-size: 2.8dvw;
-	}
+/* Small phones (portrait, e.g., iPhone XR, SE) - ensure pills are readable and scrollable */
+@media (orientation: portrait) and (max-width: 48dvh) {
 	.topic-pill {
-		font-size: 1.1dvh;
-		padding: 0.3dvh 0.6dvh;
+		font-size: 1.3dvh;
+		padding: 0.5dvh 1.2dvh;
+	}
+	.topic-pills-container {
+		gap: 0.8dvh;
+		padding-bottom: 0.6dvh;
 	}
 	.primary-button, .secondary-button {
 		padding: var(--spacing-xs) var(--spacing-sm);
-		font-size: 1.2dvh;
+		font-size: 1.3dvh;
 	}
 	.question-display {
-		min-height: 9dvh;
+		min-height: 10dvh;
 		padding: var(--spacing-sm);
-		font-size: 1.6dvh;
+		font-size: 1.7dvh;
 	}
 	.answer-input {
-		min-height: 8dvh;
-		font-size: 1.4dvh;
+		min-height: 9dvh;
+		font-size: 1.5dvh;
 	}
 	.results-display {
 		min-height: 8dvh;
+		font-size: 1.3dvh;
+	}
+	.icon-button {
+		width: 3.8dvh;
+		height: 3.8dvh;
+	}
+	.icon-button svg {
+		width: 1.8dvh;
+		height: 1.8dvh;
+	}
+	.stat-with-icon {
 		font-size: 1.2dvh;
+		padding: 0.2dvh 1dvh;
 	}
 }
+/* Very narrow devices (compact phones) */
+@media (orientation: portrait) and (max-width: 38dvh) {
+	.topic-pill {
+		font-size: 1.2dvh;
+		padding: 0.4dvh 1dvh;
+	}
+	.card-title {
+		font-size: 1.3dvh;
+	}
+	.card-subtitle {
+		font-size: 1dvh;
+	}
+	.primary-button, .secondary-button {
+		font-size: 1.1dvh;
+		padding: 0.4dvh 0.8dvh;
+	}
+}
+/* Landscape orientation - keep pills scrollable if needed */
+@media (orientation: landscape) {
+	.topic-pills-container {
+		display: flex;
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		padding-bottom: 0.5dvh;
+	}
+	.topic-pill {
+		flex-shrink: 0;
+	}
+}
+/* Tablets in portrait - ensure no overflow */
+@media (orientation: portrait) and (min-width: 60dvh) and (max-width: 100dvh) {
+	.topic-pill {
+		font-size: 1.5dvh;
+		padding: 0.6dvh 1.6dvh;
+	}
+}
+/* Reduce motion preference */
 @media (prefers-reduced-motion: reduce) {
 	* {
 		animation-duration: 0.01ms !important;
 		transition-duration: 0.01ms !important;
 	}
 }
+/* Modal and overlay adjustments for mobile */
 .modal {
 	display: none;
 	position: fixed;
