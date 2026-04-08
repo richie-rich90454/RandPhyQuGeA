@@ -11,7 +11,7 @@ export interface Question{
 	unit?: string;
 	choices?: string[];
 	difficulty: "easy"|"medium"|"hard";
-	questionType: "MC"|"MR"|"TBR"|"LAB"|"QQT";
+	questionType: "MC"|"Math"|"Graphical"|"Experiment"|"QualQuant";
 }
 
 /**
@@ -29,7 +29,7 @@ export interface GenerateOptions{
 export type GeneratorFn=(options: GenerateOptions)=>Question;
 
 /**
- * Registry mapping topic IDs (e.g., "kinematics") to their generator functions.
+ * Registry mapping topic IDs to their generator functions.
  */
 export interface GeneratorRegistry{
 	[key: string]: GeneratorFn;
