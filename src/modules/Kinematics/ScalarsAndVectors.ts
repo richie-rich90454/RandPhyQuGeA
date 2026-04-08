@@ -1,11 +1,14 @@
 /**
  * Generator for Scalars and Vectors in One Dimension (Topic 1.1)
- * Conforms to the generator contract: exports a single `generate` function
- * that returns a `Question` object. Supports all five question types:
- * MC, Math, Graphical, Experiment, QualQuant.
+ * Conforms to the generator contract: exports `topicId`, `topicName`, and a `generate` function.
+ * Supports all five question types: MC, Math, Graphical, Experiment, QualQuant.
  * @timestamp 2026-04-08
  */
 import {Question, GenerateOptions, SeededRandom} from "../../types.js";
+
+export const topicId="1.1_scalars_vectors_1d";
+export const topicName="Scalars and Vectors (1D)";
+
 /**
  * Main generator function – randomly selects a question type and scenario,
  * uses seeded randomness for reproducibility, and builds a complete Question.
@@ -137,8 +140,8 @@ export function generate(options: GenerateOptions): Question{
 		}
 		return {
 			id: `1.1_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.1_scalars_vectors_1d",
-			topicName: "Scalars and Vectors (1D)",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "string",
@@ -200,8 +203,8 @@ export function generate(options: GenerateOptions): Question{
 		}
 		return {
 			id: `1.1_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.1_scalars_vectors_1d",
-			topicName: "Scalars and Vectors (1D)",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "numeric",
@@ -270,8 +273,8 @@ export function generate(options: GenerateOptions): Question{
 		}
 		return {
 			id: `1.1_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.1_scalars_vectors_1d",
-			topicName: "Scalars and Vectors (1D)",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "string",
@@ -286,8 +289,8 @@ export function generate(options: GenerateOptions): Question{
 		let answer="N/A";
 		return {
 			id: `1.1_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.1_scalars_vectors_1d",
-			topicName: "Scalars and Vectors (1D)",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "string",
@@ -306,8 +309,8 @@ export function generate(options: GenerateOptions): Question{
 		let answer=`Rubric: 1) Distance = total path length ≥0; Displacement = x_f - x_i (any real). 2) Example: distance = at least ${dist.toFixed(1)} m, displacement = ${disp.toFixed(1)} m (negative because ${xf.toFixed(1)} < ${xi.toFixed(1)}).`;
 		return {
 			id: `1.1_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.1_scalars_vectors_1d",
-			topicName: "Scalars and Vectors (1D)",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "string",

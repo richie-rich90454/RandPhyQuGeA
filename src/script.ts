@@ -1,12 +1,11 @@
 import {Question, GenerateOptions, GeneratorRegistry, AppSettings, MentalSession, GeneratorFn} from "./types.js";
-
 /**
  * Main entry point: sets up all event listeners, loads settings,
  * and provides full exam‑ready question generation for Single and Mental modes.
  * All question generators are registered externally via registerPhysicsGenerator.
  * Topic pills and scope dropdowns are built dynamically from registered generators.
  */
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded",async()=>{
 	// ========== DOM ELEMENTS ==========
 	let elemModeSingleBtn=document.getElementById("mode-single")as HTMLButtonElement|null;
 	let elemModeMentalBtn=document.getElementById("mode-mental")as HTMLButtonElement|null;
@@ -62,7 +61,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 	let elemPhysicsToolbarBtns=document.querySelectorAll(".physics-toolbar-btn[data-symbol]");
 	let elemDropdownBtn=document.getElementById("physics-dropdown-btn")as HTMLButtonElement|null;
 	let elemPhysicsDropdown=document.getElementById("physics-dropdown")as HTMLDivElement|null;
-
 	// ========== STATE VARIABLES ==========
 	let objCurrentQuestion: Question|null=null;
 	let strActiveTopicId: string|null=null;
@@ -103,10 +101,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 		blurEffect: true
 	};
 	let mapGeneratorRegistry: GeneratorRegistry={};
-	let mapTopicMetadata: {[topicId: string]: {name: string, scope: string}}={};
-
+	let mapTopicMetadata: {[topicId: string]: {name: string; scope: string}}={};
 	// ========== HELPER FUNCTIONS ==========
-	/** Derives scope from topicId based on prefix. */
 	function getScopeFromTopicId(strTopicId: string): string{
 		if (strTopicId.match(/^[1-8]\./)) return "mechanics";
 		if (strTopicId.match(/^9\.|^10\.|^11\.|^12\./)) return "emag";
@@ -115,7 +111,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 		if (strTopicId.match(/^16\./)) return "modern";
 		return "mechanics";
 	}
-	/** Populates scope dropdowns with distinct scopes from registered topics. */
 	function populateScopeSelects(): void{
 		let arrScopes=new Set<string>();
 		for (let strTopicId in mapGeneratorRegistry){
@@ -128,8 +123,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 			arrScopeList.forEach(strScope=>{
 				let option=document.createElement("option");
 				option.value=strScope;
-				option.textContent=strScope=== "all"?"All":strScope.charAt(0).toUpperCase()+strScope.slice(1);
-				elemScopeSelect.appendChild(option);
+				option.textContent=strScope==="all"?"All":strScope.charAt(0).toUpperCase()+strScope.slice(1);
+				elemScopeSelect!.appendChild(option);
 			});
 		}
 		if (elemMentalScopeSelect){
@@ -137,12 +132,11 @@ document.addEventListener("DOMContentLoaded",()=>{
 			arrScopeList.forEach(strScope=>{
 				let option=document.createElement("option");
 				option.value=strScope;
-				option.textContent=strScope=== "all"?"All":strScope.charAt(0).toUpperCase()+strScope.slice(1);
-				elemMentalScopeSelect.appendChild(option);
+				option.textContent=strScope==="all"?"All":strScope.charAt(0).toUpperCase()+strScope.slice(1);
+				elemMentalScopeSelect!.appendChild(option);
 			});
 		}
 	}
-	/** Rebuilds the topic pills from registered generators, filtered by current scope. */
 	function rebuildTopicPills(): void{
 		if (!elemTopicGrid) return;
 		elemTopicGrid.innerHTML="";
@@ -168,7 +162,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 		if (elemTopicSearch) filterTopics(elemTopicSearch.value);
 	}
-	/** Filters visible topic pills based on search term. */
 	function filterTopics(strTerm: string): void{
 		if (!elemTopicGrid) return;
 		let arrPills=elemTopicGrid.querySelectorAll(".topic-pill");
@@ -179,7 +172,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 			else (elemPill as HTMLElement).style.display="none";
 		});
 	}
-	/** Updates UI based on current mode (single/mental). */
 	function setMode(strMode: "single"|"mental"): void{
 		if (strMode==="single"){
 			elemModeSingleBtn?.classList.add("active");
@@ -194,7 +186,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 			elemSingleControls?.classList.add("hidden");
 		}
 	}
-	/** Applies the selected theme (light/dark/system). */
 	function applyTheme(strTheme: "light"|"dark"|"system"): void{
 		let elemRoot=document.documentElement;
 		if (strTheme==="system"){
@@ -210,7 +201,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 		localStorage.setItem("theme",strTheme);
 	}
-	/** Loads all settings from localStorage and applies them. */
 	function loadSettings(): void{
 		let strSaved=localStorage.getItem("physicsSettings");
 		if (strSaved){
@@ -266,7 +256,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 		setMode(objSettings.defaultMode);
 		rebuildTopicPills();
 	}
-	/** Saves current settings to localStorage and updates runtime flags. */
 	function saveSettings(): void{
 		localStorage.setItem("physicsSettings",JSON.stringify(objSettings));
 		boolAutoContinue=objSettings.autoContinue;
@@ -280,7 +269,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 		applyTheme(objSettings.theme);
 		rebuildTopicPills();
 	}
-	/** Updates the statistics panel (accuracy and average time). */
 	function updateStatistics(): void{
 		if (!elemAccuracyStat || !elemAvgTimeStat) return;
 		let numTotal=objMentalSession.total;
@@ -295,7 +283,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 		elemAccuracyStat.textContent=`Accuracy: ${numAccuracy.toFixed(1)}%`;
 		elemAvgTimeStat.textContent=`Avg: ${numAvgTime.toFixed(1)}s`;
 	}
-	/** Displays a question object in the UI, including MCQ buttons if applicable. */
 	function displayQuestion(objQ: Question): void{
 		if (!elemQuestionArea) return;
 		elemQuestionArea.innerHTML=`<div class="math">${objQ.text}</div>`;
@@ -330,7 +317,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 			else elemExpectedFormatDiv.textContent="Enter your answer as a number or expression. Use ^ for exponents.";
 		}
 	}
-	/** Shows a result message (correct/incorrect) with the correct answer. */
 	function showResult(boolIsCorrect: boolean, strCorrectAnswer: string, strExplanation?: string): void{
 		if (!elemResultsDiv) return;
 		if (boolIsCorrect){
@@ -344,7 +330,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 			elemResultsDiv.classList.remove("correct");
 		}
 	}
-	/** Checks the user's answer against the current question with tolerance for numeric types. */
 	function checkAnswer(): void{
 		if (!objCurrentQuestion || !elemAnswerBox) return;
 		let strUserAnswer=elemAnswerBox.value.trim();
@@ -376,7 +361,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 			}
 		}
 	}
-	/** Generates a new question using the current active topic, shuffle, and scope. */
 	function generateNewQuestion(): void{
 		if (!mapGeneratorRegistry || Object.keys(mapGeneratorRegistry).length===0){
 			console.warn("No generators registered yet");
@@ -418,7 +402,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 			console.error("Generator error",e);
 		}
 	}
-	/** Starts a mental mode session (timer, score reset, etc.). */
 	function startMentalSession(): void{
 		if (objMentalSession.active) endMentalSession();
 		objMentalSession.active=true;
@@ -454,7 +437,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 		},1000);
 		generateNextMentalQuestion();
 	}
-	/** Ends the mental mode session and cleans up the timer. */
 	function endMentalSession(): void{
 		if (objMentalSession.timerInterval){
 			clearInterval(objMentalSession.timerInterval);
@@ -467,7 +449,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 		if (elemSkipQuestionBtn) elemSkipQuestionBtn.classList.add("hidden");
 		if (elemStatisticsPanel) elemStatisticsPanel.style.display="none";
 	}
-	/** Generates the next question in mental mode (respects shuffle and scope). */
 	function generateNextMentalQuestion(): void{
 		if (!objMentalSession.active) return;
 		let strTopicId=strActiveTopicId;
@@ -494,16 +475,13 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 		catch(e){}
 	}
-	/** Registers a generator function for a given topic ID, stores its metadata, and updates UI. */
-	function registerGenerator(strTopicId: string, fnGenerator: GeneratorFn, strTopicName?: string): void{
+	function registerGenerator(strTopicId: string, fnGenerator: GeneratorFn, strTopicName: string): void{
 		mapGeneratorRegistry[strTopicId]=fnGenerator;
 		let strScope=getScopeFromTopicId(strTopicId);
-		let strDisplayName=strTopicName||strTopicId.replace(/_/g," ").replace(/\d+\.\d+\s*/,"");
-		mapTopicMetadata[strTopicId]={name: strDisplayName, scope: strScope};
+		mapTopicMetadata[strTopicId]={name: strTopicName, scope: strScope};
 		populateScopeSelects();
 		rebuildTopicPills();
 	}
-	/** Initializes topic pills and search filter. */
 	function initTopics(): void{
 		rebuildTopicPills();
 		if (elemTopicSearch){
@@ -512,7 +490,16 @@ document.addEventListener("DOMContentLoaded",()=>{
 			});
 		}
 	}
-
+	// ========== AUTO‑LOAD ALL GENERATORS ==========
+	const unitModules=import.meta.glob<{generators: Array<{id: string; name: string; generate: GeneratorFn}>}>("/src/modules/*/index.ts");
+	for (const path in unitModules){
+		const module=await unitModules[path]();
+		if (module && module.generators){
+			for (const gen of module.generators){
+				registerGenerator(gen.id, gen.generate, gen.name);
+			}
+		}
+	}
 	// ========== EVENT LISTENERS ==========
 	if (elemModeSingleBtn) elemModeSingleBtn.addEventListener("click",()=>setMode("single"));
 	if (elemModeMentalBtn) elemModeMentalBtn.addEventListener("click",()=>setMode("mental"));
@@ -665,10 +652,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 			if (!elemPhysicsDropdown?.contains(e.target as Node) && e.target!==elemDropdownBtn) elemPhysicsDropdown?.classList.remove("show");
 		});
 	}
-
 	// ========== INITIALIZATION ==========
 	loadSettings();
 	initTopics();
 	if (!localStorage.getItem("onboardingSeen") && elemOnboardingOverlay) elemOnboardingOverlay.classList.add("show");
-	(window as any).registerPhysicsGenerator=registerGenerator;
 });
