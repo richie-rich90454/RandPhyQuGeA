@@ -5,7 +5,7 @@
  * MC, Math, Graphical, Experiment, QualQuant.
  * @timestamp 2026-04-08
  */
-import {Question, GenerateOptions, SeededRandom} from "../../types.js";
+import { Question, GenerateOptions, SeededRandom } from "../../types.js";
 /**
  * Main generator function – randomly selects a question type and scenario,
  * uses seeded randomness for reproducibility, and builds a complete Question.
@@ -23,7 +23,6 @@ export function generate(options: GenerateOptions): Question{
 		let answer="";
 		let choices:string[]=[];
 		let unit:string|undefined=undefined;
-		let answerType:"numeric"|"expression"|"string"="string";
 		switch(scenario){
 			case "distanceSame":{
 				let a=rng.nextInt(10,100);
@@ -132,7 +131,6 @@ export function generate(options: GenerateOptions): Question{
 				break;
 			}
 		}
-		// shuffle choices
 		for (let i=choices.length-1;i>0;i--){
 			let j=rng.nextInt(0,i);
 			[choices[i],choices[j]]=[choices[j],choices[i]];
