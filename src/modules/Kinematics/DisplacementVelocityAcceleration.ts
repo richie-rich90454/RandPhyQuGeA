@@ -1,14 +1,17 @@
 /**
  * Generator for Displacement, Velocity, and Acceleration (Topic 1.2)
- * Conforms to the generator contract: exports a single `generate` function
- * that returns a `Question` object. Covers MC (slope of x-t, area under v-t,
- * constant acceleration from v-t, rank average velocities), Math (average velocity,
- * average acceleration, instantaneous velocity from table), Graphical (sketch v-t
- * from x-t, sketch a-t from v-t), Experiment (ticker tape acceleration), and
- * QualQuant (top of vertical throw claim). All scenarios randomly selected.
+ * Conforms to the generator contract: exports `topicId`, `topicName`, and a `generate` function.
+ * Covers MC (slope of x-t, area under v-t, constant acceleration from v-t, rank average velocities),
+ * Math (average velocity, average acceleration, instantaneous velocity from table),
+ * Graphical (sketch v-t from x-t, sketch a-t from v-t), Experiment (ticker tape acceleration),
+ * and QualQuant (top of vertical throw claim). All scenarios randomly selected.
  * @timestamp 2026-04-08
  */
-import { Question, GenerateOptions, SeededRandom } from "../../types.js";
+import {Question, GenerateOptions, SeededRandom} from "../../types.js";
+
+export const topicId="1.2_displacement_velocity_acceleration";
+export const topicName="Displacement, Velocity, Acceleration";
+
 /**
  * Main generator function – randomly selects a question type and scenario,
  * uses seeded randomness for reproducibility, and builds a complete Question.
@@ -75,8 +78,8 @@ export function generate(options: GenerateOptions): Question{
 			}
 			return {
 				id: `1.2_${Date.now()}_${rng.nextInt(0,1e6)}`,
-				topicId: "1.2_displacement_velocity_acceleration",
-				topicName: "Displacement, Velocity, Acceleration",
+				topicId: topicId,
+				topicName: topicName,
 				text: text,
 				answer: answer,
 				answerType: "string",
@@ -92,8 +95,8 @@ export function generate(options: GenerateOptions): Question{
 		}
 		return {
 			id: `1.2_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.2_displacement_velocity_acceleration",
-			topicName: "Displacement, Velocity, Acceleration",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "string",
@@ -142,8 +145,8 @@ export function generate(options: GenerateOptions): Question{
 		}
 		return {
 			id: `1.2_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.2_displacement_velocity_acceleration",
-			topicName: "Displacement, Velocity, Acceleration",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "numeric",
@@ -177,8 +180,8 @@ export function generate(options: GenerateOptions): Question{
 		}
 		return {
 			id: `1.2_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.2_displacement_velocity_acceleration",
-			topicName: "Displacement, Velocity, Acceleration",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "string",
@@ -193,8 +196,8 @@ export function generate(options: GenerateOptions): Question{
 		let answer="Rubric: Attach ticker tape to the object and run it through the timer as it falls. The timer makes dots at fixed time intervals (e.g., 0.02 s). Measure the distance between successive dots. Use Δx = v₀t + ½at² or compute velocities from adjacent intervals and plot v vs. t; slope gives a.";
 		return {
 			id: `1.2_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.2_displacement_velocity_acceleration",
-			topicName: "Displacement, Velocity, Acceleration",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "string",
@@ -212,8 +215,8 @@ export function generate(options: GenerateOptions): Question{
 		let answer=`Rubric: (a) Velocity is zero; acceleration is not zero, it is g = 9.8 m/s² downward. (b) v = v₀ - gt. Setting v=0 gives t = v₀/g = ${tTop.toFixed(2)} s. Acceleration is dv/dt = -g, constant. (c) Gravity is the only force acting; it does not disappear at the top, so acceleration is always g downward.`;
 		return {
 			id: `1.2_${Date.now()}_${rng.nextInt(0,1e6)}`,
-			topicId: "1.2_displacement_velocity_acceleration",
-			topicName: "Displacement, Velocity, Acceleration",
+			topicId: topicId,
+			topicName: topicName,
 			text: text,
 			answer: answer,
 			answerType: "string",
