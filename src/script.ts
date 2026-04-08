@@ -1,11 +1,14 @@
+// src/script.ts
 import {Question, GenerateOptions, GeneratorRegistry, AppSettings, MentalSession, GeneratorFn} from "./types.js";
 
 /**
- * Main entry point: sets up all event listeners, loads settings, and provides full exam‑ready question generation for Single and Mental modes.
+ * Main entry point: sets up all event listeners, loads settings,
+ * and provides full exam‑ready question generation for Single and Mental modes.
  * All question generators are registered externally via registerPhysicsGenerator.
+ * Topic pills and scope dropdowns are built dynamically from registered generators.
  */
 document.addEventListener("DOMContentLoaded",()=>{
-	// ========== DOM ELEMENTS  ==========
+	// ========== DOM ELEMENTS ==========
 	let elemModeSingleBtn=document.getElementById("mode-single")as HTMLButtonElement|null;
 	let elemModeMentalBtn=document.getElementById("mode-mental")as HTMLButtonElement|null;
 	let elemSingleControls=document.getElementById("single-controls")as HTMLDivElement|null;
@@ -101,8 +104,82 @@ document.addEventListener("DOMContentLoaded",()=>{
 		blurEffect: true
 	};
 	let mapGeneratorRegistry: GeneratorRegistry={};
+	let mapTopicMetadata: {[topicId: string]: {name: string, scope: string}}={};
 
 	// ========== HELPER FUNCTIONS ==========
+	/** Derives scope from topicId based on prefix. */
+	function getScopeFromTopicId(strTopicId: string): string{
+		if (strTopicId.match(/^[1-8]\./)) return "mechanics";
+		if (strTopicId.match(/^9\.|^10\.|^11\.|^12\./)) return "emag";
+		if (strTopicId.match(/^13\.|^14\./)) return "optics";
+		if (strTopicId.match(/^15\./)) return "thermo";
+		if (strTopicId.match(/^16\./)) return "modern";
+		return "mechanics";
+	}
+	/** Populates scope dropdowns with distinct scopes from registered topics. */
+	function populateScopeSelects(): void{
+		let arrScopes=new Set<string>();
+		for (let strTopicId in mapGeneratorRegistry){
+			let strScope=getScopeFromTopicId(strTopicId);
+			arrScopes.add(strScope);
+		}
+		let arrScopeList=["all", ...Array.from(arrScopes).sort()];
+		if (elemScopeSelect){
+			elemScopeSelect.innerHTML="";
+			arrScopeList.forEach(strScope=>{
+				let option=document.createElement("option");
+				option.value=strScope;
+				option.textContent=strScope=== "all"?"All":strScope.charAt(0).toUpperCase()+strScope.slice(1);
+				elemScopeSelect.appendChild(option);
+			});
+		}
+		if (elemMentalScopeSelect){
+			elemMentalScopeSelect.innerHTML="";
+			arrScopeList.forEach(strScope=>{
+				let option=document.createElement("option");
+				option.value=strScope;
+				option.textContent=strScope=== "all"?"All":strScope.charAt(0).toUpperCase()+strScope.slice(1);
+				elemMentalScopeSelect.appendChild(option);
+			});
+		}
+	}
+	/** Rebuilds the topic pills from registered generators, filtered by current scope. */
+	function rebuildTopicPills(): void{
+		if (!elemTopicGrid) return;
+		elemTopicGrid.innerHTML="";
+		let arrTopicIds=Object.keys(mapGeneratorRegistry);
+		for (let strTopicId of arrTopicIds){
+			let strScope=getScopeFromTopicId(strTopicId);
+			if (strCurrentScope!=="all" && strScope!==strCurrentScope) continue;
+			let strTopicName=mapTopicMetadata[strTopicId]?.name||strTopicId.replace(/_/g," ").replace(/\d+\.\d+\s*/,"");
+			let elemPill=document.createElement("div");
+			elemPill.className="topic-pill";
+			elemPill.setAttribute("data-topic",strTopicId);
+			elemPill.textContent=strTopicName;
+			if (strActiveTopicId===strTopicId) elemPill.classList.add("active");
+			elemPill.addEventListener("click",()=>{
+				if (mapGeneratorRegistry[strTopicId]){
+					strActiveTopicId=strTopicId;
+					document.querySelectorAll(".topic-pill").forEach(p=>p.classList.remove("active"));
+					elemPill.classList.add("active");
+					if (elemGenerateBtn) elemGenerateBtn.disabled=false;
+				}
+			});
+			elemTopicGrid.appendChild(elemPill);
+		}
+		if (elemTopicSearch) filterTopics(elemTopicSearch.value);
+	}
+	/** Filters visible topic pills based on search term. */
+	function filterTopics(strTerm: string): void{
+		if (!elemTopicGrid) return;
+		let arrPills=elemTopicGrid.querySelectorAll(".topic-pill");
+		let strLowerTerm=strTerm.toLowerCase();
+		arrPills.forEach(elemPill=>{
+			let strText=elemPill.textContent?.toLowerCase()||"";
+			if (strText.includes(strLowerTerm)) (elemPill as HTMLElement).style.display="flex";
+			else (elemPill as HTMLElement).style.display="none";
+		});
+	}
 	/** Updates UI based on current mode (single/mental). */
 	function setMode(strMode: "single"|"mental"): void{
 		if (strMode==="single"){
@@ -188,6 +265,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 		if (elemScopeSelect) elemScopeSelect.value=strCurrentScope;
 		if (elemDifficultySelect) elemDifficultySelect.value=strCurrentDifficulty;
 		setMode(objSettings.defaultMode);
+		rebuildTopicPills();
 	}
 	/** Saves current settings to localStorage and updates runtime flags. */
 	function saveSettings(): void{
@@ -201,6 +279,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 		if (elemScopeSelect) elemScopeSelect.value=strCurrentScope;
 		if (elemDifficultySelect) elemDifficultySelect.value=strCurrentDifficulty;
 		applyTheme(objSettings.theme);
+		rebuildTopicPills();
 	}
 	/** Updates the statistics panel (accuracy and average time). */
 	function updateStatistics(): void{
@@ -308,7 +387,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 		if (boolShuffleMode){
 			let arrTopics=Object.keys(mapGeneratorRegistry);
 			if (strCurrentScope!=="all"){
-				let arrFiltered=arrTopics.filter(t=>t.startsWith(strCurrentScope));
+				let arrFiltered=arrTopics.filter(t=>getScopeFromTopicId(t)===strCurrentScope);
 				if (arrFiltered.length>0) arrTopics=arrFiltered;
 			}
 			strTopicId=arrTopics[Math.floor(Math.random()*arrTopics.length)];
@@ -397,7 +476,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 			let arrTopics=Object.keys(mapGeneratorRegistry);
 			let strScopeValue=elemMentalScopeSelect?.value||"all";
 			if (strScopeValue!=="all"){
-				let arrFiltered=arrTopics.filter(t=>t.startsWith(strScopeValue));
+				let arrFiltered=arrTopics.filter(t=>getScopeFromTopicId(t)===strScopeValue);
 				if (arrFiltered.length>0) arrTopics=arrFiltered;
 			}
 			strTopicId=arrTopics[Math.floor(Math.random()*arrTopics.length)];
@@ -416,37 +495,21 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 		catch(e){}
 	}
-	/** Registers a generator function for a given topic ID and reveals its pill. */
-	function registerGenerator(strTopicId: string, fnGenerator: GeneratorFn): void{
+	/** Registers a generator function for a given topic ID, stores its metadata, and updates UI. */
+	function registerGenerator(strTopicId: string, fnGenerator: GeneratorFn, strTopicName?: string): void{
 		mapGeneratorRegistry[strTopicId]=fnGenerator;
-		let elemPill=document.querySelector(`.topic-pill[data-topic="${strTopicId}"]`);
-		if (elemPill) elemPill.classList.remove("hidden");
+		let strScope=getScopeFromTopicId(strTopicId);
+		let strDisplayName=strTopicName||strTopicId.replace(/_/g," ").replace(/\d+\.\d+\s*/,"");
+		mapTopicMetadata[strTopicId]={name: strDisplayName, scope: strScope};
+		populateScopeSelects();
+		rebuildTopicPills();
 	}
 	/** Initializes topic pills and search filter. */
 	function initTopics(): void{
-		if (!elemTopicGrid) return;
-		let arrPills=elemTopicGrid.querySelectorAll(".topic-pill");
-		arrPills.forEach(elemPill=>{
-			let strTopic=elemPill.getAttribute("data-topic");
-			if (strTopic && !mapGeneratorRegistry[strTopic]) elemPill.classList.add("hidden");
-			elemPill.addEventListener("click",()=>{
-				let strTopicId=elemPill.getAttribute("data-topic");
-				if (strTopicId && mapGeneratorRegistry[strTopicId]){
-					strActiveTopicId=strTopicId;
-					document.querySelectorAll(".topic-pill").forEach(p=>p.classList.remove("active"));
-					elemPill.classList.add("active");
-					if (elemGenerateBtn) elemGenerateBtn.disabled=false;
-				}
-			});
-		});
+		rebuildTopicPills();
 		if (elemTopicSearch){
 			elemTopicSearch.addEventListener("input",(e)=>{
-				let strTerm=(e.target as HTMLInputElement).value.toLowerCase();
-				arrPills.forEach(elemPill=>{
-					let strText=elemPill.textContent?.toLowerCase()||"";
-					if (strText.includes(strTerm)) (elemPill as HTMLElement).style.display="flex";
-					else (elemPill as HTMLElement).style.display="none";
-				});
+				filterTopics((e.target as HTMLInputElement).value);
 			});
 		}
 	}
@@ -545,7 +608,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 	if (elemAutoContinueToggle) elemAutoContinueToggle.addEventListener("change",(e)=>boolAutoContinue=(e.target as HTMLInputElement).checked);
 	if (elemShuffleToggle) elemShuffleToggle.addEventListener("change",(e)=>boolShuffleMode=(e.target as HTMLInputElement).checked);
 	if (elemMcqToggle) elemMcqToggle.addEventListener("change",(e)=>boolMcqMode=(e.target as HTMLInputElement).checked);
-	if (elemScopeSelect) elemScopeSelect.addEventListener("change",(e)=>strCurrentScope=(e.target as HTMLSelectElement).value);
+	if (elemScopeSelect) elemScopeSelect.addEventListener("change",(e)=>{
+		strCurrentScope=(e.target as HTMLSelectElement).value;
+		rebuildTopicPills();
+	});
 	if (elemDifficultySelect) elemDifficultySelect.addEventListener("change",(e)=>strCurrentDifficulty=(e.target as HTMLSelectElement).value as any);
 	if (elemStartSessionBtn){
 		elemStartSessionBtn.addEventListener("click",()=>{
