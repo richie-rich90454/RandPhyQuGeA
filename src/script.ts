@@ -1,4 +1,3 @@
-// src/script.ts
 import {Question, GenerateOptions, GeneratorRegistry, AppSettings, MentalSession, GeneratorFn} from "./types.js";
 
 /**
