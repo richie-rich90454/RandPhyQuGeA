@@ -5,7 +5,7 @@
  * MC, Math, Graphical, Experiment, QualQuant.
  * @timestamp 2026-04-08
  */
-import { Question, GenerateOptions, SeededRandom } from "../../types.js";
+import {Question, GenerateOptions, SeededRandom} from "../../types.js";
 /**
  * Main generator function – randomly selects a question type and scenario,
  * uses seeded randomness for reproducibility, and builds a complete Question.
