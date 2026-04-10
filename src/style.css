@@ -134,7 +134,7 @@ body {
 
 .mode-button.active {
 	background: var(--primary);
-	color: white;
+	color: #fff;
 	transform: scale(1.02);
 }
 
@@ -193,7 +193,7 @@ body {
 .topic-pill.active {
 	background: var(--primary);
 	border-color: var(--primary);
-	color: white;
+	color: #fff;
 	transform: scale(1.05);
 }
 
@@ -634,7 +634,7 @@ select.scope-select:focus {
 
 #clear-answer:hover {
 	background: var(--error);
-	color: white;
+	color: #fff;
 	border-color: var(--error);
 	transform: scale(1.1);
 }
@@ -973,4 +973,508 @@ button:hover,
 
 input[type="checkbox"] {
 	cursor: pointer;
+}
+
+@keyframes questionAppear {
+	0% {
+		opacity: 0;
+		transform: translateY(12px) scale(0.98);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes questionPulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.4);
+	}
+
+	70% {
+		box-shadow: 0 0 0 8px rgba(13, 148, 136, 0);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0 rgba(13, 148, 136, 0);
+	}
+}
+
+@keyframes resultFlashCorrect {
+	0% {
+		background-color: var(--primary-light);
+		transform: scale(1);
+	}
+
+	50% {
+		background-color: var(--primary);
+		transform: scale(1.02);
+		color: #fff;
+	}
+
+	100% {
+		background-color: var(--primary-light);
+		transform: scale(1);
+	}
+}
+
+@keyframes resultFlashIncorrect {
+	0% {
+		background-color: #fee2e2;
+		transform: scale(1);
+	}
+
+	50% {
+		background-color: var(--error);
+		transform: scale(1.02);
+		color: #fff;
+	}
+
+	100% {
+		background-color: #fee2e2;
+		transform: scale(1);
+	}
+}
+
+@keyframes answerShake {
+
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+
+	25% {
+		transform: translateX(-4px);
+	}
+
+	75% {
+		transform: translateX(4px);
+	}
+}
+
+@keyframes cardGlow {
+	0% {
+		border-color: var(--border);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+	}
+
+	50% {
+		border-color: var(--primary);
+		box-shadow: 0 0 12px rgba(13, 148, 136, 0.3);
+	}
+
+	100% {
+		border-color: var(--border);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+	}
+}
+
+.question-card.animate-question {
+	animation: questionAppear 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards, questionPulse 0.6s ease-out 0.2s;
+}
+
+.results-card.animate-correct {
+	animation: resultFlashCorrect 0.5s ease-in-out;
+}
+
+.results-card.animate-incorrect {
+	animation: resultFlashIncorrect 0.5s ease-in-out;
+}
+
+.answer-input.animate-shake {
+	animation: answerShake 0.3s ease-in-out;
+}
+
+.answer-section .card.animate-glow {
+	animation: cardGlow 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.question-card.animate-question,
+	.results-card.animate-correct,
+	.results-card.animate-incorrect,
+	.answer-input.animate-shake,
+	.answer-section .card.animate-glow {
+		animation: none;
+	}
+}
+
+@keyframes questionSlideUp {
+	0% {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes questionFadeScale {
+	0% {
+		opacity: 0;
+		transform: scale(0.96);
+	}
+
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes questionGentleBounce {
+	0% {
+		opacity: 0;
+		transform: translateY(15px);
+	}
+
+	60% {
+		opacity: 1;
+		transform: translateY(-3px);
+	}
+
+	100% {
+		transform: translateY(0);
+	}
+}
+
+@keyframes questionSlideLeft {
+	0% {
+		opacity: 0;
+		transform: translateX(20px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes questionSlideRight {
+	0% {
+		opacity: 0;
+		transform: translateX(-20px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+.question-card.animate-question {
+	animation: questionSlideUp 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+}
+
+.question-card.animate-question-scale {
+	animation: questionFadeScale 0.25s ease-out forwards;
+}
+
+.question-card.animate-question-bounce {
+	animation: questionGentleBounce 0.35s cubic-bezier(0.3, 1.2, 0.4, 1) forwards;
+}
+
+.question-card.animate-question-left {
+	animation: questionSlideLeft 0.28s ease-out forwards;
+}
+
+.question-card.animate-question-right {
+	animation: questionSlideRight 0.28s ease-out forwards;
+}
+
+@keyframes checkmarkPop {
+	0% {
+		transform: scale(0);
+		opacity: 0;
+	}
+
+	50% {
+		transform: scale(1.2);
+	}
+
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes crossFade {
+	0% {
+		transform: rotate(0deg) scale(0.8);
+		opacity: 0;
+	}
+
+	100% {
+		transform: rotate(0deg) scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes resultPulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+	}
+
+	70% {
+		box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+	}
+}
+
+.results-card.animate-correct .result-success svg {
+	animation: checkmarkPop 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.results-card.animate-incorrect .result-error svg {
+	animation: crossFade 0.35s ease-out;
+}
+
+.results-card.animate-correct {
+	animation: resultPulse 0.5s ease-out;
+}
+
+@keyframes inputSuccessGlow {
+	0% {
+		border-color: var(--border);
+		box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+	}
+
+	50% {
+		border-color: var(--success);
+		box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+	}
+
+	100% {
+		border-color: var(--border);
+		box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+	}
+}
+
+@keyframes inputErrorGlow {
+	0% {
+		border-color: var(--border);
+		box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+	}
+
+	50% {
+		border-color: var(--error);
+		box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+	}
+
+	100% {
+		border-color: var(--border);
+		box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+	}
+}
+
+.answer-input.input-success {
+	animation: inputSuccessGlow 0.4s ease-out;
+}
+
+.answer-input.input-error {
+	animation: inputErrorGlow 0.4s ease-out;
+}
+
+@keyframes buttonRipple {
+	0% {
+		transform: scale(0);
+		opacity: 0.5;
+	}
+
+	100% {
+		transform: scale(4);
+		opacity: 0;
+	}
+}
+
+.primary-button,
+.secondary-button,
+.icon-button,
+.physics-toolbar-btn {
+	position: relative;
+	overflow: hidden;
+}
+
+.primary-button::after,
+.secondary-button::after,
+.icon-button::after,
+.physics-toolbar-btn::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.5);
+	transform: translate(-50%, -50%);
+	transition: width 0.3s, height 0.3s, opacity 0.3s;
+	pointer-events: none;
+}
+
+.primary-button:active::after,
+.secondary-button:active::after,
+.icon-button:active::after,
+.physics-toolbar-btn:active::after {
+	width: 120px;
+	height: 120px;
+	opacity: 0;
+	transition: 0s;
+}
+
+@keyframes pillActivate {
+	0% {
+		transform: scale(1);
+	}
+
+	50% {
+		transform: scale(1.05);
+	}
+
+	100% {
+		transform: scale(1);
+	}
+}
+
+.topic-pill.active {
+	animation: pillActivate 0.2s ease-out;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.question-card.loading::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 24px;
+	height: 24px;
+	margin: -12px 0 0 -12px;
+	border: 2px solid var(--primary-light);
+	border-top-color: var(--primary);
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+	z-index: 10;
+}
+
+.question-card.loading {
+	position: relative;
+	pointer-events: none;
+	opacity: 0.7;
+}
+
+@keyframes timerWarning {
+
+	0%,
+	100% {
+		color: var(--text);
+	}
+
+	50% {
+		color: var(--error);
+		transform: scale(1.05);
+	}
+}
+
+.stat-with-icon.warning {
+	animation: timerWarning 0.8s ease-in-out 2;
+}
+
+@keyframes progressFill {
+	from {
+		width: 0%;
+	}
+
+	to {
+		width: var(--progress-width);
+	}
+}
+
+.mental-progress .progress-bar {
+	transition: width 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+@keyframes choiceHover {
+	0% {
+		transform: translateY(0);
+	}
+
+	100% {
+		transform: translateY(-2px);
+	}
+}
+
+.choice-button {
+	transition: all 0.15s ease;
+}
+
+.choice-button:hover {
+	animation: choiceHover 0.2s ease forwards;
+	background: var(--primary-light);
+	border-color: var(--primary);
+}
+
+.choice-button.selected {
+	background: var(--primary);
+	color: white;
+	transform: scale(0.98);
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: scale(0.8);
+	}
+
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+#clear-answer {
+	animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes previewFlash {
+	0% {
+		background-color: transparent;
+	}
+
+	50% {
+		background-color: var(--primary-light);
+	}
+
+	100% {
+		background-color: transparent;
+	}
+}
+
+.physics-preview.has-content {
+	animation: previewFlash 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
 }
