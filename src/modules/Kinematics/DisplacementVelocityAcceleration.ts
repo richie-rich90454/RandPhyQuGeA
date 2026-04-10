@@ -1,23 +1,7 @@
-/**
- * Generator for Displacement, Velocity, and Acceleration (Topic 1.2)
- * Conforms to the generator contract: exports `topicId`, `topicName`, and a `generate` function.
- * Covers MC (slope of x-t, area under v-t, constant acceleration from v-t, rank average velocities),
- * Math (average velocity, average acceleration, instantaneous velocity from table),
- * Graphical (sketch v-t from x-t, sketch a-t from v-t), Experiment (ticker tape acceleration),
- * and QualQuant (top of vertical throw claim). All scenarios randomly selected.
- * @timestamp 2026-04-08
- */
-import {Question, GenerateOptions, SeededRandom} from "../../types.js";
-
+import type {Question, GenerateOptions} from '../../types.d.js';
+import {SeededRandom} from '../../seededRandom.js';
 export const topicId="1.2_displacement_velocity_acceleration";
 export const topicName="Displacement, Velocity, Acceleration";
-
-/**
- * Main generator function – randomly selects a question type and scenario,
- * uses seeded randomness for reproducibility, and builds a complete Question.
- * @param options configuration including difficulty, forceMcq flag, and optional seed
- * @returns a fully populated Question object
- */
 export function generate(options: GenerateOptions): Question{
 	let rng=new SeededRandom(options.seed!==undefined?options.seed:Date.now());
 	let typeList: Question["questionType"][]=["MC","Math","Graphical","Experiment","QualQuant"];

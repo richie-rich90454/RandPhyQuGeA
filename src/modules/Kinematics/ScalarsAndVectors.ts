@@ -1,20 +1,7 @@
-/**
- * Generator for Scalars and Vectors in One Dimension (Topic 1.1)
- * Conforms to the generator contract: exports `topicId`, `topicName`, and a `generate` function.
- * Supports all five question types: MC, Math, Graphical, Experiment, QualQuant.
- * @timestamp 2026-04-08
- */
-import {Question, GenerateOptions, SeededRandom} from "../../types.js";
-
+import type {Question, GenerateOptions} from '../../types.d.js';
+import {SeededRandom} from '../../seededRandom.js';
 export const topicId="1.1_scalars_vectors_1d";
 export const topicName="Scalars and Vectors (1D)";
-
-/**
- * Main generator function – randomly selects a question type and scenario,
- * uses seeded randomness for reproducibility, and builds a complete Question.
- * @param options configuration including difficulty, forceMcq flag, and optional seed
- * @returns a fully populated Question object
- */
 export function generate(options: GenerateOptions): Question{
 	let rng=new SeededRandom(options.seed!==undefined?options.seed:Date.now());
 	let typeList: Question["questionType"][]=["MC","Math","Graphical","Experiment","QualQuant"];

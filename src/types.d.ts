@@ -1,6 +1,3 @@
-/**
- * Represents a single question with all metadata needed for display and grading.
- */
 export interface Question{
 	id: string;
 	topicId: string;
@@ -12,32 +9,17 @@ export interface Question{
 	choices?: string[];
 	difficulty: "easy"|"medium"|"hard";
 	questionType: "MC"|"Math"|"Graphical"|"Experiment"|"QualQuant";
+	explanation?: string;
 }
-
-/**
- * Options passed to every generator function.
- */
 export interface GenerateOptions{
 	difficulty: "easy"|"medium"|"hard";
 	forceMcq?: boolean;
 	seed?: number;
 }
-
-/**
- * Signature for a generator function that produces a Question.
- */
 export type GeneratorFn=(options: GenerateOptions)=>Question;
-
-/**
- * Registry mapping topic IDs to their generator functions.
- */
 export interface GeneratorRegistry{
 	[key: string]: GeneratorFn;
 }
-
-/**
- * Application settings persisted in localStorage.
- */
 export interface AppSettings{
 	theme: "light"|"dark"|"system";
 	defaultMode: "single"|"mental";
@@ -57,10 +39,6 @@ export interface AppSettings{
 	waveBackground: boolean;
 	blurEffect: boolean;
 }
-
-/**
- * Runtime state for a mental mode session.
- */
 export interface MentalSession{
 	active: boolean;
 	paused: boolean;
@@ -71,29 +49,5 @@ export interface MentalSession{
 	questionsRemaining: number;
 	unlimited: boolean;
 	startTime: number;
-}
-
-/**
- * Seeded pseudo‑random number generator (mulberry32).
- */
-export class SeededRandom{
-	private numSeed: number;
-	constructor(numSeedValue: number){
-		this.numSeed=numSeedValue;
-	}
-	/** Returns a random integer in [min, max] (inclusive). */
-	public nextInt(numMin: number, numMax: number): number{
-		return Math.floor(this.nextFloat()*(numMax-numMin+1))+numMin;
-	}
-	/** Returns a random float in [0, 1). */
-	public nextFloat(): number{
-		let numT=this.numSeed+=0x6D2B79F5;
-		numT=Math.imul(numT^numT>>>15, numT|1);
-		numT^=numT+Math.imul(numT^numT>>>17, numT|1);
-		return ((numT>>>0)/4294967296);
-	}
-	/** Returns a random element from an array. */
-	public choice<T>(arrItems: T[]): T{
-		return arrItems[this.nextInt(0,arrItems.length-1)];
-	}
+	answerTimes: number[];
 }
