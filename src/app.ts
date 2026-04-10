@@ -1,6 +1,6 @@
 import type { Question, GenerateOptions, MentalSession } from './types.d.js';
 import { generatorRegistry, topicMetadata } from "./modules/index.js";
-import { settings, loadSettings, saveSettings, applyTheme, getEffectiveTheme, defaultSettings, resetSettings } from './settings.js';
+import { settings, loadSettings, saveSettings, applyTheme, getEffectiveTheme, resetSettings } from './settings.js';
 export function initApp(){
 	const elemModeSingleBtn=document.getElementById("mode-single")as HTMLButtonElement;
 	const elemModeMentalBtn=document.getElementById("mode-mental")as HTMLButtonElement;
