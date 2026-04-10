@@ -122,7 +122,7 @@ body {
 	background: transparent;
 	border-radius: 1rem;
 	cursor: pointer;
-	color: var(--text-dim)
+	color: var(--text);
 }
 
 .mode-button.active {
@@ -616,11 +616,11 @@ select.scope-select {
 	font-size: 0.65rem;
 	cursor: pointer;
 	border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-	color: var(--text-dim)
+	color: var(--text);
 }
 
 .settings-tab.active {
-	color: var(--primary);
+	color: var(--border);
 	border-bottom: 2px solid var(--primary);
 	font-weight: 600
 }
@@ -720,4 +720,8 @@ button:hover,
 	.card-title {
 		font-size: 0.65rem
 	}
+}
+
+.shortcut-hint {
+	color: var(--text);
 }

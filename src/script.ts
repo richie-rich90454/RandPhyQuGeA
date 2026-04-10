@@ -1,6 +1,3 @@
-// ============================================================
-// 1. Type Definitions
-// ============================================================
 type Question={
 	text:string;
 	answer:string;
@@ -48,10 +45,8 @@ type MentalSession={
 	questionsRemaining:number;
 	unlimited:boolean;
 	startTime:number;
+	answerTimes:number[];
 };
-// ============================================================
-// 2. Helper Functions
-// ============================================================
 const rand=(min:number,max:number):number=>{
 	return min+Math.random()*(max-min);
 };
@@ -68,9 +63,6 @@ const pickRandom=<T>(arr:T[]):T=>{
 const formatNumber=(num:number,decimals:number=2):string=>{
 	return roundTo(num,decimals).toString();
 };
-// ============================================================
-// 3. Question Generators (Kinematics)
-// ============================================================
 const generate1DKinematics=(options:GenerateOptions):Question=>{
 	const difficulty=options.difficulty;
 	let v0:number,a:number,t:number;
@@ -95,7 +87,6 @@ const generate1DKinematics=(options:GenerateOptions):Question=>{
 	let unit:string;
 	let explanation:string="";
 	const displacement=v0*t+0.5*a*t*t;
-	// const vf=v0+a*t;
 	if(scenarioType===1){
 		scenario=`A object starts from rest and accelerates at ${formatNumber(a)} m/s² for ${formatNumber(t)} seconds. What is its final velocity?`;
 		computeAnswer=()=>a*t;
@@ -329,9 +320,6 @@ const generateMotionGraphs=(options:GenerateOptions):Question=>{
 		explanation:`Acceleration is the slope of velocity vs. time graph: a = ${formatNumber(slope)} m/s². At t=${formatNumber(time)} s, velocity = ${formatNumber(velocity)} m/s.`,
 	};
 };
-// ============================================================
-// 4. Generator Registry
-// ============================================================
 const generatorRegistry:GeneratorRegistry={};
 const topicMetadata:{[topicId:string]:{name:string;scope:string}}={};
 const registerGenerator=(topicId:string,generator:GeneratorFn,name:string,scope:string="mechanics"):void=>{
@@ -344,11 +332,7 @@ registerGenerator("mechanics.projectile-motion",generateProjectileMotion,"Projec
 registerGenerator("mechanics.vectors",generateVectors,"Vectors","mechanics");
 registerGenerator("mechanics.relative-motion",generateRelativeMotion,"Relative Motion","mechanics");
 registerGenerator("mechanics.motion-graphs",generateMotionGraphs,"Motion Graphs","mechanics");
-// ============================================================
-// 5. UI Initialization & Event Binding
-// ============================================================
 document.addEventListener("DOMContentLoaded",()=>{
-	// DOM Elements
 	const elemModeSingleBtn=document.getElementById("mode-single")as HTMLButtonElement;
 	const elemModeMentalBtn=document.getElementById("mode-mental")as HTMLButtonElement;
 	const elemSingleControls=document.getElementById("single-controls")as HTMLDivElement;
@@ -403,7 +387,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 	const elemPhysicsToolbarBtns=document.querySelectorAll(".physics-toolbar-btn[data-symbol]");
 	const elemDropdownBtn=document.getElementById("physics-dropdown-btn")as HTMLButtonElement;
 	const elemPhysicsDropdown=document.getElementById("physics-dropdown")as HTMLDivElement;
-	// State
+	const elemSettingsReset=document.getElementById("settings-reset")as HTMLButtonElement;
 	let currentQuestion:Question|null=null;
 	let activeTopicId:string|null=null;
 	let currentDifficulty:"easy"|"medium"|"hard"="medium";
@@ -412,6 +396,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 	let shuffleMode=false;
 	let currentScope="all";
 	let mentalModeActive=false;
+	let autoContinueTimeout:number|null=null;
 	let mentalSession:MentalSession={
 		active:false,
 		paused:false,
@@ -422,6 +407,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 		questionsRemaining:5,
 		unlimited:false,
 		startTime:0,
+		answerTimes:[],
 	};
 	let settings:AppSettings={
 		theme:"system",
@@ -442,12 +428,18 @@ document.addEventListener("DOMContentLoaded",()=>{
 		waveBackground:true,
 		blurEffect:true,
 	};
-	// Helper: Get scope from topic id
+	const showModal=(modal:HTMLDivElement)=>{
+		modal.classList.remove("hidden");
+		modal.classList.add("show");
+	};
+	const hideModal=(modal:HTMLDivElement)=>{
+		modal.classList.add("hidden");
+		modal.classList.remove("show");
+	};
 	const getScopeFromTopicId=(topicId:string):string=>{
 		if(topicId.startsWith("mechanics.")) return"mechanics";
 		return"mechanics";
 	};
-	// Populate scope dropdowns
 	const populateScopeSelects=()=>{
 		const scopes=new Set<string>();
 		for(const id in generatorRegistry){
@@ -473,7 +465,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 			});
 		}
 	};
-	// Rebuild topic pills
 	const rebuildTopicPills=()=>{
 		if(!elemTopicGrid) return;
 		elemTopicGrid.innerHTML="";
@@ -509,12 +500,17 @@ document.addEventListener("DOMContentLoaded",()=>{
 		});
 	};
 	const setMode=(mode:"single"|"mental")=>{
+		if(autoContinueTimeout){
+			clearTimeout(autoContinueTimeout);
+			autoContinueTimeout=null;
+		}
 		if(mode==="single"){
 			elemModeSingleBtn.classList.add("active");
 			elemModeMentalBtn.classList.remove("active");
 			elemSingleControls.classList.remove("hidden");
 			elemMentalControls.classList.add("hidden");
 			mentalModeActive=false;
+			if(mentalSession.active) endMentalSession();
 		}
 		else{
 			elemModeMentalBtn.classList.add("active");
@@ -538,6 +534,12 @@ document.addEventListener("DOMContentLoaded",()=>{
 			root.classList.add("light");
 		}
 		localStorage.setItem("theme",theme);
+	};
+	const getEffectiveTheme=():string=>{
+		const root=document.documentElement;
+		if(root.classList.contains("dark")) return"dark";
+		if(root.classList.contains("light")) return"light";
+		return window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
 	};
 	const loadSettings=()=>{
 		const saved=localStorage.getItem("physicsSettings");
@@ -616,8 +618,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 			return;
 		}
 		const accuracy=(mentalSession.score/total)*100;
-		const elapsed=(Date.now()-mentalSession.startTime)/1000;
-		const avgTime=elapsed/total;
+		const sumTimes=mentalSession.answerTimes.reduce((a,b)=>a+b,0);
+		const avgTime=sumTimes/total;
 		elemAccuracyStat.textContent=`Accuracy: ${accuracy.toFixed(1)}%`;
 		elemAvgTimeStat.textContent=`Avg: ${avgTime.toFixed(1)}s`;
 	};
@@ -636,9 +638,11 @@ document.addEventListener("DOMContentLoaded",()=>{
 					if(elemAnswerBox) elemAnswerBox.value=btn.getAttribute("data-value")||"";
 				});
 			});
+			if(elemAnswerBox) elemAnswerBox.style.display="none";
 		}
-		else if(elemMcqChoicesContainer){
-			elemMcqChoicesContainer.style.display="none";
+		else{
+			if(elemMcqChoicesContainer) elemMcqChoicesContainer.style.display="none";
+			if(elemAnswerBox) elemAnswerBox.style.display="block";
 		}
 		if(elemAnswerBox){
 			elemAnswerBox.disabled=false;
@@ -668,6 +672,13 @@ document.addEventListener("DOMContentLoaded",()=>{
 			elemResultsDiv.classList.add("incorrect");
 			elemResultsDiv.classList.remove("correct");
 		}
+		if(autoContinue&&!mentalModeActive&&!mentalSession.active){
+			if(autoContinueTimeout) clearTimeout(autoContinueTimeout);
+			autoContinueTimeout=window.setTimeout(()=>{
+				generateNewQuestion();
+				autoContinueTimeout=null;
+			},3000);
+		}
 	};
 	const checkAnswer=()=>{
 		if(!currentQuestion||!elemAnswerBox) return;
@@ -688,6 +699,8 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 		showResult(isCorrect,currentQuestion.answer,currentQuestion.explanation);
 		if(mentalModeActive&&mentalSession.active&&!mentalSession.paused){
+			const timeSpent=(Date.now()-mentalSession.startTime)/1000;
+			mentalSession.answerTimes.push(timeSpent);
 			if(isCorrect) mentalSession.score++;
 			mentalSession.total++;
 			if(elemScoreDisplay) elemScoreDisplay.textContent=`${mentalSession.score} / ${mentalSession.total}`;
@@ -701,6 +714,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 	};
 	const generateNewQuestion=()=>{
+		if(autoContinueTimeout){
+			clearTimeout(autoContinueTimeout);
+			autoContinueTimeout=null;
+		}
 		if(Object.keys(generatorRegistry).length===0) return;
 		let topicId=activeTopicId;
 		if(shuffleMode){
@@ -724,11 +741,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 			const newQuestion=generatorRegistry[topicId](options);
 			currentQuestion=newQuestion;
 			displayQuestion(newQuestion);
-			if(autoContinue){
-				setTimeout(()=>{
-					if(currentQuestion) checkAnswer();
-				},settings.autoCheckDelayMs);
-			}
 		}
 		catch(e){
 			console.error(e);
@@ -744,13 +756,17 @@ document.addEventListener("DOMContentLoaded",()=>{
 		mentalSession.unlimited=elemUnlimitedToggle?.checked||false;
 		mentalSession.questionsRemaining=settings.maxQuestions;
 		mentalSession.startTime=Date.now();
-		if(elemTimerDisplay) elemTimerDisplay.textContent=`00:${mentalSession.timeLeft<10?"0"+mentalSession.timeLeft:mentalSession.timeLeft}`;
+		mentalSession.answerTimes=[];
+		const mins=Math.floor(mentalSession.timeLeft/60);
+		const secs=mentalSession.timeLeft%60;
+		if(elemTimerDisplay) elemTimerDisplay.textContent=`${mins.toString().padStart(2,"0")}:${secs.toString().padStart(2,"0")}`;
 		if(elemScoreDisplay) elemScoreDisplay.textContent="0 / 0";
 		if(elemStatisticsPanel) elemStatisticsPanel.style.display="flex";
 		if(elemStartSessionBtn) elemStartSessionBtn.textContent="End Session";
 		if(elemPauseSessionBtn) elemPauseSessionBtn.classList.remove("hidden");
 		if(elemSkipQuestionBtn) elemSkipQuestionBtn.classList.remove("hidden");
 		updateStatistics();
+		if(mentalSession.timerInterval) clearInterval(mentalSession.timerInterval);
 		mentalSession.timerInterval=window.setInterval(()=>{
 			if(!mentalSession.active||mentalSession.paused) return;
 			if(mentalSession.timeLeft<=0){
@@ -759,10 +775,14 @@ document.addEventListener("DOMContentLoaded",()=>{
 			}
 			else{
 				mentalSession.timeLeft--;
-				if(elemTimerDisplay) elemTimerDisplay.textContent=`00:${mentalSession.timeLeft<10?"0"+mentalSession.timeLeft:mentalSession.timeLeft}`;
+				const minsLeft=Math.floor(mentalSession.timeLeft/60);
+				const secsLeft=mentalSession.timeLeft%60;
+				if(elemTimerDisplay) elemTimerDisplay.textContent=`${minsLeft.toString().padStart(2,"0")}:${secsLeft.toString().padStart(2,"0")}`;
 				if(elemMentalProgressBar){
-					let progress=(mentalSession.total/mentalSession.questionsRemaining)*100;
-					if(mentalSession.unlimited) progress=0;
+					let progress=0;
+					if(!mentalSession.unlimited&&mentalSession.questionsRemaining>0){
+						progress=(mentalSession.total/mentalSession.questionsRemaining)*100;
+					}
 					elemMentalProgressBar.style.width=Math.min(100,progress)+"%";
 				}
 			}
@@ -781,6 +801,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 		if(elemSkipQuestionBtn) elemSkipQuestionBtn.classList.add("hidden");
 		if(elemStatisticsPanel) elemStatisticsPanel.style.display="none";
 		if(elemCopyAnswerBtn) elemCopyAnswerBtn.classList.add("hidden");
+		if(elemMentalProgressBar) elemMentalProgressBar.style.width="0%";
+		if(elemTimerDisplay) elemTimerDisplay.textContent="00:30";
+		if(elemScoreDisplay) elemScoreDisplay.textContent="0 / 0";
 	};
 	const generateNextMentalQuestion=()=>{
 		if(!mentalSession.active) return;
@@ -807,7 +830,20 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 		catch(e){}
 	};
-	// Keyboard shortcuts
+	const toggleTheme=()=>{
+		let currentTheme=settings.theme;
+		let effective=getEffectiveTheme();
+		let newThemeSetting:"light"|"dark"|"system";
+		if(currentTheme==="system"){
+			newThemeSetting=effective==="dark"?"light":"dark";
+		}
+		else{
+			newThemeSetting=currentTheme==="dark"?"light":"dark";
+		}
+		settings.theme=newThemeSetting;
+		applyTheme(settings.theme);
+		saveSettings();
+	};
 	const handleKeydown=(e:KeyboardEvent)=>{
 		if(e.ctrlKey&&e.key==='g'){
 			e.preventDefault();
@@ -827,18 +863,14 @@ document.addEventListener("DOMContentLoaded",()=>{
 		}
 		else if(e.ctrlKey&&e.key===','){
 			e.preventDefault();
-			elemSettingsModal.classList.add("show");
+			showModal(elemSettingsModal);
 		}
 		else if(e.ctrlKey&&e.shiftKey&&e.key==='T'){
 			e.preventDefault();
-			const newTheme=document.documentElement.classList.contains("dark")?"light":"dark";
-			settings.theme=newTheme as"light"|"dark";
-			applyTheme(settings.theme);
-			saveSettings();
+			toggleTheme();
 		}
 	};
 	document.addEventListener("keydown",handleKeydown);
-	// Event listeners
 	elemModeSingleBtn?.addEventListener("click",()=>setMode("single"));
 	elemModeMentalBtn?.addEventListener("click",()=>setMode("mental"));
 	elemGenerateBtn?.addEventListener("click",generateNewQuestion);
@@ -850,20 +882,17 @@ document.addEventListener("DOMContentLoaded",()=>{
 			elemPhysicsPreview.textContent="";
 			elemPhysicsPreview.classList.remove("has-content");
 		}
+		const selectedChoice=document.querySelector(".choice-button.selected");
+		if(selectedChoice) selectedChoice.classList.remove("selected");
 	});
 	elemAnswerBox?.addEventListener("input",()=>{
 		if(elemPhysicsPreview) elemPhysicsPreview.textContent=elemAnswerBox.value;
 		if(elemPhysicsPreview.textContent) elemPhysicsPreview.classList.add("has-content");
 		else elemPhysicsPreview.classList.remove("has-content");
 	});
-	elemThemeToggle?.addEventListener("click",()=>{
-		const newTheme=document.documentElement.classList.contains("dark")?"light":"dark";
-		settings.theme=newTheme as"light"|"dark";
-		applyTheme(settings.theme);
-		saveSettings();
-	});
-	elemSettingsBtn?.addEventListener("click",()=>elemSettingsModal?.classList.add("show"));
-	elemSettingsClose?.addEventListener("click",()=>elemSettingsModal?.classList.remove("show"));
+	elemThemeToggle?.addEventListener("click",toggleTheme);
+	elemSettingsBtn?.addEventListener("click",()=>showModal(elemSettingsModal));
+	elemSettingsClose?.addEventListener("click",()=>hideModal(elemSettingsModal));
 	elemSettingsSave?.addEventListener("click",()=>{
 		const themeSel=document.getElementById("settings-theme")as HTMLSelectElement;
 		if(themeSel) settings.theme=themeSel.value as any;
@@ -900,7 +929,30 @@ document.addEventListener("DOMContentLoaded",()=>{
 		const blur=document.getElementById("settings-perf-blur")as HTMLInputElement;
 		if(blur) settings.blurEffect=blur.checked;
 		saveSettings();
-		elemSettingsModal?.classList.remove("show");
+		hideModal(elemSettingsModal);
+	});
+	elemSettingsReset?.addEventListener("click",()=>{
+		settings={
+			theme:"system",
+			defaultMode:"single",
+			autoContinue:false,
+			shuffle:false,
+			defaultScope:"all",
+			notifications:true,
+			difficulty:"medium",
+			timerSeconds:30,
+			maxQuestions:5,
+			autoCheckDelayMs:800,
+			decimalPlaces:2,
+			sound:false,
+			vibration:false,
+			mcqChoices:4,
+			performanceMode:false,
+			waveBackground:true,
+			blurEffect:true,
+		};
+		saveSettings();
+		loadSettings();
 	});
 	elemSettingsTabBasic?.addEventListener("click",()=>{
 		elemSettingsTabBasic.classList.add("active");
@@ -914,18 +966,36 @@ document.addEventListener("DOMContentLoaded",()=>{
 		elemSettingsAdvancedPanel?.classList.remove("hidden");
 		elemSettingsBasicPanel?.classList.add("hidden");
 	});
-	elemShortcutsBtn?.addEventListener("click",()=>elemShortcutsModal?.classList.add("show"));
-	elemShortcutsClose?.addEventListener("click",()=>elemShortcutsModal?.classList.remove("show"));
-	elemShortcutsGotit?.addEventListener("click",()=>elemShortcutsModal?.classList.remove("show"));
-	elemHelpBtn?.addEventListener("click",()=>elemOnboardingOverlay?.classList.add("show"));
-	elemOnboardingClose?.addEventListener("click",()=>elemOnboardingOverlay?.classList.remove("show"));
+	elemShortcutsBtn?.addEventListener("click",()=>showModal(elemShortcutsModal));
+	elemShortcutsClose?.addEventListener("click",()=>hideModal(elemShortcutsModal));
+	elemShortcutsGotit?.addEventListener("click",()=>hideModal(elemShortcutsModal));
+	elemHelpBtn?.addEventListener("click",()=>showModal(elemOnboardingOverlay));
+	elemOnboardingClose?.addEventListener("click",()=>hideModal(elemOnboardingOverlay));
 	elemOnboardingGotit?.addEventListener("click",()=>{
-		elemOnboardingOverlay?.classList.remove("show");
+		hideModal(elemOnboardingOverlay);
 		localStorage.setItem("onboardingSeen","true");
 	});
 	elemAutoContinueToggle?.addEventListener("change",(e)=>autoContinue=(e.target as HTMLInputElement).checked);
 	elemShuffleToggle?.addEventListener("change",(e)=>shuffleMode=(e.target as HTMLInputElement).checked);
-	elemMcqToggle?.addEventListener("change",(e)=>mcqMode=(e.target as HTMLInputElement).checked);
+	elemMcqToggle?.addEventListener("change",(e)=>{
+		mcqMode=(e.target as HTMLInputElement).checked;
+		if(currentQuestion){
+			const options:GenerateOptions={
+				difficulty:currentDifficulty,
+				forceMcq:mcqMode,
+				seed:Date.now(),
+			};
+			try{
+				const topicId=activeTopicId||Object.keys(generatorRegistry)[0];
+				if(topicId&&generatorRegistry[topicId]){
+					const newQuestion=generatorRegistry[topicId](options);
+					currentQuestion=newQuestion;
+					displayQuestion(newQuestion);
+				}
+			}
+			catch(err){}
+		}
+	});
 	elemScopeSelect?.addEventListener("change",(e)=>{
 		currentScope=(e.target as HTMLSelectElement).value;
 		rebuildTopicPills();
@@ -945,8 +1015,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 		generateNextMentalQuestion();
 	});
 	elemCopyAnswerBtn?.addEventListener("click",()=>{
-		const correctText=elemResultsDiv?.querySelector(".result-error p")?.textContent?.replace("Correct answer: ","")||"";
-		if(correctText) navigator.clipboard.writeText(correctText);
+		if(currentQuestion){
+			navigator.clipboard.writeText(currentQuestion.answer);
+		}
 	});
 	elemPhysicsToolbarBtns.forEach(btn=>{
 		btn.addEventListener("click",()=>{
@@ -974,11 +1045,10 @@ document.addEventListener("DOMContentLoaded",()=>{
 			elemPhysicsDropdown?.classList.remove("show");
 		}
 	});
-	// Initialize
 	loadSettings();
 	populateScopeSelects();
 	rebuildTopicPills();
 	if(!localStorage.getItem("onboardingSeen")&&elemOnboardingOverlay){
-		elemOnboardingOverlay.classList.add("show");
+		showModal(elemOnboardingOverlay);
 	}
 });
