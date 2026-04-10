@@ -288,7 +288,9 @@ export function initApp(){
 		if(!elemResultsDiv) return;
 		if(elemCopyAnswerBtn) elemCopyAnswerBtn.classList.remove("hidden");
 		if(isCorrect){
-			elemResultsDiv.innerHTML=`<div class="result-success"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><div><h3>Correct!</h3><p>${explanation||"Great job!"}</p></div></div>`;
+			const answerText=`Answer: ${correctAnswer}`;
+			const explanationText=explanation ? `<p>${explanation}</p>` : "";
+			elemResultsDiv.innerHTML=`<div class="result-success"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><div><h3>Correct!</h3><p>${answerText}</p>${explanationText}</div></div>`;
 			elemResultsDiv.classList.add("correct");
 			elemResultsDiv.classList.remove("incorrect");
 		}
@@ -313,16 +315,21 @@ export function initApp(){
 			if(selected) userAnswer=selected.dataset.value||"";
 		}
 		let isCorrect=false;
-		if(currentQuestion.answerType==="numeric"){
+		const correctAnswerRaw=currentQuestion.answer;
+		const correctAnswerTrimmed=correctAnswerRaw.trim();
+		if(mcqMode && currentQuestion.choices){
+			isCorrect=userAnswer.trim().toLowerCase() === correctAnswerTrimmed.toLowerCase();
+		}
+		else if(currentQuestion.answerType==="numeric"){
 			const userNum=parseFloat(userAnswer);
-			const correctNum=parseFloat(currentQuestion.answer);
+			const correctNum=parseFloat(correctAnswerTrimmed);
 			const tolerance=Math.pow(10,-settings.decimalPlaces);
 			isCorrect=!isNaN(userNum)&&!isNaN(correctNum)&&Math.abs(userNum-correctNum)<=tolerance;
 		}
 		else{
-			isCorrect=userAnswer.toLowerCase()===currentQuestion.answer.toLowerCase();
+			isCorrect=userAnswer.trim().toLowerCase() === correctAnswerTrimmed.toLowerCase();
 		}
-		showResult(isCorrect,currentQuestion.answer,currentQuestion.explanation);
+		showResult(isCorrect, currentQuestion.answer, currentQuestion.explanation);
 		if(mentalModeActive&&mentalSession.active&&!mentalSession.paused){
 			const timeSpent=(Date.now()-mentalSession.startTime)/1000;
 			mentalSession.answerTimes.push(timeSpent);
