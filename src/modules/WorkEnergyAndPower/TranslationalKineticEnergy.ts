@@ -41,20 +41,20 @@ export function generate(options: GenerateOptions): Question{
 					choices=[answer,answer==="A"?"B":"A","Both zero","Cannot be determined"];
 					break;
 				}
-				case "keDoublingSpeed":{
-					const ke_orig=rng.nextInt(10,50);
-					text=`If the speed of an object is doubled, its kinetic energy becomes:`;
-					answer="Four times the original";
-					choices=[answer,"Twice the original","Half the original","Eight times the original"];
-					break;
-				}
-				case "keDoublingMass":{
-					const ke_orig=rng.nextInt(10,50);
-					text=`If the mass of an object is doubled (speed constant), its kinetic energy becomes:`;
-					answer="Twice the original";
-					choices=[answer,"Four times the original","Half the original","Eight times the original"];
-					break;
-				}
+                case "keDoublingSpeed":{
+                    const ke_orig=rng.nextInt(10,50);
+                    text=`An object has kinetic energy ${ke_orig} J. If its speed is doubled, its kinetic energy becomes:`;
+                    answer="Four times the original";
+                    choices=[answer,"Twice the original","Half the original","Eight times the original"];
+                    break;
+                }
+                case "keDoublingMass":{
+                    const ke_orig=rng.nextInt(10,50);
+                    text=`An object has kinetic energy ${ke_orig} J. If its mass is doubled (speed constant), its kinetic energy becomes:`;
+                    answer="Twice the original";
+                    choices=[answer,"Four times the original","Half the original","Eight times the original"];
+                    break;
+                }
 				default:{
 					const v_car=rng.nextInt(10,30);
 					const v_ground=rng.nextInt(5,20);
