@@ -1,5 +1,5 @@
-import type { Question, GenerateOptions } from '../../types.d.js';
-import { SeededRandom } from '../../seededRandom.js';
+import type {Question, GenerateOptions} from '../../types.d.js';
+import {SeededRandom} from '../../seededRandom.js';
 export const topicId="2.7_friction";
 export const topicName="Kinetic and Static Friction";
 export function generate(options: GenerateOptions): Question{
