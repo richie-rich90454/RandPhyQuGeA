@@ -86,13 +86,11 @@ export function initApp(){
 		modal.classList.add("hidden");
 		modal.classList.remove("show");
 	};
-	const getScopeFromTopicId=(topicId: string): string=>{
-		return topicId.split('_')[0]||'general';
-	};
 	const populateScopeSelects=()=>{
 		const scopes=new Set<string>();
 		for(const id in generatorRegistry){
-			scopes.add(getScopeFromTopicId(id));
+			const scope=topicMetadata[id]?.scope;
+			if (scope) scopes.add(scope);
 		}
 		const scopeList=["all",...Array.from(scopes).sort()];
 		if(elemScopeSelect){
@@ -119,7 +117,7 @@ export function initApp(){
 		elemTopicGrid.innerHTML="";
 		const topicIds=Object.keys(generatorRegistry);
 		for(const id of topicIds){
-			const scope=getScopeFromTopicId(id);
+			const scope=topicMetadata[id]?.scope||"General";
 			if(currentScope!=="all"&&scope!==currentScope) continue;
 			const topicName=topicMetadata[id]?.name||id;
 			const pill=document.createElement("div");
@@ -355,7 +353,7 @@ export function initApp(){
 		if(shuffleMode){
 			let topics=Object.keys(generatorRegistry);
 			if(currentScope!=="all"){
-				topics=topics.filter(t=>getScopeFromTopicId(t)===currentScope);
+				topics=topics.filter(t=>(topicMetadata[t]?.scope||"General")===currentScope);
 			}
 			if(topics.length) topicId=topics[Math.floor(Math.random()*topics.length)];
 		}
@@ -444,7 +442,7 @@ export function initApp(){
 			let topics=Object.keys(generatorRegistry);
 			const scopeVal=elemMentalScopeSelect?.value||"all";
 			if(scopeVal!=="all"){
-				topics=topics.filter(t=>getScopeFromTopicId(t)===scopeVal);
+				topics=topics.filter(t=>(topicMetadata[t]?.scope||"General")===scopeVal);
 			}
 			if(topics.length) topicId=topics[Math.floor(Math.random()*topics.length)];
 		}
