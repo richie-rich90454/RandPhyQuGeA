@@ -4,6 +4,7 @@ export const topicMetadata: Record<string, {name: string; scope: string}>={};
 import * as scalarsVectors from './Kinematics/ScalarsAndVectors.js';
 import * as kinematics12 from './Kinematics/DisplacementVelocityAcceleration.js';
 import * as ReferenceFrameRelativeMotion from './Kinematics/ReferenceFrameRelativeMotion.js';
+import * as ProjectileMotion from "./Kinematics/ProjectileMotion.js";
 function registerModule(module: {topicId: string; topicName: string; generate: GeneratorFn}){
 	generatorRegistry[module.topicId]=module.generate;
 	topicMetadata[module.topicId]={name: module.topicName, scope: module.topicId.split('_')[0]||'general'};
@@ -11,3 +12,4 @@ function registerModule(module: {topicId: string; topicName: string; generate: G
 registerModule(scalarsVectors);
 registerModule(kinematics12);
 registerModule(ReferenceFrameRelativeMotion);
+registerModule(ProjectileMotion);
