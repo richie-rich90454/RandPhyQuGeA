@@ -1,4 +1,4 @@
-import type {GeneratorFn} from '../types.d.js';
+import type {GeneratorFn} from '../types.js';
 export const generatorRegistry: Record<string, GeneratorFn>={};
 export const topicMetadata: Record<string, {name: string; scope: string}>={};
 import * as scalarsVectors from './Kinematics/ScalarsAndVectors.js';
