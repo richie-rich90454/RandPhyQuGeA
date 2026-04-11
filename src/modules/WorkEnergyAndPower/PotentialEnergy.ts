@@ -53,14 +53,14 @@ export function generate(options: GenerateOptions): Question{
 					choices=[answer,"Negative","Zero","Depends on mass"];
 					break;
 				}
-				default:{
-					const k=rng.nextInt(50,150);
-					const x=rng.nextInt(5,20)/100;
-					text=`A spring is compressed by ${(x*100).toFixed(0)} cm. If the spring is compressed further, the potential energy:`;
-					answer="Increases";
-					choices=[answer,"Decreases","Stays the same","Becomes zero"];
-					break;
-				}
+                default:{
+                    const k=rng.nextInt(50,150);
+                    const x=rng.nextInt(5,20)/100;
+                    text=`A spring with spring constant ${k} N/m is compressed by ${(x*100).toFixed(0)} cm. If the spring is compressed further, the potential energy:`;
+                    answer="Increases";
+                    choices=[answer,"Decreases","Stays the same","Becomes zero"];
+                    break;
+                }
 			}
 			for(let i=choices.length-1;i>0;i--){
 				const j=rng.nextInt(0,i);
