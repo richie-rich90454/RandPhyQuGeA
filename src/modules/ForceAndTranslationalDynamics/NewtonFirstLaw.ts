@@ -76,16 +76,16 @@ export function generate(options: GenerateOptions): Question{
 					unit="N";
 					break;
 				}
-				default:{
-					const m1=rng.nextInt(2,6);
-					const m2=rng.nextInt(2,6);
-					const ratio=m1/m2;
-					text=`Object A has mass ${m1} kg, object B has mass ${m2} kg. Both are moving at constant velocity. Which requires a greater net force to stop in the same time?`;
-					correctAnswer=`Object ${m1>m2?"A":"B"} (greater mass)`;
-					numericValue=Math.max(m1,m2);
-					unit="kg";
-					break;
-				}
+                default:{
+                    const m1=rng.nextInt(2,6);
+                    const m2=rng.nextInt(2,6);
+                    const ratio=m1/m2;
+                    text=`Object A has mass ${m1} kg, object B has mass ${m2} kg (mass ratio A/B = ${ratio.toFixed(2)}). Both are moving at constant velocity. Which requires a greater net force to stop in the same time?`;
+                    correctAnswer=`Object ${m1>m2?"A":"B"} (greater mass)`;
+                    numericValue=Math.max(m1,m2);
+                    unit="kg";
+                    break;
+                }
 			}
 			if (options.forceMcq){
 				let choices: string[]=[correctAnswer];

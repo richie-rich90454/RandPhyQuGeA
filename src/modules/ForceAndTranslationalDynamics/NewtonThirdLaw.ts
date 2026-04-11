@@ -91,19 +91,19 @@ export function generate(options: GenerateOptions): Question{
 					unit="N";
 					break;
 				}
-				default:{
-					const m1=rng.nextInt(1,4);
-					const m2=rng.nextInt(1,4);
-					const v1=rng.nextInt(5,15);
-					const v2=rng.nextInt(5,15);
-					const p1=m1*v1;
-					const p2=m2*v2;
-					text=`A ${m1} kg object moving at ${v1} m/s collides with a ${m2} kg object moving at ${v2} m/s. The magnitude of the force on the first object during the collision is equal to:`;
-					correctAnswer=`The force on the second object (Newton's third law)`;
-					numericValue=1;
-					unit="";
-					break;
-				}
+                default:{
+                    const m1=rng.nextInt(1,4);
+                    const m2=rng.nextInt(1,4);
+                    const v1=rng.nextInt(5,15);
+                    const v2=rng.nextInt(5,15);
+                    const p1=m1*v1;
+                    const p2=m2*v2;
+                    text=`A ${m1} kg object moving at ${v1} m/s (momentum ${p1} kg·m/s) collides with a ${m2} kg object moving at ${v2} m/s (momentum ${p2} kg·m/s). The magnitude of the force on the first object during the collision is equal to:`;
+                    correctAnswer=`The force on the second object (Newton's third law)`;
+                    numericValue=1;
+                    unit="";
+                    break;
+                }
 			}
 			if (options.forceMcq){
 				let choices: string[]=[correctAnswer];
