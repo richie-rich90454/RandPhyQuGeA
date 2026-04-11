@@ -669,14 +669,14 @@ select.scope-select:focus {
 .results-display.correct {
 	background: var(--primary-light);
 	border: 1px solid var(--primary);
-	color: var(--primary-dark);
+	color: var(--text);
 	animation: gentlePulse 0.4s ease-out;
 }
 
 .results-display.incorrect {
 	background: #fee2e2;
 	border: 1px solid var(--error);
-	color: #b91c1c;
+	color: var(--error);
 	animation: gentleShake 0.3s ease-out;
 }
 
