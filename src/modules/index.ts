@@ -4,6 +4,7 @@ export const topicMetadata: Record<string, { name: string; scope: string }>={};
 function getScopeFromTopicId(topicId: string): string{
 	if (topicId.startsWith("1.")) return "Kinematics";
 	if (topicId.startsWith("2.")) return "Force and Translational Dynamics";
+	if (topicId.startsWith("3.")) return "Force and Translational Dynamics";
 	return "General";
 }
 const modules=import.meta.glob<{

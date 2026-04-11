@@ -62,14 +62,13 @@ export function generate(options: GenerateOptions): Question{
 					choices=[answer,wrong1,wrong2,wrong3];
 					break;
 				}
-				default:{
-					const angle=rng.nextInt(20,50);
-					const muK=rng.nextInt(2,5)/10;
-					text=`A block slides down a ${angle}° incline at constant speed. The coefficient of kinetic friction is:`;
-					answer=`${Math.tan(angle*Math.PI/180).toFixed(3)}`;
-					choices=[answer,`${(Math.tan(angle*Math.PI/180)*0.8).toFixed(3)}`,`${(Math.tan(angle*Math.PI/180)*1.2).toFixed(3)}`,`0`];
-					break;
-				}
+                default:{
+                    const angle=rng.nextInt(20,50);
+                    text=`A block slides down a ${angle}° incline at constant speed. The coefficient of kinetic friction is:`;
+                    answer=`${Math.tan(angle*Math.PI/180).toFixed(3)}`;
+                    choices=[answer,`${(Math.tan(angle*Math.PI/180)*0.8).toFixed(3)}`,`${(Math.tan(angle*Math.PI/180)*1.2).toFixed(3)}`,`0`];
+                    break;
+                }
 			}
 			for(let i=choices.length-1;i>0;i--){
 				const j=rng.nextInt(0,i);
