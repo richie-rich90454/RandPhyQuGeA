@@ -12,7 +12,9 @@ export function generate(options: GenerateOptions): Question{
 			const scenarioList=[
 				"forcesOnRest","acceleratingCarForce","newtonThirdPair","boxOnIncline",
 				"hangingMassTension","pulleySystem","normalForceIncline","frictionDirection",
-				"netForceZero","actionReaction"
+				"netForceZero","actionReaction","elevatorNormal","tensionTwoRopes",
+				"inclinedPlaneComponents","springForceDirection","airResistanceDirection",
+				"centripetalForceDirection","frictionStaticVsKinetic","normalForceOnCurve"
 			];
 			const scenario=rng.choice(scenarioList);
 			let text="";
@@ -34,18 +36,19 @@ export function generate(options: GenerateOptions): Question{
 					answer="Force of the sled on the person";
 					choices=[answer,"Friction on the sled","Weight of the sled","Normal force on the sled"];
 					break;
-				case "boxOnIncline":{
-					const angle=rng.nextInt(15,45);
-					text=`A box slides down a rough incline at constant speed. The direction of the kinetic friction force is:`;
+				case "boxOnIncline":
+					text="A box slides down a rough incline at constant speed. The direction of the kinetic friction force is:";
 					answer="Up the incline";
 					choices=[answer,"Down the incline","Perpendicular to the incline","Horizontal"];
 					break;
-				}
 				case "hangingMassTension":{
 					const m=rng.nextInt(1,5);
 					text=`A ${m} kg mass hangs at rest from a vertical string. The tension in the string is:`;
 					answer=`${(m*9.8).toFixed(0)} N`;
-					choices=[answer,`${(m*9.8*0.5).toFixed(0)} N`, `${(m*9.8*2).toFixed(0)} N`, "0 N"];
+					const wrong1=`${(m*9.8*0.5).toFixed(0)} N`;
+					const wrong2=`${(m*9.8*2).toFixed(0)} N`;
+					const wrong3="0 N";
+					choices=[answer,wrong1,wrong2,wrong3];
 					break;
 				}
 				case "pulleySystem":
@@ -61,15 +64,78 @@ export function generate(options: GenerateOptions): Question{
 					answer=`${N.toFixed(0)} N`;
 					const wrong1=`${(m*9.8).toFixed(0)} N`;
 					const wrong2=`${(m*9.8*Math.sin(angle*Math.PI/180)).toFixed(0)} N`;
-					const wrong3=`0 N`;
+					const wrong3="0 N";
 					choices=[answer,wrong1,wrong2,wrong3];
 					break;
 				}
-				default:
-					text="When a person walks, the force that propels them forward is:";
-					answer="Friction from the ground on the foot";
-					choices=[answer,"Muscle force","Weight","Air resistance"];
+				case "frictionDirection":
+					text="A box is pushed to the right across a rough floor at constant speed. The direction of the kinetic friction force on the box is:";
+					answer="To the left";
+					choices=[answer,"To the right","Upward","Downward"];
 					break;
+				case "netForceZero":
+					text="An object moves at constant velocity. Which statement is true?";
+					answer="The net force on the object is zero";
+					choices=[answer,"The net force is non‑zero","All forces are zero","There is no gravity"];
+					break;
+				case "actionReaction":
+					text="A book pushes down on a table. The reaction force to this force is:";
+					answer="The table pushes up on the book";
+					choices=[answer,"The book's weight","The table's weight","Friction from the table"];
+					break;
+				case "elevatorNormal":{
+					const dir=rng.choice(["upward","downward"]);
+					if (dir==="upward"){
+						text="An elevator accelerates upward. Compared to the person's weight, the normal force from the floor is:";
+						answer="Greater";
+						choices=[answer,"Less","Equal","Zero"];
+					}
+					else{
+						text="An elevator accelerates downward. Compared to the person's weight, the normal force from the floor is:";
+						answer="Less";
+						choices=[answer,"Greater","Equal","Zero"];
+					}
+					break;
+				}
+				case "tensionTwoRopes":{
+					const angle=rng.nextInt(20,70);
+					text=`A sign hangs from two ropes at equal angles of ${angle}° from the vertical. Compared to the weight, the tension in each rope is:`;
+					answer="Greater than half the weight";
+					choices=[answer,"Less than half the weight","Equal to half the weight","Equal to the weight"];
+					break;
+				}
+				case "inclinedPlaneComponents":
+					text="On an inclined plane, the component of weight parallel to the incline is:";
+					answer="mg sinθ";
+					choices=[answer,"mg cosθ","mg tanθ","mg"];
+					break;
+				case "springForceDirection":
+					text="A spring is stretched to the right. The force exerted by the spring on the object attached to it is directed:";
+					answer="To the left";
+					choices=[answer,"To the right","Upward","Downward"];
+					break;
+				case "airResistanceDirection":
+					text="A ball is thrown upward. As it rises, the direction of air resistance is:";
+					answer="Downward";
+					choices=[answer,"Upward","Zero","Horizontal"];
+					break;
+				case "centripetalForceDirection":
+					text="A car moves at constant speed around a circular track. The net force on the car is directed:";
+					answer="Toward the center of the circle";
+					choices=[answer,"Forward","Backward","Away from the center"];
+					break;
+				case "frictionStaticVsKinetic":
+					text="Which is generally true about the maximum static friction force compared to kinetic friction?";
+					answer="Maximum static friction is greater";
+					choices=[answer,"Kinetic friction is greater","They are equal","Depends on speed"];
+					break;
+				default:{
+					const angle=rng.nextInt(10,60);
+					text=`A car rounds a banked curve at the design speed. The horizontal component of the normal force provides the centripetal force. The bank angle is ${angle}°. The normal force is:`;
+					answer="Greater than mg/cosθ";
+					choices=[answer,"Equal to mg","Less than mg","Zero"];
+					break;
+				}
 			}
 			for(let i=choices.length-1;i>0;i--){
 				const j=rng.nextInt(0,i);
@@ -91,7 +157,8 @@ export function generate(options: GenerateOptions): Question{
 		default:{
 			const scenarioList=[
 				"netForceFromFBD","tensionInString","normalForceOnIncline","frictionForceMagnitude",
-				"accelerationFromForces","weightAndNormal","springForce","resultantForce2D"
+				"accelerationFromForces","weightAndNormal","springForce","resultantForce2D",
+				"tensionTwoRopesMath","inclineAcceleration","elevatorApparentWeight","pulleyAcceleration"
 			];
 			const scenario=rng.choice(scenarioList);
 			let text="";
@@ -104,7 +171,7 @@ export function generate(options: GenerateOptions): Question{
 					const F1=rng.nextInt(10,30);
 					const F2=rng.nextInt(5,15);
 					const net=F1-F2;
-					text=`A 5 kg box has a  ${F1} N force to the right and a ${F2} N force to the left. What is the net force?`;
+					text=`A 5 kg box has a ${F1} N force to the right and a ${F2} N force to the left. What is the net force?`;
 					correctAnswer=`${net.toFixed(0)} N to the right`;
 					numericValue=net;
 					unit="N";
@@ -168,7 +235,7 @@ export function generate(options: GenerateOptions): Question{
 					unit="N";
 					break;
 				}
-				default:{
+				case "resultantForce2D":{
 					const Fx=rng.nextInt(10,30);
 					const Fy=rng.nextInt(10,30);
 					const Fr=Math.sqrt(Fx*Fx+Fy*Fy);
@@ -176,6 +243,54 @@ export function generate(options: GenerateOptions): Question{
 					correctAnswer=`${Fr.toFixed(1)} N`;
 					numericValue=Fr;
 					unit="N";
+					break;
+				}
+				case "tensionTwoRopesMath":{
+					const m=rng.nextInt(2,6);
+					const angle=rng.nextInt(20,70);
+					const T=(m*g)/(2*Math.cos(angle*Math.PI/180));
+					text=`A ${m} kg sign hangs from two ropes making equal angles of ${angle}° with the vertical. Find the tension in each rope. (g = 9.8 m/s²)`;
+					correctAnswer=`${T.toFixed(1)} N`;
+					numericValue=T;
+					unit="N";
+					break;
+				}
+				case "inclineAcceleration":{
+					const m=rng.nextInt(2,8);
+					const angle=rng.nextInt(15,45);
+					const a=g*Math.sin(angle*Math.PI/180);
+					text=`A ${m} kg block slides down a frictionless incline at ${angle}°. Find its acceleration. (g = 9.8 m/s²)`;
+					correctAnswer=`${a.toFixed(2)} m/s²`;
+					numericValue=a;
+					unit="m/s²";
+					break;
+				}
+				case "elevatorApparentWeight":{
+					const m=rng.nextInt(50,80);
+					const a=rng.nextInt(1,4);
+					const dir=rng.choice(["up","down"]);
+					let N:number;
+					if (dir==="up"){
+						N=m*(g+a);
+						text=`A ${m} kg person stands on a scale in an elevator accelerating upward at ${a} m/s². What is the scale reading (normal force)? (g = 9.8 m/s²)`;
+					}
+					else{
+						N=m*(g-a);
+						text=`A ${m} kg person stands on a scale in an elevator accelerating downward at ${a} m/s². What is the scale reading (normal force)? (g = 9.8 m/s²)`;
+					}
+					correctAnswer=`${N.toFixed(0)} N`;
+					numericValue=N;
+					unit="N";
+					break;
+				}
+				default:{
+					const m1=rng.nextInt(2,5);
+					const m2=rng.nextInt(1,4);
+					const a=(m2*g)/(m1+m2);
+					text=`A ${m1} kg block on a frictionless table is connected by a string over a pulley to a hanging ${m2} kg mass. Find the acceleration of the system. (g = 9.8 m/s²)`;
+					correctAnswer=`${a.toFixed(2)} m/s²`;
+					numericValue=a;
+					unit="m/s²";
 					break;
 				}
 			}
