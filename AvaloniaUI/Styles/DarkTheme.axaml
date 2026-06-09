@@ -1,0 +1,79 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         DARK THEME OVERRIDES
+         Deep navy/charcoal palette — easy on the eyes, never pure black.
+         ═══════════════════════════════════════════════════════════════ -->
+
+    <!-- Text -->
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#E8EAED" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#9AA0A6" />
+    <SolidColorBrush x:Key="TextTertiaryBrush" Color="#6B7280" />
+    <SolidColorBrush x:Key="TextOnPrimaryBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="TextOnAccentBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="TextDisabledBrush" Color="#5F6368" />
+
+    <!-- Surfaces -->
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#1A1A2E" />
+    <SolidColorBrush x:Key="PaneBackgroundBrush" Color="#16213E" />
+    <SolidColorBrush x:Key="ContentBackgroundBrush" Color="#1A1A2E" />
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#1E2A45" />
+    <SolidColorBrush x:Key="CardHoverBrush" Color="#243352" />
+    <SolidColorBrush x:Key="OverlayBrush" Color="#1E2A45" />
+
+    <!-- Borders & Dividers -->
+    <SolidColorBrush x:Key="BorderBrush" Color="#2D3A54" />
+    <SolidColorBrush x:Key="DividerBrush" Color="#2D3A54" />
+    <SolidColorBrush x:Key="FocusBorderBrush" Color="#3B7DDD" />
+
+    <!-- Navigation -->
+    <SolidColorBrush x:Key="NavPaneBackgroundBrush" Color="#16213E" />
+    <SolidColorBrush x:Key="NavItemSelectedBrush" Color="#1E3A5F" />
+    <SolidColorBrush x:Key="NavItemHoverBrush" Color="#1E2A45" />
+    <SolidColorBrush x:Key="NavItemActiveTextBrush" Color="#3B7DDD" />
+    <SolidColorBrush x:Key="NavItemInactiveTextBrush" Color="#9AA0A6" />
+
+    <!-- Input -->
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="#1E2A45" />
+    <SolidColorBrush x:Key="InputBorderBrush" Color="#2D3A54" />
+    <SolidColorBrush x:Key="InputFocusBorderBrush" Color="#3B7DDD" />
+    <SolidColorBrush x:Key="InputPlaceholderBrush" Color="#6B7280" />
+
+    <!-- Status Bar -->
+    <SolidColorBrush x:Key="StatusBarBackgroundBrush" Color="#16213E" />
+    <SolidColorBrush x:Key="StatusBarTextBrush" Color="#9AA0A6" />
+
+    <!-- Menu -->
+    <SolidColorBrush x:Key="MenuBarBackgroundBrush" Color="#16213E" />
+    <SolidColorBrush x:Key="MenuHoverBrush" Color="#1E2A45" />
+
+    <!-- Badge Colors -->
+    <SolidColorBrush x:Key="BadgeMCBrush" Color="#3B7DDD" />
+    <SolidColorBrush x:Key="BadgeSABrush" Color="#9C27B0" />
+    <SolidColorBrush x:Key="BadgeEasyBrush" Color="#2E7D32" />
+    <SolidColorBrush x:Key="BadgeMediumBrush" Color="#E65100" />
+    <SolidColorBrush x:Key="BadgeHardBrush" Color="#C62828" />
+
+    <!-- Timer Colors -->
+    <SolidColorBrush x:Key="TimerNormalBrush" Color="#3B7DDD" />
+    <SolidColorBrush x:Key="TimerWarningBrush" Color="#E65100" />
+    <SolidColorBrush x:Key="TimerCriticalBrush" Color="#C62828" />
+
+    <!-- Answer Feedback -->
+    <SolidColorBrush x:Key="CorrectBackgroundBrush" Color="#1B3A26" />
+    <SolidColorBrush x:Key="CorrectBorderBrush" Color="#2E5E3E" />
+    <SolidColorBrush x:Key="CorrectTextBrush" Color="#66BB6A" />
+    <SolidColorBrush x:Key="IncorrectBackgroundBrush" Color="#3A1B1B" />
+    <SolidColorBrush x:Key="IncorrectBorderBrush" Color="#5E2E2E" />
+    <SolidColorBrush x:Key="IncorrectTextBrush" Color="#EF5350" />
+
+    <!-- Progress -->
+    <SolidColorBrush x:Key="ProgressBarBackgroundBrush" Color="#2D3A54" />
+    <SolidColorBrush x:Key="ProgressBarFillBrush" Color="#3B7DDD" />
+
+    <!-- Scrollbar -->
+    <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#3C4043" />
+    <SolidColorBrush x:Key="ScrollBarTrackBrush" Color="Transparent" />
+
+</ResourceDictionary>
