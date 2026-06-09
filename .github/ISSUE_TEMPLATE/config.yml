@@ -1,0 +1,5 @@
+blank_issue_enabled: false
+contact_links:
+  - name: Security Vulnerability
+    url: mailto:security@randphyqugea.dev
+    about: Please report security vulnerabilities privately. See SECURITY.md for details.
