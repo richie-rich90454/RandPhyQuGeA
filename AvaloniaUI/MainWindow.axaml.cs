@@ -98,6 +98,28 @@ public partial class MainWindow : Window
         {
             var helpWindow = new Views.HelpWindow();
             helpWindow.Show(this);
+            return;
+        }
+
+        // Ctrl+1 through Ctrl+6 for quick navigation
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            var viewKey = e.Key switch
+            {
+                Key.D1 => "Home",
+                Key.D2 => "MentalPractice",
+                Key.D3 => "FocusedPractice",
+                Key.D4 => "QuestionBank",
+                Key.D5 => "Progress",
+                Key.D6 => "Settings",
+                _ => null
+            };
+
+            if (viewKey is not null && DataContext is MainWindowViewModel vm)
+            {
+                vm.Navigation.Navigate(viewKey);
+                e.Handled = true;
+            }
         }
     }
 
