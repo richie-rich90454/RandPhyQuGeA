@@ -23,15 +23,16 @@ public class MainWindowViewModel : ReactiveObject, IActivatableViewModel
     private string? _selectedSkillId;
     private decimal? _selectedDifficulty;
     private string? _selectedQuestionType;
-    private string _questionText = "Click Generate to create a question.";
+    private string _questionText = string.Empty;
     private string _answerText = string.Empty;
     private string _solutionText = string.Empty;
     private string _solutionLaTeX = string.Empty;
     private bool _isSolutionVisible;
     private bool _isLoading;
-    private string _statusMessage = "Ready";
+    private string _statusMessage = "Ready — press Ctrl+N or click Generate to create a question";
     private IReadOnlyList<string> _choices = Array.Empty<string>();
     private bool _hasChoices;
+    private bool _hasQuestion;
     private ObservableCollection<GeneratedQuestion> _history = new();
     private GeneratedQuestion? _currentQuestion;
     private IReadOnlyList<string> _availableTopics = Array.Empty<string>();
@@ -139,6 +140,14 @@ public class MainWindowViewModel : ReactiveObject, IActivatableViewModel
         set => this.RaiseAndSetIfChanged(ref _hasChoices, value);
     }
 
+    public bool HasQuestion
+    {
+        get => _hasQuestion;
+        set => this.RaiseAndSetIfChanged(ref _hasQuestion, value);
+    }
+
+    public string ToggleSolutionText => IsSolutionVisible ? "Hide Solution" : "Show Solution";
+
     public ObservableCollection<GeneratedQuestion> History
     {
         get => _history;
@@ -194,6 +203,7 @@ public class MainWindowViewModel : ReactiveObject, IActivatableViewModel
                 SolutionLaTeX = string.Empty;
                 Choices = Array.Empty<string>();
                 HasChoices = false;
+                HasQuestion = false;
                 CurrentQuestion = null;
             }
             else
@@ -204,6 +214,7 @@ public class MainWindowViewModel : ReactiveObject, IActivatableViewModel
                 SolutionLaTeX = question.SolutionLaTeX;
                 Choices = question.Choices ?? Array.Empty<string>();
                 HasChoices = question.Choices is { Count: > 0 };
+                HasQuestion = true;
                 CurrentQuestion = question;
 
                 History.Insert(0, question);
@@ -214,6 +225,7 @@ public class MainWindowViewModel : ReactiveObject, IActivatableViewModel
             }
 
             IsSolutionVisible = false;
+            this.RaisePropertyChanged(nameof(ToggleSolutionText));
         }
         catch (Exception ex)
         {
@@ -228,6 +240,7 @@ public class MainWindowViewModel : ReactiveObject, IActivatableViewModel
     private void OnToggleSolution()
     {
         IsSolutionVisible = !IsSolutionVisible;
+        this.RaisePropertyChanged(nameof(ToggleSolutionText));
     }
 
     private async Task OnCopyToClipboard()
@@ -243,6 +256,7 @@ public class MainWindowViewModel : ReactiveObject, IActivatableViewModel
         }
 
         CopyToClipboardRequested?.Invoke(this, text);
+        StatusMessage = "Question copied to clipboard.";
         await Task.CompletedTask;
     }
 

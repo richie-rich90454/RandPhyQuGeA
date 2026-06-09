@@ -1,30 +1,93 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="AvaloniaUI.Views.HelpWindow"
-        Title="Physics Question Generator - Help"
-        Width="600" Height="500"
-        WindowStartupLocation="CenterOwner">
-    <ScrollViewer Padding="15">
-        <StackPanel Spacing="12">
-            <TextBlock Text="Physics Question Generator" FontSize="22" FontWeight="Bold"/>
-            <TextBlock Text="User Manual" FontSize="18" FontWeight="SemiBold"/>
+        Title="Physics Question Generator — Help"
+        Width="640" Height="540"
+        WindowStartupLocation="CenterOwner"
+        Background="#F8F8F8">
+    <DockPanel>
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Background="#FFFFFF" Padding="24,16"
+                BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+            <StackPanel Spacing="4">
+                <TextBlock Text="Physics Question Generator" FontSize="20" FontWeight="Bold" Foreground="#1A1A1A" />
+                <TextBlock Text="User Manual" FontSize="13" Foreground="#616161" />
+            </StackPanel>
+        </Border>
 
-            <TextBlock Text="Getting Started" FontSize="16" FontWeight="SemiBold"/>
-            <TextBlock TextWrapping="Wrap">1. Place your specification file (part_one.txt) in the specifications/ directory.&#x0a;2. Launch the application.&#x0a;3. Use the filters on the left to narrow down question types.&#x0a;4. Click Generate or press Ctrl+N to create a question.&#x0a;5. Click 'Toggle Solution' to reveal the answer and solution steps.</TextBlock>
+        <!-- Close Button -->
+        <Border DockPanel.Dock="Bottom" Padding="16" Background="#FFFFFF"
+                BorderBrush="#E0E0E0" BorderThickness="0,1,0,0">
+            <Button Content="Close" Click="Close_Click" HorizontalAlignment="Right"
+                    MinWidth="80" Height="32" CornerRadius="6" />
+        </Border>
 
-            <TextBlock Text="Keyboard Shortcuts" FontSize="16" FontWeight="SemiBold"/>
-            <TextBlock TextWrapping="Wrap">Ctrl+N - Generate a new question&#x0a;Ctrl+E - Open export dialog&#x0a;F1 - Open this help window</TextBlock>
+        <!-- Content -->
+        <ScrollViewer Padding="24,16">
+            <StackPanel Spacing="20">
+                <!-- Getting Started -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Getting Started" FontSize="16" FontWeight="SemiBold" Foreground="#1A1A1A" />
+                    <Border Background="#FFFFFF" CornerRadius="6" Padding="16" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <TextBlock TextWrapping="Wrap" FontSize="13" LineHeight="20" Foreground="#1A1A1A"
+                                   Text="1. Place your specification file (part_one.txt) in the specifications/ directory.&#x0a;2. Launch the application.&#x0a;3. Use the filters on the left to narrow down question types.&#x0a;4. Click Generate or press Ctrl+N to create a question.&#x0a;5. Click 'Show Solution' to reveal the answer and solution steps." />
+                    </Border>
+                </StackPanel>
 
-            <TextBlock Text="Filters" FontSize="16" FontWeight="SemiBold"/>
-            <TextBlock TextWrapping="Wrap">Topic - Filter questions by topic area.&#x0a;Skill - Filter by specific skill.&#x0a;Difficulty - Set difficulty level (1-10).&#x0a;Type - Choose Short Answer (SA) or Multiple Choice (MC).</TextBlock>
+                <!-- Keyboard Shortcuts -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Keyboard Shortcuts" FontSize="16" FontWeight="SemiBold" Foreground="#1A1A1A" />
+                    <Border Background="#FFFFFF" CornerRadius="6" Padding="16" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <StackPanel Spacing="6">
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" Background="#F0F0F0" CornerRadius="4" Padding="8,4" MinWidth="80">
+                                    <TextBlock Text="Ctrl+N" FontSize="12" FontWeight="SemiBold" Foreground="#1A1A1A" HorizontalAlignment="Center" />
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="Generate a new question" FontSize="13" Foreground="#1A1A1A" VerticalAlignment="Center" Margin="12,0,0,0" />
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" Background="#F0F0F0" CornerRadius="4" Padding="8,4" MinWidth="80">
+                                    <TextBlock Text="Ctrl+E" FontSize="12" FontWeight="SemiBold" Foreground="#1A1A1A" HorizontalAlignment="Center" />
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="Open export dialog" FontSize="13" Foreground="#1A1A1A" VerticalAlignment="Center" Margin="12,0,0,0" />
+                            </Grid>
+                            <Grid ColumnDefinitions="Auto,*">
+                                <Border Grid.Column="0" Background="#F0F0F0" CornerRadius="4" Padding="8,4" MinWidth="80">
+                                    <TextBlock Text="F1" FontSize="12" FontWeight="SemiBold" Foreground="#1A1A1A" HorizontalAlignment="Center" />
+                                </Border>
+                                <TextBlock Grid.Column="1" Text="Open this help window" FontSize="13" Foreground="#1A1A1A" VerticalAlignment="Center" Margin="12,0,0,0" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
 
-            <TextBlock Text="Export Formats" FontSize="16" FontWeight="SemiBold"/>
-            <TextBlock TextWrapping="Wrap">Text - Plain text format.&#x0a;PDF - Formatted PDF document.&#x0a;HTML - Self-contained HTML with MathJax.&#x0a;Markdown - Markdown with LaTeX math.</TextBlock>
+                <!-- Filters -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Filters" FontSize="16" FontWeight="SemiBold" Foreground="#1A1A1A" />
+                    <Border Background="#FFFFFF" CornerRadius="6" Padding="16" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <TextBlock TextWrapping="Wrap" FontSize="13" LineHeight="20" Foreground="#1A1A1A"
+                                   Text="Topic — Filter questions by topic area.&#x0a;Skill — Filter by specific skill.&#x0a;Difficulty — Set difficulty level (1-10).&#x0a;Type — Choose Short Answer (SA) or Multiple Choice (MC)." />
+                    </Border>
+                </StackPanel>
 
-            <TextBlock Text="Specification File Format" FontSize="16" FontWeight="SemiBold"/>
-            <TextBlock TextWrapping="Wrap">The specification file uses section markers:&#x0a;[UNIT id:name] - Define a unit&#x0a;[TOPIC id:name unit:unitId] - Define a topic&#x0a;[SKILL id:name topic:topicId] - Define a skill&#x0a;[TEMPLATE ...] - Define a question template</TextBlock>
+                <!-- Export Formats -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Export Formats" FontSize="16" FontWeight="SemiBold" Foreground="#1A1A1A" />
+                    <Border Background="#FFFFFF" CornerRadius="6" Padding="16" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <TextBlock TextWrapping="Wrap" FontSize="13" LineHeight="20" Foreground="#1A1A1A"
+                                   Text="Text — Plain text format.&#x0a;PDF — Formatted PDF document.&#x0a;HTML — Self-contained HTML with MathJax.&#x0a;Markdown — Markdown with LaTeX math." />
+                    </Border>
+                </StackPanel>
 
-            <Button Content="Close" Click="Close_Click" HorizontalAlignment="Right" Margin="0,10,0,0"/>
-        </StackPanel>
-    </ScrollViewer>
+                <!-- Specification File Format -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="Specification File Format" FontSize="16" FontWeight="SemiBold" Foreground="#1A1A1A" />
+                    <Border Background="#FFFFFF" CornerRadius="6" Padding="16" BorderBrush="#E0E0E0" BorderThickness="1">
+                        <TextBlock TextWrapping="Wrap" FontSize="13" LineHeight="20" Foreground="#1A1A1A"
+                                   Text="The specification file uses section markers:&#x0a;[UNIT id:name] — Define a unit&#x0a;[TOPIC id:name unit:unitId] — Define a topic&#x0a;[SKILL id:name topic:topicId] — Define a skill&#x0a;[TEMPLATE ...] — Define a question template" />
+                    </Border>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
 </Window>
