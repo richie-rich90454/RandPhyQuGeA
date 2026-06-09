@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using AvaloniaUI.ViewModels;
 using Core.Domain;
 using Core.Interfaces;
@@ -13,9 +16,16 @@ namespace AvaloniaUI;
 
 public partial class App : Application
 {
+    private ResourceDictionary? _lightThemeResources;
+    private ResourceDictionary? _darkThemeResources;
+
+    public static AppTheme CurrentTheme { get; private set; } = AppTheme.System;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        LoadThemeResources();
+        ApplyTheme(CurrentTheme);
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -27,6 +37,57 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    /// <summary>
+    /// Switches the application theme between Light, Dark, and System.
+    /// </summary>
+    public static void SwitchTheme(AppTheme theme)
+    {
+        CurrentTheme = theme;
+        if (Application.Current is App app)
+        {
+            app.ApplyTheme(theme);
+        }
+    }
+
+    private void LoadThemeResources()
+    {
+        _lightThemeResources = (ResourceDictionary)AvaloniaXamlLoader.Load(
+            new Uri("avares://AvaloniaUI/Styles/LightTheme.axaml"));
+        _darkThemeResources = (ResourceDictionary)AvaloniaXamlLoader.Load(
+            new Uri("avares://AvaloniaUI/Styles/DarkTheme.axaml"));
+    }
+
+    private void ApplyTheme(AppTheme theme)
+    {
+        var actualTheme = theme switch
+        {
+            AppTheme.Light => ThemeVariant.Light,
+            AppTheme.Dark => ThemeVariant.Dark,
+            _ => ThemeVariant.Default
+        };
+
+        RequestedThemeVariant = actualTheme;
+
+        // Swap semantic brush resources based on theme
+        var resources = Current?.Resources;
+        if (resources is null) return;
+
+        var themeResources = IsDarkTheme(actualTheme) ? _darkThemeResources : _lightThemeResources;
+
+        if (themeResources is not null)
+        {
+            foreach (var key in themeResources.Keys)
+            {
+                resources[key] = themeResources[key];
+            }
+        }
+    }
+
+    private static bool IsDarkTheme(ThemeVariant variant)
+    {
+        return variant == ThemeVariant.Dark;
     }
 
     private static MainWindowViewModel CreateViewModel()
@@ -42,4 +103,14 @@ public partial class App : Application
 
         return new MainWindowViewModel(questionGenerator, latexRenderer, loader);
     }
+}
+
+/// <summary>
+/// Available application themes.
+/// </summary>
+public enum AppTheme
+{
+    System,
+    Light,
+    Dark
 }
