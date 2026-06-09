@@ -161,11 +161,19 @@
               </Grid>
             </Button>
 
-            <!-- Title Area -->
-            <TextBlock Grid.Column="1" Text="{Binding Navigation.CurrentViewTitle}"
-                       FontSize="14" FontWeight="SemiBold"
-                       Foreground="{DynamicResource TextPrimaryBrush}"
-                       VerticalAlignment="Center" Margin="12,0,0,0" />
+            <!-- Breadcrumb Title Area -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4"
+                        VerticalAlignment="Center" Margin="12,0,0,0">
+              <TextBlock Text="Physics QG" FontSize="13"
+                         Foreground="{DynamicResource TextTertiaryBrush}"
+                         VerticalAlignment="Center" />
+              <TextBlock Text="/" FontSize="13"
+                         Foreground="{DynamicResource TextTertiaryBrush}"
+                         VerticalAlignment="Center" />
+              <TextBlock Text="{Binding Navigation.CurrentViewTitle}" FontSize="14" FontWeight="SemiBold"
+                         Foreground="{DynamicResource TextPrimaryBrush}"
+                         VerticalAlignment="Center" />
+            </StackPanel>
 
             <!-- Right Actions -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
