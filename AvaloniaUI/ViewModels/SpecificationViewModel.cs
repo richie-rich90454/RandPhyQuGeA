@@ -1,10 +1,12 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Core.Domain;
 using Core.Interfaces;
+using Core.Parsing;
 using ReactiveUI;
 
 using ReactiveUnit = System.Reactive.Unit;
@@ -31,7 +33,9 @@ public class SpecificationViewModel : ViewModelBase
         Skills = new ObservableCollection<Skill>();
         Templates = new ObservableCollection<QuestionTemplate>();
 
+        var canRetry = this.WhenAnyValue(x => x.ErrorMessage, msg => !string.IsNullOrEmpty(msg));
         LoadCommand = ReactiveCommand.CreateFromTask(LoadSpecification);
+        RetryCommand = ReactiveCommand.CreateFromTask(LoadSpecification, canRetry);
     }
 
     public bool IsLoaded
@@ -70,6 +74,7 @@ public class SpecificationViewModel : ViewModelBase
     public ObservableCollection<QuestionTemplate> Templates { get; }
 
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> LoadCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> RetryCommand { get; }
 
     private async Task LoadSpecification()
     {
@@ -78,6 +83,13 @@ public class SpecificationViewModel : ViewModelBase
 
         try
         {
+            if (!File.Exists(SpecFilePath))
+            {
+                ErrorMessage = $"Specification file not found: {SpecFilePath}";
+                IsLoaded = false;
+                return;
+            }
+
             var spec = await Task.Run(() => _loader.Load(SpecFilePath));
 
             Specification = spec;
@@ -100,9 +112,25 @@ public class SpecificationViewModel : ViewModelBase
 
             IsLoaded = true;
         }
+        catch (ParseException ex)
+        {
+            var errorLines = ex.Errors.Select(e => $"Line {e.LineNumber}: {e.Message}");
+            ErrorMessage = $"Parse error: {string.Join(Environment.NewLine, errorLines)}";
+            IsLoaded = false;
+        }
+        catch (FileNotFoundException ex)
+        {
+            ErrorMessage = $"File not found: {ex.Message}";
+            IsLoaded = false;
+        }
+        catch (IOException ex)
+        {
+            ErrorMessage = $"I/O error reading specification: {ex.Message}";
+            IsLoaded = false;
+        }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message;
+            ErrorMessage = $"Error loading specification: {ex.Message}";
             IsLoaded = false;
         }
         finally
