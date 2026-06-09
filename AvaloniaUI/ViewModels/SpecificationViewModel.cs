@@ -213,6 +213,14 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private static bool IsMcType(string questionType) =>
+        questionType.StartsWith("MC", StringComparison.OrdinalIgnoreCase) ||
+        questionType.Equals("MultipleChoice", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsSaType(string questionType) =>
+        questionType.StartsWith("SA", StringComparison.OrdinalIgnoreCase) ||
+        questionType.Equals("ShortAnswer", StringComparison.OrdinalIgnoreCase);
+
     private void BuildHierarchy(Specification spec)
     {
         UnitNodes.Clear();
@@ -231,6 +239,8 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
                     skillNode.Templates.Add(new TemplateNode(template));
             }
             skillNode.TemplateCount = skillNode.Templates.Count;
+            skillNode.McCount = skillNode.Templates.Count(t => IsMcType(t.QuestionType));
+            skillNode.SaCount = skillNode.Templates.Count(t => IsSaType(t.QuestionType));
 
             if (skillNode.Templates.Count > 0)
             {
@@ -250,6 +260,8 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
                     topicNode.Skills.Add(skill);
             }
             topicNode.TemplateCount = topicNode.Skills.Sum(s => s.TemplateCount);
+            topicNode.McCount = topicNode.Skills.Sum(s => s.McCount);
+            topicNode.SaCount = topicNode.Skills.Sum(s => s.SaCount);
 
             var allTemplates = topicNode.Skills.SelectMany(s => s.Templates).ToList();
             if (allTemplates.Count > 0)
@@ -270,6 +282,8 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
                     unitNode.Topics.Add(topic);
             }
             unitNode.TemplateCount = unitNode.Topics.Sum(t => t.TemplateCount);
+            unitNode.McCount = unitNode.Topics.Sum(t => t.McCount);
+            unitNode.SaCount = unitNode.Topics.Sum(t => t.SaCount);
 
             var allTemplates = unitNode.Topics.SelectMany(t => t.Skills).SelectMany(s => s.Templates).ToList();
             if (allTemplates.Count > 0)

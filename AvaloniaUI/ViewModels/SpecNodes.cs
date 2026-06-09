@@ -14,6 +14,8 @@ public sealed class UnitNode
     public int MinDifficulty { get; set; }
     public int MaxDifficulty { get; set; }
     public double AvgDifficulty { get; set; }
+    public int McCount { get; set; }
+    public int SaCount { get; set; }
 
     public UnitNode(Unit unit)
     {
@@ -34,6 +36,8 @@ public sealed class TopicNode
     public int MinDifficulty { get; set; }
     public int MaxDifficulty { get; set; }
     public double AvgDifficulty { get; set; }
+    public int McCount { get; set; }
+    public int SaCount { get; set; }
 
     public TopicNode(Topic topic)
     {
@@ -55,6 +59,8 @@ public sealed class SkillNode
     public int MinDifficulty { get; set; }
     public int MaxDifficulty { get; set; }
     public double AvgDifficulty { get; set; }
+    public int McCount { get; set; }
+    public int SaCount { get; set; }
 
     public SkillNode(Skill skill)
     {
