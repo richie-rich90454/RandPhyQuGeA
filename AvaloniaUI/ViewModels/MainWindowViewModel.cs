@@ -13,7 +13,7 @@ using ReactiveUnit = System.Reactive.Unit;
 
 namespace AvaloniaUI.ViewModels;
 
-public class MainWindowViewModel : ReactiveObject, IActivatableViewModel
+public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 {
     private readonly QuestionGenerator? _questionGenerator;
     private readonly ILaTeXRenderer? _laTeXRenderer;
