@@ -51,4 +51,4 @@ Place your `part_one.txt` in `specifications/` (gitignored). Format:
 
 ## License
 
-MIT
+Apache 2.0
