@@ -37,6 +37,7 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
         Topics = new ObservableCollection<Topic>();
         Skills = new ObservableCollection<Skill>();
         Templates = new ObservableCollection<QuestionTemplate>();
+        UnitNodes = new ObservableCollection<UnitNode>();
 
         var canRetry = this.WhenAnyValue(x => x.ErrorMessage, msg => !string.IsNullOrEmpty(msg));
         LoadCommand = ReactiveCommand.CreateFromTask(LoadSpecification);
@@ -86,6 +87,7 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
     public ObservableCollection<Topic> Topics { get; }
     public ObservableCollection<Skill> Skills { get; }
     public ObservableCollection<QuestionTemplate> Templates { get; }
+    public ObservableCollection<UnitNode> UnitNodes { get; }
 
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> LoadCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> RetryCommand { get; }
@@ -180,6 +182,8 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
             foreach (var template in spec.Templates)
                 Templates.Add(template);
 
+            BuildHierarchy(spec);
+
             IsLoaded = true;
         }
         catch (ParseException ex)
@@ -207,6 +211,56 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
         {
             IsLoading = false;
         }
+    }
+
+    private void BuildHierarchy(Specification spec)
+    {
+        UnitNodes.Clear();
+
+        var skillNodes = spec.Skills.Select(s => new SkillNode(s)).ToList();
+        var topicNodes = spec.Topics.Select(t => new TopicNode(t)).ToList();
+        var unitNodes = spec.Units.Select(u => new UnitNode(u)).ToList();
+
+        var templatesBySkill = spec.Templates.GroupBy(t => t.SkillId).ToDictionary(g => g.Key, g => g.ToList());
+        var topicLookup = topicNodes.ToDictionary(t => t.Id);
+        var unitLookup = unitNodes.ToDictionary(u => u.Id);
+
+        foreach (var skillNode in skillNodes)
+        {
+            if (templatesBySkill.TryGetValue(skillNode.Id, out var templates))
+            {
+                foreach (var template in templates)
+                    skillNode.Templates.Add(new TemplateNode(template));
+            }
+            skillNode.TemplateCount = skillNode.Templates.Count;
+        }
+
+        var skillNodesByTopic = skillNodes.GroupBy(s => s.TopicId).ToDictionary(g => g.Key, g => g.ToList());
+
+        foreach (var topicNode in topicNodes)
+        {
+            if (skillNodesByTopic.TryGetValue(topicNode.Id, out var skills))
+            {
+                foreach (var skill in skills)
+                    topicNode.Skills.Add(skill);
+            }
+            topicNode.TemplateCount = topicNode.Skills.Sum(s => s.TemplateCount);
+        }
+
+        var topicNodesByUnit = topicNodes.GroupBy(t => t.UnitId).ToDictionary(g => g.Key, g => g.ToList());
+
+        foreach (var unitNode in unitNodes)
+        {
+            if (topicNodesByUnit.TryGetValue(unitNode.Id, out var topics))
+            {
+                foreach (var topic in topics)
+                    unitNode.Topics.Add(topic);
+            }
+            unitNode.TemplateCount = unitNode.Topics.Sum(t => t.TemplateCount);
+        }
+
+        foreach (var unitNode in unitNodes)
+            UnitNodes.Add(unitNode);
     }
 
     public void Dispose()
