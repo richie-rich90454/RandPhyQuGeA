@@ -20,6 +20,7 @@ public class SpecificationViewModel : ViewModelBase
     private string _errorMessage = string.Empty;
     private bool _isLoading;
     private Specification? _specification;
+    private string _specFilePath = "part_one.txt";
 
     public SpecificationViewModel(ISpecificationLoader loader)
     {
@@ -57,6 +58,12 @@ public class SpecificationViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _specification, value);
     }
 
+    public string SpecFilePath
+    {
+        get => _specFilePath;
+        set => this.RaiseAndSetIfChanged(ref _specFilePath, value);
+    }
+
     public ObservableCollection<DomainUnit> Units { get; }
     public ObservableCollection<Topic> Topics { get; }
     public ObservableCollection<Skill> Skills { get; }
@@ -71,7 +78,7 @@ public class SpecificationViewModel : ViewModelBase
 
         try
         {
-            var spec = await Task.Run(() => _loader.Load("part_one.txt"));
+            var spec = await Task.Run(() => _loader.Load(SpecFilePath));
 
             Specification = spec;
 
