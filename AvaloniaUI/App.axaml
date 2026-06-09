@@ -1,5 +1,7 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AvaloniaUI.ViewModels"
+             xmlns:v="using:AvaloniaUI.Views"
              x:Class="AvaloniaUI.App"
              RequestedThemeVariant="Default">
     <Application.Styles>
@@ -13,4 +15,25 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
+
+    <Application.DataTemplates>
+        <DataTemplate x:DataType="vm:HomeViewModel">
+            <v:HomeView />
+        </DataTemplate>
+        <DataTemplate x:DataType="vm:MentalPracticeViewModel">
+            <v:MentalPracticeView />
+        </DataTemplate>
+        <DataTemplate x:DataType="vm:FocusedPracticeViewModel">
+            <v:FocusedPracticeView />
+        </DataTemplate>
+        <DataTemplate x:DataType="vm:QuestionBankViewModel">
+            <v:QuestionBankView />
+        </DataTemplate>
+        <DataTemplate x:DataType="vm:ProgressViewModel">
+            <v:ProgressView />
+        </DataTemplate>
+        <DataTemplate x:DataType="vm:SettingsViewModel">
+            <v:SettingsView />
+        </DataTemplate>
+    </Application.DataTemplates>
 </Application>

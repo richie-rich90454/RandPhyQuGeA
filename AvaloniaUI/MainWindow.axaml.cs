@@ -58,17 +58,6 @@ public partial class MainWindow : Window
         }
     }
 
-    private void ClearFilters_Click(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-        {
-            vm.SelectedTopicId = null;
-            vm.SelectedSkillId = null;
-            vm.SelectedDifficulty = null;
-            vm.SelectedQuestionType = null;
-        }
-    }
-
     private void Help_Click(object? sender, RoutedEventArgs e)
     {
         var helpWindow = new Views.HelpWindow();
