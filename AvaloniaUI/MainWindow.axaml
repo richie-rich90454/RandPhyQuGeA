@@ -192,7 +192,7 @@
         </Border>
 
         <!-- Content Area -->
-        <ContentControl Content="{Binding Navigation.CurrentView}" />
+        <ContentControl x:Name="ContentArea" />
       </DockPanel>
     </SplitView.Content>
   </SplitView>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
@@ -6,12 +7,14 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using AvaloniaUI.ViewModels;
+using AvaloniaUI.Views;
 
 namespace AvaloniaUI;
 
 public partial class MainWindow : Window
 {
     private Button[]? _navButtons;
+    private readonly Dictionary<string, Control> _viewCache = new();
 
     public MainWindow()
     {
@@ -61,6 +64,10 @@ public partial class MainWindow : Window
         {
             UpdateNavHighlight();
         }
+        else if (e.PropertyName == nameof(NavigationViewModel.CurrentView))
+        {
+            UpdateContentView();
+        }
     }
 
     private void UpdateNavHighlight()
@@ -77,6 +84,32 @@ public partial class MainWindow : Window
             button.Background = isSelected
                 ? this.FindResourceOrDefault<IBrush>("NavItemSelectedBrush", new SolidColorBrush(Color.FromArgb(255, 232, 240, 254)))
                 : Brushes.Transparent;
+        }
+    }
+
+    private void UpdateContentView()
+    {
+        if (DataContext is not MainWindowViewModel vm) return;
+
+        var viewKey = vm.Navigation.SelectedItem?.ViewKey;
+        if (viewKey is null) return;
+
+        // Get or create the cached view
+        if (!_viewCache.TryGetValue(viewKey, out var view))
+        {
+            view = ViewLocator.Resolve(vm.Navigation.CurrentView!);
+            if (view is not null)
+            {
+                view.DataContext = vm.Navigation.CurrentView;
+                _viewCache[viewKey] = view;
+            }
+        }
+
+        // Set the cached view directly on the ContentControl
+        var contentControl = this.FindControl<ContentControl>("ContentArea");
+        if (contentControl is not null)
+        {
+            contentControl.Content = view;
         }
     }
 
