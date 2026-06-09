@@ -1,0 +1,93 @@
+@page "/"
+@inject QuestionGenerator QuestionGenerator
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Physics Question Generator</PageTitle>
+
+<div class="container">
+    <h1>Physics Question Generator</h1>
+
+    <div class="filters">
+        <div class="filter-group">
+            <label>Difficulty:</label>
+            <input type="number" min="1" max="10" @bind="selectedDifficulty" />
+        </div>
+        <div class="filter-group">
+            <label>Type:</label>
+            <select @bind="selectedType">
+                <option value="">Any</option>
+                <option value="SA">Short Answer</option>
+                <option value="MC">Multiple Choice</option>
+            </select>
+        </div>
+        <button class="btn-primary" @onclick="GenerateQuestion">Generate Question</button>
+    </div>
+
+    @if (currentQuestion != null)
+    {
+        <div class="question-card">
+            <h2>Question</h2>
+            <p class="question-text">@currentQuestion.Text</p>
+
+            @if (currentQuestion.Choices is { Count: > 0 })
+            {
+                <div class="choices">
+                    @foreach (var choice in currentQuestion.Choices)
+                    {
+                        <div class="choice">@choice</div>
+                    }
+                </div>
+            }
+
+            @if (showSolution)
+            {
+                <div class="solution">
+                    <h3>Answer</h3>
+                    <p class="answer">@currentQuestion.Answer</p>
+                    <h3>Solution</h3>
+                    <p>@currentQuestion.SolutionText</p>
+                </div>
+            }
+
+            <button class="btn-secondary" @onclick="() => showSolution = !showSolution">
+                @(showSolution ? "Hide Solution" : "Show Solution")
+            </button>
+        </div>
+    }
+    else if (errorMessage != null)
+    {
+        <div class="error">@errorMessage</div>
+    }
+</div>
+
+@code {
+    private GeneratedQuestion? currentQuestion;
+    private bool showSolution = false;
+    private int? selectedDifficulty = null;
+    private string? selectedType = null;
+    private string? errorMessage;
+
+    private void GenerateQuestion()
+    {
+        try
+        {
+            errorMessage = null;
+            showSolution = false;
+            currentQuestion = QuestionGenerator.Generate(
+                topicId: null,
+                skillId: null,
+                difficulty: selectedDifficulty,
+                questionType: string.IsNullOrEmpty(selectedType) ? null : selectedType
+            );
+
+            if (currentQuestion == null)
+            {
+                errorMessage = "No matching template found. Try different filters.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+        }
+    }
+}

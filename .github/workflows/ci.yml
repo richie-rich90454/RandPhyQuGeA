@@ -1,0 +1,48 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest, ubuntu-latest, macos-latest ]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore PhysicsQuestionGenerator.sln
+
+    - name: Build Core
+      run: dotnet build Core/Core.csproj --no-restore --configuration Release
+
+    - name: Build LaTeX
+      run: dotnet build LaTeX/LaTeX.csproj --no-restore --configuration Release
+
+    - name: Build AvaloniaUI
+      run: dotnet build AvaloniaUI/AvaloniaUI.csproj --no-restore --configuration Release
+
+    - name: Build Console
+      run: dotnet build Console/Console.csproj --no-restore --configuration Release
+
+    - name: Run Tests
+      run: dotnet test Tests/Tests.csproj --no-restore --configuration Release --verbosity normal --logger "trx;LogFileName=test-results.trx"
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.os }}
+        path: '**/test-results.trx'
