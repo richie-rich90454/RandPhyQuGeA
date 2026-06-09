@@ -50,6 +50,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
         _specificationLoader = specificationLoader;
 
         Activator = new ViewModelActivator();
+        Navigation = new NavigationViewModel();
 
         GenerateCommand = ReactiveCommand.CreateFromTask(OnGenerate);
         ToggleSolutionCommand = ReactiveCommand.Create(OnToggleSolution);
@@ -61,6 +62,8 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     }
 
     public ViewModelActivator Activator { get; }
+
+    public NavigationViewModel Navigation { get; }
 
     public string? SelectedTopicId
     {
