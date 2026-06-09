@@ -24,7 +24,30 @@ This project follows [Semantic Versioning](https://semver.org/):
 
 ## Artifacts
 
-- Windows: MSI installer
-- macOS: DMG
-- Linux: AppImage
-- Web: Blazor WASM deployment package
+For detailed build, run, and packaging instructions, see [docs/BUILD_AND_PACKAGE.md](docs/BUILD_AND_PACKAGE.md).
+
+### Portable Packages
+
+Self-contained single-file executables that run without .NET installed:
+
+```bash
+# Windows x64
+dotnet publish AvaloniaUI -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o ./publish/win-x64
+
+# Linux x64
+dotnet publish AvaloniaUI -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o ./publish/linux-x64
+
+# macOS Apple Silicon
+dotnet publish AvaloniaUI -c Release -r osx-arm64 --self-contained -p:PublishSingleFile=true -o ./publish/osx-arm64
+```
+
+### Installer Packages
+
+| Platform | Format | Tooling |
+|----------|--------|---------|
+| Windows | EXE installer | InnoSetup (recommended) or WiX (MSI) |
+| macOS | DMG | `hdiutil` + `.app` bundle |
+| Linux | AppImage | `appimagetool` |
+| Web | Static files | `dotnet publish Web -c Release` |
+
+See [docs/BUILD_AND_PACKAGE.md](docs/BUILD_AND_PACKAGE.md) for complete step-by-step instructions.
