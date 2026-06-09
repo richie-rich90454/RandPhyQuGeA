@@ -28,7 +28,112 @@
              PanePlacement="Left">
     <SplitView.Pane>
       <Border Background="{DynamicResource NavPaneBackgroundBrush}">
-        <TextBlock Text="Nav Pane" />
+        <DockPanel>
+          <!-- App Title in Pane -->
+          <Border DockPanel.Dock="Top" Padding="16,20" IsVisible="{Binding Navigation.IsPaneOpen}">
+            <StackPanel Spacing="4">
+              <TextBlock Text="Physics QG" FontSize="18" FontWeight="SemiBold"
+                         Foreground="{DynamicResource TextPrimaryBrush}" />
+              <TextBlock Text="Question Generator" FontSize="11"
+                         Foreground="{DynamicResource TextTertiaryBrush}" />
+            </StackPanel>
+          </Border>
+
+          <!-- Navigation Items -->
+          <ScrollViewer>
+            <StackPanel Spacing="2" Margin="8,8">
+              <!-- Home -->
+              <Button Click="NavButton_Click" Tag="Home" HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
+                      Background="Transparent" x:Name="NavHome">
+                <Grid ColumnDefinitions="48,*" MinHeight="44">
+                  <TextBlock Text="&#xE80F;" FontFamily="Segoe MDL2 Assets" FontSize="18"
+                             HorizontalAlignment="Center" VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}" />
+                  <TextBlock Grid.Column="1" Text="Home" FontSize="13"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}"
+                             IsVisible="{Binding Navigation.IsPaneOpen}" />
+                </Grid>
+              </Button>
+
+              <!-- Mental Practice -->
+              <Button Click="NavButton_Click" Tag="MentalPractice" HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
+                      Background="Transparent" x:Name="NavMentalPractice">
+                <Grid ColumnDefinitions="48,*" MinHeight="44">
+                  <TextBlock Text="&#xE945;" FontFamily="Segoe MDL2 Assets" FontSize="18"
+                             HorizontalAlignment="Center" VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}" />
+                  <TextBlock Grid.Column="1" Text="Mental Practice" FontSize="13"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}"
+                             IsVisible="{Binding Navigation.IsPaneOpen}" />
+                </Grid>
+              </Button>
+
+              <!-- Focused Practice -->
+              <Button Click="NavButton_Click" Tag="FocusedPractice" HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
+                      Background="Transparent" x:Name="NavFocusedPractice">
+                <Grid ColumnDefinitions="48,*" MinHeight="44">
+                  <TextBlock Text="&#xE8FD;" FontFamily="Segoe MDL2 Assets" FontSize="18"
+                             HorizontalAlignment="Center" VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}" />
+                  <TextBlock Grid.Column="1" Text="Focused Practice" FontSize="13"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}"
+                             IsVisible="{Binding Navigation.IsPaneOpen}" />
+                </Grid>
+              </Button>
+
+              <!-- Question Bank -->
+              <Button Click="NavButton_Click" Tag="QuestionBank" HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
+                      Background="Transparent" x:Name="NavQuestionBank">
+                <Grid ColumnDefinitions="48,*" MinHeight="44">
+                  <TextBlock Text="&#xE8F1;" FontFamily="Segoe MDL2 Assets" FontSize="18"
+                             HorizontalAlignment="Center" VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}" />
+                  <TextBlock Grid.Column="1" Text="Question Bank" FontSize="13"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}"
+                             IsVisible="{Binding Navigation.IsPaneOpen}" />
+                </Grid>
+              </Button>
+
+              <!-- Progress -->
+              <Button Click="NavButton_Click" Tag="Progress" HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
+                      Background="Transparent" x:Name="NavProgress">
+                <Grid ColumnDefinitions="48,*" MinHeight="44">
+                  <TextBlock Text="&#xE9D9;" FontFamily="Segoe MDL2 Assets" FontSize="18"
+                             HorizontalAlignment="Center" VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}" />
+                  <TextBlock Grid.Column="1" Text="Progress" FontSize="13"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}"
+                             IsVisible="{Binding Navigation.IsPaneOpen}" />
+                </Grid>
+              </Button>
+
+              <!-- Settings -->
+              <Button Click="NavButton_Click" Tag="Settings" HorizontalAlignment="Stretch"
+                      HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
+                      Background="Transparent" x:Name="NavSettings">
+                <Grid ColumnDefinitions="48,*" MinHeight="44">
+                  <TextBlock Text="&#xE713;" FontFamily="Segoe MDL2 Assets" FontSize="18"
+                             HorizontalAlignment="Center" VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}" />
+                  <TextBlock Grid.Column="1" Text="Settings" FontSize="13"
+                             VerticalAlignment="Center"
+                             Foreground="{DynamicResource NavItemInactiveTextBrush}"
+                             IsVisible="{Binding Navigation.IsPaneOpen}" />
+                </Grid>
+              </Button>
+            </StackPanel>
+          </ScrollViewer>
+        </DockPanel>
       </Border>
     </SplitView.Pane>
 

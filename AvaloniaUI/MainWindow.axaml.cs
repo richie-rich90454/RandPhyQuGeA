@@ -45,6 +45,17 @@ public partial class MainWindow : Window
         }
     }
 
+    private void NavButton_Click(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.Tag is string viewKey)
+        {
+            if (DataContext is MainWindowViewModel vm)
+            {
+                vm.Navigation.Navigate(viewKey);
+            }
+        }
+    }
+
     private async void OnCopyToClipboardRequested(object? sender, string text)
     {
         var topLevel = TopLevel.GetTopLevel(this);
