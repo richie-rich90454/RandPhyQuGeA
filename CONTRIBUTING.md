@@ -27,7 +27,7 @@ Thank you for your interest in contributing! This document provides guidelines a
 ## Development Setup
 
 ```bash
-git clone https://github.com/your-username/RandPhyQuGeA.git
+git clone https://github.com/richie-rich90454/RandPhyQuGeA.git
 cd RandPhyQuGeA
 dotnet restore PhysicsQuestionGenerator.sln
 dotnet build PhysicsQuestionGenerator.sln
