@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Core.Domain;
 
 namespace AvaloniaUI.ViewModels;
@@ -10,6 +11,9 @@ public sealed class UnitNode
     public string Description { get; }
     public List<TopicNode> Topics { get; } = new();
     public int TemplateCount { get; set; }
+    public int MinDifficulty { get; set; }
+    public int MaxDifficulty { get; set; }
+    public double AvgDifficulty { get; set; }
 
     public UnitNode(Unit unit)
     {
@@ -27,6 +31,9 @@ public sealed class TopicNode
     public string UnitId { get; }
     public List<SkillNode> Skills { get; } = new();
     public int TemplateCount { get; set; }
+    public int MinDifficulty { get; set; }
+    public int MaxDifficulty { get; set; }
+    public double AvgDifficulty { get; set; }
 
     public TopicNode(Topic topic)
     {
@@ -45,6 +52,9 @@ public sealed class SkillNode
     public string TopicId { get; }
     public List<TemplateNode> Templates { get; } = new();
     public int TemplateCount { get; set; }
+    public int MinDifficulty { get; set; }
+    public int MaxDifficulty { get; set; }
+    public double AvgDifficulty { get; set; }
 
     public SkillNode(Skill skill)
     {

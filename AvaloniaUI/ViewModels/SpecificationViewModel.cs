@@ -222,8 +222,6 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
         var unitNodes = spec.Units.Select(u => new UnitNode(u)).ToList();
 
         var templatesBySkill = spec.Templates.GroupBy(t => t.SkillId).ToDictionary(g => g.Key, g => g.ToList());
-        var topicLookup = topicNodes.ToDictionary(t => t.Id);
-        var unitLookup = unitNodes.ToDictionary(u => u.Id);
 
         foreach (var skillNode in skillNodes)
         {
@@ -233,6 +231,13 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
                     skillNode.Templates.Add(new TemplateNode(template));
             }
             skillNode.TemplateCount = skillNode.Templates.Count;
+
+            if (skillNode.Templates.Count > 0)
+            {
+                skillNode.MinDifficulty = skillNode.Templates.Min(t => t.Difficulty);
+                skillNode.MaxDifficulty = skillNode.Templates.Max(t => t.Difficulty);
+                skillNode.AvgDifficulty = skillNode.Templates.Average(t => t.Difficulty);
+            }
         }
 
         var skillNodesByTopic = skillNodes.GroupBy(s => s.TopicId).ToDictionary(g => g.Key, g => g.ToList());
@@ -245,6 +250,14 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
                     topicNode.Skills.Add(skill);
             }
             topicNode.TemplateCount = topicNode.Skills.Sum(s => s.TemplateCount);
+
+            var allTemplates = topicNode.Skills.SelectMany(s => s.Templates).ToList();
+            if (allTemplates.Count > 0)
+            {
+                topicNode.MinDifficulty = allTemplates.Min(t => t.Difficulty);
+                topicNode.MaxDifficulty = allTemplates.Max(t => t.Difficulty);
+                topicNode.AvgDifficulty = allTemplates.Average(t => t.Difficulty);
+            }
         }
 
         var topicNodesByUnit = topicNodes.GroupBy(t => t.UnitId).ToDictionary(g => g.Key, g => g.ToList());
@@ -257,6 +270,14 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
                     unitNode.Topics.Add(topic);
             }
             unitNode.TemplateCount = unitNode.Topics.Sum(t => t.TemplateCount);
+
+            var allTemplates = unitNode.Topics.SelectMany(t => t.Skills).SelectMany(s => s.Templates).ToList();
+            if (allTemplates.Count > 0)
+            {
+                unitNode.MinDifficulty = allTemplates.Min(t => t.Difficulty);
+                unitNode.MaxDifficulty = allTemplates.Max(t => t.Difficulty);
+                unitNode.AvgDifficulty = allTemplates.Average(t => t.Difficulty);
+            }
         }
 
         foreach (var unitNode in unitNodes)
