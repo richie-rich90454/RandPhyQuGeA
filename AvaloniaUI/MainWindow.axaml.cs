@@ -45,6 +45,14 @@ public partial class MainWindow : Window
         }
     }
 
+    private void TogglePane_Click(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+        {
+            vm.Navigation.IsPaneOpen = !vm.Navigation.IsPaneOpen;
+        }
+    }
+
     private void NavButton_Click(object? sender, RoutedEventArgs e)
     {
         if (sender is Button button && button.Tag is string viewKey)

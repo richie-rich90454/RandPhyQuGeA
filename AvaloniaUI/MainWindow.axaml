@@ -138,7 +138,54 @@
     </SplitView.Pane>
 
     <SplitView.Content>
-      <ContentControl Content="{Binding Navigation.CurrentView}" />
+      <DockPanel>
+        <!-- Header Bar with Hamburger Toggle -->
+        <Border DockPanel.Dock="Top" Background="{DynamicResource PaneBackgroundBrush}"
+                BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1"
+                Padding="8,0" MinHeight="48">
+          <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+            <!-- Hamburger Toggle Button -->
+            <Button Grid.Column="0" Click="TogglePane_Click"
+                    VerticalAlignment="Center" Padding="8"
+                    CornerRadius="6" Background="Transparent">
+              <Grid Width="20" Height="16">
+                <Rectangle x:Name="HamburgerTop" Fill="{DynamicResource TextPrimaryBrush}"
+                           Height="2" RadiusX="1" RadiusY="1"
+                           VerticalAlignment="Top" />
+                <Rectangle x:Name="HamburgerMid" Fill="{DynamicResource TextPrimaryBrush}"
+                           Height="2" RadiusX="1" RadiusY="1"
+                           VerticalAlignment="Center" />
+                <Rectangle x:Name="HamburgerBot" Fill="{DynamicResource TextPrimaryBrush}"
+                           Height="2" RadiusX="1" RadiusY="1"
+                           VerticalAlignment="Bottom" />
+              </Grid>
+            </Button>
+
+            <!-- Title Area -->
+            <TextBlock Grid.Column="1" Text="{Binding Navigation.CurrentViewTitle}"
+                       FontSize="14" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       VerticalAlignment="Center" Margin="12,0,0,0" />
+
+            <!-- Right Actions -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+              <Button Click="Help_Click" Padding="8" CornerRadius="6" Background="Transparent"
+                      ToolTip.Tip="Help (F1)">
+                <TextBlock Text="&#xE897;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                           Foreground="{DynamicResource TextSecondaryBrush}" />
+              </Button>
+              <Button Click="About_Click" Padding="8" CornerRadius="6" Background="Transparent"
+                      ToolTip.Tip="About">
+                <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                           Foreground="{DynamicResource TextSecondaryBrush}" />
+              </Button>
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <!-- Content Area -->
+        <ContentControl Content="{Binding Navigation.CurrentView}" />
+      </DockPanel>
     </SplitView.Content>
   </SplitView>
 </Window>
