@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
+using System.Threading;
 using System.Threading.Tasks;
 using Core.Domain;
 using Core.Interfaces;
@@ -14,9 +16,12 @@ using DomainUnit = Core.Domain.Unit;
 
 namespace AvaloniaUI.ViewModels;
 
-public class SpecificationViewModel : ViewModelBase
+public class SpecificationViewModel : ViewModelBase, IDisposable
 {
     private readonly ISpecificationLoader _loader;
+    private FileSystemWatcher? _watcher;
+    private Timer? _debounceTimer;
+    private readonly object _debounceLock = new();
 
     private bool _isLoaded;
     private string _errorMessage = string.Empty;
@@ -65,7 +70,16 @@ public class SpecificationViewModel : ViewModelBase
     public string SpecFilePath
     {
         get => _specFilePath;
-        set => this.RaiseAndSetIfChanged(ref _specFilePath, value);
+        set
+        {
+            var old = _specFilePath;
+            this.RaiseAndSetIfChanged(ref _specFilePath, value);
+            if (old != value)
+            {
+                StopWatching();
+                StartWatching();
+            }
+        }
     }
 
     public ObservableCollection<DomainUnit> Units { get; }
@@ -75,6 +89,62 @@ public class SpecificationViewModel : ViewModelBase
 
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> LoadCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> RetryCommand { get; }
+
+    public void StartWatching()
+    {
+        if (_watcher != null)
+            return;
+
+        var fullPath = Path.GetFullPath(SpecFilePath);
+        var directory = Path.GetDirectoryName(fullPath);
+        var fileName = Path.GetFileName(fullPath);
+
+        if (string.IsNullOrEmpty(directory) || !Directory.Exists(directory))
+            return;
+
+        _watcher = new FileSystemWatcher(directory, fileName)
+        {
+            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
+        };
+
+        _watcher.Changed += OnFileChanged;
+        _watcher.EnableRaisingEvents = true;
+    }
+
+    public void StopWatching()
+    {
+        if (_watcher != null)
+        {
+            _watcher.EnableRaisingEvents = false;
+            _watcher.Changed -= OnFileChanged;
+            _watcher.Dispose();
+            _watcher = null;
+        }
+    }
+
+    private void OnFileChanged(object sender, FileSystemEventArgs e)
+    {
+        lock (_debounceLock)
+        {
+            _debounceTimer?.Dispose();
+            _debounceTimer = new Timer(_ => DebouncedReload(), null, TimeSpan.FromSeconds(1), Timeout.InfiniteTimeSpan);
+        }
+    }
+
+    private void DebouncedReload()
+    {
+        lock (_debounceLock)
+        {
+            _debounceTimer?.Dispose();
+            _debounceTimer = null;
+        }
+
+        RxApp.MainThreadScheduler.Schedule(ReactiveUnit.Default, (_, _) =>
+        {
+            _ = LoadSpecification();
+            return Disposable.Empty;
+        });
+    }
 
     private async Task LoadSpecification()
     {
@@ -136,6 +206,16 @@ public class SpecificationViewModel : ViewModelBase
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        StopWatching();
+        lock (_debounceLock)
+        {
+            _debounceTimer?.Dispose();
+            _debounceTimer = null;
         }
     }
 }
