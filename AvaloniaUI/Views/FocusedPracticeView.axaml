@@ -1,10 +1,59 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AvaloniaUI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
-             x:Class="AvaloniaUI.Views.FocusedPracticeView">
-  <Panel>
-    <TextBlock Text="Focused Practice" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
-  </Panel>
+             x:Class="AvaloniaUI.Views.FocusedPracticeView"
+             x:DataType="vm:FocusedPracticeViewModel">
+
+  <ScrollViewer Background="{DynamicResource ContentBackgroundBrush}">
+    <Grid Margin="48,40" MaxWidth="700" HorizontalAlignment="Left">
+
+      <!-- Step 1: Scope Selection -->
+      <StackPanel IsVisible="{Binding IsSelectingScope}" Spacing="24">
+
+        <!-- Step Indicator -->
+        <Border Background="{DynamicResource PrimarySubtleBrush}" CornerRadius="8"
+                Padding="16,10" HorizontalAlignment="Left">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="12"
+                    Width="24" Height="24" VerticalAlignment="Center">
+              <TextBlock Text="1" FontSize="12" FontWeight="Bold"
+                         Foreground="{DynamicResource TextOnPrimaryBrush}"
+                         HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <TextBlock Text="Select What to Practice" FontSize="14" FontWeight="SemiBold"
+                       Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center" />
+          </StackPanel>
+        </Border>
+
+        <!-- Title -->
+        <StackPanel Spacing="8">
+          <TextBlock Text="Focused Practice" FontSize="28" FontWeight="Bold"
+                     Foreground="{DynamicResource TextPrimaryBrush}" />
+          <TextBlock Text="Choose the topics and skills you want to practice, then start your session."
+                     FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}"
+                     TextWrapping="Wrap" MaxWidth="600" />
+        </StackPanel>
+
+        <!-- Scope Selection Placeholder -->
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                Padding="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <TextBlock Text="Scope selection will appear here" FontSize="13"
+                     Foreground="{DynamicResource TextTertiaryBrush}"
+                     HorizontalAlignment="Center" Margin="0,32" />
+        </Border>
+
+      </StackPanel>
+
+      <!-- Practice Session (hidden during scope selection) -->
+      <StackPanel IsVisible="{Binding !IsSelectingScope}" Spacing="24">
+        <TextBlock Text="Practice session will appear here" FontSize="14"
+                   Foreground="{DynamicResource TextSecondaryBrush}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,48" />
+      </StackPanel>
+
+    </Grid>
+  </ScrollViewer>
 </UserControl>

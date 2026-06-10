@@ -32,6 +32,17 @@
                      TextAlignment="Center" MaxWidth="400" />
         </StackPanel>
 
+        <!-- Scope Selector -->
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8"
+                Padding="16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <StackPanel Spacing="8">
+            <TextBlock Text="Scope" FontSize="13" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}" />
+            <ComboBox ItemsSource="{Binding ScopeOptions}" SelectedItem="{Binding SelectedScope}"
+                      HorizontalAlignment="Stretch" Padding="8,6" />
+          </StackPanel>
+        </Border>
+
         <!-- Start Button -->
         <Button Command="{Binding StartCommand}"
                 HorizontalAlignment="Center"
