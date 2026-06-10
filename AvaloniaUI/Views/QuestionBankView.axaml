@@ -3,9 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:AvaloniaUI.ViewModels"
+             xmlns:cvt="using:AvaloniaUI.Converters"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
              x:Class="AvaloniaUI.Views.QuestionBankView"
              x:DataType="vm:QuestionBankViewModel">
+
+  <UserControl.Resources>
+    <cvt:DifficultyToBrushConverter x:Key="DifficultyToBrushConverter" />
+  </UserControl.Resources>
 
   <UserControl.DataTemplates>
     <!-- Unit → Topics hierarchy with colored header -->
@@ -34,9 +39,22 @@
       </Border>
     </TreeDataTemplate>
 
-    <!-- Skill (leaf) -->
+    <!-- Skill with template count badge and difficulty indicator -->
     <TreeDataTemplate x:DataType="vm:SkillNode">
-      <TextBlock Text="{Binding Name}" />
+      <DockPanel Margin="16,2,0,2">
+        <!-- Template count badge -->
+        <Border DockPanel.Dock="Right"
+                Background="{Binding DifficultyLevel, Converter={StaticResource DifficultyToBrushConverter}}"
+                CornerRadius="8" Padding="6,2" Margin="6,0,0,0"
+                VerticalAlignment="Center">
+          <TextBlock Text="{Binding TemplateCount, StringFormat='{}{0}'}"
+                     FontSize="10" FontWeight="SemiBold"
+                     Foreground="White" />
+        </Border>
+        <TextBlock Text="{Binding Name}" FontSize="12"
+                   Foreground="{DynamicResource TextSecondaryBrush}"
+                   VerticalAlignment="Center" />
+      </DockPanel>
     </TreeDataTemplate>
   </UserControl.DataTemplates>
 

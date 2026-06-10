@@ -62,6 +62,13 @@ public sealed class SkillNode
     public int McCount { get; set; }
     public int SaCount { get; set; }
 
+    public string DifficultyLevel => AvgDifficulty switch
+    {
+        <= 3 => "Easy",
+        <= 6 => "Medium",
+        _ => "Hard"
+    };
+
     public SkillNode(Skill skill)
     {
         Id = skill.Id;
