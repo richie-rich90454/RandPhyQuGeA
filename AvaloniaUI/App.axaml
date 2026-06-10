@@ -35,5 +35,8 @@
         <DataTemplate x:DataType="vm:SettingsViewModel">
             <v:SettingsView />
         </DataTemplate>
+        <DataTemplate x:DataType="vm:SessionSummaryViewModel">
+            <v:SessionSummaryView />
+        </DataTemplate>
     </Application.DataTemplates>
 </Application>

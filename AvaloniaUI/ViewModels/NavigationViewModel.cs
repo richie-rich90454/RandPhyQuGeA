@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Interfaces;
 using Core.Services;
 using ReactiveUI;
 
@@ -21,13 +22,16 @@ public class NavigationViewModel : ViewModelBase
     private readonly List<NavigationItem> _navigationItems;
     private readonly SpecificationViewModel? _specificationViewModel;
     private readonly QuestionGenerator? _questionGenerator;
+    private SessionSummaryViewModel? _lastSessionSummary;
+    private readonly IPracticeResultRepository? _resultRepository;
 
-    public NavigationViewModel() : this(null, null) { }
+    public NavigationViewModel() : this(null, null, null) { }
 
-    public NavigationViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator)
+    public NavigationViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator, IPracticeResultRepository? resultRepository = null)
     {
         _specificationViewModel = specificationViewModel;
         _questionGenerator = questionGenerator;
+        _resultRepository = resultRepository;
 
         _navigationItems = new List<NavigationItem>
         {
@@ -92,6 +96,15 @@ public class NavigationViewModel : ViewModelBase
     public ReactiveCommand<string, System.Reactive.Unit> NavigateCommand { get; }
 
     /// <summary>
+    /// The last session summary, used for comparison with new sessions.
+    /// </summary>
+    public SessionSummaryViewModel? LastSessionSummary
+    {
+        get => _lastSessionSummary;
+        set => this.RaiseAndSetIfChanged(ref _lastSessionSummary, value);
+    }
+
+    /// <summary>
     /// Navigates to the specified view key, creating and caching the view model if needed.
     /// </summary>
     public void Navigate(string viewKey)
@@ -112,12 +125,36 @@ public class NavigationViewModel : ViewModelBase
         return viewKey switch
         {
             "Home" => new HomeViewModel(),
-            "MentalPractice" => new MentalPracticeViewModel(_specificationViewModel, _questionGenerator),
-            "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!),
+            "MentalPractice" => new MentalPracticeViewModel(_specificationViewModel, _questionGenerator, _resultRepository),
+            "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!, _resultRepository),
             "QuestionBank" => new QuestionBankViewModel(_specificationViewModel!, this),
-            "Progress" => new ProgressViewModel(),
+            "Progress" => new ProgressViewModel(_resultRepository),
             "Settings" => new SettingsViewModel(),
             _ => throw new ArgumentException($"Unknown view key: {viewKey}", nameof(viewKey))
         };
+    }
+
+    /// <summary>
+    /// Navigates to the session summary view with the given results.
+    /// Stores the previous session summary for comparison.
+    /// </summary>
+    public void NavigateToSessionSummary(SessionSummaryViewModel summary)
+    {
+        // Set previous session for comparison
+        if (_lastSessionSummary is not null)
+        {
+            summary.PreviousSession = _lastSessionSummary;
+        }
+
+        // Save as last session summary
+        _lastSessionSummary = summary;
+
+        // Remove any cached SessionSummary so we always get a fresh one
+        _viewCache.Remove("SessionSummary");
+        _viewCache["SessionSummary"] = summary;
+
+        CurrentView = summary;
+        SelectedItem = null;
+        CurrentViewTitle = "Session Summary";
     }
 }
