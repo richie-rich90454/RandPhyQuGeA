@@ -112,7 +112,7 @@ public class NavigationViewModel : ViewModelBase
         return viewKey switch
         {
             "Home" => new HomeViewModel(),
-            "MentalPractice" => new MentalPracticeViewModel(),
+            "MentalPractice" => new MentalPracticeViewModel(_specificationViewModel, _questionGenerator),
             "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!),
             "QuestionBank" => new QuestionBankViewModel(_specificationViewModel!, this),
             "Progress" => new ProgressViewModel(),
