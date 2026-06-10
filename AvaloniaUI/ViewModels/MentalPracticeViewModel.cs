@@ -148,6 +148,7 @@ public class MentalPracticeViewModel : ViewModelBase
             this.RaisePropertyChanged(nameof(QuestionText));
             this.RaisePropertyChanged(nameof(IsMultipleChoice));
             this.RaisePropertyChanged(nameof(Choices));
+            this.RaisePropertyChanged(nameof(ChoiceItems));
             this.RaisePropertyChanged(nameof(HasChoices));
         }
     }
@@ -157,6 +158,18 @@ public class MentalPracticeViewModel : ViewModelBase
     public bool IsMultipleChoice => CurrentQuestion?.QuestionType == "MC";
 
     public IReadOnlyList<string> Choices => CurrentQuestion?.Choices ?? Array.Empty<string>();
+
+    public IReadOnlyList<ChoiceItem> ChoiceItems
+    {
+        get
+        {
+            if (CurrentQuestion?.Choices is not { Count: > 0 } choices)
+                return Array.Empty<ChoiceItem>();
+            var letters = new[] { "A", "B", "C", "D", "E", "F", "G", "H" };
+            var keys = new[] { "1", "2", "3", "4", "5", "6", "7", "8" };
+            return choices.Select((c, i) => new ChoiceItem(i, letters[i], keys[i], c)).ToList();
+        }
+    }
 
     public bool HasChoices => CurrentQuestion?.Choices is { Count: > 0 };
 
@@ -654,5 +667,21 @@ public sealed class ScopeItem
     {
         Id = id;
         Label = label;
+    }
+}
+
+public sealed class ChoiceItem
+{
+    public int Index { get; }
+    public string Letter { get; }
+    public string KeyHint { get; }
+    public string Text { get; }
+
+    public ChoiceItem(int index, string letter, string keyHint, string text)
+    {
+        Index = index;
+        Letter = letter;
+        KeyHint = keyHint;
+        Text = text;
     }
 }

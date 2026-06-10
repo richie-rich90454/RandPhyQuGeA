@@ -177,7 +177,7 @@
           <!-- MC Answer Cards -->
           <ItemsControl IsVisible="{Binding IsMultipleChoice}" MaxWidth="700"
                         HorizontalAlignment="Center"
-                        ItemsSource="{Binding Choices}">
+                        ItemsSource="{Binding ChoiceItems}">
             <ItemsControl.ItemTemplate>
               <DataTemplate>
                 <Border Background="{DynamicResource CardBackgroundBrush}"
@@ -188,18 +188,19 @@
                     <Border Background="{DynamicResource PrimarySubtleBrush}" CornerRadius="4"
                             Width="32" Height="32" VerticalAlignment="Center"
                             HorizontalAlignment="Center">
-                      <TextBlock FontSize="14" FontWeight="Bold"
+                      <TextBlock Text="{Binding Letter}" FontSize="14" FontWeight="Bold"
                                  Foreground="{DynamicResource PrimaryBrush}"
                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
-                    <TextBlock Grid.Column="1" Text="{Binding}" FontSize="14"
+                    <TextBlock Grid.Column="1" Text="{Binding Text}" FontSize="14"
                                Foreground="{DynamicResource TextPrimaryBrush}"
                                VerticalAlignment="Center" Margin="12,0,0,0"
                                TextWrapping="Wrap" />
                     <Border Grid.Column="2" Background="{DynamicResource Neutral10Brush}"
                             CornerRadius="4" Padding="6,2" VerticalAlignment="Center"
                             Margin="8,0,0,0">
-                      <TextBlock FontSize="10" Foreground="{DynamicResource TextTertiaryBrush}"
+                      <TextBlock Text="{Binding KeyHint}" FontSize="10"
+                                 Foreground="{DynamicResource TextTertiaryBrush}"
                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                   </Grid>
