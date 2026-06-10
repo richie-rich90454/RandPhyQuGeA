@@ -8,9 +8,21 @@
              x:DataType="vm:QuestionBankViewModel">
 
   <UserControl.DataTemplates>
-    <!-- Unit → Topics hierarchy -->
+    <!-- Unit → Topics hierarchy with colored header -->
     <TreeDataTemplate x:DataType="vm:UnitNode" ItemsSource="{Binding Topics}">
-      <TextBlock Text="{Binding Name}" />
+      <Border Background="{DynamicResource PrimarySubtleBrush}"
+              CornerRadius="4" Padding="8,6" Margin="0,2">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Right"
+                     Text="{Binding TemplateCount, StringFormat='{}{0} templates'}"
+                     FontSize="11"
+                     Foreground="{DynamicResource TextTertiaryBrush}"
+                     VerticalAlignment="Center" Margin="8,0,0,0" />
+          <TextBlock Text="{Binding Name}"
+                     FontWeight="SemiBold" FontSize="14"
+                     Foreground="{DynamicResource PrimaryBrush}" />
+        </DockPanel>
+      </Border>
     </TreeDataTemplate>
 
     <!-- Topic → Skills hierarchy -->
