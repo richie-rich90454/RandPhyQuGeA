@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
 using Core.Domain;
+using Core.Interfaces;
 using Core.Services;
 using ReactiveUI;
 
@@ -16,6 +17,7 @@ public class FocusedPracticeViewModel : ViewModelBase
 {
     private readonly SpecificationViewModel _specificationViewModel;
     private readonly QuestionGenerator _questionGenerator;
+    private readonly IPracticeResultRepository? _resultRepository;
 
     // Scope selection state
     private bool _isSelectingScope = true;
@@ -39,10 +41,11 @@ public class FocusedPracticeViewModel : ViewModelBase
     // Confirmation dialog
     private bool _isEndConfirmationVisible;
 
-    public FocusedPracticeViewModel(SpecificationViewModel specificationViewModel, QuestionGenerator questionGenerator)
+    public FocusedPracticeViewModel(SpecificationViewModel specificationViewModel, QuestionGenerator questionGenerator, IPracticeResultRepository? resultRepository = null)
     {
         _specificationViewModel = specificationViewModel;
         _questionGenerator = questionGenerator;
+        _resultRepository = resultRepository;
 
         var canStartPractice = this.WhenAnyValue(
             x => x.IsSelectingScope,
@@ -382,6 +385,24 @@ public class FocusedPracticeViewModel : ViewModelBase
         else
         {
             IsCorrect = string.Equals(ShortAnswer.Trim(), CurrentQuestion.Answer, StringComparison.OrdinalIgnoreCase);
+        }
+
+        // Save result to repository
+        if (_resultRepository is not null)
+        {
+            var userAnswer = CurrentQuestion.Choices is { Count: > 0 } ? SelectedAnswer : ShortAnswer.Trim();
+            var result = new PracticeResult
+            {
+                QuestionId = CurrentQuestion.Id,
+                TopicId = CurrentQuestion.TopicId,
+                SkillId = CurrentQuestion.SkillId,
+                IsCorrect = IsCorrect,
+                TimeTaken = TimeSpan.Zero,
+                UserAnswer = userAnswer,
+                Timestamp = DateTime.UtcNow,
+                Mode = PracticeMode.Focused
+            };
+            _ = _resultRepository.SaveAsync(result);
         }
     }
 }

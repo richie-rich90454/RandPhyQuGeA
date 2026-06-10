@@ -165,7 +165,8 @@
 
       <!-- Question Content -->
       <ScrollViewer>
-        <StackPanel Spacing="20" Margin="48,32">
+        <StackPanel x:Name="QuestionContentPanel" Spacing="20" Margin="48,32"
+                    Opacity="1">
 
           <!-- Question Timer -->
           <TextBlock x:Name="QuestionTimerText" Text="{Binding QuestionTimerText}" FontSize="36" FontWeight="Bold"

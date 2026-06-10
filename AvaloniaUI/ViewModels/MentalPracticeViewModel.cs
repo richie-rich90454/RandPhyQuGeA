@@ -7,6 +7,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Core.Domain;
+using Core.Interfaces;
 using Core.Services;
 using ReactiveUI;
 
@@ -18,6 +19,8 @@ public class MentalPracticeViewModel : ViewModelBase
 {
     private readonly SpecificationViewModel? _specificationViewModel;
     private readonly QuestionGenerator? _questionGenerator;
+    private readonly IPracticeResultRepository? _resultRepository;
+    private readonly NavigationViewModel? _navigationViewModel;
 
     // State machine
     private bool _isInSetup = true;
@@ -40,6 +43,9 @@ public class MentalPracticeViewModel : ViewModelBase
     private TimeSpan _questionTimer;
     private TimeSpan _sessionTimer;
     private IDisposable? _timerSubscription;
+
+    // Per-question tracking
+    private readonly List<QuestionResultItem> _questionResultsList = new();
 
     // Scoring
     private int _currentStreak;
@@ -67,12 +73,14 @@ public class MentalPracticeViewModel : ViewModelBase
     private List<string> _scopeOptions = new() { "All Topics" };
     private List<ScopeItem> _unitScopeItems = new();
 
-    public MentalPracticeViewModel() : this(null, null) { }
+    public MentalPracticeViewModel() : this(null, null, null, null) { }
 
-    public MentalPracticeViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator)
+    public MentalPracticeViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null)
     {
         _specificationViewModel = specificationViewModel;
         _questionGenerator = questionGenerator;
+        _resultRepository = resultRepository;
+        _navigationViewModel = navigationViewModel;
 
         var canStart = this.WhenAnyValue(
             x => x.IsInSetup,
@@ -574,6 +582,23 @@ public class MentalPracticeViewModel : ViewModelBase
         this.RaisePropertyChanged(nameof(SpeedRating));
         this.RaisePropertyChanged(nameof(SpeedRatingIcon));
         this.RaisePropertyChanged(nameof(ProgressText));
+
+        // Save result to repository
+        if (_resultRepository is not null && CurrentQuestion is not null)
+        {
+            var result = new PracticeResult
+            {
+                QuestionId = CurrentQuestion.Id,
+                TopicId = CurrentQuestion.TopicId,
+                SkillId = CurrentQuestion.SkillId,
+                IsCorrect = correct,
+                TimeTaken = TimeSpan.FromSeconds(timeSeconds),
+                UserAnswer = correct ? CurrentQuestion.Answer : (IsMultipleChoice ? _currentAnswer : _currentAnswer),
+                Timestamp = DateTime.UtcNow,
+                Mode = PracticeMode.Mental
+            };
+            _ = _resultRepository.SaveAsync(result);
+        }
     }
 
     private async Task AutoAdvanceAsync()
