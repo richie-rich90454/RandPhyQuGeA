@@ -261,15 +261,26 @@
             Background="#80000000"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
       <StackPanel Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="&#xE769;" FontFamily="Segoe MDL2 Assets" FontSize="48"
+                   Foreground="{DynamicResource TextOnPrimaryBrush}"
+                   HorizontalAlignment="Center" Opacity="0.6" />
         <TextBlock Text="Paused" FontSize="36" FontWeight="Bold"
                    Foreground="{DynamicResource TextOnPrimaryBrush}"
                    HorizontalAlignment="Center" />
+        <TextBlock Text="{Binding SessionTimerText}" FontSize="16"
+                   Foreground="{DynamicResource TextOnPrimaryBrush}"
+                   HorizontalAlignment="Center" Opacity="0.7" />
         <Button Command="{Binding ResumeCommand}"
                 Padding="24,12" CornerRadius="8"
                 Background="{DynamicResource PrimaryBrush}"
                 Foreground="{DynamicResource TextOnPrimaryBrush}"
                 HorizontalAlignment="Center">
-          <TextBlock Text="Resume" FontSize="16" FontWeight="SemiBold" />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="Resume" FontSize="16" FontWeight="SemiBold"
+                       VerticalAlignment="Center" />
+          </StackPanel>
         </Button>
       </StackPanel>
     </Border>
