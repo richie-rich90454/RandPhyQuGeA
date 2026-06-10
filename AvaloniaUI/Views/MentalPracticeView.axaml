@@ -155,14 +155,32 @@
 
           <!-- Streak Display -->
           <StackPanel IsVisible="{Binding HasStreak}" Orientation="Horizontal"
-                      Spacing="4" HorizontalAlignment="Center">
-            <TextBlock Text="&#xE8A4;" FontFamily="Segoe MDL2 Assets" FontSize="16"
-                       Foreground="{DynamicResource WarningBrush}"
-                       IsVisible="{Binding HasFireStreak}"
-                       VerticalAlignment="Center" />
-            <TextBlock Text="{Binding CurrentStreak}" FontSize="14" FontWeight="SemiBold"
-                       Foreground="{DynamicResource WarningBrush}"
-                       VerticalAlignment="Center" />
+                      Spacing="6" HorizontalAlignment="Center">
+            <Border Background="{DynamicResource WarningBrush}" CornerRadius="10"
+                    Padding="8,3" IsVisible="{Binding HasFireStreak}">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="&#xE8A4;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                           Foreground="{DynamicResource TextOnPrimaryBrush}"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="{Binding CurrentStreak}" FontSize="12" FontWeight="Bold"
+                           Foreground="{DynamicResource TextOnPrimaryBrush}"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="streak" FontSize="10"
+                           Foreground="{DynamicResource TextOnPrimaryBrush}"
+                           VerticalAlignment="Center" Opacity="0.8" />
+              </StackPanel>
+            </Border>
+            <Border Background="{DynamicResource Neutral10Brush}" CornerRadius="10"
+                    Padding="8,3" IsVisible="{Binding !HasFireStreak}">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="{Binding CurrentStreak}" FontSize="12" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="streak" FontSize="10"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           VerticalAlignment="Center" />
+              </StackPanel>
+            </Border>
           </StackPanel>
 
           <!-- Question Card -->
