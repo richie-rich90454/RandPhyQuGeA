@@ -156,6 +156,23 @@
           </StackPanel>
         </Border>
 
+        <!-- Start Practice Button with Scope Summary -->
+        <StackPanel Spacing="12" HorizontalAlignment="Center">
+          <TextBlock x:Name="ScopeSummaryText" Text="{Binding SelectedScopeDescription}"
+                     FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                     HorizontalAlignment="Center" IsVisible="{Binding SelectedScopeDescription, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                     TextWrapping="Wrap" TextAlignment="Center" MaxWidth="400" />
+          <Button Command="{Binding StartPracticeCommand}"
+                  HorizontalAlignment="Center"
+                  Padding="32,14" CornerRadius="8"
+                  Background="{DynamicResource PrimaryBrush}"
+                  Foreground="{DynamicResource TextOnPrimaryBrush}"
+                  MinWidth="200">
+            <TextBlock Text="Start Practice" FontSize="16" FontWeight="SemiBold"
+                       HorizontalAlignment="Center" />
+          </Button>
+        </StackPanel>
+
       </StackPanel>
 
       <!-- Practice Session (hidden during scope selection) -->
