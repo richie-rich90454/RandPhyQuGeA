@@ -136,10 +136,13 @@ public partial class MentalPracticeView : UserControl
 
     private void UpdateCountButtonStyles(int selected)
     {
-        var selectedBrush = this.FindResource("PrimarySubtleBrush");
-        var normalBrush = this.FindResource("Neutral10Brush");
-        var selectedForeground = this.FindResource("PrimaryBrush");
-        var normalForeground = this.FindResource("TextPrimaryBrush");
+        var app = Application.Current;
+        if (app is null) return;
+
+        var selectedBrush = app.FindResource("PrimarySubtleBrush") as Avalonia.Media.IBrush;
+        var normalBrush = app.FindResource("Neutral10Brush") as Avalonia.Media.IBrush;
+        var selectedForeground = app.FindResource("PrimaryBrush") as Avalonia.Media.IBrush;
+        var normalForeground = app.FindResource("TextPrimaryBrush") as Avalonia.Media.IBrush;
 
         void Style(Button btn, bool isSelected)
         {

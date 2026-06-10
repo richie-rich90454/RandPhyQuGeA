@@ -11,6 +11,29 @@ public partial class FocusedPracticeView : UserControl
     public FocusedPracticeView()
     {
         InitializeComponent();
+
+        var combo = this.FindControl<ComboBox>("QuestionCountCombo");
+        if (combo is not null)
+        {
+            combo.SelectionChanged += OnQuestionCountChanged;
+        }
+    }
+
+    private void OnQuestionCountChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is FocusedPracticeViewModel vm && sender is ComboBox combo)
+        {
+            var index = combo.SelectedIndex;
+            vm.QuestionCount = index switch
+            {
+                0 => 5,
+                1 => 10,
+                2 => 15,
+                3 => 20,
+                4 => 0, // All
+                _ => 10
+            };
+        }
     }
 
     private void OnQuestionTypeMCClick(object? sender, RoutedEventArgs e)
