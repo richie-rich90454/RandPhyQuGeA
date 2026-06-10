@@ -12,11 +12,28 @@ public class QuestionBankViewModel : ViewModelBase
     public QuestionBankViewModel(SpecificationViewModel specViewModel)
     {
         _specViewModel = specViewModel;
+
+        FilteredUnitNodes = new ObservableCollection<UnitNode>();
+
+        this.WhenAnyValue(x => x.SearchText)
+            .Subscribe(_ => ApplyFilters());
+
+        this.WhenAnyValue(
+            x => x.FilterEasy,
+            x => x.FilterMedium,
+            x => x.FilterHard,
+            x => x.FilterMC,
+            x => x.FilterSA)
+            .Subscribe(_ => ApplyFilters());
+
+        _specViewModel.UnitNodes.CollectionChanged += (_, _) => ApplyFilters();
     }
 
     public SpecificationViewModel SpecViewModel => _specViewModel;
 
     public ObservableCollection<UnitNode> UnitNodes => _specViewModel.UnitNodes;
+
+    public ObservableCollection<UnitNode> FilteredUnitNodes { get; }
 
     public bool HasData => _specViewModel.IsLoaded && _specViewModel.UnitNodes.Count > 0;
 
@@ -128,6 +145,138 @@ public class QuestionBankViewModel : ViewModelBase
     {
         get => _filterSA;
         set => this.RaiseAndSetIfChanged(ref _filterSA, value);
+    }
+
+    private void ApplyFilters()
+    {
+        FilteredUnitNodes.Clear();
+
+        var search = SearchText?.Trim() ?? string.Empty;
+        var hasSearch = !string.IsNullOrEmpty(search);
+
+        foreach (var unit in UnitNodes)
+        {
+            var filteredUnit = FilterUnit(unit, search, hasSearch);
+            if (filteredUnit is not null)
+                FilteredUnitNodes.Add(filteredUnit);
+        }
+    }
+
+    private UnitNode? FilterUnit(UnitNode unit, string search, bool hasSearch)
+    {
+        // Check if unit matches search
+        var unitMatchesSearch = !hasSearch ||
+            unit.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+            unit.Description.Contains(search, StringComparison.OrdinalIgnoreCase);
+
+        // Filter topics
+        var filteredTopics = unit.Topics
+            .Select(topic => FilterTopic(topic, search, hasSearch))
+            .Where(t => t is not null)
+            .Cast<TopicNode>()
+            .ToList();
+
+        // Include unit if it matches search directly or has matching children
+        if (unitMatchesSearch || filteredTopics.Count > 0)
+        {
+            // If unit matches search directly, include all its (filtered) children
+            if (unitMatchesSearch && !hasSearch)
+            {
+                // No search active, include all with type/difficulty filters
+                var allFilteredTopics = unit.Topics
+                    .Select(t => FilterTopic(t, string.Empty, false))
+                    .Where(t => t is not null)
+                    .Cast<TopicNode>()
+                    .ToList();
+
+                var result = new UnitNode(new Core.Domain.Unit(unit.Id, unit.Name, unit.Description));
+                foreach (var topic in allFilteredTopics)
+                    result.Topics.Add(topic);
+                result.TemplateCount = allFilteredTopics.Sum(t => t.TemplateCount);
+                result.McCount = allFilteredTopics.Sum(t => t.McCount);
+                result.SaCount = allFilteredTopics.Sum(t => t.SaCount);
+                result.MinDifficulty = allFilteredTopics.Count > 0 ? allFilteredTopics.Min(t => t.MinDifficulty) : 0;
+                result.MaxDifficulty = allFilteredTopics.Count > 0 ? allFilteredTopics.Max(t => t.MaxDifficulty) : 0;
+                result.AvgDifficulty = allFilteredTopics.Count > 0 ? allFilteredTopics.Average(t => t.AvgDifficulty) : 0;
+                return result;
+            }
+
+            if (filteredTopics.Count > 0 || unitMatchesSearch)
+            {
+                var result = new UnitNode(new Core.Domain.Unit(unit.Id, unit.Name, unit.Description));
+                foreach (var topic in unitMatchesSearch && hasSearch
+                    ? unit.Topics.Select(t => FilterTopic(t, string.Empty, false)).Where(t => t is not null).Cast<TopicNode>()
+                    : filteredTopics)
+                    result.Topics.Add(topic);
+                result.TemplateCount = result.Topics.Sum(t => t.TemplateCount);
+                result.McCount = result.Topics.Sum(t => t.McCount);
+                result.SaCount = result.Topics.Sum(t => t.SaCount);
+                result.MinDifficulty = result.Topics.Count > 0 ? result.Topics.Min(t => t.MinDifficulty) : 0;
+                result.MaxDifficulty = result.Topics.Count > 0 ? result.Topics.Max(t => t.MaxDifficulty) : 0;
+                result.AvgDifficulty = result.Topics.Count > 0 ? result.Topics.Average(t => t.AvgDifficulty) : 0;
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    private TopicNode? FilterTopic(TopicNode topic, string search, bool hasSearch)
+    {
+        var topicMatchesSearch = !hasSearch ||
+            topic.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+            topic.Description.Contains(search, StringComparison.OrdinalIgnoreCase);
+
+        var filteredSkills = topic.Skills
+            .Where(s => MatchesSkillFilter(s) && (!hasSearch || topicMatchesSearch ||
+                s.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                s.Description.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                s.Templates.Any(t => t.TextTemplate.Contains(search, StringComparison.OrdinalIgnoreCase))))
+            .ToList();
+
+        if (topicMatchesSearch || filteredSkills.Count > 0)
+        {
+            var result = new TopicNode(new Core.Domain.Topic(topic.Id, topic.Name, topic.UnitId, topic.Description));
+            var skillsToAdd = topicMatchesSearch && hasSearch
+                ? topic.Skills.Where(MatchesSkillFilter).ToList()
+                : filteredSkills;
+            foreach (var skill in skillsToAdd)
+                result.Skills.Add(skill);
+            result.TemplateCount = result.Skills.Sum(s => s.TemplateCount);
+            result.McCount = result.Skills.Sum(s => s.McCount);
+            result.SaCount = result.Skills.Sum(s => s.SaCount);
+            result.MinDifficulty = result.Skills.Count > 0 ? result.Skills.Min(s => s.MinDifficulty) : 0;
+            result.MaxDifficulty = result.Skills.Count > 0 ? result.Skills.Max(s => s.MaxDifficulty) : 0;
+            result.AvgDifficulty = result.Skills.Count > 0 ? result.Skills.Average(s => s.AvgDifficulty) : 0;
+            return result;
+        }
+
+        return null;
+    }
+
+    private bool MatchesSkillFilter(SkillNode skill)
+    {
+        // Difficulty filter
+        var difficultyLevel = skill.DifficultyLevel;
+        var passesDifficulty = difficultyLevel switch
+        {
+            "Easy" => FilterEasy,
+            "Medium" => FilterMedium,
+            "Hard" => FilterHard,
+            _ => true
+        };
+
+        if (!passesDifficulty) return false;
+
+        // Question type filter
+        var hasMc = skill.McCount > 0;
+        var hasSa = skill.SaCount > 0;
+
+        if (FilterMC && FilterSA) return true;
+        if (FilterMC && hasMc) return true;
+        if (FilterSA && hasSa) return true;
+
+        return !FilterMC && !FilterSA;
     }
 
     private void UpdateDetailProperties()

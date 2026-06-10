@@ -89,9 +89,20 @@
             BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,1,0">
       <DockPanel>
         <TextBlock DockPanel.Dock="Top" Text="Question Bank" FontSize="16" FontWeight="SemiBold"
-                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="16,16,16,8" />
+                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="16,16,16,4" />
+        <!-- Search Box -->
+        <Border DockPanel.Dock="Top" Margin="12,0,12,8" Padding="8,6"
+                Background="{DynamicResource InputBackgroundBrush}"
+                BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
+                CornerRadius="6">
+          <TextBox Text="{Binding SearchText}"
+                   Watermark="Search units, topics, skills..."
+                   Background="Transparent" BorderThickness="0"
+                   Padding="4,2" FontSize="13"
+                   Foreground="{DynamicResource TextPrimaryBrush}" />
+        </Border>
         <ScrollViewer>
-          <TreeView ItemsSource="{Binding UnitNodes}"
+          <TreeView ItemsSource="{Binding FilteredUnitNodes}"
                     SelectedItem="{Binding SelectedItem}"
                     x:Name="SpecTree" />
         </ScrollViewer>
