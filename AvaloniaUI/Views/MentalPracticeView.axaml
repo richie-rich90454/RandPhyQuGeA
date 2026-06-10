@@ -148,7 +148,7 @@
         <StackPanel Spacing="20" Margin="48,32">
 
           <!-- Question Timer -->
-          <TextBlock Text="{Binding QuestionTimerText}" FontSize="36" FontWeight="Bold"
+          <TextBlock x:Name="QuestionTimerText" Text="{Binding QuestionTimerText}" FontSize="36" FontWeight="Bold"
                      Foreground="{DynamicResource TimerNormalBrush}"
                      HorizontalAlignment="Center" />
 

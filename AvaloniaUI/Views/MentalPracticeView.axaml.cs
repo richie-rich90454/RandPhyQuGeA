@@ -1,15 +1,20 @@
+using System;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.VisualTree;
 using AvaloniaUI.ViewModels;
+using ReactiveUI;
 
 namespace AvaloniaUI.Views;
 
 public partial class MentalPracticeView : UserControl
 {
+    private IDisposable? _timerBrushSubscription;
+
     public MentalPracticeView()
     {
         InitializeComponent();
@@ -24,6 +29,35 @@ public partial class MentalPracticeView : UserControl
         if (btn20 is not null) btn20.Click += SelectQuestionCount20;
         if (btn30 is not null) btn30.Click += SelectQuestionCount30;
         if (btnEndless is not null) btnEndless.Click += SelectEndlessMode;
+
+        DataContextChanged += OnDataContextChanged;
+    }
+
+    private void OnDataContextChanged(object? sender, EventArgs e)
+    {
+        _timerBrushSubscription?.Dispose();
+        _timerBrushSubscription = null;
+
+        if (DataContext is MentalPracticeViewModel vm)
+        {
+            _timerBrushSubscription = vm.WhenAnyValue(x => x.QuestionTimerBrushKey)
+                .Subscribe(UpdateTimerBrush);
+        }
+    }
+
+    private void UpdateTimerBrush(string brushKey)
+    {
+        var timerText = this.FindControl<TextBlock>("QuestionTimerText");
+        if (timerText is null) return;
+
+        var app = Application.Current;
+        if (app is null) return;
+
+        var brush = app.FindResource(brushKey) as IBrush;
+        if (brush is not null)
+        {
+            timerText.Foreground = brush;
+        }
     }
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
