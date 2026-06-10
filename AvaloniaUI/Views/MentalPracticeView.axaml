@@ -9,7 +9,7 @@
 
   <Panel Background="{DynamicResource ContentBackgroundBrush}">
 
-    <!-- Setup Screen -->
+    <!-- ═══ Setup Screen ═══ -->
     <Border IsVisible="{Binding IsInSetup}"
             HorizontalAlignment="Center" VerticalAlignment="Center">
       <StackPanel Spacing="24" MaxWidth="480" HorizontalAlignment="Center">
@@ -43,6 +43,32 @@
           </StackPanel>
         </Border>
 
+        <!-- Question Count Selector -->
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8"
+                Padding="16" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <StackPanel Spacing="8">
+            <TextBlock Text="Questions" FontSize="13" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}" />
+            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+              <Button x:Name="BtnCount10" Content="10" Padding="16,8" CornerRadius="6"
+                      Background="{DynamicResource PrimarySubtleBrush}"
+                      Foreground="{DynamicResource PrimaryBrush}" FontWeight="SemiBold" />
+              <Button x:Name="BtnCount20" Content="20" Padding="16,8" CornerRadius="6"
+                      Background="{DynamicResource Neutral10Brush}"
+                      Foreground="{DynamicResource TextPrimaryBrush}" />
+              <Button x:Name="BtnCount30" Content="30" Padding="16,8" CornerRadius="6"
+                      Background="{DynamicResource Neutral10Brush}"
+                      Foreground="{DynamicResource TextPrimaryBrush}" />
+              <Button x:Name="BtnCountEndless" Padding="16,8" CornerRadius="6"
+                      Background="{DynamicResource Neutral10Brush}"
+                      Foreground="{DynamicResource TextPrimaryBrush}"
+                      ToolTip.Tip="Endless mode">
+                <TextBlock Text="&#x221E;" FontSize="16" />
+              </Button>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
         <!-- Start Button -->
         <Button Command="{Binding StartCommand}"
                 HorizontalAlignment="Center"
@@ -56,7 +82,7 @@
       </StackPanel>
     </Border>
 
-    <!-- Countdown Overlay -->
+    <!-- ═══ Countdown Overlay ═══ -->
     <Border IsVisible="{Binding IsCountdown}"
             Background="{DynamicResource ContentBackgroundBrush}"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -66,7 +92,7 @@
                  HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Border>
 
-    <!-- Practice Area -->
+    <!-- ═══ Practice Area ═══ -->
     <DockPanel IsVisible="{Binding IsInPractice}">
 
       <!-- Top Bar -->
@@ -81,12 +107,18 @@
                      VerticalAlignment="Center" />
 
           <!-- Session Timer -->
-          <TextBlock Grid.Column="1" Text="{Binding SessionTimerText}"
-                     FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
-                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4"
+                      HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="&#xE917;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                       Foreground="{DynamicResource TextTertiaryBrush}"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="{Binding SessionTimerText}"
+                       FontSize="13" Foreground="{DynamicResource TextSecondaryBrush}"
+                       VerticalAlignment="Center" />
+          </StackPanel>
 
           <!-- Controls -->
-          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
             <Button Command="{Binding PauseCommand}" Padding="8,4" CornerRadius="6"
                     Background="Transparent" ToolTip.Tip="Pause">
               <TextBlock Text="&#xE769;" FontFamily="Segoe MDL2 Assets" FontSize="14"
@@ -94,8 +126,8 @@
             </Button>
             <Button Command="{Binding GiveUpCommand}" Padding="8,4" CornerRadius="6"
                     Background="Transparent" ToolTip.Tip="Give Up">
-              <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                         Foreground="{DynamicResource TextSecondaryBrush}" />
+              <TextBlock Text="Skip" FontSize="11"
+                         Foreground="{DynamicResource WarningBrush}" />
             </Button>
             <Button Command="{Binding EndSessionCommand}" Padding="8,4" CornerRadius="6"
                     Background="Transparent" ToolTip.Tip="End Session">
@@ -108,7 +140,7 @@
 
       <!-- Question Content -->
       <ScrollViewer>
-        <StackPanel Spacing="24" Margin="48,32">
+        <StackPanel Spacing="20" Margin="48,32">
 
           <!-- Question Timer -->
           <TextBlock Text="{Binding QuestionTimerText}" FontSize="36" FontWeight="Bold"
@@ -145,12 +177,12 @@
                 <Border Background="{DynamicResource CardBackgroundBrush}"
                         CornerRadius="8" Padding="16,12" Margin="0,4"
                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
-                        Cursor="Hand">
-                  <Grid ColumnDefinitions="32,*">
+                        Cursor="Hand" PointerPressed="OnChoiceClick">
+                  <Grid ColumnDefinitions="36,*">
                     <Border Background="{DynamicResource PrimarySubtleBrush}" CornerRadius="4"
-                            Width="28" Height="28" VerticalAlignment="Center"
+                            Width="32" Height="32" VerticalAlignment="Center"
                             HorizontalAlignment="Center">
-                      <TextBlock FontSize="13" FontWeight="SemiBold"
+                      <TextBlock FontSize="14" FontWeight="Bold"
                                  Foreground="{DynamicResource PrimaryBrush}"
                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
@@ -167,8 +199,10 @@
           <!-- SA Answer Input -->
           <StackPanel IsVisible="{Binding !IsMultipleChoice}" Spacing="8"
                       MaxWidth="700" HorizontalAlignment="Center">
-            <TextBox Text="{Binding CurrentAnswer}" Watermark="Type your answer..."
-                     FontSize="16" Padding="12,10" CornerRadius="8" />
+            <TextBox x:Name="SaAnswerBox" Text="{Binding CurrentAnswer}"
+                     Watermark="Type your answer..."
+                     FontSize="16" Padding="12,10" CornerRadius="8"
+                     KeyDown="OnSaAnswerKeyDown" />
             <TextBlock Text="Press Enter to submit" FontSize="11"
                        Foreground="{DynamicResource TextTertiaryBrush}"
                        HorizontalAlignment="Center" />
@@ -178,7 +212,7 @@
       </ScrollViewer>
     </DockPanel>
 
-    <!-- Paused Overlay -->
+    <!-- ═══ Paused Overlay ═══ -->
     <Border IsVisible="{Binding IsPaused}"
             Background="#80000000"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -196,7 +230,7 @@
       </StackPanel>
     </Border>
 
-    <!-- Feedback Overlay -->
+    <!-- ═══ Feedback Overlay ═══ -->
     <Border IsVisible="{Binding IsInFeedback}"
             Background="{DynamicResource ContentBackgroundBrush}"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -234,7 +268,7 @@
       </StackPanel>
     </Border>
 
-    <!-- Session Over -->
+    <!-- ═══ Session Over ═══ -->
     <Border IsVisible="{Binding IsSessionOver}"
             HorizontalAlignment="Center" VerticalAlignment="Center">
       <StackPanel Spacing="24" MaxWidth="480" HorizontalAlignment="Center">

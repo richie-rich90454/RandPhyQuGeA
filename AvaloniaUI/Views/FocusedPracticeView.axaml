@@ -90,6 +90,29 @@
           </StackPanel>
         </Border>
 
+        <!-- Difficulty Range -->
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                Padding="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Difficulty Range" FontSize="13" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}" />
+            <Grid ColumnDefinitions="Auto,16,*,16,Auto" VerticalAlignment="Center">
+              <StackPanel Grid.Column="0" Spacing="4">
+                <TextBlock Text="Min" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
+                <NumericUpDown Value="{Binding MinDifficulty}" Minimum="1" Maximum="10"
+                               Width="80" FormatString="0" />
+              </StackPanel>
+              <Border Grid.Column="2" Height="2" Background="{DynamicResource ProgressBarFillBrush}"
+                      VerticalAlignment="Center" CornerRadius="1" />
+              <StackPanel Grid.Column="4" Spacing="4">
+                <TextBlock Text="Max" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
+                <NumericUpDown Value="{Binding MaxDifficulty}" Minimum="1" Maximum="10"
+                               Width="80" FormatString="0" />
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+        </Border>
+
       </StackPanel>
 
       <!-- Practice Session (hidden during scope selection) -->
