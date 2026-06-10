@@ -139,6 +139,23 @@
           </StackPanel>
         </Border>
 
+        <!-- Question Count Selector -->
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                Padding="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <StackPanel Spacing="12">
+            <TextBlock Text="Number of Questions" FontSize="13" FontWeight="SemiBold"
+                       Foreground="{DynamicResource TextPrimaryBrush}" />
+            <ComboBox x:Name="QuestionCountCombo" SelectedIndex="1"
+                      HorizontalAlignment="Stretch" Padding="8,6">
+              <ComboBoxItem Content="5" />
+              <ComboBoxItem Content="10" />
+              <ComboBoxItem Content="15" />
+              <ComboBoxItem Content="20" />
+              <ComboBoxItem Content="All" />
+            </ComboBox>
+          </StackPanel>
+        </Border>
+
       </StackPanel>
 
       <!-- Practice Session (hidden during scope selection) -->
