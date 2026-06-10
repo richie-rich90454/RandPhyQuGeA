@@ -260,6 +260,9 @@
             <TextBlock Text="Correct!" FontSize="24" FontWeight="Bold"
                        Foreground="{DynamicResource CorrectTextBrush}"
                        HorizontalAlignment="Center" />
+            <TextBlock Text="{Binding QuestionTimerText}" FontSize="14"
+                       Foreground="{DynamicResource CorrectTextBrush}"
+                       HorizontalAlignment="Center" Opacity="0.7" />
           </StackPanel>
         </Border>
 
@@ -276,8 +279,15 @@
                        Foreground="{DynamicResource IncorrectTextBrush}"
                        HorizontalAlignment="Center" TextWrapping="Wrap"
                        TextAlignment="Center" />
+            <TextBlock Text="{Binding QuestionTimerText}" FontSize="14"
+                       Foreground="{DynamicResource IncorrectTextBrush}"
+                       HorizontalAlignment="Center" Opacity="0.7" />
           </StackPanel>
         </Border>
+
+        <TextBlock Text="Next question..." FontSize="12"
+                   Foreground="{DynamicResource TextTertiaryBrush}"
+                   HorizontalAlignment="Center" />
       </StackPanel>
     </Border>
 
