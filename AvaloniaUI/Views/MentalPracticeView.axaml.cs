@@ -14,6 +14,7 @@ namespace AvaloniaUI.Views;
 public partial class MentalPracticeView : UserControl
 {
     private IDisposable? _timerBrushSubscription;
+    private IDisposable? _saFocusSubscription;
 
     public MentalPracticeView()
     {
@@ -37,11 +38,24 @@ public partial class MentalPracticeView : UserControl
     {
         _timerBrushSubscription?.Dispose();
         _timerBrushSubscription = null;
+        _saFocusSubscription?.Dispose();
+        _saFocusSubscription = null;
 
         if (DataContext is MentalPracticeViewModel vm)
         {
             _timerBrushSubscription = vm.WhenAnyValue(x => x.QuestionTimerBrushKey)
                 .Subscribe(UpdateTimerBrush);
+
+            // Auto-focus SA input when a short-answer question appears
+            _saFocusSubscription = vm.WhenAnyValue(x => x.IsInPractice, x => x.IsMultipleChoice)
+                .Subscribe(tuple =>
+                {
+                    if (tuple.Item1 && !tuple.Item2)
+                    {
+                        var saBox = this.FindControl<TextBox>("SaAnswerBox");
+                        saBox?.Focus();
+                    }
+                });
         }
     }
 
