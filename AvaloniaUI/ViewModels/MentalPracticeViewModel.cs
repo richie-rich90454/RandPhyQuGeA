@@ -92,6 +92,7 @@ public class MentalPracticeViewModel : ViewModelBase
         ResumeCommand = ReactiveCommand.Create(OnResume, canResume);
         GiveUpCommand = ReactiveCommand.Create(OnGiveUp, canGiveUp);
         EndSessionCommand = ReactiveCommand.Create(OnEndSession, canEnd);
+        SelectQuestionCountCommand = ReactiveCommand.Create<int>(OnSelectQuestionCount);
 
         LoadScopeOptions();
     }
@@ -358,6 +359,7 @@ public class MentalPracticeViewModel : ViewModelBase
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> ResumeCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> GiveUpCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> EndSessionCommand { get; }
+    public ReactiveCommand<int, ReactiveUnit> SelectQuestionCountCommand { get; }
 
     // ─── Private Methods ────────────────────────────────────────────────
 
@@ -594,6 +596,19 @@ public class MentalPracticeViewModel : ViewModelBase
     private void OnEndSession()
     {
         EndSession();
+    }
+
+    private void OnSelectQuestionCount(int count)
+    {
+        if (count == -1)
+        {
+            IsEndlessMode = true;
+        }
+        else
+        {
+            IsEndlessMode = false;
+            SelectedQuestionCount = count;
+        }
     }
 
     private void EndSession()

@@ -56,6 +56,31 @@
                    VerticalAlignment="Center" />
       </DockPanel>
     </TreeDataTemplate>
+
+    <!-- Template detail card in the detail panel -->
+    <DataTemplate x:DataType="vm:TemplateNode">
+      <Border Background="{DynamicResource CardBackgroundBrush}"
+              CornerRadius="8" Padding="16" Margin="0,4"
+              BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+        <StackPanel Spacing="8">
+          <TextBlock Text="{Binding TextTemplate}" FontSize="13"
+                     TextWrapping="Wrap"
+                     Foreground="{DynamicResource TextPrimaryBrush}" />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <Border Background="{DynamicResource BadgeMCBrush}" CornerRadius="4" Padding="6,2">
+              <TextBlock Text="{Binding QuestionType}" FontSize="10"
+                         Foreground="White" FontWeight="SemiBold" />
+            </Border>
+            <Border Background="{DynamicResource BadgeMediumBrush}" CornerRadius="4" Padding="6,2">
+              <TextBlock Text="{Binding Difficulty, StringFormat='Difficulty: {0}'}" FontSize="10"
+                         Foreground="White" FontWeight="SemiBold" />
+            </Border>
+          </StackPanel>
+          <TextBlock Text="{Binding AnswerExpression, StringFormat='Answer: {0}'}" FontSize="11"
+                     Foreground="{DynamicResource TextTertiaryBrush}" />
+        </StackPanel>
+      </Border>
+    </DataTemplate>
   </UserControl.DataTemplates>
 
   <Grid ColumnDefinitions="320,*">
@@ -75,11 +100,64 @@
 
     <!-- Right Panel: Detail Panel -->
     <Border Grid.Column="1" Background="{DynamicResource ContentBackgroundBrush}">
-      <DockPanel>
-        <TextBlock DockPanel.Dock="Top" Text="Select an item to view details" FontSize="14"
+      <Grid>
+        <!-- No selection state -->
+        <TextBlock Text="Select an item to view details" FontSize="14"
                    Foreground="{DynamicResource TextTertiaryBrush}"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16" />
-      </DockPanel>
+                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16"
+                   IsVisible="{Binding !HasSelection}" />
+
+        <!-- Detail content -->
+        <ScrollViewer IsVisible="{Binding HasSelection}" Padding="24">
+          <StackPanel Spacing="16">
+            <!-- Header card -->
+            <Border Background="{DynamicResource CardBackgroundBrush}"
+                    CornerRadius="8" Padding="20"
+                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+              <StackPanel Spacing="8">
+                <TextBlock Text="{Binding DetailTitle}" FontSize="20" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
+                <TextBlock Text="{Binding DetailDescription}" FontSize="13"
+                           TextWrapping="Wrap"
+                           Foreground="{DynamicResource TextSecondaryBrush}" />
+              </StackPanel>
+            </Border>
+
+            <!-- Stats row -->
+            <Border Background="{DynamicResource CardBackgroundBrush}"
+                    CornerRadius="8" Padding="16"
+                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+              <StackPanel Orientation="Horizontal" Spacing="24">
+                <StackPanel Spacing="2">
+                  <TextBlock Text="Templates" FontSize="11"
+                             Foreground="{DynamicResource TextTertiaryBrush}" />
+                  <TextBlock Text="{Binding DetailTemplateCount}" FontSize="14" FontWeight="SemiBold"
+                             Foreground="{DynamicResource TextPrimaryBrush}" />
+                </StackPanel>
+                <StackPanel Spacing="2">
+                  <TextBlock Text="Difficulty" FontSize="11"
+                             Foreground="{DynamicResource TextTertiaryBrush}" />
+                  <TextBlock Text="{Binding DetailDifficultyRange}" FontSize="14" FontWeight="SemiBold"
+                             Foreground="{DynamicResource TextPrimaryBrush}" />
+                </StackPanel>
+                <StackPanel Spacing="2">
+                  <TextBlock Text="Types" FontSize="11"
+                             Foreground="{DynamicResource TextTertiaryBrush}" />
+                  <TextBlock Text="{Binding DetailQuestionTypes}" FontSize="14" FontWeight="SemiBold"
+                             Foreground="{DynamicResource TextPrimaryBrush}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+
+            <!-- Templates list (visible when skill is selected) -->
+            <StackPanel IsVisible="{Binding IsSkillSelected}" Spacing="4">
+              <TextBlock Text="Templates" FontSize="14" FontWeight="SemiBold"
+                         Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,8,0,4" />
+              <ItemsControl ItemsSource="{Binding DetailTemplates}" />
+            </StackPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
     </Border>
   </Grid>
 
