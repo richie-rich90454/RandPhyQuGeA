@@ -25,9 +25,13 @@
       </Border>
     </TreeDataTemplate>
 
-    <!-- Topic → Skills hierarchy -->
+    <!-- Topic → Skills hierarchy with description tooltip -->
     <TreeDataTemplate x:DataType="vm:TopicNode" ItemsSource="{Binding Skills}">
-      <TextBlock Text="{Binding Name}" />
+      <Border Margin="8,2,0,2" Padding="6,4" CornerRadius="3"
+              ToolTip.Tip="{Binding Description}">
+        <TextBlock Text="{Binding Name}" FontWeight="Medium" FontSize="13"
+                   Foreground="{DynamicResource TextPrimaryBrush}" />
+      </Border>
     </TreeDataTemplate>
 
     <!-- Skill (leaf) -->
