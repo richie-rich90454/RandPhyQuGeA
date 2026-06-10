@@ -89,6 +89,27 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
     public ObservableCollection<QuestionTemplate> Templates { get; }
     public ObservableCollection<UnitNode> UnitNodes { get; }
 
+    // Summary statistics
+    private int _totalUnits;
+    private int _totalTopics;
+    private int _totalSkills;
+    private int _totalTemplates;
+    private int _overallMinDifficulty;
+    private int _overallMaxDifficulty;
+    private double _overallAvgDifficulty;
+    private int _totalMcCount;
+    private int _totalSaCount;
+
+    public int TotalUnits { get => _totalUnits; set => this.RaiseAndSetIfChanged(ref _totalUnits, value); }
+    public int TotalTopics { get => _totalTopics; set => this.RaiseAndSetIfChanged(ref _totalTopics, value); }
+    public int TotalSkills { get => _totalSkills; set => this.RaiseAndSetIfChanged(ref _totalSkills, value); }
+    public int TotalTemplates { get => _totalTemplates; set => this.RaiseAndSetIfChanged(ref _totalTemplates, value); }
+    public int OverallMinDifficulty { get => _overallMinDifficulty; set => this.RaiseAndSetIfChanged(ref _overallMinDifficulty, value); }
+    public int OverallMaxDifficulty { get => _overallMaxDifficulty; set => this.RaiseAndSetIfChanged(ref _overallMaxDifficulty, value); }
+    public double OverallAvgDifficulty { get => _overallAvgDifficulty; set => this.RaiseAndSetIfChanged(ref _overallAvgDifficulty, value); }
+    public int TotalMcCount { get => _totalMcCount; set => this.RaiseAndSetIfChanged(ref _totalMcCount, value); }
+    public int TotalSaCount { get => _totalSaCount; set => this.RaiseAndSetIfChanged(ref _totalSaCount, value); }
+
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> LoadCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> RetryCommand { get; }
 
@@ -296,6 +317,22 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
 
         foreach (var unitNode in unitNodes)
             UnitNodes.Add(unitNode);
+
+        // Compute summary statistics
+        TotalUnits = unitNodes.Count;
+        TotalTopics = unitNodes.Sum(u => u.Topics.Count);
+        TotalSkills = unitNodes.Sum(u => u.Topics.Sum(t => t.Skills.Count));
+        TotalTemplates = unitNodes.Sum(u => u.TemplateCount);
+        TotalMcCount = unitNodes.Sum(u => u.McCount);
+        TotalSaCount = unitNodes.Sum(u => u.SaCount);
+
+        var allSpecTemplates = unitNodes.SelectMany(u => u.Topics.SelectMany(t => t.Skills.SelectMany(s => s.Templates))).ToList();
+        if (allSpecTemplates.Count > 0)
+        {
+            OverallMinDifficulty = allSpecTemplates.Min(t => t.Difficulty);
+            OverallMaxDifficulty = allSpecTemplates.Max(t => t.Difficulty);
+            OverallAvgDifficulty = allSpecTemplates.Average(t => t.Difficulty);
+        }
     }
 
     public void Dispose()
