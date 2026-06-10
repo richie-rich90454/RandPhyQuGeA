@@ -5,7 +5,8 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using AvaloniaUI.ViewModels;
-using Core.Domain;
+
+using ReactiveUnit = System.Reactive.Unit;
 
 namespace AvaloniaUI.Views;
 
@@ -128,7 +129,7 @@ public partial class FocusedPracticeView : UserControl
     {
         if (DataContext is FocusedPracticeViewModel vm && !vm.IsAnswerSubmitted)
         {
-            vm.SubmitAnswerCommand.Execute();
+            vm.SubmitAnswerCommand.Execute(System.Reactive.Unit.Default);
         }
     }
 
@@ -138,7 +139,7 @@ public partial class FocusedPracticeView : UserControl
     {
         if (e.Key == Key.Enter && DataContext is FocusedPracticeViewModel vm && !vm.IsAnswerSubmitted)
         {
-            vm.SubmitAnswerCommand.Execute();
+            vm.SubmitAnswerCommand.Execute(System.Reactive.Unit.Default);
             e.Handled = true;
         }
     }
@@ -147,7 +148,7 @@ public partial class FocusedPracticeView : UserControl
     {
         if (DataContext is FocusedPracticeViewModel vm && !vm.IsAnswerSubmitted)
         {
-            vm.SubmitAnswerCommand.Execute();
+            vm.SubmitAnswerCommand.Execute(System.Reactive.Unit.Default);
         }
     }
 }

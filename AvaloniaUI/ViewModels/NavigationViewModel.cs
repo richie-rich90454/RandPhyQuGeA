@@ -114,7 +114,7 @@ public class NavigationViewModel : ViewModelBase
             "Home" => new HomeViewModel(),
             "MentalPractice" => new MentalPracticeViewModel(),
             "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!),
-            "QuestionBank" => new QuestionBankViewModel(_specificationViewModel!),
+            "QuestionBank" => new QuestionBankViewModel(_specificationViewModel!, this),
             "Progress" => new ProgressViewModel(),
             "Settings" => new SettingsViewModel(),
             _ => throw new ArgumentException($"Unknown view key: {viewKey}", nameof(viewKey))

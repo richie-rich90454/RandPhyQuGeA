@@ -200,6 +200,21 @@
                          Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,8,0,4" />
               <ItemsControl ItemsSource="{Binding DetailTemplates}" />
             </StackPanel>
+
+            <!-- Start Practice Button -->
+            <Button Command="{Binding StartPracticeCommand}"
+                    IsVisible="{Binding HasSelection}"
+                    HorizontalAlignment="Stretch"
+                    Padding="16,12" CornerRadius="8"
+                    Background="{DynamicResource PrimaryBrush}"
+                    HorizontalContentAlignment="Center">
+              <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                <TextBlock Text="&#xE8FD;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                           Foreground="White" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding PracticeContextText}" FontSize="14" FontWeight="SemiBold"
+                           Foreground="White" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
           </StackPanel>
         </ScrollViewer>
       </Grid>

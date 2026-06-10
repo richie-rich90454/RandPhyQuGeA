@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using ReactiveUI;
 
 namespace AvaloniaUI.ViewModels;
@@ -8,10 +9,14 @@ namespace AvaloniaUI.ViewModels;
 public class QuestionBankViewModel : ViewModelBase
 {
     private readonly SpecificationViewModel _specViewModel;
+    private readonly NavigationViewModel? _navigationViewModel;
 
-    public QuestionBankViewModel(SpecificationViewModel specViewModel)
+    public QuestionBankViewModel(SpecificationViewModel specViewModel) : this(specViewModel, null) { }
+
+    public QuestionBankViewModel(SpecificationViewModel specViewModel, NavigationViewModel? navigationViewModel)
     {
         _specViewModel = specViewModel;
+        _navigationViewModel = navigationViewModel;
 
         FilteredUnitNodes = new ObservableCollection<UnitNode>();
 
@@ -26,7 +31,13 @@ public class QuestionBankViewModel : ViewModelBase
             x => x.FilterSA)
             .Subscribe(_ => ApplyFilters());
 
+        this.WhenAnyValue(x => x.SelectedItem)
+            .Subscribe(_ => this.RaisePropertyChanged(nameof(PracticeContextText)));
+
         _specViewModel.UnitNodes.CollectionChanged += (_, _) => ApplyFilters();
+
+        var canStartPractice = this.WhenAnyValue(x => x.SelectedItem, sel => sel is SkillNode or TopicNode or UnitNode);
+        StartPracticeCommand = ReactiveCommand.Create(OnStartPractice, canStartPractice);
     }
 
     public SpecificationViewModel SpecViewModel => _specViewModel;
@@ -145,6 +156,21 @@ public class QuestionBankViewModel : ViewModelBase
     {
         get => _filterSA;
         set => this.RaiseAndSetIfChanged(ref _filterSA, value);
+    }
+
+    public string PracticeContextText => SelectedItem switch
+    {
+        SkillNode skill => $"Practice: {skill.Name} ({skill.TemplateCount} templates)",
+        TopicNode topic => $"Practice: {topic.Name} ({topic.Skills.Count} skills, {topic.TemplateCount} templates)",
+        UnitNode unit => $"Practice: {unit.Name} ({unit.Topics.Sum(t => t.Skills.Count)} skills, {unit.TemplateCount} templates)",
+        _ => string.Empty
+    };
+
+    public ReactiveCommand<Unit, Unit> StartPracticeCommand { get; }
+
+    private void OnStartPractice()
+    {
+        _navigationViewModel?.Navigate("FocusedPractice");
     }
 
     private void ApplyFilters()
