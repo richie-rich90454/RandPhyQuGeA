@@ -1,13 +1,18 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using AvaloniaUI.ViewModels;
+using Core.Domain;
 
 namespace AvaloniaUI.Views;
 
 public partial class FocusedPracticeView : UserControl
 {
+    private static readonly string[] ChoiceLetters = { "A", "B", "C", "D", "E", "F", "G", "H" };
+
     public FocusedPracticeView()
     {
         InitializeComponent();
@@ -94,6 +99,55 @@ public partial class FocusedPracticeView : UserControl
             mixedBtn.Background = selected == "Mixed" ? activeBrush : inactiveBrush;
             mixedBtn.Foreground = selected == "Mixed" ? activeFg : inactiveFg;
             mixedBtn.FontWeight = selected == "Mixed" ? FontWeight.SemiBold : FontWeight.Normal;
+        }
+    }
+
+    // ─── MC Answer Selection ─────────────────────────────────────────
+
+    private void OnMcChoiceClick(object? sender, PointerPressedEventArgs e)
+    {
+        if (DataContext is not FocusedPracticeViewModel vm) return;
+        if (vm.IsAnswerSubmitted) return;
+
+        if (sender is Border border)
+        {
+            var itemsControl = border.FindAncestorOfType<ItemsControl>();
+            if (itemsControl is not null)
+            {
+                var index = itemsControl.IndexFromContainer(border);
+                if (index >= 0 && vm.CurrentQuestion?.Choices is { Count: > 0 } && index < vm.CurrentQuestion.Choices.Count)
+                {
+                    var choice = vm.CurrentQuestion.Choices[index];
+                    vm.SelectedAnswer = choice;
+                }
+            }
+        }
+    }
+
+    private void OnMcConfirmClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is FocusedPracticeViewModel vm && !vm.IsAnswerSubmitted)
+        {
+            vm.SubmitAnswerCommand.Execute();
+        }
+    }
+
+    // ─── SA Answer Submission ─────────────────────────────────────────
+
+    private void OnSaAnswerKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && DataContext is FocusedPracticeViewModel vm && !vm.IsAnswerSubmitted)
+        {
+            vm.SubmitAnswerCommand.Execute();
+            e.Handled = true;
+        }
+    }
+
+    private void OnSaSubmitClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is FocusedPracticeViewModel vm && !vm.IsAnswerSubmitted)
+        {
+            vm.SubmitAnswerCommand.Execute();
         }
     }
 }

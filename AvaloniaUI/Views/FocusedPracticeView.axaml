@@ -177,10 +177,227 @@
 
       <!-- Practice Session (hidden during scope selection) -->
       <StackPanel IsVisible="{Binding !IsSelectingScope}" Spacing="24">
-        <TextBlock Text="Practice session will appear here" FontSize="14"
-                   Foreground="{DynamicResource TextSecondaryBrush}"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,48" />
+
+        <!-- Progress Indicator (Commit 51) -->
+        <StackPanel Spacing="8">
+          <TextBlock Text="{Binding ProgressText}" FontSize="13" FontWeight="SemiBold"
+                     Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+          <ProgressBar Value="{Binding ProgressPercent}" Minimum="0" Maximum="100"
+                       Height="4" CornerRadius="2"
+                       Foreground="{DynamicResource ProgressBarFillBrush}"
+                       Background="{DynamicResource ProgressBarBackgroundBrush}" />
+        </StackPanel>
+
+        <!-- Question Display Card (Commit 45) -->
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                Padding="32,24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <StackPanel Spacing="16">
+            <!-- Question Number Badge & Type/Difficulty Tags -->
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="12"
+                      Padding="10,4">
+                <TextBlock FontSize="12" FontWeight="Bold"
+                           Foreground="{DynamicResource TextOnPrimaryBrush}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center">
+                  <TextBlock.Text>
+                    <MultiBinding StringFormat="{}Q{0}">
+                      <Binding Path="CurrentQuestionIndex" />
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+              </Border>
+              <Border Background="{DynamicResource BadgeMCBrush}" CornerRadius="4" Padding="6,2"
+                      x:Name="TypeBadge">
+                <TextBlock Text="{Binding CurrentQuestion.QuestionType}" FontSize="10"
+                           Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold" />
+              </Border>
+              <Border CornerRadius="4" Padding="6,2" x:Name="DifficultyBadge">
+                <Border.Background>
+                  <DynamicResource ResourceKey="BadgeMediumBrush" />
+                </Border.Background>
+                <TextBlock FontSize="10" Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold">
+                  <TextBlock.Text>
+                    <MultiBinding StringFormat="{}Diff {0}">
+                      <Binding Path="CurrentQuestion.Difficulty" />
+                    </MultiBinding>
+                  </TextBlock.Text>
+                </TextBlock>
+              </Border>
+            </StackPanel>
+
+            <!-- Question Text -->
+            <TextBlock Text="{Binding CurrentQuestion.Text}" FontSize="18"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       TextWrapping="Wrap" LineHeight="26" />
+          </StackPanel>
+        </Border>
+
+        <!-- MC Answer Selection (Commit 46) -->
+        <ItemsControl IsVisible="{Binding CurrentQuestion.Choices.Count, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
+                      ItemsSource="{Binding CurrentQuestion.Choices}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border x:Name="ChoiceCard" Background="{DynamicResource CardBackgroundBrush}"
+                      CornerRadius="8" Padding="16,12" Margin="0,4"
+                      BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                      Cursor="Hand" PointerPressed="OnMcChoiceClick">
+                <Grid ColumnDefinitions="36,*">
+                  <Border Background="{DynamicResource PrimarySubtleBrush}" CornerRadius="4"
+                          Width="32" Height="32" VerticalAlignment="Center"
+                          HorizontalAlignment="Center">
+                    <TextBlock x:Name="ChoiceLetter" FontSize="14" FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Border>
+                  <TextBlock Grid.Column="1" Text="{Binding}" FontSize="14"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             VerticalAlignment="Center" Margin="12,0,0,0"
+                             TextWrapping="Wrap" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- MC Confirm Button (Commit 46) -->
+        <Button x:Name="McConfirmBtn" Click="OnMcConfirmClick"
+                HorizontalAlignment="Center"
+                Padding="24,10" CornerRadius="8"
+                Background="{DynamicResource PrimaryBrush}"
+                Foreground="{DynamicResource TextOnPrimaryBrush}"
+                IsVisible="{Binding CurrentQuestion.Choices.Count, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}">
+          <TextBlock Text="Confirm Answer" FontSize="14" FontWeight="SemiBold" />
+        </Button>
+
+        <!-- SA Answer Input (Commit 47) -->
+        <StackPanel Spacing="8" MaxWidth="700" HorizontalAlignment="Center">
+          <StackPanel.IsVisible>
+            <Binding Path="CurrentQuestion" Converter="{x:Static ObjectConverters.IsNotNull}" />
+          </StackPanel.IsVisible>
+          <TextBox x:Name="SaAnswerBox" Text="{Binding ShortAnswer}"
+                   Watermark="Type your answer..."
+                   FontSize="16" Padding="12,10" CornerRadius="8"
+                   KeyDown="OnSaAnswerKeyDown"
+                   IsVisible="{Binding CurrentQuestion.Choices.Count, Converter={x:Static ObjectConverters.IsNull}, FallbackValue=True}" />
+          <Button x:Name="SaSubmitBtn" Click="OnSaSubmitClick"
+                  HorizontalAlignment="Center"
+                  Padding="24,10" CornerRadius="8"
+                  Background="{DynamicResource PrimaryBrush}"
+                  Foreground="{DynamicResource TextOnPrimaryBrush}"
+                  IsVisible="{Binding CurrentQuestion.Choices.Count, Converter={x:Static ObjectConverters.IsNull}, FallbackValue=True}">
+            <TextBlock Text="Submit Answer" FontSize="14" FontWeight="SemiBold" />
+          </Button>
+        </StackPanel>
+
+        <!-- Reveal Solution Button (Commit 48) -->
+        <Button Command="{Binding ShowSolutionCommand}"
+                HorizontalAlignment="Center"
+                Padding="20,10" CornerRadius="8"
+                Background="{DynamicResource Neutral10Brush}"
+                Foreground="{DynamicResource TextPrimaryBrush}"
+                IsVisible="{Binding !IsSolutionVisible}">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="Reveal Solution" FontSize="13" FontWeight="SemiBold"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+
+        <!-- Solution Panel (Commit 49) -->
+        <Border IsVisible="{Binding IsSolutionVisible}"
+                Background="{DynamicResource CorrectBackgroundBrush}"
+                BorderBrush="{DynamicResource CorrectBorderBrush}" BorderThickness="1"
+                CornerRadius="12" Padding="24">
+          <StackPanel Spacing="12">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="18"
+                         Foreground="{DynamicResource CorrectTextBrush}"
+                         VerticalAlignment="Center" />
+              <TextBlock Text="Solution" FontSize="14" FontWeight="SemiBold"
+                         Foreground="{DynamicResource CorrectTextBrush}"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+            <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8"
+                    Padding="16" BorderBrush="{DynamicResource CorrectBorderBrush}" BorderThickness="1">
+              <StackPanel Spacing="8">
+                <TextBlock Text="Answer" FontSize="11" Foreground="{DynamicResource TextTertiaryBrush}" />
+                <TextBlock Text="{Binding CurrentQuestion.Answer}" FontSize="16" FontWeight="Bold"
+                           Foreground="{DynamicResource CorrectTextBrush}" />
+              </StackPanel>
+            </Border>
+            <TextBlock Text="{Binding CurrentQuestion.SolutionText}" FontSize="13"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       TextWrapping="Wrap" LineHeight="20" />
+          </StackPanel>
+        </Border>
+
+        <!-- Navigation Buttons (Commit 50) -->
+        <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+          <Button Command="{Binding NextQuestionCommand}"
+                  Padding="24,10" CornerRadius="8"
+                  Background="{DynamicResource PrimaryBrush}"
+                  Foreground="{DynamicResource TextOnPrimaryBrush}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="Next Question" FontSize="14" FontWeight="SemiBold"
+                         VerticalAlignment="Center" />
+              <TextBlock Text="&#xE72A;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+          <Button Command="{Binding EndSessionCommand}"
+                  Padding="24,10" CornerRadius="8"
+                  Background="{DynamicResource Neutral10Brush}"
+                  Foreground="{DynamicResource TextPrimaryBrush}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                         VerticalAlignment="Center" />
+              <TextBlock Text="End Session" FontSize="14"
+                         VerticalAlignment="Center" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+
       </StackPanel>
+
+      <!-- End Session Confirmation Dialog (Commit 52) -->
+      <Border IsVisible="{Binding IsEndConfirmationVisible}"
+              Background="#80000000"
+              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+              ZIndex="100">
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                Padding="32" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                MinWidth="360" MaxWidth="440">
+          <StackPanel Spacing="20">
+            <TextBlock Text="End Session?" FontSize="20" FontWeight="Bold"
+                       Foreground="{DynamicResource TextPrimaryBrush}" />
+            <TextBlock FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}"
+                       TextWrapping="Wrap">
+              <TextBlock.Text>
+                <MultiBinding StringFormat="{}Are you sure? You've answered {0} of {1} questions.">
+                  <Binding Path="AnsweredCount" />
+                  <Binding Path="Questions.Count" />
+                </MultiBinding>
+              </TextBlock.Text>
+            </TextBlock>
+            <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
+              <Button Command="{Binding CancelEndSessionCommand}"
+                      Padding="16,10" CornerRadius="8"
+                      Background="{DynamicResource Neutral10Brush}"
+                      Foreground="{DynamicResource TextPrimaryBrush}">
+                <TextBlock Text="No, Continue" FontSize="13" />
+              </Button>
+              <Button Command="{Binding ConfirmEndSessionCommand}"
+                      Padding="16,10" CornerRadius="8"
+                      Background="{DynamicResource ErrorBrush}"
+                      Foreground="{DynamicResource TextOnPrimaryBrush}">
+                <TextBlock Text="Yes, End" FontSize="13" FontWeight="SemiBold" />
+              </Button>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </Border>
 
     </Grid>
   </ScrollViewer>
