@@ -26,6 +26,7 @@ public class MentalPracticeViewModel : ViewModelBase
     private bool _isSessionOver;
     private bool _isPaused;
     private bool _isCountdown;
+    private bool _isTransitioning;
 
     // Current question
     private GeneratedQuestion? _currentQuestion;
@@ -135,6 +136,12 @@ public class MentalPracticeViewModel : ViewModelBase
     {
         get => _isCountdown;
         set => this.RaiseAndSetIfChanged(ref _isCountdown, value);
+    }
+
+    public bool IsTransitioning
+    {
+        get => _isTransitioning;
+        set => this.RaiseAndSetIfChanged(ref _isTransitioning, value);
     }
 
     // ─── Question Properties ────────────────────────────────────────────
@@ -571,9 +578,12 @@ public class MentalPracticeViewModel : ViewModelBase
 
     private async Task AutoAdvanceAsync()
     {
-        await Task.Delay(2000);
+        await Task.Delay(1500);
 
         if (IsSessionOver || IsPaused) return;
+
+        IsTransitioning = true;
+        await Task.Delay(300); // Brief fade-out
 
         CurrentQuestionIndex++;
 
@@ -585,6 +595,8 @@ public class MentalPracticeViewModel : ViewModelBase
         {
             ShowNextQuestion();
         }
+
+        IsTransitioning = false;
     }
 
     private void OnPause()

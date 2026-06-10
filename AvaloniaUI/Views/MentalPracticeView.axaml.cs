@@ -15,6 +15,7 @@ public partial class MentalPracticeView : UserControl
 {
     private IDisposable? _timerBrushSubscription;
     private IDisposable? _saFocusSubscription;
+    private IDisposable? _transitionSubscription;
 
     public MentalPracticeView()
     {
@@ -40,6 +41,8 @@ public partial class MentalPracticeView : UserControl
         _timerBrushSubscription = null;
         _saFocusSubscription?.Dispose();
         _saFocusSubscription = null;
+        _transitionSubscription?.Dispose();
+        _transitionSubscription = null;
 
         if (DataContext is MentalPracticeViewModel vm)
         {
@@ -54,6 +57,17 @@ public partial class MentalPracticeView : UserControl
                     {
                         var saBox = this.FindControl<TextBox>("SaAnswerBox");
                         saBox?.Focus();
+                    }
+                });
+
+            // Smooth opacity transition between questions
+            _transitionSubscription = vm.WhenAnyValue(x => x.IsTransitioning)
+                .Subscribe(trans =>
+                {
+                    var panel = this.FindControl<Panel>("QuestionContentPanel");
+                    if (panel is not null)
+                    {
+                        panel.Opacity = trans ? 0.3 : 1.0;
                     }
                 });
         }
