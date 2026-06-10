@@ -7,6 +7,23 @@
              x:Class="AvaloniaUI.Views.QuestionBankView"
              x:DataType="vm:QuestionBankViewModel">
 
+  <UserControl.DataTemplates>
+    <!-- Unit → Topics hierarchy -->
+    <TreeDataTemplate x:DataType="vm:UnitNode" ItemsSource="{Binding Topics}">
+      <TextBlock Text="{Binding Name}" />
+    </TreeDataTemplate>
+
+    <!-- Topic → Skills hierarchy -->
+    <TreeDataTemplate x:DataType="vm:TopicNode" ItemsSource="{Binding Skills}">
+      <TextBlock Text="{Binding Name}" />
+    </TreeDataTemplate>
+
+    <!-- Skill (leaf) -->
+    <TreeDataTemplate x:DataType="vm:SkillNode">
+      <TextBlock Text="{Binding Name}" />
+    </TreeDataTemplate>
+  </UserControl.DataTemplates>
+
   <Grid ColumnDefinitions="320,*">
     <!-- Left Panel: TreeView Browser -->
     <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}"
@@ -15,8 +32,9 @@
         <TextBlock DockPanel.Dock="Top" Text="Question Bank" FontSize="16" FontWeight="SemiBold"
                    Foreground="{DynamicResource TextPrimaryBrush}" Margin="16,16,16,8" />
         <ScrollViewer>
-          <TextBlock Text="Tree view placeholder" Margin="16"
-                     Foreground="{DynamicResource TextTertiaryBrush}" />
+          <TreeView ItemsSource="{Binding UnitNodes}"
+                    SelectedItem="{Binding SelectedItem}"
+                    x:Name="SpecTree" />
         </ScrollViewer>
       </DockPanel>
     </Border>
