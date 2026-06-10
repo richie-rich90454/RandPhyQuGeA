@@ -302,6 +302,15 @@ public class MentalPracticeViewModel : ViewModelBase
         return "Careful";
     }
 
+    public string SpeedRatingIcon => SpeedRating switch
+    {
+        "Lightning" => "⚡",
+        "Fast" => "★",
+        "Steady" => "⏳",
+        "Careful" => "🧠",
+        _ => ""
+    };
+
     // ─── Settings Properties ────────────────────────────────────────────
 
     public string SelectedScope
@@ -556,6 +565,7 @@ public class MentalPracticeViewModel : ViewModelBase
         }
 
         this.RaisePropertyChanged(nameof(SpeedRating));
+        this.RaisePropertyChanged(nameof(SpeedRatingIcon));
         this.RaisePropertyChanged(nameof(ProgressText));
     }
 
@@ -636,6 +646,7 @@ public class MentalPracticeViewModel : ViewModelBase
         IsPaused = false;
 
         this.RaisePropertyChanged(nameof(SpeedRating));
+        this.RaisePropertyChanged(nameof(SpeedRatingIcon));
     }
 
     private void StartTimerLoop()
