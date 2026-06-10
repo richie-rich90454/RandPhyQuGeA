@@ -144,9 +144,15 @@
                          Foreground="{DynamicResource TextSecondaryBrush}" />
             </Button>
             <Button Command="{Binding GiveUpCommand}" Padding="8,4" CornerRadius="6"
-                    Background="Transparent" ToolTip.Tip="Give Up">
-              <TextBlock Text="Skip" FontSize="11"
-                         Foreground="{DynamicResource WarningBrush}" />
+                    Background="Transparent" ToolTip.Tip="Give Up (Esc)">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="&#xE7BA;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                           Foreground="{DynamicResource WarningBrush}"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="Skip" FontSize="11"
+                           Foreground="{DynamicResource WarningBrush}"
+                           VerticalAlignment="Center" />
+              </StackPanel>
             </Button>
             <Button Command="{Binding EndSessionCommand}" Padding="8,4" CornerRadius="6"
                     Background="Transparent" ToolTip.Tip="End Session">

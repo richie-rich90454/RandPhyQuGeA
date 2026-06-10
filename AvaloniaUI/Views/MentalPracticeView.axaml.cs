@@ -108,6 +108,13 @@ public partial class MentalPracticeView : UserControl
                 e.Handled = true;
             }
         }
+
+        // Escape to give up on current question
+        if (e.Key == Key.Escape)
+        {
+            vm.GiveUpCommand.Execute();
+            e.Handled = true;
+        }
     }
 
     private void OnSaAnswerKeyDown(object? sender, KeyEventArgs e)
