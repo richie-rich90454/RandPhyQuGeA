@@ -100,8 +100,9 @@ public partial class App : Application
         var solutionBuilder = new PlainTextSolutionBuilder();
         var questionGenerator = new QuestionGenerator(repository, random, evaluator, distractorGenerator, solutionBuilder);
         var latexRenderer = new DummyRenderer();
+        var specViewModel = new SpecificationViewModel(loader);
 
-        return new MainWindowViewModel(questionGenerator, latexRenderer, loader);
+        return new MainWindowViewModel(questionGenerator, latexRenderer, loader, specViewModel);
     }
 }
 

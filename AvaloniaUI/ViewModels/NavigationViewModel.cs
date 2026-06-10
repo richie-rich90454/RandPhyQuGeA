@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Services;
 using ReactiveUI;
 
 namespace AvaloniaUI.ViewModels;
@@ -18,9 +19,16 @@ public class NavigationViewModel : ViewModelBase
 
     private readonly Dictionary<string, ViewModelBase> _viewCache = new();
     private readonly List<NavigationItem> _navigationItems;
+    private readonly SpecificationViewModel? _specificationViewModel;
+    private readonly QuestionGenerator? _questionGenerator;
 
-    public NavigationViewModel()
+    public NavigationViewModel() : this(null, null) { }
+
+    public NavigationViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator)
     {
+        _specificationViewModel = specificationViewModel;
+        _questionGenerator = questionGenerator;
+
         _navigationItems = new List<NavigationItem>
         {
             new("Home", "\uE80F", "Home"),
@@ -105,8 +113,8 @@ public class NavigationViewModel : ViewModelBase
         {
             "Home" => new HomeViewModel(),
             "MentalPractice" => new MentalPracticeViewModel(),
-            "FocusedPractice" => new FocusedPracticeViewModel(),
-            "QuestionBank" => new QuestionBankViewModel(),
+            "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!),
+            "QuestionBank" => new QuestionBankViewModel(_specificationViewModel!),
             "Progress" => new ProgressViewModel(),
             "Settings" => new SettingsViewModel(),
             _ => throw new ArgumentException($"Unknown view key: {viewKey}", nameof(viewKey))

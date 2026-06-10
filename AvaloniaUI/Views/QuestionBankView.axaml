@@ -2,9 +2,33 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
-             x:Class="AvaloniaUI.Views.QuestionBankView">
-  <Panel>
-    <TextBlock Text="Question Bank" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
-  </Panel>
+             xmlns:vm="using:AvaloniaUI.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+             x:Class="AvaloniaUI.Views.QuestionBankView"
+             x:DataType="vm:QuestionBankViewModel">
+
+  <Grid ColumnDefinitions="320,*">
+    <!-- Left Panel: TreeView Browser -->
+    <Border Grid.Column="0" Background="{DynamicResource CardBackgroundBrush}"
+            BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,1,0">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Question Bank" FontSize="16" FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextPrimaryBrush}" Margin="16,16,16,8" />
+        <ScrollViewer>
+          <TextBlock Text="Tree view placeholder" Margin="16"
+                     Foreground="{DynamicResource TextTertiaryBrush}" />
+        </ScrollViewer>
+      </DockPanel>
+    </Border>
+
+    <!-- Right Panel: Detail Panel -->
+    <Border Grid.Column="1" Background="{DynamicResource ContentBackgroundBrush}">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="Select an item to view details" FontSize="14"
+                   Foreground="{DynamicResource TextTertiaryBrush}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="16" />
+      </DockPanel>
+    </Border>
+  </Grid>
+
 </UserControl>

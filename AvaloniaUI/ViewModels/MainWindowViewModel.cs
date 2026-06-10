@@ -18,6 +18,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     private readonly QuestionGenerator? _questionGenerator;
     private readonly ILaTeXRenderer? _laTeXRenderer;
     private readonly ISpecificationLoader? _specificationLoader;
+    private readonly SpecificationViewModel? _specificationViewModel;
 
     private string? _selectedTopicId;
     private string? _selectedSkillId;
@@ -38,19 +39,21 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     private IReadOnlyList<string> _availableTopics = Array.Empty<string>();
     private IReadOnlyList<string> _availableSkills = Array.Empty<string>();
 
-    public MainWindowViewModel() : this(null, null, null) { }
+    public MainWindowViewModel() : this(null, null, null, null) { }
 
     public MainWindowViewModel(
         QuestionGenerator? questionGenerator,
         ILaTeXRenderer? laTeXRenderer,
-        ISpecificationLoader? specificationLoader)
+        ISpecificationLoader? specificationLoader,
+        SpecificationViewModel? specificationViewModel = null)
     {
         _questionGenerator = questionGenerator;
         _laTeXRenderer = laTeXRenderer;
         _specificationLoader = specificationLoader;
+        _specificationViewModel = specificationViewModel;
 
         Activator = new ViewModelActivator();
-        Navigation = new NavigationViewModel();
+        Navigation = new NavigationViewModel(specificationViewModel, questionGenerator);
 
         GenerateCommand = ReactiveCommand.CreateFromTask(OnGenerate);
         ToggleSolutionCommand = ReactiveCommand.Create(OnToggleSolution);
