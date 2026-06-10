@@ -86,10 +86,15 @@
     <Border IsVisible="{Binding IsCountdown}"
             Background="{DynamicResource ContentBackgroundBrush}"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-      <TextBlock Text="{Binding CountdownValue}"
-                 FontSize="120" FontWeight="Bold"
-                 Foreground="{DynamicResource PrimaryBrush}"
-                 HorizontalAlignment="Center" VerticalAlignment="Center" />
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+        <TextBlock Text="{Binding CountdownValue}"
+                   FontSize="120" FontWeight="Bold"
+                   Foreground="{DynamicResource PrimaryBrush}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+        <TextBlock Text="Get Ready!"
+                   FontSize="16" Foreground="{DynamicResource TextTertiaryBrush}"
+                   HorizontalAlignment="Center" />
+      </StackPanel>
     </Border>
 
     <!-- ═══ Practice Area ═══ -->
