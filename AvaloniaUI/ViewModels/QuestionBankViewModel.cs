@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Threading.Tasks;
 using ReactiveUI;
 
 namespace AvaloniaUI.ViewModels;
@@ -38,6 +39,8 @@ public class QuestionBankViewModel : ViewModelBase
 
         var canStartPractice = this.WhenAnyValue(x => x.SelectedItem, sel => sel is SkillNode or TopicNode or UnitNode);
         StartPracticeCommand = ReactiveCommand.Create(OnStartPractice, canStartPractice);
+
+        LoadSpecCommand = ReactiveCommand.Create(OnLoadSpec);
     }
 
     public SpecificationViewModel SpecViewModel => _specViewModel;
@@ -167,6 +170,13 @@ public class QuestionBankViewModel : ViewModelBase
     };
 
     public ReactiveCommand<Unit, Unit> StartPracticeCommand { get; }
+
+    public ReactiveCommand<Unit, Unit> LoadSpecCommand { get; }
+
+    private void OnLoadSpec()
+    {
+        _specViewModel.LoadCommand.Execute();
+    }
 
     private void OnStartPractice()
     {
