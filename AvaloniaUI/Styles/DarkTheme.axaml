@@ -22,6 +22,7 @@
     <SolidColorBrush x:Key="CardHoverBrush" Color="#243352" />
     <SolidColorBrush x:Key="OverlayBrush" Color="#1E2A45" />
     <SolidColorBrush x:Key="OverlayScrimBrush" Color="#E0000000" />
+    <SolidColorBrush x:Key="HeaderBarBackgroundBrush" Color="#1A1A2E" />
 
     <!-- Borders & Dividers -->
     <SolidColorBrush x:Key="BorderBrush" Color="#2D3A54" />
@@ -48,6 +49,16 @@
     <!-- Menu -->
     <SolidColorBrush x:Key="MenuBarBackgroundBrush" Color="#16213E" />
     <SolidColorBrush x:Key="MenuHoverBrush" Color="#1E2A45" />
+
+    <!-- Neutral overrides for dark theme -->
+    <SolidColorBrush x:Key="Neutral10Brush" Color="#1E2A45" />
+    <SolidColorBrush x:Key="Neutral20Brush" Color="#243352" />
+
+    <!-- Primary overrides for dark theme -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="#3B7DDD" />
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="#5A9AE6" />
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="#2A5FB0" />
+    <SolidColorBrush x:Key="PrimarySubtleBrush" Color="#1E3A5F" />
 
     <!-- Badge Colors -->
     <SolidColorBrush x:Key="BadgeMCBrush" Color="#3B7DDD" />
