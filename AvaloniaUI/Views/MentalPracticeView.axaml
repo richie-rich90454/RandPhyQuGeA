@@ -168,6 +168,11 @@
       <ScrollViewer>
         <StackPanel x:Name="QuestionContentPanel" Spacing="20" Margin="48,32"
                     Opacity="1">
+          <StackPanel.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Opacity" Duration="0:0:0.2" Easing="CubicEaseOut" />
+            </Transitions>
+          </StackPanel.Transitions>
 
           <!-- Question Timer -->
           <TextBlock x:Name="QuestionTimerText" Text="{Binding QuestionTimerText}" FontSize="36" FontWeight="Bold"
