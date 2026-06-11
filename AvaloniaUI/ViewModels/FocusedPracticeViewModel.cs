@@ -24,6 +24,9 @@ public class FocusedPracticeViewModel : ViewModelBase
     // Per-question tracking for session summary
     private readonly List<QuestionResultItem> _questionResultsList = new();
 
+    // Scope item event handler tracking for proper unsubscription
+    private readonly List<(ScopeCheckItem item, System.ComponentModel.PropertyChangedEventHandler handler)> _scopeHandlers = new();
+
     // Scope selection state
     private bool _isSelectingScope = true;
     private int _minDifficulty = 1;
@@ -231,6 +234,11 @@ public class FocusedPracticeViewModel : ViewModelBase
 
     private void InitializeScopeItems()
     {
+        // Unsubscribe old handlers
+        foreach (var (item, handler) in _scopeHandlers)
+            item.PropertyChanged -= handler;
+        _scopeHandlers.Clear();
+
         ScopeItems.Clear();
 
         if (!_specificationViewModel.IsLoaded)
@@ -258,11 +266,13 @@ public class FocusedPracticeViewModel : ViewModelBase
 
         foreach (var item in ScopeItems)
         {
-            item.PropertyChanged += (s, e) =>
+            System.ComponentModel.PropertyChangedEventHandler handler = (s, e) =>
             {
                 if (e.PropertyName == nameof(ScopeCheckItem.IsChecked))
                     UpdateScopeDescription();
             };
+            item.PropertyChanged += handler;
+            _scopeHandlers.Add((item, handler));
         }
 
         UpdateScopeDescription();
