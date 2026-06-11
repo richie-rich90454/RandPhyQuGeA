@@ -56,8 +56,7 @@
                        FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                        TextWrapping="Wrap" />
             <Button HorizontalAlignment="Left" Padding="16,8" CornerRadius="6"
-                    Background="{DynamicResource PrimaryBrush}"
-                    Foreground="{DynamicResource TextOnPrimaryBrush}"
+                    Classes="primary"
                     Click="StartMentalPractice_Click">
               <TextBlock Text="Start" FontSize="13" FontWeight="SemiBold" />
             </Button>
@@ -81,8 +80,7 @@
                        FontSize="12" Foreground="{DynamicResource TextSecondaryBrush}"
                        TextWrapping="Wrap" />
             <Button HorizontalAlignment="Left" Padding="16,8" CornerRadius="6"
-                    Background="{DynamicResource InfoBrush}"
-                    Foreground="{DynamicResource TextOnAccentBrush}"
+                    Classes="primary"
                     Click="StartFocusedPractice_Click">
               <TextBlock Text="Start" FontSize="13" FontWeight="SemiBold" />
             </Button>
