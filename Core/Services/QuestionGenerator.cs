@@ -116,6 +116,8 @@ public class QuestionGenerator
         return candidates[index];
     }
 
+    private static readonly Regex VariablePattern = new Regex(@"\{(\w+)\}", RegexOptions.Compiled);
+
     private Dictionary<string, object> GenerateVariables(IReadOnlyList<VariableDefinition> definitions)
     {
         var variables = new Dictionary<string, object>();
@@ -123,9 +125,15 @@ public class QuestionGenerator
         {
             object value = def.Type switch
             {
-                "int" => _random.NextInt((int)def.Min!, (int)def.Max!),
-                "double" => _random.NextDouble(def.Min!.Value, def.Max!.Value, def.Step ?? 1.0),
-                "enum" => _random.NextFromSet(def.EnumValues!),
+                "int" => def.Min is null || def.Max is null
+                    ? throw new ArgumentException($"Variable '{def.Name}' of type 'int' requires both Min and Max to be set.")
+                    : _random.NextInt((int)def.Min, (int)def.Max),
+                "double" => def.Min is null || def.Max is null
+                    ? throw new ArgumentException($"Variable '{def.Name}' of type 'double' requires both Min and Max to be set.")
+                    : _random.NextDouble(def.Min.Value, def.Max.Value, def.Step ?? 1.0),
+                "enum" => def.EnumValues is null
+                    ? throw new ArgumentException($"Variable '{def.Name}' of type 'enum' requires EnumValues to be set.")
+                    : _random.NextFromSet(def.EnumValues),
                 _ => throw new NotSupportedException($"Variable type '{def.Type}' is not supported.")
             };
             variables[def.Name] = value;
@@ -135,7 +143,7 @@ public class QuestionGenerator
 
     private static string SubstituteVariables(string template, IReadOnlyDictionary<string, object> variables)
     {
-        return Regex.Replace(template, @"\{(\w+)\}", match =>
+        return VariablePattern.Replace(template, match =>
         {
             var varName = match.Groups[1].Value;
             return variables.TryGetValue(varName, out var value) ? FormatVariableValue(value) : match.Value;

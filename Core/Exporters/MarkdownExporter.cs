@@ -8,6 +8,9 @@ public sealed class MarkdownExporter : IQuestionExporter
 {
     public void Export(IEnumerable<GeneratedQuestion> questions, Stream output)
     {
+        ArgumentNullException.ThrowIfNull(questions);
+        ArgumentNullException.ThrowIfNull(output);
+
         using var writer = new StreamWriter(output, Encoding.UTF8, leaveOpen: true);
 
         writer.WriteLine("# Physics Questions");

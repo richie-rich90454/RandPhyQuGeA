@@ -15,6 +15,9 @@ public sealed class PdfExporter : IQuestionExporter
 
     public void Export(IEnumerable<GeneratedQuestion> questions, Stream output)
     {
+        ArgumentNullException.ThrowIfNull(questions);
+        ArgumentNullException.ThrowIfNull(output);
+
         var questionList = questions.ToList();
 
         Document.Create(container =>
