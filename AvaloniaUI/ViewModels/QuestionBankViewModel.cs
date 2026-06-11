@@ -2,15 +2,17 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using ReactiveUI;
 
 namespace AvaloniaUI.ViewModels;
 
-public class QuestionBankViewModel : ViewModelBase
+public class QuestionBankViewModel : ViewModelBase, IDisposable
 {
     private readonly SpecificationViewModel _specViewModel;
     private readonly NavigationViewModel? _navigationViewModel;
+    private readonly CompositeDisposable _subscriptions = new();
 
     public QuestionBankViewModel(SpecificationViewModel specViewModel) : this(specViewModel, null) { }
 
@@ -21,19 +23,19 @@ public class QuestionBankViewModel : ViewModelBase
 
         FilteredUnitNodes = new ObservableCollection<UnitNode>();
 
-        this.WhenAnyValue(x => x.SearchText)
-            .Subscribe(_ => ApplyFilters());
+        _subscriptions.Add(this.WhenAnyValue(x => x.SearchText)
+            .Subscribe(_ => ApplyFilters()));
 
-        this.WhenAnyValue(
+        _subscriptions.Add(this.WhenAnyValue(
             x => x.FilterEasy,
             x => x.FilterMedium,
             x => x.FilterHard,
             x => x.FilterMC,
             x => x.FilterSA)
-            .Subscribe(_ => ApplyFilters());
+            .Subscribe(_ => ApplyFilters()));
 
-        this.WhenAnyValue(x => x.SelectedItem)
-            .Subscribe(_ => this.RaisePropertyChanged(nameof(PracticeContextText)));
+        _subscriptions.Add(this.WhenAnyValue(x => x.SelectedItem)
+            .Subscribe(_ => this.RaisePropertyChanged(nameof(PracticeContextText))));
 
         _specViewModel.UnitNodes.CollectionChanged += (_, _) => ApplyFilters();
 
@@ -364,5 +366,10 @@ public class QuestionBankViewModel : ViewModelBase
                 DetailTemplateCount = string.Empty;
                 break;
         }
+    }
+
+    public void Dispose()
+    {
+        _subscriptions.Dispose();
     }
 }
