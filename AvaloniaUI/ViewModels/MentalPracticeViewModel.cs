@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using AvaloniaUI.Controls;
 using Core.Domain;
 using Core.Interfaces;
 using Core.Services;
@@ -103,6 +104,8 @@ public class MentalPracticeViewModel : ViewModelBase
         EndSessionCommand = ReactiveCommand.Create(OnEndSession, canEnd);
         SelectQuestionCountCommand = ReactiveCommand.Create<int>(OnSelectQuestionCount);
         ViewSummaryCommand = ReactiveCommand.Create(OnViewSummary);
+        CopyQuestionCommand = ReactiveCommand.Create(OnCopyQuestion);
+        CopyAnswerCommand = ReactiveCommand.Create(OnCopyAnswer);
 
         LoadScopeOptions();
     }
@@ -162,6 +165,7 @@ public class MentalPracticeViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _currentQuestion, value);
             this.RaisePropertyChanged(nameof(QuestionText));
+            this.RaisePropertyChanged(nameof(QuestionHasLaTeX));
             this.RaisePropertyChanged(nameof(IsMultipleChoice));
             this.RaisePropertyChanged(nameof(Choices));
             this.RaisePropertyChanged(nameof(ChoiceItems));
@@ -170,6 +174,8 @@ public class MentalPracticeViewModel : ViewModelBase
     }
 
     public string QuestionText => CurrentQuestion?.Text ?? string.Empty;
+
+    public bool QuestionHasLaTeX => LaTeXImage.ContainsLaTeX(QuestionText);
 
     public bool IsMultipleChoice => CurrentQuestion?.QuestionType == "MC";
 
@@ -399,6 +405,10 @@ public class MentalPracticeViewModel : ViewModelBase
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> EndSessionCommand { get; }
     public ReactiveCommand<int, ReactiveUnit> SelectQuestionCountCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> ViewSummaryCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> CopyQuestionCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> CopyAnswerCommand { get; }
+
+    public event EventHandler<string>? CopyToClipboardRequested;
 
     // ─── Private Methods ────────────────────────────────────────────────
 
@@ -738,6 +748,25 @@ public class MentalPracticeViewModel : ViewModelBase
     {
         _timerSubscription?.Dispose();
         _timerSubscription = null;
+    }
+
+    // ─── Clipboard Copy Logic ──────────────────────────────────────────
+
+    private void OnCopyQuestion()
+    {
+        if (CurrentQuestion is null) return;
+        CopyToClipboardRequested?.Invoke(this, CurrentQuestion.Text);
+    }
+
+    private void OnCopyAnswer()
+    {
+        if (CurrentQuestion is null) return;
+        var text = CurrentQuestion.Answer;
+        if (CurrentQuestion.Choices is { Count: > 0 })
+        {
+            text = $"Answer: {CurrentQuestion.Answer}";
+        }
+        CopyToClipboardRequested?.Invoke(this, text);
     }
 }
 

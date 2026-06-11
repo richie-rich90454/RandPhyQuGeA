@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using AvaloniaUI.Controls;
 using Core.Domain;
 using Core.Interfaces;
 using Core.Services;
@@ -66,6 +67,9 @@ public class FocusedPracticeViewModel : ViewModelBase
         SubmitAnswerCommand = ReactiveCommand.Create(OnSubmitAnswer);
         SelectAnswerCommand = ReactiveCommand.Create<string>(OnSelectAnswer);
         ViewSummaryCommand = ReactiveCommand.Create(OnViewSummary);
+        CopyQuestionCommand = ReactiveCommand.Create(OnCopyQuestion);
+        CopyAnswerCommand = ReactiveCommand.Create(OnCopyAnswer);
+        CopyFullCommand = ReactiveCommand.Create(OnCopyFull);
 
         InitializeScopeItems();
     }
@@ -129,6 +133,8 @@ public class FocusedPracticeViewModel : ViewModelBase
         {
             this.RaiseAndSetIfChanged(ref _currentQuestionIndex, value);
             this.RaisePropertyChanged(nameof(CurrentQuestion));
+            this.RaisePropertyChanged(nameof(QuestionHasLaTeX));
+            this.RaisePropertyChanged(nameof(SolutionHasLaTeX));
             this.RaisePropertyChanged(nameof(IsLastQuestion));
             this.RaisePropertyChanged(nameof(ProgressText));
             this.RaisePropertyChanged(nameof(ProgressPercent));
@@ -139,6 +145,10 @@ public class FocusedPracticeViewModel : ViewModelBase
         CurrentQuestionIndex >= 0 && CurrentQuestionIndex < Questions.Count
             ? Questions[CurrentQuestionIndex]
             : null;
+
+    public bool QuestionHasLaTeX => CurrentQuestion is not null && LaTeXImage.ContainsLaTeX(CurrentQuestion.Text);
+
+    public bool SolutionHasLaTeX => CurrentQuestion is not null && LaTeXImage.ContainsLaTeX(CurrentQuestion.SolutionLaTeX);
 
     public bool IsLastQuestion => CurrentQuestionIndex >= Questions.Count - 1;
 
@@ -211,6 +221,11 @@ public class FocusedPracticeViewModel : ViewModelBase
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> SubmitAnswerCommand { get; }
     public ReactiveCommand<string, ReactiveUnit> SelectAnswerCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> ViewSummaryCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> CopyQuestionCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> CopyAnswerCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> CopyFullCommand { get; }
+
+    public event EventHandler<string>? CopyToClipboardRequested;
 
     // ─── Scope Selection Logic ───────────────────────────────────────
 
@@ -442,6 +457,45 @@ public class FocusedPracticeViewModel : ViewModelBase
             };
             _ = _resultRepository.SaveAsync(result);
         }
+    }
+
+    // ─── Clipboard Copy Logic ──────────────────────────────────────────
+
+    private void OnCopyQuestion()
+    {
+        if (CurrentQuestion is null) return;
+        CopyToClipboardRequested?.Invoke(this, CurrentQuestion.Text);
+    }
+
+    private void OnCopyAnswer()
+    {
+        if (CurrentQuestion is null) return;
+        CopyToClipboardRequested?.Invoke(this, CurrentQuestion.Answer);
+    }
+
+    private void OnCopyFull()
+    {
+        if (CurrentQuestion is null) return;
+
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine(CurrentQuestion.Text);
+
+        if (CurrentQuestion.Choices is { Count: > 0 })
+        {
+            var letter = 'A';
+            foreach (var choice in CurrentQuestion.Choices)
+            {
+                sb.AppendLine($"  {letter}) {choice}");
+                letter++;
+            }
+        }
+
+        sb.AppendLine();
+        sb.AppendLine($"Answer: {CurrentQuestion.Answer}");
+        sb.AppendLine();
+        sb.AppendLine(CurrentQuestion.SolutionText);
+
+        CopyToClipboardRequested?.Invoke(this, sb.ToString());
     }
 }
 
