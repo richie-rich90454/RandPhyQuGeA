@@ -125,10 +125,10 @@ public class NavigationViewModel : ViewModelBase
         return viewKey switch
         {
             "Home" => new HomeViewModel(),
-            "MentalPractice" => new MentalPracticeViewModel(_specificationViewModel, _questionGenerator, _resultRepository),
-            "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!, _resultRepository),
+            "MentalPractice" => new MentalPracticeViewModel(_specificationViewModel, _questionGenerator, _resultRepository, this),
+            "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!, _resultRepository, this),
             "QuestionBank" => new QuestionBankViewModel(_specificationViewModel!, this),
-            "Progress" => new ProgressViewModel(_resultRepository),
+            "Progress" => new ProgressViewModel(_resultRepository, _specificationViewModel),
             "Settings" => new SettingsViewModel(),
             _ => throw new ArgumentException($"Unknown view key: {viewKey}", nameof(viewKey))
         };

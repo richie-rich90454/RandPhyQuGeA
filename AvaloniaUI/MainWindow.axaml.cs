@@ -90,19 +90,25 @@ public partial class MainWindow : Window
     private void UpdateContentView()
     {
         if (DataContext is not MainWindowViewModel vm) return;
+        if (vm.Navigation.CurrentView is null) return;
 
-        var viewKey = vm.Navigation.SelectedItem?.ViewKey;
-        if (viewKey is null) return;
+        var currentVm = vm.Navigation.CurrentView;
+        var viewKey = vm.Navigation.SelectedItem?.ViewKey ?? currentVm.GetType().Name.Replace("ViewModel", "View", System.StringComparison.Ordinal);
 
         // Get or create the cached view
         if (!_viewCache.TryGetValue(viewKey, out var view))
         {
-            view = ViewLocator.Resolve(vm.Navigation.CurrentView!);
+            view = ViewLocator.Resolve(currentVm);
             if (view is not null)
             {
-                view.DataContext = vm.Navigation.CurrentView;
+                view.DataContext = currentVm;
                 _viewCache[viewKey] = view;
             }
+        }
+        else
+        {
+            // Always update DataContext for cached views (e.g., SessionSummary changes)
+            view.DataContext = currentVm;
         }
 
         // Set the cached view directly on the ContentControl

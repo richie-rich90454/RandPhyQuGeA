@@ -18,6 +18,10 @@ public class FocusedPracticeViewModel : ViewModelBase
     private readonly SpecificationViewModel _specificationViewModel;
     private readonly QuestionGenerator _questionGenerator;
     private readonly IPracticeResultRepository? _resultRepository;
+    private readonly NavigationViewModel? _navigationViewModel;
+
+    // Per-question tracking for session summary
+    private readonly List<QuestionResultItem> _questionResultsList = new();
 
     // Scope selection state
     private bool _isSelectingScope = true;
@@ -41,11 +45,12 @@ public class FocusedPracticeViewModel : ViewModelBase
     // Confirmation dialog
     private bool _isEndConfirmationVisible;
 
-    public FocusedPracticeViewModel(SpecificationViewModel specificationViewModel, QuestionGenerator questionGenerator, IPracticeResultRepository? resultRepository = null)
+    public FocusedPracticeViewModel(SpecificationViewModel specificationViewModel, QuestionGenerator questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null)
     {
         _specificationViewModel = specificationViewModel;
         _questionGenerator = questionGenerator;
         _resultRepository = resultRepository;
+        _navigationViewModel = navigationViewModel;
 
         var canStartPractice = this.WhenAnyValue(
             x => x.IsSelectingScope,
@@ -60,6 +65,7 @@ public class FocusedPracticeViewModel : ViewModelBase
         CancelEndSessionCommand = ReactiveCommand.Create(OnCancelEndSession);
         SubmitAnswerCommand = ReactiveCommand.Create(OnSubmitAnswer);
         SelectAnswerCommand = ReactiveCommand.Create<string>(OnSelectAnswer);
+        ViewSummaryCommand = ReactiveCommand.Create(OnViewSummary);
 
         InitializeScopeItems();
     }
@@ -186,6 +192,14 @@ public class FocusedPracticeViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _isEndConfirmationVisible, value);
     }
 
+    private bool _isSessionOver;
+
+    public bool IsSessionOver
+    {
+        get => _isSessionOver;
+        set => this.RaiseAndSetIfChanged(ref _isSessionOver, value);
+    }
+
     // ─── Commands ────────────────────────────────────────────────────
 
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> StartPracticeCommand { get; }
@@ -196,6 +210,7 @@ public class FocusedPracticeViewModel : ViewModelBase
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> CancelEndSessionCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> SubmitAnswerCommand { get; }
     public ReactiveCommand<string, ReactiveUnit> SelectAnswerCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> ViewSummaryCommand { get; }
 
     // ─── Scope Selection Logic ───────────────────────────────────────
 
@@ -318,11 +333,13 @@ public class FocusedPracticeViewModel : ViewModelBase
         Questions = new ObservableCollection<GeneratedQuestion>(questions);
         CurrentQuestionIndex = Questions.Count > 0 ? 0 : -1;
         IsSelectingScope = false;
+        IsSessionOver = false;
         IsSolutionVisible = false;
         SelectedAnswer = string.Empty;
         ShortAnswer = string.Empty;
         IsAnswerSubmitted = false;
         AnsweredCount = 0;
+        _questionResultsList.Clear();
     }
 
     private void OnShowSolution()
@@ -350,19 +367,32 @@ public class FocusedPracticeViewModel : ViewModelBase
     private void OnConfirmEndSession()
     {
         IsEndConfirmationVisible = false;
-        IsSelectingScope = true;
-        Questions.Clear();
-        CurrentQuestionIndex = -1;
-        IsSolutionVisible = false;
-        SelectedAnswer = string.Empty;
-        ShortAnswer = string.Empty;
-        IsAnswerSubmitted = false;
-        AnsweredCount = 0;
+        IsSessionOver = true;
+
+        // Navigate to session summary
+        if (_navigationViewModel is not null && _questionResultsList.Count > 0)
+        {
+            var summary = new SessionSummaryViewModel(
+                _questionResultsList.ToList(),
+                _navigationViewModel);
+            _navigationViewModel.NavigateToSessionSummary(summary);
+        }
     }
 
     private void OnCancelEndSession()
     {
         IsEndConfirmationVisible = false;
+    }
+
+    private void OnViewSummary()
+    {
+        if (_navigationViewModel is not null && _questionResultsList.Count > 0)
+        {
+            var summary = new SessionSummaryViewModel(
+                _questionResultsList.ToList(),
+                _navigationViewModel);
+            _navigationViewModel.NavigateToSessionSummary(summary);
+        }
     }
 
     private void OnSelectAnswer(string answer)
@@ -387,10 +417,18 @@ public class FocusedPracticeViewModel : ViewModelBase
             IsCorrect = string.Equals(ShortAnswer.Trim(), CurrentQuestion.Answer, StringComparison.OrdinalIgnoreCase);
         }
 
+        // Track result for session summary
+        var userAnswer = CurrentQuestion.Choices is { Count: > 0 } ? SelectedAnswer : ShortAnswer.Trim();
+        _questionResultsList.Add(new QuestionResultItem(
+            CurrentQuestion.Text,
+            userAnswer,
+            CurrentQuestion.Answer,
+            0,
+            IsCorrect));
+
         // Save result to repository
         if (_resultRepository is not null)
         {
-            var userAnswer = CurrentQuestion.Choices is { Count: > 0 } ? SelectedAnswer : ShortAnswer.Trim();
             var result = new PracticeResult
             {
                 QuestionId = CurrentQuestion.Id,

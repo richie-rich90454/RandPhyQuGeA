@@ -102,6 +102,7 @@ public class MentalPracticeViewModel : ViewModelBase
         GiveUpCommand = ReactiveCommand.Create(OnGiveUp, canGiveUp);
         EndSessionCommand = ReactiveCommand.Create(OnEndSession, canEnd);
         SelectQuestionCountCommand = ReactiveCommand.Create<int>(OnSelectQuestionCount);
+        ViewSummaryCommand = ReactiveCommand.Create(OnViewSummary);
 
         LoadScopeOptions();
     }
@@ -397,6 +398,7 @@ public class MentalPracticeViewModel : ViewModelBase
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> GiveUpCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> EndSessionCommand { get; }
     public ReactiveCommand<int, ReactiveUnit> SelectQuestionCountCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> ViewSummaryCommand { get; }
 
     // ─── Private Methods ────────────────────────────────────────────────
 
@@ -424,6 +426,7 @@ public class MentalPracticeViewModel : ViewModelBase
 
         // Reset state
         _questionQueue.Clear();
+        _questionResultsList.Clear();
         CurrentQuestion = null;
         CurrentQuestionIndex = 0;
         QuestionsAnswered = 0;
@@ -579,6 +582,17 @@ public class MentalPracticeViewModel : ViewModelBase
             CurrentStreak = 0;
         }
 
+        // Track result for session summary
+        if (CurrentQuestion is not null)
+        {
+            _questionResultsList.Add(new QuestionResultItem(
+                CurrentQuestion.Text,
+                correct ? CurrentQuestion.Answer : _currentAnswer,
+                CurrentQuestion.Answer,
+                timeSeconds,
+                correct));
+        }
+
         this.RaisePropertyChanged(nameof(SpeedRating));
         this.RaisePropertyChanged(nameof(SpeedRatingIcon));
         this.RaisePropertyChanged(nameof(ProgressText));
@@ -595,7 +609,8 @@ public class MentalPracticeViewModel : ViewModelBase
                 TimeTaken = TimeSpan.FromSeconds(timeSeconds),
                 UserAnswer = correct ? CurrentQuestion.Answer : (IsMultipleChoice ? _currentAnswer : _currentAnswer),
                 Timestamp = DateTime.UtcNow,
-                Mode = PracticeMode.Mental
+                Mode = PracticeMode.Mental,
+                Difficulty = CurrentQuestion.Difficulty
             };
             _ = _resultRepository.SaveAsync(result);
         }
@@ -658,6 +673,17 @@ public class MentalPracticeViewModel : ViewModelBase
         EndSession();
     }
 
+    private void OnViewSummary()
+    {
+        if (_navigationViewModel is not null && _questionResultsList.Count > 0)
+        {
+            var summary = new SessionSummaryViewModel(
+                _questionResultsList.ToList(),
+                _navigationViewModel);
+            _navigationViewModel.NavigateToSessionSummary(summary);
+        }
+    }
+
     private void OnSelectQuestionCount(int count)
     {
         if (count == -1)
@@ -684,6 +710,15 @@ public class MentalPracticeViewModel : ViewModelBase
 
         this.RaisePropertyChanged(nameof(SpeedRating));
         this.RaisePropertyChanged(nameof(SpeedRatingIcon));
+
+        // Navigate to session summary
+        if (_navigationViewModel is not null)
+        {
+            var summary = new SessionSummaryViewModel(
+                _questionResultsList.ToList(),
+                _navigationViewModel);
+            _navigationViewModel.NavigateToSessionSummary(summary);
+        }
     }
 
     private void StartTimerLoop()
