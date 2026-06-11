@@ -29,8 +29,7 @@
                    HorizontalAlignment="Center" />
         <Button Command="{Binding BackToHomeCommand}" HorizontalAlignment="Center"
                 Padding="20,10" CornerRadius="8"
-                Background="{DynamicResource PrimaryBrush}"
-                Foreground="{DynamicResource TextOnPrimaryBrush}">
+                Classes="primary">
           <TextBlock Text="Back to Home" FontSize="13" FontWeight="SemiBold" />
         </Button>
       </StackPanel>
@@ -215,8 +214,7 @@
         <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
           <Button Command="{Binding PracticeAgainCommand}"
                   Padding="24,12" CornerRadius="8"
-                  Background="{DynamicResource PrimaryBrush}"
-                  Foreground="{DynamicResource TextOnPrimaryBrush}"
+                  Classes="primary"
                   MinWidth="160">
             <StackPanel Orientation="Horizontal" Spacing="8">
               <TextBlock Text="&#xE768;" FontFamily="Segoe MDL2 Assets" FontSize="14"
@@ -243,8 +241,7 @@
         <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
           <Button Command="{Binding ExportCommand}"
                   Padding="24,12" CornerRadius="8"
-                  Background="{DynamicResource Neutral10Brush}"
-                  Foreground="{DynamicResource TextPrimaryBrush}"
+                  Classes="secondary"
                   MinWidth="160">
             <StackPanel Orientation="Horizontal" Spacing="8">
               <TextBlock Text="&#xE72D;" FontFamily="Segoe MDL2 Assets" FontSize="14"
@@ -256,8 +253,7 @@
 
           <Button Command="{Binding BackToHomeCommand}"
                   Padding="24,12" CornerRadius="8"
-                  Background="{DynamicResource Neutral10Brush}"
-                  Foreground="{DynamicResource TextPrimaryBrush}"
+                  Classes="secondary"
                   MinWidth="160">
             <StackPanel Orientation="Horizontal" Spacing="8">
               <TextBlock Text="&#xE80F;" FontFamily="Segoe MDL2 Assets" FontSize="14"
