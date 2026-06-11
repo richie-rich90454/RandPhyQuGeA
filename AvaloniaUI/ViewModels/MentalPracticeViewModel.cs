@@ -70,6 +70,10 @@ public class MentalPracticeViewModel : ViewModelBase
     // Feedback
     private string _feedbackMessage = string.Empty;
 
+    // Easter egg state
+    private int _consecutiveFastAnswers;
+    private bool _hasShownPerfectMessage;
+
     // Scope options
     private List<string> _scopeOptions = new() { "All Topics" };
     private List<ScopeItem> _unitScopeItems = new();
@@ -447,6 +451,8 @@ public class MentalPracticeViewModel : ViewModelBase
         LastAnswerCorrect = null;
         CurrentAnswer = string.Empty;
         FeedbackMessage = string.Empty;
+        _consecutiveFastAnswers = 0;
+        _hasShownPerfectMessage = false;
 
         // Pre-generate questions
         string? topicId = ResolveTopicId();
@@ -543,10 +549,11 @@ public class MentalPracticeViewModel : ViewModelBase
         if (CurrentQuestion is null || IsInFeedback) return;
 
         var isCorrect = CheckAnswer(answer);
-        RecordAnswer(isCorrect, _questionStopwatch.Elapsed.TotalSeconds);
+        var elapsed = _questionStopwatch.Elapsed.TotalSeconds;
+        RecordAnswer(isCorrect, elapsed);
 
         LastAnswerCorrect = isCorrect;
-        FeedbackMessage = isCorrect ? "Correct!" : $"Incorrect. Answer: {CurrentQuestion.Answer}";
+        FeedbackMessage = isCorrect ? GetCorrectFeedback(elapsed) : $"Incorrect. Answer: {CurrentQuestion.Answer}";
 
         IsInPractice = false;
         IsInFeedback = true;
@@ -721,6 +728,17 @@ public class MentalPracticeViewModel : ViewModelBase
         this.RaisePropertyChanged(nameof(SpeedRating));
         this.RaisePropertyChanged(nameof(SpeedRatingIcon));
 
+        // Perfect score celebration
+        if (QuestionsAnswered > 0 && CorrectCount == QuestionsAnswered)
+        {
+            FeedbackMessage = QuestionsAnswered switch
+            {
+                >= 20 => "Flawless! Absolutely perfect session!",
+                >= 10 => "Perfect score! You're a physics master!",
+                _ => "Perfect! Every answer correct!"
+            };
+        }
+
         // Navigate to session summary
         if (_navigationViewModel is not null)
         {
@@ -748,6 +766,37 @@ public class MentalPracticeViewModel : ViewModelBase
     {
         _timerSubscription?.Dispose();
         _timerSubscription = null;
+    }
+
+    // ─── Easter Egg Feedback ──────────────────────────────────────────
+
+    private string GetCorrectFeedback(double elapsedSeconds)
+    {
+        // Fast answer easter eggs
+        if (elapsedSeconds < 3)
+        {
+            _consecutiveFastAnswers++;
+            if (_consecutiveFastAnswers >= 5)
+                return "Unstoppable! You're on fire!";
+            if (_consecutiveFastAnswers >= 3)
+                return "Speed demon! Keep it up!";
+            return "Lightning fast! Correct!";
+        }
+
+        _consecutiveFastAnswers = 0;
+
+        // Streak-based messages
+        if (CurrentStreak >= 10 && !_hasShownPerfectMessage)
+        {
+            _hasShownPerfectMessage = true;
+            return "Legendary! 10 in a row!";
+        }
+        if (CurrentStreak == 7) return "Lucky seven! On a roll!";
+        if (CurrentStreak == 5) return "Five alive! Impressive streak!";
+
+        // Random encouraging messages
+        var messages = new[] { "Correct!", "Nice one!", "Well done!", "Spot on!", "You got it!", "Right answer!" };
+        return messages[Random.Shared.Next(messages.Length)];
     }
 
     // ─── Clipboard Copy Logic ──────────────────────────────────────────
