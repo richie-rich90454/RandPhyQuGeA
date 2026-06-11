@@ -28,9 +28,9 @@ public class QuestionGenerator
         _solutionBuilder = solutionBuilder;
     }
 
-    public GeneratedQuestion? Generate(string? topicId = null, string? skillId = null, int? difficulty = null, string? questionType = null)
+    public GeneratedQuestion? Generate(string? topicId = null, string? skillId = null, int? minDifficulty = null, int? maxDifficulty = null, string? questionType = null)
     {
-        var template = GetRandomTemplate(topicId, skillId, difficulty, questionType);
+        var template = GetRandomTemplate(topicId, skillId, minDifficulty, maxDifficulty, questionType);
         if (template is null)
             return null;
 
@@ -66,19 +66,19 @@ public class QuestionGenerator
         );
     }
 
-    public IReadOnlyList<GeneratedQuestion> GenerateBatch(int count, string? topicId = null, string? skillId = null, int? difficulty = null, string? questionType = null)
+    public IReadOnlyList<GeneratedQuestion> GenerateBatch(int count, string? topicId = null, string? skillId = null, int? minDifficulty = null, int? maxDifficulty = null, string? questionType = null)
     {
         var results = new List<GeneratedQuestion>();
         for (int i = 0; i < count; i++)
         {
-            var question = Generate(topicId, skillId, difficulty, questionType);
+            var question = Generate(topicId, skillId, minDifficulty, maxDifficulty, questionType);
             if (question is not null)
                 results.Add(question);
         }
         return results;
     }
 
-    private QuestionTemplate? GetRandomTemplate(string? topicId, string? skillId, int? difficulty, string? questionType)
+    private QuestionTemplate? GetRandomTemplate(string? topicId, string? skillId, int? minDifficulty, int? maxDifficulty, string? questionType)
     {
         IReadOnlyList<QuestionTemplate> candidates;
 
@@ -101,8 +101,10 @@ public class QuestionGenerator
             candidates = _templateRepository.GetAll();
         }
 
-        if (difficulty.HasValue)
-            candidates = candidates.Where(t => t.Difficulty == difficulty.Value).ToList();
+        if (minDifficulty.HasValue)
+            candidates = candidates.Where(t => t.Difficulty >= minDifficulty.Value).ToList();
+        if (maxDifficulty.HasValue)
+            candidates = candidates.Where(t => t.Difficulty <= maxDifficulty.Value).ToList();
 
         if (!string.IsNullOrEmpty(questionType))
             candidates = candidates.Where(t => t.QuestionType == questionType).ToList();

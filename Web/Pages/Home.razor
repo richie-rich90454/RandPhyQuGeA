@@ -76,7 +76,8 @@
             currentQuestion = QuestionGenerator.Generate(
                 topicId: null,
                 skillId: null,
-                difficulty: selectedDifficulty,
+                minDifficulty: selectedDifficulty,
+                maxDifficulty: selectedDifficulty,
                 questionType: string.IsNullOrEmpty(selectedType) ? null : selectedType
             );
 

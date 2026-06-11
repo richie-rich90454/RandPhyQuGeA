@@ -29,6 +29,9 @@ public sealed class InMemoryTemplateRepository : ITemplateRepository
     public IReadOnlyList<QuestionTemplate> GetByDifficulty(int difficulty) =>
         _templates.Where(t => t.Difficulty == difficulty).ToList();
 
+    public IEnumerable<QuestionTemplate> GetByDifficultyRange(int minDifficulty, int maxDifficulty) =>
+        _templates.Where(t => t.Difficulty >= minDifficulty && t.Difficulty <= maxDifficulty);
+
     public QuestionTemplate? GetRandom(Random? random = null)
     {
         if (_templates.Count == 0) return null;

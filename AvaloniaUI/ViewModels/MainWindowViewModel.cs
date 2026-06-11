@@ -199,7 +199,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 
             int? difficulty = SelectedDifficulty.HasValue ? (int)SelectedDifficulty.Value : null;
             var question = await Task.Run(() =>
-                _questionGenerator.Generate(SelectedTopicId, SelectedSkillId, difficulty, SelectedQuestionType));
+                _questionGenerator.Generate(SelectedTopicId, SelectedSkillId, difficulty, difficulty, SelectedQuestionType));
 
             if (question is null)
             {
