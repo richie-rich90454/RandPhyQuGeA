@@ -156,7 +156,7 @@
           <!-- Header Bar with Hamburger Toggle -->
         <Border DockPanel.Dock="Top" Background="{DynamicResource HeaderBarBackgroundBrush}"
                 BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1"
-                Padding="8,0" MinHeight="48">
+                Padding="8,0,140,0" MinHeight="48">
           <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
             <!-- Hamburger Toggle Button -->
             <Button Grid.Column="0" Click="TogglePane_Click"
