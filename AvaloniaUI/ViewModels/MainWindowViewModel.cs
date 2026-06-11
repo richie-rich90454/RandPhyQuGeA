@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Core.Domain;
 using Core.Interfaces;
@@ -30,6 +31,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     private string _solutionLaTeX = string.Empty;
     private bool _isSolutionVisible;
     private bool _isLoading;
+    private bool _isGenerating;
     private string _statusMessage = "Ready — press Ctrl+N or click Generate to create a question";
     private IReadOnlyList<string> _choices = Array.Empty<string>();
     private bool _hasChoices;
@@ -56,7 +58,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
         var settingsViewModel = new SettingsViewModel();
         Navigation = new NavigationViewModel(specificationViewModel, questionGenerator, new JsonPracticeResultRepository(), settingsViewModel);
 
-        GenerateCommand = ReactiveCommand.CreateFromTask(OnGenerate);
+        GenerateCommand = ReactiveCommand.CreateFromTask(OnGenerate, this.WhenAnyValue(x => x.IsGenerating).Select(b => !b));
         ToggleSolutionCommand = ReactiveCommand.Create(OnToggleSolution);
         CopyToClipboardCommand = ReactiveCommand.CreateFromTask(OnCopyToClipboard);
         ExportCommand = ReactiveCommand.Create(OnExport);
@@ -129,6 +131,12 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
         set => this.RaiseAndSetIfChanged(ref _isLoading, value);
     }
 
+    public bool IsGenerating
+    {
+        get => _isGenerating;
+        set => this.RaiseAndSetIfChanged(ref _isGenerating, value);
+    }
+
     public string StatusMessage
     {
         get => _statusMessage;
@@ -193,6 +201,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
             return;
         }
 
+        IsGenerating = true;
         try
         {
             IsLoading = true;
@@ -241,6 +250,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
         finally
         {
             IsLoading = false;
+            IsGenerating = false;
         }
     }
 

@@ -7,6 +7,7 @@ using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AvaloniaUI.Controls;
+using AvaloniaUI.Services;
 using Core.Domain;
 using Core.Interfaces;
 using Core.Services;
@@ -16,12 +17,15 @@ using ReactiveUnit = System.Reactive.Unit;
 
 namespace AvaloniaUI.ViewModels;
 
-public class MentalPracticeViewModel : ViewModelBase
+public class MentalPracticeViewModel : ViewModelBase, IDisposable
 {
+    private bool _isDisposed;
+
     private readonly SpecificationViewModel? _specificationViewModel;
     private readonly QuestionGenerator? _questionGenerator;
     private readonly IPracticeResultRepository? _resultRepository;
     private readonly NavigationViewModel? _navigationViewModel;
+    private readonly SoundService? _soundService;
 
     // State machine
     private bool _isInSetup = true;
@@ -76,13 +80,16 @@ public class MentalPracticeViewModel : ViewModelBase
     private int _consecutiveFastAnswers;
     private bool _hasShownPerfectMessage;
 
+    // Concurrency guard
+    private volatile bool _isAutoAdvancing;
+
     // Scope options
     private List<string> _scopeOptions = new() { "All Topics" };
     private List<ScopeItem> _unitScopeItems = new();
 
     public MentalPracticeViewModel() : this(null, null, null, null) { }
 
-    public MentalPracticeViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null, int selectedQuestionCount = 10, bool isTimerVisible = true)
+    public MentalPracticeViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null, int selectedQuestionCount = 10, bool isTimerVisible = true, SoundService? soundService = null)
     {
         _specificationViewModel = specificationViewModel;
         _questionGenerator = questionGenerator;
@@ -90,6 +97,7 @@ public class MentalPracticeViewModel : ViewModelBase
         _navigationViewModel = navigationViewModel;
         _selectedQuestionCount = selectedQuestionCount;
         _isTimerVisible = isTimerVisible;
+        _soundService = soundService;
 
         var canStart = this.WhenAnyValue(
             x => x.IsInSetup,
@@ -460,6 +468,8 @@ public class MentalPracticeViewModel : ViewModelBase
         LastAnswerCorrect = null;
         CurrentAnswer = string.Empty;
         FeedbackMessage = string.Empty;
+        IsSessionOver = false;
+        IsInFeedback = false;
         _consecutiveFastAnswers = 0;
         _hasShownPerfectMessage = false;
 
@@ -563,6 +573,12 @@ public class MentalPracticeViewModel : ViewModelBase
 
         LastAnswerCorrect = isCorrect;
         FeedbackMessage = isCorrect ? GetCorrectFeedback(elapsed) : $"Incorrect. Answer: {CurrentQuestion.Answer}";
+
+        // Play sound feedback
+        if (isCorrect)
+            _soundService?.PlayCorrect();
+        else
+            _soundService?.PlayIncorrect();
 
         IsInPractice = false;
         IsInFeedback = true;
@@ -766,6 +782,7 @@ public class MentalPracticeViewModel : ViewModelBase
 
     private void StartTimerLoop()
     {
+        if (_isDisposed) return;
         _timerSubscription = Observable.Interval(TimeSpan.FromSeconds(1), RxApp.MainThreadScheduler)
             .Subscribe(_ =>
             {
@@ -786,8 +803,21 @@ public class MentalPracticeViewModel : ViewModelBase
 
     public void StopTimerLoop()
     {
+        if (_isDisposed) return;
         _timerSubscription?.Dispose();
         _timerSubscription = null;
+    }
+
+    public void Dispose()
+    {
+        if (_isDisposed) return;
+        StopTimerLoop();
+        _questionStopwatch.Stop();
+        _sessionStopwatch.Stop();
+        _timerSubscription?.Dispose();
+        _timerSubscription = null;
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 
     // ─── Easter Egg Feedback ──────────────────────────────────────────

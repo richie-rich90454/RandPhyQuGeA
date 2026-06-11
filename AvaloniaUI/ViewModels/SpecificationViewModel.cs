@@ -24,11 +24,13 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
     private Timer? _debounceTimer;
     private readonly object _debounceLock = new();
 
+    private bool _isDisposed;
     private bool _isLoaded;
     private string _errorMessage = string.Empty;
     private bool _isLoading;
     private Specification? _specification;
     private string _specFilePath = Path.Combine(AppContext.BaseDirectory, "Data", "part_one.txt");
+    private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     public SpecificationViewModel(ISpecificationLoader loader)
     {
@@ -148,6 +150,7 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
 
     private void OnFileChanged(object sender, FileSystemEventArgs e)
     {
+        if (_isDisposed) return;
         lock (_debounceLock)
         {
             _debounceTimer?.Dispose();
@@ -157,6 +160,7 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
 
     private void DebouncedReload()
     {
+        if (_isDisposed) return;
         lock (_debounceLock)
         {
             _debounceTimer?.Dispose();
@@ -172,68 +176,76 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
 
     private async Task LoadSpecification()
     {
-        IsLoading = true;
-        ErrorMessage = string.Empty;
-
+        await _loadLock.WaitAsync();
         try
         {
-            if (!File.Exists(SpecFilePath))
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+
+            try
             {
-                ErrorMessage = $"Specification file not found: {SpecFilePath}";
-                IsLoaded = false;
-                return;
+                if (!File.Exists(SpecFilePath))
+                {
+                    ErrorMessage = $"Specification file not found: {SpecFilePath}";
+                    IsLoaded = false;
+                    return;
+                }
+
+                var spec = await Task.Run(() => _loader.Load(SpecFilePath));
+
+                Specification = spec;
+
+                // Batch-populate collections to minimize layout invalidations
+                Units.Clear();
+                foreach (var unit in spec.Units)
+                    Units.Add(unit);
+
+                Topics.Clear();
+                foreach (var topic in spec.Topics)
+                    Topics.Add(topic);
+
+                Skills.Clear();
+                foreach (var skill in spec.Skills)
+                    Skills.Add(skill);
+
+                Templates.Clear();
+                foreach (var template in spec.Templates)
+                    Templates.Add(template);
+
+                // Build hierarchy last — this populates UnitNodes which triggers ApplyFilters
+                BuildHierarchy(spec);
+
+                IsLoaded = true;
             }
-
-            var spec = await Task.Run(() => _loader.Load(SpecFilePath));
-
-            Specification = spec;
-
-            // Batch-populate collections to minimize layout invalidations
-            Units.Clear();
-            foreach (var unit in spec.Units)
-                Units.Add(unit);
-
-            Topics.Clear();
-            foreach (var topic in spec.Topics)
-                Topics.Add(topic);
-
-            Skills.Clear();
-            foreach (var skill in spec.Skills)
-                Skills.Add(skill);
-
-            Templates.Clear();
-            foreach (var template in spec.Templates)
-                Templates.Add(template);
-
-            // Build hierarchy last — this populates UnitNodes which triggers ApplyFilters
-            BuildHierarchy(spec);
-
-            IsLoaded = true;
-        }
-        catch (ParseException ex)
-        {
-            var errorLines = ex.Errors.Select(e => $"Line {e.LineNumber}: {e.Message}");
-            ErrorMessage = $"Parse error: {string.Join(Environment.NewLine, errorLines)}";
-            IsLoaded = false;
-        }
-        catch (FileNotFoundException ex)
-        {
-            ErrorMessage = $"File not found: {ex.Message}";
-            IsLoaded = false;
-        }
-        catch (IOException ex)
-        {
-            ErrorMessage = $"I/O error reading specification: {ex.Message}";
-            IsLoaded = false;
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Error loading specification: {ex.Message}";
-            IsLoaded = false;
+            catch (ParseException ex)
+            {
+                var errorLines = ex.Errors.Select(e => $"Line {e.LineNumber}: {e.Message}");
+                ErrorMessage = $"Parse error: {string.Join(Environment.NewLine, errorLines)}";
+                IsLoaded = false;
+            }
+            catch (FileNotFoundException ex)
+            {
+                ErrorMessage = $"File not found: {ex.Message}";
+                IsLoaded = false;
+            }
+            catch (IOException ex)
+            {
+                ErrorMessage = $"I/O error reading specification: {ex.Message}";
+                IsLoaded = false;
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error loading specification: {ex.Message}";
+                IsLoaded = false;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
         finally
         {
-            IsLoading = false;
+            _loadLock.Release();
         }
     }
 
@@ -351,11 +363,14 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
-        StopWatching();
+        if (_isDisposed) return;
         lock (_debounceLock)
         {
+            StopWatching();
             _debounceTimer?.Dispose();
             _debounceTimer = null;
         }
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

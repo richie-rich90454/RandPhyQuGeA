@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AvaloniaUI.Controls;
+using AvaloniaUI.Services;
 using Core.Domain;
 using Core.Interfaces;
 using Core.Services;
@@ -15,12 +16,15 @@ using ReactiveUnit = System.Reactive.Unit;
 
 namespace AvaloniaUI.ViewModels;
 
-public class FocusedPracticeViewModel : ViewModelBase
+public class FocusedPracticeViewModel : ViewModelBase, IDisposable
 {
+    private bool _isDisposed;
+
     private readonly SpecificationViewModel _specificationViewModel;
     private readonly QuestionGenerator _questionGenerator;
     private readonly IPracticeResultRepository? _resultRepository;
     private readonly NavigationViewModel? _navigationViewModel;
+    private readonly SoundService? _soundService;
 
     // Per-question tracking for session summary
     private readonly List<QuestionResultItem> _questionResultsList = new();
@@ -50,7 +54,10 @@ public class FocusedPracticeViewModel : ViewModelBase
     // Confirmation dialog
     private bool _isEndConfirmationVisible;
 
-    public FocusedPracticeViewModel(SpecificationViewModel specificationViewModel, QuestionGenerator questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null, int questionCount = 10, int minDifficulty = 1, int maxDifficulty = 10, string questionType = "Mixed")
+    // Concurrency guard
+    private bool _isGenerating;
+
+    public FocusedPracticeViewModel(SpecificationViewModel specificationViewModel, QuestionGenerator questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null, int questionCount = 10, int minDifficulty = 1, int maxDifficulty = 10, string questionType = "Mixed", SoundService? soundService = null)
     {
         _specificationViewModel = specificationViewModel;
         _questionGenerator = questionGenerator;
@@ -60,11 +67,13 @@ public class FocusedPracticeViewModel : ViewModelBase
         _minDifficulty = minDifficulty;
         _maxDifficulty = maxDifficulty;
         _questionType = questionType;
+        _soundService = soundService;
 
         var canStartPractice = this.WhenAnyValue(
             x => x.IsSelectingScope,
             x => x.SelectedScopeDescription,
-            (isSelecting, desc) => isSelecting && !string.IsNullOrEmpty(desc));
+            x => x.IsGenerating,
+            (isSelecting, desc, generating) => isSelecting && !string.IsNullOrEmpty(desc) && !generating);
 
         StartPracticeCommand = ReactiveCommand.CreateFromTask(OnStartPractice, canStartPractice);
         ShowSolutionCommand = ReactiveCommand.Create(OnShowSolution);
@@ -104,13 +113,23 @@ public class FocusedPracticeViewModel : ViewModelBase
     public int MinDifficulty
     {
         get => _minDifficulty;
-        set => this.RaiseAndSetIfChanged(ref _minDifficulty, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _minDifficulty, value);
+            if (_maxDifficulty < value)
+                MaxDifficulty = value;
+        }
     }
 
     public int MaxDifficulty
     {
         get => _maxDifficulty;
-        set => this.RaiseAndSetIfChanged(ref _maxDifficulty, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _maxDifficulty, value);
+            if (_minDifficulty > value)
+                MinDifficulty = value;
+        }
     }
 
     public string QuestionType
@@ -216,6 +235,12 @@ public class FocusedPracticeViewModel : ViewModelBase
     {
         get => _isEndConfirmationVisible;
         set => this.RaiseAndSetIfChanged(ref _isEndConfirmationVisible, value);
+    }
+
+    public bool IsGenerating
+    {
+        get => _isGenerating;
+        set => this.RaiseAndSetIfChanged(ref _isGenerating, value);
     }
 
     private bool _isSessionOver;
@@ -346,67 +371,75 @@ public class FocusedPracticeViewModel : ViewModelBase
         if (selectedSkillIds.Count == 0)
             return;
 
-        var targetCount = QuestionCount == 0 ? selectedSkillIds.Count * 3 : QuestionCount;
-        string? qType = QuestionType == "Mixed" ? null : QuestionType;
-
-        // Capture skill parent IDs for the background thread
-        var skillParentMap = ScopeItems
-            .Where(i => i.Level == "Skill" && i.IsChecked)
-            .ToDictionary(i => i.Id, i => i.ParentId);
-
-        var minDiff = MinDifficulty;
-        var maxDiff = MaxDifficulty;
-
-        // Generate ALL questions in a single background task — no sequential UI-thread hops
-        var questions = await Task.Run(() =>
+        IsGenerating = true;
+        try
         {
-            var results = new List<GeneratedQuestion>();
-            var rng = new Random();
+            var targetCount = QuestionCount == 0 ? selectedSkillIds.Count * 3 : QuestionCount;
+            string? qType = QuestionType == "Mixed" ? null : QuestionType;
 
-            // First pass: one question per selected skill
-            foreach (var skillId in selectedSkillIds)
+            // Capture skill parent IDs for the background thread
+            var skillParentMap = ScopeItems
+                .Where(i => i.Level == "Skill" && i.IsChecked)
+                .ToDictionary(i => i.Id, i => i.ParentId);
+
+            var minDiff = MinDifficulty;
+            var maxDiff = MaxDifficulty;
+
+            // Generate ALL questions in a single background task — no sequential UI-thread hops
+            var questions = await Task.Run(() =>
             {
-                var parentId = skillParentMap.GetValueOrDefault(skillId);
-                for (int attempt = 0; attempt < 3; attempt++)
+                var results = new List<GeneratedQuestion>();
+                var rng = new Random();
+
+                // First pass: one question per selected skill
+                foreach (var skillId in selectedSkillIds)
                 {
-                    var question = _questionGenerator.Generate(parentId, skillId, minDiff, maxDiff, qType);
-                    if (question is not null)
+                    var parentId = skillParentMap.GetValueOrDefault(skillId);
+                    for (int attempt = 0; attempt < 3; attempt++)
                     {
-                        results.Add(question);
-                        break;
+                        var question = _questionGenerator.Generate(parentId, skillId, minDiff, maxDiff, qType);
+                        if (question is not null)
+                        {
+                            results.Add(question);
+                            break;
+                        }
                     }
                 }
-            }
 
-            // Second pass: fill up to target count
-            if (results.Count < targetCount)
-            {
-                for (int i = results.Count; i < targetCount; i++)
+                // Second pass: fill up to target count
+                if (results.Count < targetCount)
                 {
-                    var skillId = selectedSkillIds[rng.Next(selectedSkillIds.Count)];
-                    var parentId = skillParentMap.GetValueOrDefault(skillId);
-                    var question = _questionGenerator.Generate(parentId, skillId, minDiff, maxDiff, qType);
-                    if (question is not null)
-                        results.Add(question);
+                    for (int i = results.Count; i < targetCount; i++)
+                    {
+                        var skillId = selectedSkillIds[rng.Next(selectedSkillIds.Count)];
+                        var parentId = skillParentMap.GetValueOrDefault(skillId);
+                        var question = _questionGenerator.Generate(parentId, skillId, minDiff, maxDiff, qType);
+                        if (question is not null)
+                            results.Add(question);
+                    }
                 }
-            }
 
-            return results;
-        });
+                return results;
+            });
 
-        Questions.Clear();
-        foreach (var q in questions)
-            Questions.Add(q);
+            Questions.Clear();
+            foreach (var q in questions)
+                Questions.Add(q);
 
-        CurrentQuestionIndex = Questions.Count > 0 ? 0 : -1;
-        IsSelectingScope = false;
-        IsSessionOver = false;
-        IsSolutionVisible = false;
-        SelectedAnswer = string.Empty;
-        ShortAnswer = string.Empty;
-        IsAnswerSubmitted = false;
-        AnsweredCount = 0;
-        _questionResultsList.Clear();
+            CurrentQuestionIndex = Questions.Count > 0 ? 0 : -1;
+            IsSelectingScope = false;
+            IsSessionOver = false;
+            IsSolutionVisible = false;
+            SelectedAnswer = string.Empty;
+            ShortAnswer = string.Empty;
+            IsAnswerSubmitted = false;
+            AnsweredCount = 0;
+            _questionResultsList.Clear();
+        }
+        finally
+        {
+            IsGenerating = false;
+        }
     }
 
     private void OnShowSolution()
@@ -491,6 +524,12 @@ public class FocusedPracticeViewModel : ViewModelBase
             IsCorrect = string.Equals(ShortAnswer.Trim(), CurrentQuestion.Answer, StringComparison.OrdinalIgnoreCase);
         }
 
+        // Play sound feedback
+        if (IsCorrect)
+            _soundService?.PlayCorrect();
+        else
+            _soundService?.PlayIncorrect();
+
         // Track result for session summary
         var userAnswer = CurrentQuestion.Choices is { Count: > 0 } ? SelectedAnswer : ShortAnswer.Trim();
         _questionResultsList.Add(new QuestionResultItem(
@@ -556,6 +595,18 @@ public class FocusedPracticeViewModel : ViewModelBase
         sb.AppendLine(CurrentQuestion.SolutionText);
 
         CopyToClipboardRequested?.Invoke(this, sb.ToString());
+    }
+
+    public void Dispose()
+    {
+        if (_isDisposed) return;
+
+        foreach (var (item, handler) in _scopeHandlers)
+            item.PropertyChanged -= handler;
+        _scopeHandlers.Clear();
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }
 
