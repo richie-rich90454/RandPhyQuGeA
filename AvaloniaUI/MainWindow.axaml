@@ -214,7 +214,7 @@
 
       <!-- Keyboard Shortcut Help Overlay -->
       <Border x:Name="ShortcutOverlay" IsVisible="False"
-              Background="#C0000000"
+              Background="{DynamicResource OverlayScrimBrush}"
               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
               ZIndex="200" Cursor="Hand"
               PointerPressed="OnShortcutOverlayDismiss">

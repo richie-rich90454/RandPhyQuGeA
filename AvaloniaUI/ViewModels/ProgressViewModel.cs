@@ -294,7 +294,7 @@ public class ProgressViewModel : ViewModelBase
                 CorrectQuestions = correct,
                 Accuracy = total > 0 ? Math.Round(correct * 100.0 / total, 1) : 0,
                 AccuracyText = total > 0 ? $"{correct * 100.0 / total:F0}%" : "\u2014",
-                BarWidth = maxCount > 0 ? (double)total / maxCount : 0
+                BarWidth = maxCount > 0 ? (double)total / maxCount * 200 : 0
             };
         }))
         {
@@ -320,7 +320,7 @@ public class ProgressViewModel : ViewModelBase
             {
                 Difficulty = d,
                 Count = count,
-                BarWidth = maxCount > 0 ? (double)count / maxCount : 0,
+                BarWidth = maxCount > 0 ? (double)count / maxCount * 200 : 0,
                 Label = d switch
                 {
                     <= 3 => "Easy",
