@@ -7,14 +7,6 @@
     <Application.Styles>
         <FluentTheme />
 
-        <!-- Override FluentTheme Button hover styles that make transparent buttons disappear -->
-        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource NavItemHoverBrush}" />
-        </Style>
-        <Style Selector="Button:pressed /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource NavItemSelectedBrush}" />
-        </Style>
-
         <!-- Nav button classes: subtle hover, no FluentTheme chrome -->
         <Style Selector="Button.nav-item">
             <Setter Property="Background" Value="Transparent" />
@@ -63,6 +55,32 @@
         </Style>
         <Style Selector="Button.primary:disabled /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource Neutral30Brush}" />
+        </Style>
+
+        <!-- Secondary/neutral button -->
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="{DynamicResource Neutral10Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+        <Style Selector="Button.secondary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource Neutral20Brush}" />
+        </Style>
+        <Style Selector="Button.secondary:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource Neutral30Brush}" />
+        </Style>
+
+        <!-- Danger/destructive button -->
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextOnPrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
         </Style>
     </Application.Styles>
 
