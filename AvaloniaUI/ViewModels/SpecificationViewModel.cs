@@ -338,6 +338,14 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
 
     public IReadOnlyList<QuestionTemplate> GetLoadedTemplates() => Templates.ToList();
 
+    public async Task EnsureLoadedAsync()
+    {
+        if (!IsLoaded)
+        {
+            await LoadSpecification();
+        }
+    }
+
     public void Dispose()
     {
         StopWatching();

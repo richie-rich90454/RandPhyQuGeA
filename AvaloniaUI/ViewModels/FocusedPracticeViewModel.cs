@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AvaloniaUI.Controls;
 using Core.Domain;
@@ -78,7 +79,12 @@ public class FocusedPracticeViewModel : ViewModelBase
         CopyAnswerCommand = ReactiveCommand.Create(OnCopyAnswer);
         CopyFullCommand = ReactiveCommand.Create(OnCopyFull);
 
-        InitializeScopeItems();
+        _ = InitializeAsync();
+    }
+
+    private async Task InitializeAsync()
+    {
+        await InitializeScopeItemsAsync();
     }
 
     // ─── Scope Selection Properties ──────────────────────────────────
@@ -261,7 +267,7 @@ public class FocusedPracticeViewModel : ViewModelBase
         UpdateScopeDescription();
     }
 
-    private void InitializeScopeItems()
+    private async Task InitializeScopeItemsAsync()
     {
         // Unsubscribe old handlers
         foreach (var (item, handler) in _scopeHandlers)
@@ -272,7 +278,7 @@ public class FocusedPracticeViewModel : ViewModelBase
 
         if (!_specificationViewModel.IsLoaded)
         {
-            _specificationViewModel.LoadCommand.Execute(ReactiveUnit.Default).Subscribe();
+            await _specificationViewModel.EnsureLoadedAsync();
         }
 
         foreach (var unit in _specificationViewModel.UnitNodes)

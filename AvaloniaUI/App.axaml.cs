@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -28,26 +29,28 @@ public partial class App : Application
         ApplyTheme(CurrentTheme);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var (viewModel, specViewModel, repository) = CreateViewModel();
-            desktop.MainWindow = new MainWindow(viewModel);
 
-            // Auto-load the specification and populate the template repository
-            InitializeAsync(specViewModel, repository);
+            // Load spec and populate repository before showing window
+            try
+            {
+                await specViewModel.EnsureLoadedAsync();
+                repository.AddRange(specViewModel.GetLoadedTemplates());
+            }
+            catch (Exception ex)
+            {
+                // Log but continue — user can still use the app without a spec
+                System.Diagnostics.Debug.WriteLine($"Failed to load spec: {ex.Message}");
+            }
+
+            desktop.MainWindow = new MainWindow(viewModel);
         }
 
         base.OnFrameworkInitializationCompleted();
-    }
-
-    private static void InitializeAsync(SpecificationViewModel specViewModel, InMemoryTemplateRepository repository)
-    {
-        specViewModel.LoadCommand.Execute(System.Reactive.Unit.Default).Subscribe(_ =>
-        {
-            repository.AddRange(specViewModel.GetLoadedTemplates());
-        });
     }
 
     /// <summary>
