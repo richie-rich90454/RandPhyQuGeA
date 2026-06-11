@@ -471,7 +471,8 @@ public class FocusedPracticeViewModel : ViewModelBase
                 TimeTaken = TimeSpan.Zero,
                 UserAnswer = userAnswer,
                 Timestamp = DateTime.UtcNow,
-                Mode = PracticeMode.Focused
+                Mode = PracticeMode.Focused,
+                Difficulty = CurrentQuestion?.Difficulty ?? 0
             };
             _ = _resultRepository.SaveAsync(result);
         }
