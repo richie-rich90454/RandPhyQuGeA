@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia;
@@ -31,7 +32,6 @@ public partial class ExportDialog : Window
         {
             vm.CopyToClipboardRequested += OnCopyToClipboardRequested;
             vm.SaveRequested += OnSaveRequested;
-            vm.CloseCommand.Execute(System.Reactive.Unit.Default);
         }
     }
 
@@ -78,9 +78,13 @@ public partial class ExportDialog : Window
                 using var writer = new StreamWriter(stream);
                 await writer.WriteAsync(e.Content);
             }
-            catch
+            catch (Exception ex)
             {
-                // Silently fail
+                Debug.WriteLine($"Save export failed: {ex.Message}");
+                if (DataContext is ExportViewModel vm)
+                {
+                    vm.ErrorMessage = $"Failed to save file: {ex.Message}";
+                }
             }
         }
     }

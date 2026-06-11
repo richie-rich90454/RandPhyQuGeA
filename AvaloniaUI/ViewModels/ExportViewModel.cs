@@ -19,6 +19,7 @@ public class ExportViewModel : ViewModelBase
     private bool _isExporting;
     private bool _isExportPanelVisible;
     private string _exportTitle = "Export";
+    private string _errorMessage = string.Empty;
     private IReadOnlyList<GeneratedQuestion> _questions = Array.Empty<GeneratedQuestion>();
 
     public ExportViewModel()
@@ -89,6 +90,12 @@ public class ExportViewModel : ViewModelBase
     {
         get => _exportTitle;
         set => this.RaiseAndSetIfChanged(ref _exportTitle, value);
+    }
+
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set => this.RaiseAndSetIfChanged(ref _errorMessage, value);
     }
 
     public IReadOnlyList<GeneratedQuestion> Questions
