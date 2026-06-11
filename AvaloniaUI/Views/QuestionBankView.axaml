@@ -167,11 +167,9 @@
                           Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold" />
           </StackPanel>
         </StackPanel>
-        <ScrollViewer>
-          <TreeView ItemsSource="{Binding FilteredUnitNodes}"
-                    SelectedItem="{Binding SelectedItem}"
-                    x:Name="SpecTree" />
-        </ScrollViewer>
+        <TreeView ItemsSource="{Binding FilteredUnitNodes}"
+                  SelectedItem="{Binding SelectedItem}"
+                  x:Name="SpecTree" />
       </DockPanel>
     </Border>
 
