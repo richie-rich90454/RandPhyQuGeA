@@ -41,8 +41,9 @@ public class MentalPracticeViewModel : ViewModelBase
     // Timer
     private readonly Stopwatch _questionStopwatch = new();
     private readonly Stopwatch _sessionStopwatch = new();
-    private TimeSpan _questionTimer;
-    private TimeSpan _sessionTimer;
+    private string _questionTimerText = "00:00";
+    private string _sessionTimerText = "00:00";
+    private string _questionTimerBrushKey = "TimerNormalBrush";
     private IDisposable? _timerSubscription;
 
     // Per-question tracking
@@ -219,58 +220,41 @@ public class MentalPracticeViewModel : ViewModelBase
 
     // ─── Timer Properties ───────────────────────────────────────────────
 
-    public TimeSpan QuestionTimer
-    {
-        get => _questionTimer;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _questionTimer, value);
-            this.RaisePropertyChanged(nameof(QuestionTimerText));
-            this.RaisePropertyChanged(nameof(QuestionTimerBrushKey));
-        }
-    }
+    public TimeSpan QuestionTimer => _questionStopwatch.Elapsed;
 
     public string QuestionTimerText
     {
-        get
-        {
-            var t = QuestionTimer;
-            if (t.TotalHours >= 1)
-                return $"{(int)t.TotalHours}:{t.Minutes:D2}:{t.Seconds:D2}";
-            return $"{t.Minutes:D2}:{t.Seconds:D2}";
-        }
+        get => _questionTimerText;
+        set => this.RaiseAndSetIfChanged(ref _questionTimerText, value);
     }
 
     public string QuestionTimerBrushKey
     {
-        get
-        {
-            var seconds = QuestionTimer.TotalSeconds;
-            if (seconds >= 60) return "TimerCriticalBrush";
-            if (seconds >= 30) return "TimerWarningBrush";
-            return "TimerNormalBrush";
-        }
+        get => _questionTimerBrushKey;
+        set => this.RaiseAndSetIfChanged(ref _questionTimerBrushKey, value);
     }
 
-    public TimeSpan SessionTimer
-    {
-        get => _sessionTimer;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _sessionTimer, value);
-            this.RaisePropertyChanged(nameof(SessionTimerText));
-        }
-    }
+    public TimeSpan SessionTimer => _sessionStopwatch.Elapsed;
 
     public string SessionTimerText
     {
-        get
-        {
-            var t = SessionTimer;
-            if (t.TotalHours >= 1)
-                return $"{(int)t.TotalHours}:{t.Minutes:D2}:{t.Seconds:D2}";
-            return $"{t.Minutes:D2}:{t.Seconds:D2}";
-        }
+        get => _sessionTimerText;
+        set => this.RaiseAndSetIfChanged(ref _sessionTimerText, value);
+    }
+
+    private static string FormatTimeSpan(TimeSpan t)
+    {
+        if (t.TotalHours >= 1)
+            return $"{(int)t.TotalHours}:{t.Minutes:D2}:{t.Seconds:D2}";
+        return $"{t.Minutes:D2}:{t.Seconds:D2}";
+    }
+
+    private static string ComputeBrushKey(TimeSpan elapsed)
+    {
+        var seconds = elapsed.TotalSeconds;
+        if (seconds >= 60) return "TimerCriticalBrush";
+        if (seconds >= 30) return "TimerWarningBrush";
+        return "TimerNormalBrush";
     }
 
     // ─── Scoring Properties ─────────────────────────────────────────────
@@ -751,13 +735,20 @@ public class MentalPracticeViewModel : ViewModelBase
 
     private void StartTimerLoop()
     {
-        _timerSubscription = Observable.Interval(TimeSpan.FromMilliseconds(100), RxApp.MainThreadScheduler)
+        _timerSubscription = Observable.Interval(TimeSpan.FromSeconds(1), RxApp.MainThreadScheduler)
             .Subscribe(_ =>
             {
                 if (!IsPaused)
                 {
-                    QuestionTimer = _questionStopwatch.Elapsed;
-                    SessionTimer = _sessionStopwatch.Elapsed;
+                    var qElapsed = _questionStopwatch.Elapsed;
+                    var sElapsed = _sessionStopwatch.Elapsed;
+
+                    QuestionTimerText = FormatTimeSpan(qElapsed);
+                    SessionTimerText = FormatTimeSpan(sElapsed);
+
+                    var newBrushKey = ComputeBrushKey(qElapsed);
+                    if (newBrushKey != _questionTimerBrushKey)
+                        QuestionTimerBrushKey = newBrushKey;
                 }
             });
     }
