@@ -8,6 +8,8 @@ namespace AvaloniaUI.Views;
 
 public partial class HomeView : UserControl
 {
+    private IDisposable? _loadSubscription;
+
     public HomeView()
     {
         InitializeComponent();
@@ -16,10 +18,20 @@ public partial class HomeView : UserControl
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
+        _loadSubscription?.Dispose();
+        _loadSubscription = null;
+
         if (DataContext is HomeViewModel vm)
         {
-            vm.LoadRecentSessionsCommand.Execute(System.Reactive.Unit.Default).Subscribe();
+            _loadSubscription = vm.LoadRecentSessionsCommand.Execute(System.Reactive.Unit.Default).Subscribe();
         }
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        _loadSubscription?.Dispose();
+        _loadSubscription = null;
     }
 
     private void StartMentalPractice_Click(object? sender, RoutedEventArgs e)

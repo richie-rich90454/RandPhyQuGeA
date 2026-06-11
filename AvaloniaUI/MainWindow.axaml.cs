@@ -16,6 +16,8 @@ public partial class MainWindow : Window
     private Button[]? _navButtons;
     private ContentControl? _cachedContentArea;
     private readonly Dictionary<string, Control> _viewCache = new();
+    private readonly List<string> _viewCacheInsertionOrder = new();
+    private const int MaxViewCacheSize = 10;
     private MainWindowViewModel? _currentViewModel;
 
     // Konami code easter egg
@@ -132,7 +134,7 @@ public partial class MainWindow : Window
             if (view is not null)
             {
                 view.DataContext = currentVm;
-                _viewCache[viewKey] = view;
+                AddViewToCache(viewKey, view);
             }
         }
         else
@@ -146,6 +148,35 @@ public partial class MainWindow : Window
         if (_cachedContentArea is not null)
         {
             _cachedContentArea.Content = view;
+        }
+    }
+
+    private void AddViewToCache(string viewKey, Control view)
+    {
+        // If key already exists, remove old entry first
+        if (_viewCache.ContainsKey(viewKey))
+        {
+            RemoveViewFromCache(viewKey);
+        }
+
+        _viewCache[viewKey] = view;
+        _viewCacheInsertionOrder.Add(viewKey);
+
+        // Evict oldest entries if cache exceeds max size
+        while (_viewCache.Count > MaxViewCacheSize && _viewCacheInsertionOrder.Count > 0)
+        {
+            var oldestKey = _viewCacheInsertionOrder[0];
+            RemoveViewFromCache(oldestKey);
+        }
+    }
+
+    private void RemoveViewFromCache(string viewKey)
+    {
+        if (_viewCache.Remove(viewKey, out var oldView))
+        {
+            _viewCacheInsertionOrder.Remove(viewKey);
+            if (oldView.DataContext is IDisposable disposable)
+                disposable.Dispose();
         }
     }
 

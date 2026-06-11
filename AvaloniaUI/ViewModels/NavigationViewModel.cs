@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AvaloniaUI.Services;
 using Core.Interfaces;
 using Core.Services;
 using ReactiveUI;
@@ -11,7 +12,7 @@ namespace AvaloniaUI.ViewModels;
 /// Manages view switching and navigation state for the application.
 /// Caches view models to preserve state when switching between views.
 /// </summary>
-public class NavigationViewModel : ViewModelBase
+public class NavigationViewModel : ViewModelBase, IDisposable
 {
     private ViewModelBase? _currentView;
     private bool _isPaneOpen = true;
@@ -19,12 +20,14 @@ public class NavigationViewModel : ViewModelBase
     private string _currentViewTitle = "Home";
 
     private readonly Dictionary<string, ViewModelBase> _viewCache = new();
+    private readonly List<string> _viewCacheInsertionOrder = new();
     private readonly List<NavigationItem> _navigationItems;
     private readonly SpecificationViewModel? _specificationViewModel;
     private readonly QuestionGenerator? _questionGenerator;
     private SessionSummaryViewModel? _lastSessionSummary;
     private readonly IPracticeResultRepository? _resultRepository;
     private readonly SettingsViewModel? _settingsViewModel;
+    private readonly SoundService _soundService;
 
     public NavigationViewModel() : this(null, null, null, null) { }
 
@@ -34,6 +37,7 @@ public class NavigationViewModel : ViewModelBase
         _questionGenerator = questionGenerator;
         _resultRepository = resultRepository;
         _settingsViewModel = settingsViewModel;
+        _soundService = new SoundService(settingsViewModel?.IsSoundEnabled ?? true);
 
         _navigationItems = new List<NavigationItem>
         {
@@ -111,15 +115,19 @@ public class NavigationViewModel : ViewModelBase
     /// </summary>
     public void Navigate(string viewKey)
     {
+        // Invalidate stale MentalPractice cache so user gets fresh state
+        if (viewKey == "MentalPractice")
+            RemoveFromCache("MentalPractice");
+
         if (!_viewCache.TryGetValue(viewKey, out var vm))
         {
             vm = CreateViewModel(viewKey);
-            _viewCache[viewKey] = vm;
+            AddToCache(viewKey, vm);
         }
 
-        CurrentView = vm;
         SelectedItem = _navigationItems.FirstOrDefault(i => i.ViewKey == viewKey);
         CurrentViewTitle = SelectedItem?.Label ?? viewKey;
+        CurrentView = vm;
     }
 
     private ViewModelBase CreateViewModel(string viewKey)
@@ -129,13 +137,20 @@ public class NavigationViewModel : ViewModelBase
             "Home" => new HomeViewModel(_resultRepository),
             "MentalPractice" => new MentalPracticeViewModel(_specificationViewModel, _questionGenerator, _resultRepository, this,
                 _settingsViewModel?.DefaultQuestionCount ?? 10,
-                _settingsViewModel?.IsTimerVisible ?? true),
-            "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!, _resultRepository, this,
+                _settingsViewModel?.IsTimerVisible ?? true,
+                _soundService),
+            "FocusedPractice" => new FocusedPracticeViewModel(
+                _specificationViewModel ?? throw new InvalidOperationException("Specification not loaded"),
+                _questionGenerator ?? throw new InvalidOperationException("Question generator not loaded"),
+                _resultRepository, this,
                 _settingsViewModel?.DefaultQuestionCount ?? 10,
                 _settingsViewModel?.DefaultMinDifficulty ?? 1,
                 _settingsViewModel?.DefaultMaxDifficulty ?? 10,
-                _settingsViewModel?.DefaultQuestionType ?? "Mixed"),
-            "QuestionBank" => new QuestionBankViewModel(_specificationViewModel!, this),
+                _settingsViewModel?.DefaultQuestionType ?? "Mixed",
+                _soundService),
+            "QuestionBank" => new QuestionBankViewModel(
+                _specificationViewModel ?? throw new InvalidOperationException("Specification not loaded"),
+                this),
             "Progress" => new ProgressViewModel(_resultRepository, _specificationViewModel),
             "Settings" => _settingsViewModel ?? new SettingsViewModel(),
             _ => throw new ArgumentException($"Unknown view key: {viewKey}", nameof(viewKey))
@@ -158,12 +173,12 @@ public class NavigationViewModel : ViewModelBase
         _lastSessionSummary = summary;
 
         // Remove any cached SessionSummary so we always get a fresh one
-        _viewCache.Remove("SessionSummary");
-        _viewCache["SessionSummary"] = summary;
+        RemoveFromCache("SessionSummary");
+        AddToCache("SessionSummary", summary);
 
-        CurrentView = summary;
         SelectedItem = null;
         CurrentViewTitle = "Session Summary";
+        CurrentView = summary;
     }
 
     /// <summary>
@@ -172,14 +187,46 @@ public class NavigationViewModel : ViewModelBase
     public void NavigateToFocusedPractice(string[]? skillIds, string[]? topicIds)
     {
         // Remove any cached FocusedPractice so we get a fresh one with scope
-        _viewCache.Remove("FocusedPractice");
+        RemoveFromCache("FocusedPractice");
 
-        var vm = new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!, _resultRepository, this);
+        var vm = new FocusedPracticeViewModel(
+            _specificationViewModel ?? throw new InvalidOperationException("Specification not loaded"),
+            _questionGenerator ?? throw new InvalidOperationException("Question generator not loaded"),
+            _resultRepository, this,
+            soundService: _soundService);
         vm.SetScope(skillIds, topicIds);
-        _viewCache["FocusedPractice"] = vm;
+        AddToCache("FocusedPractice", vm);
 
-        CurrentView = vm;
         SelectedItem = _navigationItems.FirstOrDefault(i => i.ViewKey == "FocusedPractice");
         CurrentViewTitle = SelectedItem?.Label ?? "FocusedPractice";
+        CurrentView = vm;
+    }
+
+    private void AddToCache(string viewKey, ViewModelBase vm)
+    {
+        _viewCache[viewKey] = vm;
+        _viewCacheInsertionOrder.Remove(viewKey);
+        _viewCacheInsertionOrder.Add(viewKey);
+    }
+
+    private void RemoveFromCache(string viewKey)
+    {
+        if (_viewCache.Remove(viewKey, out var oldVm))
+        {
+            _viewCacheInsertionOrder.Remove(viewKey);
+            if (oldVm is IDisposable disposable)
+                disposable.Dispose();
+        }
+    }
+
+    public void Dispose()
+    {
+        foreach (var vm in _viewCache.Values)
+        {
+            if (vm is IDisposable disposable)
+                disposable.Dispose();
+        }
+        _viewCache.Clear();
+        _viewCacheInsertionOrder.Clear();
     }
 }
