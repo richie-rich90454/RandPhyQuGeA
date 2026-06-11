@@ -149,7 +149,7 @@
                           Height="16" VerticalAlignment="Center" Margin="8,0">
                     <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="4"
                             HorizontalAlignment="Left"
-                            Width="{Binding BarWidth, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                            Width="{Binding BarWidth}"
                             MinWidth="4">
                     </Border>
                   </Border>
