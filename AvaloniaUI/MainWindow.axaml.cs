@@ -15,6 +15,7 @@ public partial class MainWindow : Window
 {
     private Button[]? _navButtons;
     private readonly Dictionary<string, Control> _viewCache = new();
+    private MainWindowViewModel? _currentViewModel;
 
     // Konami code easter egg
     private static readonly Key[] KonamiSequence =
@@ -29,14 +30,6 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         KeyDown += OnKeyDown;
-
-        var viewModel = DataContext as MainWindowViewModel;
-        if (viewModel is not null)
-        {
-            viewModel.CopyToClipboardRequested += OnCopyToClipboardRequested;
-            viewModel.Navigation.PropertyChanged += OnNavigationPropertyChanged;
-            viewModel.ExportRequested += OnExportRequested;
-        }
 
         DataContextChanged += OnDataContextChanged;
 
@@ -61,12 +54,23 @@ public partial class MainWindow : Window
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
+        // Unsubscribe from old
+        if (_currentViewModel is not null)
+        {
+            _currentViewModel.CopyToClipboardRequested -= OnCopyToClipboardRequested;
+            _currentViewModel.Navigation.PropertyChanged -= OnNavigationPropertyChanged;
+            _currentViewModel.ExportRequested -= OnExportRequested;
+        }
+
+        // Subscribe to new
         if (DataContext is MainWindowViewModel vm)
         {
             vm.CopyToClipboardRequested += OnCopyToClipboardRequested;
             vm.Navigation.PropertyChanged += OnNavigationPropertyChanged;
             vm.ExportRequested += OnExportRequested;
         }
+
+        _currentViewModel = DataContext as MainWindowViewModel;
     }
 
     private void OnNavigationPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
