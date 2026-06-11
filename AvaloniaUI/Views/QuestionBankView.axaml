@@ -49,7 +49,7 @@
                 VerticalAlignment="Center">
           <TextBlock Text="{Binding TemplateCount, StringFormat='{}{0}'}"
                      FontSize="10" FontWeight="SemiBold"
-                     Foreground="White" />
+                     Foreground="{DynamicResource TextOnPrimaryBrush}" />
         </Border>
         <TextBlock Text="{Binding Name}" FontSize="12"
                    Foreground="{DynamicResource TextSecondaryBrush}"
@@ -69,11 +69,11 @@
           <StackPanel Orientation="Horizontal" Spacing="8">
             <Border Background="{DynamicResource BadgeMCBrush}" CornerRadius="4" Padding="6,2">
               <TextBlock Text="{Binding QuestionType}" FontSize="10"
-                         Foreground="White" FontWeight="SemiBold" />
+                         Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold" />
             </Border>
             <Border Background="{DynamicResource BadgeMediumBrush}" CornerRadius="4" Padding="6,2">
               <TextBlock Text="{Binding Difficulty, StringFormat='Difficulty: {0}'}" FontSize="10"
-                         Foreground="White" FontWeight="SemiBold" />
+                         Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold" />
             </Border>
           </StackPanel>
           <TextBlock Text="{Binding AnswerExpression, StringFormat='Answer: {0}'}" FontSize="11"
@@ -107,9 +107,9 @@
                 Background="{DynamicResource PrimaryBrush}">
           <StackPanel Orientation="Horizontal" Spacing="8">
             <TextBlock Text="&#xE8E5;" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                       Foreground="White" VerticalAlignment="Center" />
+                       Foreground="{DynamicResource TextOnPrimaryBrush}" VerticalAlignment="Center" />
             <TextBlock Text="Load Specification" FontSize="14" FontWeight="SemiBold"
-                       Foreground="White" VerticalAlignment="Center" />
+                       Foreground="{DynamicResource TextOnPrimaryBrush}" VerticalAlignment="Center" />
           </StackPanel>
         </Button>
       </StackPanel>
@@ -141,17 +141,17 @@
             <ToggleButton IsChecked="{Binding FilterEasy}"
                           Content="Easy" FontSize="11" Padding="8,3" CornerRadius="10"
                           Background="{DynamicResource BadgeEasyBrush}"
-                          Foreground="White" FontWeight="SemiBold" />
+                          Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold" />
             <!-- Medium chip -->
             <ToggleButton IsChecked="{Binding FilterMedium}"
                           Content="Medium" FontSize="11" Padding="8,3" CornerRadius="10"
                           Background="{DynamicResource BadgeMediumBrush}"
-                          Foreground="White" FontWeight="SemiBold" />
+                          Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold" />
             <!-- Hard chip -->
             <ToggleButton IsChecked="{Binding FilterHard}"
                           Content="Hard" FontSize="11" Padding="8,3" CornerRadius="10"
                           Background="{DynamicResource BadgeHardBrush}"
-                          Foreground="White" FontWeight="SemiBold" />
+                          Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold" />
           </StackPanel>
           <TextBlock Text="Type" FontSize="11" Foreground="{DynamicResource TextTertiaryBrush}" Margin="4,4,0,2" />
           <StackPanel Orientation="Horizontal" Spacing="4">
@@ -159,12 +159,12 @@
             <ToggleButton IsChecked="{Binding FilterMC}"
                           Content="MC" FontSize="11" Padding="8,3" CornerRadius="10"
                           Background="{DynamicResource BadgeMCBrush}"
-                          Foreground="White" FontWeight="SemiBold" />
+                          Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold" />
             <!-- SA chip -->
             <ToggleButton IsChecked="{Binding FilterSA}"
                           Content="SA" FontSize="11" Padding="8,3" CornerRadius="10"
                           Background="{DynamicResource BadgeSABrush}"
-                          Foreground="White" FontWeight="SemiBold" />
+                          Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold" />
           </StackPanel>
         </StackPanel>
         <ScrollViewer>
@@ -243,9 +243,9 @@
                     HorizontalContentAlignment="Center">
               <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
                 <TextBlock Text="&#xE8FD;" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                           Foreground="White" VerticalAlignment="Center" />
+                           Foreground="{DynamicResource TextOnPrimaryBrush}" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding PracticeContextText}" FontSize="14" FontWeight="SemiBold"
-                           Foreground="White" VerticalAlignment="Center" />
+                           Foreground="{DynamicResource TextOnPrimaryBrush}" VerticalAlignment="Center" />
               </StackPanel>
             </Button>
           </StackPanel>
