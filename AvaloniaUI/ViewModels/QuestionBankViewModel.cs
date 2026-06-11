@@ -10,6 +10,8 @@ namespace AvaloniaUI.ViewModels;
 
 public class QuestionBankViewModel : ViewModelBase, IDisposable
 {
+    private bool _isDisposed;
+
     private readonly SpecificationViewModel _specViewModel;
     private readonly NavigationViewModel? _navigationViewModel;
     private readonly CompositeDisposable _subscriptions = new();
@@ -390,6 +392,9 @@ public class QuestionBankViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
+        if (_isDisposed) return;
         _subscriptions.Dispose();
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

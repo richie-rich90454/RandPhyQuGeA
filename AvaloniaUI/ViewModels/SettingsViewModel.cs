@@ -7,8 +7,10 @@ using ReactiveUI;
 
 namespace AvaloniaUI.ViewModels;
 
-public class SettingsViewModel : ViewModelBase
+public class SettingsViewModel : ViewModelBase, IDisposable
 {
+    private bool _isDisposed;
+
     private static readonly string SettingsFilePath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "PhysicsQG", "settings.json");
@@ -84,13 +86,23 @@ public class SettingsViewModel : ViewModelBase
     public int DefaultMinDifficulty
     {
         get => _defaultMinDifficulty;
-        set => this.RaiseAndSetIfChanged(ref _defaultMinDifficulty, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _defaultMinDifficulty, value);
+            if (_defaultMaxDifficulty < value)
+                DefaultMaxDifficulty = value;
+        }
     }
 
     public int DefaultMaxDifficulty
     {
         get => _defaultMaxDifficulty;
-        set => this.RaiseAndSetIfChanged(ref _defaultMaxDifficulty, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _defaultMaxDifficulty, value);
+            if (_defaultMinDifficulty > value)
+                DefaultMinDifficulty = value;
+        }
     }
 
     public string DefaultQuestionType
@@ -241,6 +253,14 @@ public class SettingsViewModel : ViewModelBase
         {
             // Use defaults if loading fails
         }
+    }
+
+    public void Dispose()
+    {
+        if (_isDisposed) return;
+        _autoSaveSubscriptions.Dispose();
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 
     private class SettingsData
