@@ -1,13 +1,15 @@
 using System;
 using System.Globalization;
+using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
+using Avalonia.Styling;
 
 namespace AvaloniaUI.Converters;
 
 /// <summary>
-/// Converts a bool (WasCorrect) to the appropriate brush resource key for correct/incorrect styling.
-/// Returns "CorrectBackgroundBrush" for true, "IncorrectBackgroundBrush" for false.
+/// Converts a bool (WasCorrect) to the appropriate brush for correct/incorrect styling.
+/// Returns CorrectBackgroundBrush for true, IncorrectBackgroundBrush for false.
 /// </summary>
 public class CorrectToBackgroundBrushConverter : IValueConverter
 {
@@ -15,9 +17,11 @@ public class CorrectToBackgroundBrushConverter : IValueConverter
     {
         if (value is bool wasCorrect)
         {
-            return wasCorrect ? "CorrectBackgroundBrush" : "IncorrectBackgroundBrush";
+            var key = wasCorrect ? "CorrectBackgroundBrush" : "IncorrectBackgroundBrush";
+            if (Application.Current?.TryFindResource(key, ThemeVariant.Default, out var resource) == true && resource is IBrush brush)
+                return brush;
         }
-        return "Neutral10Brush";
+        return Avalonia.Application.Current?.TryFindResource("Neutral10Brush", ThemeVariant.Default, out var fallback) == true && fallback is IBrush fb ? fb : Brushes.Transparent;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -27,7 +31,7 @@ public class CorrectToBackgroundBrushConverter : IValueConverter
 }
 
 /// <summary>
-/// Converts a bool (WasCorrect) to the appropriate border brush resource key.
+/// Converts a bool (WasCorrect) to the appropriate border brush.
 /// </summary>
 public class CorrectToBorderBrushConverter : IValueConverter
 {
@@ -35,9 +39,11 @@ public class CorrectToBorderBrushConverter : IValueConverter
     {
         if (value is bool wasCorrect)
         {
-            return wasCorrect ? "CorrectBorderBrush" : "IncorrectBorderBrush";
+            var key = wasCorrect ? "CorrectBorderBrush" : "IncorrectBorderBrush";
+            if (Application.Current?.TryFindResource(key, ThemeVariant.Default, out var resource) == true && resource is IBrush brush)
+                return brush;
         }
-        return "BorderBrush";
+        return Avalonia.Application.Current?.TryFindResource("BorderBrush", ThemeVariant.Default, out var fallback) == true && fallback is IBrush fb ? fb : Brushes.Transparent;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -47,7 +53,7 @@ public class CorrectToBorderBrushConverter : IValueConverter
 }
 
 /// <summary>
-/// Converts a bool (WasCorrect) to the appropriate text brush resource key.
+/// Converts a bool (WasCorrect) to the appropriate text brush.
 /// </summary>
 public class CorrectToTextBrushConverter : IValueConverter
 {
@@ -55,9 +61,11 @@ public class CorrectToTextBrushConverter : IValueConverter
     {
         if (value is bool wasCorrect)
         {
-            return wasCorrect ? "CorrectTextBrush" : "IncorrectTextBrush";
+            var key = wasCorrect ? "CorrectTextBrush" : "IncorrectTextBrush";
+            if (Application.Current?.TryFindResource(key, ThemeVariant.Default, out var resource) == true && resource is IBrush brush)
+                return brush;
         }
-        return "TextPrimaryBrush";
+        return Avalonia.Application.Current?.TryFindResource("TextPrimaryBrush", ThemeVariant.Default, out var fallback) == true && fallback is IBrush fb ? fb : Brushes.Transparent;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
