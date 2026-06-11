@@ -433,6 +433,7 @@ public class CalendarDayItem : ViewModelBase
     public int QuestionCount { get; init; }
     public int IntensityLevel { get; init; }
     public string Tooltip { get; init; } = string.Empty;
+    public bool HasActivity => QuestionCount > 0;
 }
 
 public class CalendarWeekItem : ViewModelBase

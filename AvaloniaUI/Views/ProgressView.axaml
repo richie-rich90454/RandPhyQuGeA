@@ -1,11 +1,16 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:AvaloniaUI.ViewModels"
+             xmlns:conv="using:AvaloniaUI.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
              x:Class="AvaloniaUI.Views.ProgressView"
              x:DataType="vm:ProgressViewModel">
+
+  <UserControl.Resources>
+    <conv:IntensityToBrushConverter x:Key="IntensityToBrushConverter" />
+  </UserControl.Resources>
 
   <ScrollViewer Background="{DynamicResource ContentBackgroundBrush}">
     <Panel>
@@ -205,9 +210,9 @@
                   <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:CalendarDayItem">
                       <Border Width="12" Height="12" CornerRadius="2"
-                              Background="{DynamicResource Neutral10Brush}"
+                              Background="{Binding IntensityLevel, Converter={StaticResource IntensityToBrushConverter}}"
                               ToolTip.Tip="{Binding Tooltip}">
-                        <Border IsVisible="{Binding QuestionCount, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        <Border IsVisible="{Binding HasActivity}"
                                 CornerRadius="2" />
                       </Border>
                     </DataTemplate>
