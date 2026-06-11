@@ -154,8 +154,7 @@
                        Foreground="{DynamicResource TextPrimaryBrush}" />
             <StackPanel Orientation="Horizontal" Spacing="8">
               <Button x:Name="BtnCount5" Content="5" Padding="16,8" CornerRadius="6"
-                      Background="{DynamicResource Neutral10Brush}"
-                      Foreground="{DynamicResource TextPrimaryBrush}"
+                      Classes="secondary"
                       Click="OnQuestionCount5Click"
                       AutomationProperties.Name="5 questions" />
               <Button x:Name="BtnCount10" Content="10" Padding="16,8" CornerRadius="6"
@@ -164,13 +163,11 @@
                       Click="OnQuestionCount10Click"
                       AutomationProperties.Name="10 questions" />
               <Button x:Name="BtnCount15" Content="15" Padding="16,8" CornerRadius="6"
-                      Background="{DynamicResource Neutral10Brush}"
-                      Foreground="{DynamicResource TextPrimaryBrush}"
+                      Classes="secondary"
                       Click="OnQuestionCount15Click"
                       AutomationProperties.Name="15 questions" />
               <Button x:Name="BtnCount20" Content="20" Padding="16,8" CornerRadius="6"
-                      Background="{DynamicResource Neutral10Brush}"
-                      Foreground="{DynamicResource TextPrimaryBrush}"
+                      Classes="secondary"
                       Click="OnQuestionCount20Click"
                       AutomationProperties.Name="20 questions" />
             </StackPanel>
@@ -210,13 +207,11 @@
                       Click="OnTypeMCClick"
                       AutomationProperties.Name="Multiple choice" />
               <Button x:Name="BtnTypeSA" Content="SA" Padding="20,8" CornerRadius="6"
-                      Background="{DynamicResource Neutral10Brush}"
-                      Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"
+                      Classes="secondary" FontSize="13"
                       Click="OnTypeSAClick"
                       AutomationProperties.Name="Short answer" />
               <Button x:Name="BtnTypeMixed" Content="Mixed" Padding="20,8" CornerRadius="6"
-                      Background="{DynamicResource Neutral10Brush}"
-                      Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13"
+                      Classes="secondary" FontSize="13"
                       Click="OnTypeMixedClick"
                       AutomationProperties.Name="Mixed question types" />
             </StackPanel>
@@ -373,14 +368,12 @@
           <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
             <Button Command="{Binding CancelResetCommand}"
                     Padding="16,10" CornerRadius="8"
-                    Background="{DynamicResource Neutral10Brush}"
-                    Foreground="{DynamicResource TextPrimaryBrush}">
+                    Classes="secondary">
               <TextBlock Text="Cancel" FontSize="13" />
             </Button>
             <Button Command="{Binding ConfirmResetCommand}"
                     Padding="16,10" CornerRadius="8"
-                    Background="{DynamicResource ErrorBrush}"
-                    Foreground="{DynamicResource TextOnPrimaryBrush}">
+                    Classes="danger">
               <TextBlock Text="Reset" FontSize="13" FontWeight="SemiBold" />
             </Button>
           </StackPanel>
