@@ -30,6 +30,11 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
+        // Extend client area into title bar for seamless look
+        ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.Default;
+        ExtendClientAreaTitleBarHeightHint = -1;
+
         KeyDown += OnKeyDown;
 
         DataContextChanged += OnDataContextChanged;
@@ -99,9 +104,16 @@ public partial class MainWindow : Window
             var tag = button.Tag as string;
             var isSelected = tag == selectedKey;
 
-            button.Background = isSelected
-                ? this.FindResourceOrDefault<IBrush>("NavItemSelectedBrush", new SolidColorBrush(Color.FromArgb(255, 232, 240, 254)))
-                : Brushes.Transparent;
+            // Use classes for selection state instead of directly setting Background
+            if (isSelected)
+            {
+                if (!button.Classes.Contains("selected"))
+                    button.Classes.Add("selected");
+            }
+            else
+            {
+                button.Classes.Remove("selected");
+            }
         }
     }
 
@@ -135,18 +147,6 @@ public partial class MainWindow : Window
         {
             _cachedContentArea.Content = view;
         }
-    }
-
-    private T FindResourceOrDefault<T>(string key, T defaultValue)
-    {
-        try
-        {
-            var resource = this.FindResource(key);
-            if (resource is T typed)
-                return typed;
-        }
-        catch { }
-        return defaultValue;
     }
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
