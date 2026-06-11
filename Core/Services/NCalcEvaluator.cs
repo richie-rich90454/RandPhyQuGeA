@@ -74,8 +74,6 @@ public class NCalcEvaluator : IExpressionEvaluator
         }
 
         // Security: catch disallowed functions during evaluation.
-        // NCalcSync does not expose GetFunctionNames(), so we validate via
-        // a secondary parse that intercepts unknown function calls.
         try
         {
             var result = workingExpr.Evaluate();
