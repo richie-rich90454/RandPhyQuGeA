@@ -22,7 +22,7 @@
   </Window.KeyBindings>
 
   <SplitView IsPaneOpen="{Binding Navigation.IsPaneOpen}"
-             DisplayMode="Inline"
+             DisplayMode="CompactInline"
              OpenPaneLength="280"
              CompactPaneLength="60"
              PanePlacement="Left">
