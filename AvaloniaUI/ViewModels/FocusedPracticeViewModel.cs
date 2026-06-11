@@ -343,55 +343,58 @@ public class FocusedPracticeViewModel : ViewModelBase
         if (selectedSkillIds.Count == 0)
             return;
 
-        var questions = new List<GeneratedQuestion>();
         var targetCount = QuestionCount == 0 ? selectedSkillIds.Count * 3 : QuestionCount;
+        string? qType = QuestionType == "Mixed" ? null : QuestionType;
 
-        foreach (var skillId in selectedSkillIds)
+        // Capture skill parent IDs for the background thread
+        var skillParentMap = ScopeItems
+            .Where(i => i.Level == "Skill" && i.IsChecked)
+            .ToDictionary(i => i.Id, i => i.ParentId);
+
+        var minDiff = MinDifficulty;
+        var maxDiff = MaxDifficulty;
+
+        // Generate ALL questions in a single background task — no sequential UI-thread hops
+        var questions = await Task.Run(() =>
         {
-            var skillItem = ScopeItems.FirstOrDefault(i => i.Id == skillId);
-            if (skillItem is null) continue;
-
-            string? qType = QuestionType == "Mixed" ? null : QuestionType;
-
-            for (int attempt = 0; attempt < 3; attempt++)
-            {
-                var question = await Task.Run(() =>
-                    _questionGenerator.Generate(skillItem.ParentId, skillId, MinDifficulty, MaxDifficulty, qType));
-
-                if (question is not null)
-                {
-                    questions.Add(question);
-                    break;
-                }
-            }
-        }
-
-        // If we need more questions and have fewer than target, try generating more
-        if (questions.Count < targetCount)
-        {
+            var results = new List<GeneratedQuestion>();
             var rng = new Random();
-            for (int i = questions.Count; i < targetCount; i++)
+
+            // First pass: one question per selected skill
+            foreach (var skillId in selectedSkillIds)
             {
-                var skillId = selectedSkillIds[rng.Next(selectedSkillIds.Count)];
-                var skillItem = ScopeItems.FirstOrDefault(s => s.Id == skillId);
-                if (skillItem is null) continue;
-
-                string? qType = QuestionType == "Mixed" ? null : QuestionType;
-                var question = await Task.Run(() =>
-                    _questionGenerator.Generate(skillItem.ParentId, skillId, MinDifficulty, MaxDifficulty, qType));
-
-                if (question is not null)
+                var parentId = skillParentMap.GetValueOrDefault(skillId);
+                for (int attempt = 0; attempt < 3; attempt++)
                 {
-                    questions.Add(question);
+                    var question = _questionGenerator.Generate(parentId, skillId, minDiff, maxDiff, qType);
+                    if (question is not null)
+                    {
+                        results.Add(question);
+                        break;
+                    }
                 }
             }
-        }
+
+            // Second pass: fill up to target count
+            if (results.Count < targetCount)
+            {
+                for (int i = results.Count; i < targetCount; i++)
+                {
+                    var skillId = selectedSkillIds[rng.Next(selectedSkillIds.Count)];
+                    var parentId = skillParentMap.GetValueOrDefault(skillId);
+                    var question = _questionGenerator.Generate(parentId, skillId, minDiff, maxDiff, qType);
+                    if (question is not null)
+                        results.Add(question);
+                }
+            }
+
+            return results;
+        });
 
         Questions.Clear();
         foreach (var q in questions)
-        {
             Questions.Add(q);
-        }
+
         CurrentQuestionIndex = Questions.Count > 0 ? 0 : -1;
         IsSelectingScope = false;
         IsSessionOver = false;
