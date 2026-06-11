@@ -37,7 +37,9 @@ public class QuestionBankViewModel : ViewModelBase, IDisposable
         _subscriptions.Add(this.WhenAnyValue(x => x.SelectedItem)
             .Subscribe(_ => this.RaisePropertyChanged(nameof(PracticeContextText))));
 
-        _specViewModel.UnitNodes.CollectionChanged += (_, _) => ApplyFilters();
+        // Listen for IsLoaded changes instead of every CollectionChanged — avoids O(N²) during spec load
+        _subscriptions.Add(this.WhenAnyValue(x => x.SpecViewModel.IsLoaded)
+            .Subscribe(loaded => { if (loaded) ApplyFilters(); }));
 
         var canStartPractice = this.WhenAnyValue(x => x.SelectedItem, sel => sel is SkillNode or TopicNode or UnitNode);
         StartPracticeCommand = ReactiveCommand.Create(OnStartPractice, canStartPractice);
