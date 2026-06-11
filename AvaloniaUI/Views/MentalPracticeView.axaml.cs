@@ -16,6 +16,7 @@ public partial class MentalPracticeView : UserControl
     private IDisposable? _timerBrushSubscription;
     private IDisposable? _saFocusSubscription;
     private IDisposable? _transitionSubscription;
+    private MentalPracticeViewModel? _currentViewModel;
 
     public MentalPracticeView()
     {
@@ -33,10 +34,15 @@ public partial class MentalPracticeView : UserControl
         if (btnEndless is not null) btnEndless.Click += SelectEndlessMode;
 
         DataContextChanged += OnDataContextChanged;
+        Unloaded += OnUnloaded;
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
+        // Stop timer loop on the old ViewModel before switching
+        if (_currentViewModel is not null)
+            _currentViewModel.StopTimerLoop();
+
         _timerBrushSubscription?.Dispose();
         _timerBrushSubscription = null;
         _saFocusSubscription?.Dispose();
@@ -44,8 +50,11 @@ public partial class MentalPracticeView : UserControl
         _transitionSubscription?.Dispose();
         _transitionSubscription = null;
 
-        if (DataContext is MentalPracticeViewModel vm)
+        _currentViewModel = DataContext as MentalPracticeViewModel;
+
+        if (_currentViewModel is not null)
         {
+            var vm = _currentViewModel;
             _timerBrushSubscription = vm.WhenAnyValue(x => x.QuestionTimerBrushKey)
                 .Subscribe(UpdateTimerBrush);
 
@@ -74,6 +83,12 @@ public partial class MentalPracticeView : UserControl
             vm.CopyToClipboardRequested -= OnCopyToClipboardRequested;
             vm.CopyToClipboardRequested += OnCopyToClipboardRequested;
         }
+    }
+
+    private void OnUnloaded(object? sender, RoutedEventArgs e)
+    {
+        if (_currentViewModel is not null)
+            _currentViewModel.StopTimerLoop();
     }
 
     private async void OnCopyToClipboardRequested(object? sender, string text)

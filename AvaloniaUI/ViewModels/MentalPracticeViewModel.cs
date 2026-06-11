@@ -128,7 +128,11 @@ public class MentalPracticeViewModel : ViewModelBase
     public bool IsInPractice
     {
         get => _isInPractice;
-        set => this.RaiseAndSetIfChanged(ref _isInPractice, value);
+        set
+        {
+            if (this.RaiseAndSetIfChanged(ref _isInPractice, value) && !value)
+                StopTimerLoop();
+        }
     }
 
     public bool IsInFeedback
@@ -421,6 +425,9 @@ public class MentalPracticeViewModel : ViewModelBase
     private async Task OnStart()
     {
         if (_questionGenerator is null) return;
+
+        // Safety: stop any existing timer loop before starting a new session
+        StopTimerLoop();
 
         // Reset state
         _questionQueue.Clear();
@@ -753,7 +760,7 @@ public class MentalPracticeViewModel : ViewModelBase
             });
     }
 
-    private void StopTimerLoop()
+    public void StopTimerLoop()
     {
         _timerSubscription?.Dispose();
         _timerSubscription = null;
