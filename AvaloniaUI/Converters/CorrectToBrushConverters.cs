@@ -1,9 +1,9 @@
 using System;
 using System.Globalization;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
-using Avalonia.Styling;
 
 namespace AvaloniaUI.Converters;
 
@@ -18,10 +18,9 @@ public class CorrectToBackgroundBrushConverter : IValueConverter
         if (value is bool wasCorrect)
         {
             var key = wasCorrect ? "CorrectBackgroundBrush" : "IncorrectBackgroundBrush";
-            if (Application.Current?.TryFindResource(key, ThemeVariant.Default, out var resource) == true && resource is IBrush brush)
-                return brush;
+            return Application.Current?.FindResource(key) as IBrush ?? Brushes.Transparent;
         }
-        return Avalonia.Application.Current?.TryFindResource("Neutral10Brush", ThemeVariant.Default, out var fallback) == true && fallback is IBrush fb ? fb : Brushes.Transparent;
+        return Application.Current?.FindResource("Neutral10Brush") as IBrush ?? Brushes.Transparent;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -40,10 +39,9 @@ public class CorrectToBorderBrushConverter : IValueConverter
         if (value is bool wasCorrect)
         {
             var key = wasCorrect ? "CorrectBorderBrush" : "IncorrectBorderBrush";
-            if (Application.Current?.TryFindResource(key, ThemeVariant.Default, out var resource) == true && resource is IBrush brush)
-                return brush;
+            return Application.Current?.FindResource(key) as IBrush ?? Brushes.Transparent;
         }
-        return Avalonia.Application.Current?.TryFindResource("BorderBrush", ThemeVariant.Default, out var fallback) == true && fallback is IBrush fb ? fb : Brushes.Transparent;
+        return Application.Current?.FindResource("BorderBrush") as IBrush ?? Brushes.Transparent;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -62,10 +60,9 @@ public class CorrectToTextBrushConverter : IValueConverter
         if (value is bool wasCorrect)
         {
             var key = wasCorrect ? "CorrectTextBrush" : "IncorrectTextBrush";
-            if (Application.Current?.TryFindResource(key, ThemeVariant.Default, out var resource) == true && resource is IBrush brush)
-                return brush;
+            return Application.Current?.FindResource(key) as IBrush ?? Brushes.Transparent;
         }
-        return Avalonia.Application.Current?.TryFindResource("TextPrimaryBrush", ThemeVariant.Default, out var fallback) == true && fallback is IBrush fb ? fb : Brushes.Transparent;
+        return Application.Current?.FindResource("TextPrimaryBrush") as IBrush ?? Brushes.Transparent;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

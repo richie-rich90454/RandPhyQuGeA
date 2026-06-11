@@ -14,6 +14,7 @@ namespace AvaloniaUI;
 public partial class MainWindow : Window
 {
     private Button[]? _navButtons;
+    private ContentControl? _cachedContentArea;
     private readonly Dictionary<string, Control> _viewCache = new();
     private MainWindowViewModel? _currentViewModel;
 
@@ -43,6 +44,8 @@ public partial class MainWindow : Window
             this.FindControl<Button>("NavProgress"),
             this.FindControl<Button>("NavSettings"),
         }!;
+
+        _cachedContentArea = this.FindControl<ContentControl>("ContentArea");
 
         UpdateNavHighlight();
     }
@@ -128,10 +131,9 @@ public partial class MainWindow : Window
         }
 
         // Set the cached view directly on the ContentControl
-        var contentControl = this.FindControl<ContentControl>("ContentArea");
-        if (contentControl is not null)
+        if (_cachedContentArea is not null)
         {
-            contentControl.Content = view;
+            _cachedContentArea.Content = view;
         }
     }
 
