@@ -61,6 +61,7 @@ public class MentalPracticeViewModel : ViewModelBase
     private string? _selectedUnitId;
     private int _selectedQuestionCount = 10;
     private bool _isEndlessMode;
+    private bool _isTimerVisible = true;
 
     // Countdown
     private int _countdownValue = 3;
@@ -81,12 +82,14 @@ public class MentalPracticeViewModel : ViewModelBase
 
     public MentalPracticeViewModel() : this(null, null, null, null) { }
 
-    public MentalPracticeViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null)
+    public MentalPracticeViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null, int selectedQuestionCount = 10, bool isTimerVisible = true)
     {
         _specificationViewModel = specificationViewModel;
         _questionGenerator = questionGenerator;
         _resultRepository = resultRepository;
         _navigationViewModel = navigationViewModel;
+        _selectedQuestionCount = selectedQuestionCount;
+        _isTimerVisible = isTimerVisible;
 
         var canStart = this.WhenAnyValue(
             x => x.IsInSetup,
@@ -349,6 +352,12 @@ public class MentalPracticeViewModel : ViewModelBase
     {
         get => _isEndlessMode;
         set => this.RaiseAndSetIfChanged(ref _isEndlessMode, value);
+    }
+
+    public bool IsTimerVisible
+    {
+        get => _isTimerVisible;
+        set => this.RaiseAndSetIfChanged(ref _isTimerVisible, value);
     }
 
     // ─── Countdown ──────────────────────────────────────────────────────

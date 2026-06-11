@@ -24,14 +24,16 @@ public class NavigationViewModel : ViewModelBase
     private readonly QuestionGenerator? _questionGenerator;
     private SessionSummaryViewModel? _lastSessionSummary;
     private readonly IPracticeResultRepository? _resultRepository;
+    private readonly SettingsViewModel? _settingsViewModel;
 
-    public NavigationViewModel() : this(null, null, null) { }
+    public NavigationViewModel() : this(null, null, null, null) { }
 
-    public NavigationViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator, IPracticeResultRepository? resultRepository = null)
+    public NavigationViewModel(SpecificationViewModel? specificationViewModel, QuestionGenerator? questionGenerator, IPracticeResultRepository? resultRepository = null, SettingsViewModel? settingsViewModel = null)
     {
         _specificationViewModel = specificationViewModel;
         _questionGenerator = questionGenerator;
         _resultRepository = resultRepository;
+        _settingsViewModel = settingsViewModel;
 
         _navigationItems = new List<NavigationItem>
         {
@@ -125,11 +127,17 @@ public class NavigationViewModel : ViewModelBase
         return viewKey switch
         {
             "Home" => new HomeViewModel(),
-            "MentalPractice" => new MentalPracticeViewModel(_specificationViewModel, _questionGenerator, _resultRepository, this),
-            "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!, _resultRepository, this),
+            "MentalPractice" => new MentalPracticeViewModel(_specificationViewModel, _questionGenerator, _resultRepository, this,
+                _settingsViewModel?.DefaultQuestionCount ?? 10,
+                _settingsViewModel?.IsTimerVisible ?? true),
+            "FocusedPractice" => new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!, _resultRepository, this,
+                _settingsViewModel?.DefaultQuestionCount ?? 10,
+                _settingsViewModel?.DefaultMinDifficulty ?? 1,
+                _settingsViewModel?.DefaultMaxDifficulty ?? 10,
+                _settingsViewModel?.DefaultQuestionType ?? "Mixed"),
             "QuestionBank" => new QuestionBankViewModel(_specificationViewModel!, this),
             "Progress" => new ProgressViewModel(_resultRepository, _specificationViewModel),
-            "Settings" => new SettingsViewModel(),
+            "Settings" => _settingsViewModel ?? new SettingsViewModel(),
             _ => throw new ArgumentException($"Unknown view key: {viewKey}", nameof(viewKey))
         };
     }

@@ -53,7 +53,8 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
         _specificationViewModel = specificationViewModel;
 
         Activator = new ViewModelActivator();
-        Navigation = new NavigationViewModel(specificationViewModel, questionGenerator, new JsonPracticeResultRepository());
+        var settingsViewModel = new SettingsViewModel();
+        Navigation = new NavigationViewModel(specificationViewModel, questionGenerator, new JsonPracticeResultRepository(), settingsViewModel);
 
         GenerateCommand = ReactiveCommand.CreateFromTask(OnGenerate);
         ToggleSolutionCommand = ReactiveCommand.Create(OnToggleSolution);

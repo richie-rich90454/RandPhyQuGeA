@@ -49,12 +49,16 @@ public class FocusedPracticeViewModel : ViewModelBase
     // Confirmation dialog
     private bool _isEndConfirmationVisible;
 
-    public FocusedPracticeViewModel(SpecificationViewModel specificationViewModel, QuestionGenerator questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null)
+    public FocusedPracticeViewModel(SpecificationViewModel specificationViewModel, QuestionGenerator questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null, int questionCount = 10, int minDifficulty = 1, int maxDifficulty = 10, string questionType = "Mixed")
     {
         _specificationViewModel = specificationViewModel;
         _questionGenerator = questionGenerator;
         _resultRepository = resultRepository;
         _navigationViewModel = navigationViewModel;
+        _questionCount = questionCount;
+        _minDifficulty = minDifficulty;
+        _maxDifficulty = maxDifficulty;
+        _questionType = questionType;
 
         var canStartPractice = this.WhenAnyValue(
             x => x.IsSelectingScope,
