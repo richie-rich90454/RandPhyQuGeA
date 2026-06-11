@@ -108,8 +108,34 @@ public class LocalLaTeXRenderer : ILaTeXRenderer
             }
         };
 
-        process.Start();
-        await process.WaitForExitAsync(cancellationToken);
+        try
+        {
+            process.Start();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Failed to start process '{fileName}': {ex.Message}", ex);
+        }
+
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(TimeSpan.FromSeconds(30));
+
+        var stdoutTask = process.StandardOutput.ReadToEndAsync();
+        var stderrTask = process.StandardError.ReadToEndAsync();
+
+        try
+        {
+            await process.WaitForExitAsync(cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            try { process.Kill(true); } catch { }
+            throw;
+        }
+
+        await stdoutTask;
+        await stderrTask;
+
         return process.ExitCode;
     }
 
