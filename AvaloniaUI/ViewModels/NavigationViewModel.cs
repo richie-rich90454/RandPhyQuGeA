@@ -165,4 +165,21 @@ public class NavigationViewModel : ViewModelBase
         SelectedItem = null;
         CurrentViewTitle = "Session Summary";
     }
+
+    /// <summary>
+    /// Navigates to FocusedPractice with pre-selected scope items.
+    /// </summary>
+    public void NavigateToFocusedPractice(string[]? skillIds, string[]? topicIds)
+    {
+        // Remove any cached FocusedPractice so we get a fresh one with scope
+        _viewCache.Remove("FocusedPractice");
+
+        var vm = new FocusedPracticeViewModel(_specificationViewModel!, _questionGenerator!, _resultRepository, this);
+        vm.SetScope(skillIds, topicIds);
+        _viewCache["FocusedPractice"] = vm;
+
+        CurrentView = vm;
+        SelectedItem = _navigationItems.FirstOrDefault(i => i.ViewKey == "FocusedPractice");
+        CurrentViewTitle = SelectedItem?.Label ?? "FocusedPractice";
+    }
 }

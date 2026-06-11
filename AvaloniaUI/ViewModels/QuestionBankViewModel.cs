@@ -182,7 +182,25 @@ public class QuestionBankViewModel : ViewModelBase, IDisposable
 
     private void OnStartPractice()
     {
-        _navigationViewModel?.Navigate("FocusedPractice");
+        string[]? skillIds = null;
+        string[]? topicIds = null;
+
+        switch (SelectedItem)
+        {
+            case SkillNode skill:
+                skillIds = new[] { skill.Id };
+                break;
+            case TopicNode topic:
+                topicIds = new[] { topic.Id };
+                skillIds = topic.Skills.Select(s => s.Id).ToArray();
+                break;
+            case UnitNode unit:
+                topicIds = unit.Topics.Select(t => t.Id).ToArray();
+                skillIds = unit.Topics.SelectMany(t => t.Skills.Select(s => s.Id)).ToArray();
+                break;
+        }
+
+        _navigationViewModel?.NavigateToFocusedPractice(skillIds, topicIds);
     }
 
     private void ApplyFilters()

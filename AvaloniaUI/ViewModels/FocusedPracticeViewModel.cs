@@ -236,6 +236,31 @@ public class FocusedPracticeViewModel : ViewModelBase
 
     // ─── Scope Selection Logic ───────────────────────────────────────
 
+    /// <summary>
+    /// Pre-selects scope items matching the given skill and topic IDs.
+    /// </summary>
+    public void SetScope(string[]? skillIds, string[]? topicIds)
+    {
+        if (skillIds is null && topicIds is null) return;
+
+        var skillIdSet = skillIds is not null ? new HashSet<string>(skillIds) : null;
+        var topicIdSet = topicIds is not null ? new HashSet<string>(topicIds) : null;
+
+        foreach (var item in ScopeItems)
+        {
+            if (skillIdSet is not null && item.Level == "Skill" && skillIdSet.Contains(item.Id))
+            {
+                item.IsChecked = true;
+            }
+            if (topicIdSet is not null && item.Level == "Topic" && topicIdSet.Contains(item.Id))
+            {
+                item.IsChecked = true;
+            }
+        }
+
+        UpdateScopeDescription();
+    }
+
     private void InitializeScopeItems()
     {
         // Unsubscribe old handlers
