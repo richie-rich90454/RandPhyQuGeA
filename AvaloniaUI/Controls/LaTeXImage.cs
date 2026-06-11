@@ -56,7 +56,6 @@ public class LaTeXImage : UserControl
             Stretch = Stretch.Uniform,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            IsVisible = false,
         };
 
         _textBlock = new TextBlock
@@ -75,14 +74,7 @@ public class LaTeXImage : UserControl
             Background = new SolidColorBrush(Color.FromArgb(40, 128, 128, 128)),
         };
 
-        var panel = new Panel
-        {
-            Children = { _image, _textBorder },
-        };
-
-        Content = panel;
-
-        _textBorder.IsVisible = true;
+        Content = _textBorder;
 
         LaTeXSourceProperty.Changed.AddClassHandler<LaTeXImage>(OnLaTeXSourceChanged);
         ShowAsTextProperty.Changed.AddClassHandler<LaTeXImage>(OnShowAsTextChanged);
@@ -110,8 +102,7 @@ public class LaTeXImage : UserControl
     private void UpdateVisibility()
     {
         var showText = ShowAsText;
-        _textBorder.IsVisible = showText;
-        _image.IsVisible = !showText;
+        Content = showText ? _textBorder : _image;
     }
 
     private void ApplyThemeBrushes()
