@@ -126,7 +126,7 @@ public class NavigationViewModel : ViewModelBase
     {
         return viewKey switch
         {
-            "Home" => new HomeViewModel(),
+            "Home" => new HomeViewModel(_resultRepository),
             "MentalPractice" => new MentalPracticeViewModel(_specificationViewModel, _questionGenerator, _resultRepository, this,
                 _settingsViewModel?.DefaultQuestionCount ?? 10,
                 _settingsViewModel?.IsTimerVisible ?? true),

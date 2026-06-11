@@ -1,13 +1,24 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive;
+using System.Threading.Tasks;
+using Core.Interfaces;
 using ReactiveUI;
+
+using ReactiveUnit = System.Reactive.Unit;
 
 namespace AvaloniaUI.ViewModels;
 
 public class HomeViewModel : ViewModelBase
 {
+    private readonly IPracticeResultRepository? _resultRepository;
     private string _welcomeTitle = "Physics Question Generator";
     private string _welcomeDescription = "Generate practice questions from specification files with LaTeX support and multiple export formats.";
     private string _dailyQuote = string.Empty;
     private string _dailyQuoteAuthor = string.Empty;
+    private ObservableCollection<HomeRecentSessionItem> _recentSessions = new();
+    private bool _hasRecentSessions;
 
     private static readonly (string Quote, string Author)[] Quotes =
     {
@@ -23,12 +34,18 @@ public class HomeViewModel : ViewModelBase
         ("If you can't explain it simply, you don't understand it well enough.", "Albert Einstein"),
     };
 
-    public HomeViewModel()
+    public HomeViewModel() : this(null) { }
+
+    public HomeViewModel(IPracticeResultRepository? resultRepository)
     {
-        var today = System.DateTime.UtcNow.DayOfYear;
+        _resultRepository = resultRepository;
+
+        var today = DateTime.UtcNow.DayOfYear;
         var (quote, author) = Quotes[today % Quotes.Length];
         _dailyQuote = quote;
         _dailyQuoteAuthor = author;
+
+        LoadRecentSessionsCommand = ReactiveCommand.CreateFromTask(LoadRecentSessionsAsync);
     }
 
     public string WelcomeTitle
@@ -46,4 +63,52 @@ public class HomeViewModel : ViewModelBase
     public string DailyQuote => _dailyQuote;
 
     public string DailyQuoteAuthor => $"— {_dailyQuoteAuthor}";
+
+    public ObservableCollection<HomeRecentSessionItem> RecentSessions
+    {
+        get => _recentSessions;
+        set => this.RaiseAndSetIfChanged(ref _recentSessions, value);
+    }
+
+    public bool HasRecentSessions
+    {
+        get => _hasRecentSessions;
+        set => this.RaiseAndSetIfChanged(ref _hasRecentSessions, value);
+    }
+
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> LoadRecentSessionsCommand { get; }
+
+    private async Task LoadRecentSessionsAsync()
+    {
+        if (_resultRepository is null) return;
+
+        var results = await _resultRepository.LoadAsync();
+
+        var sessions = results
+            .GroupBy(r => r.Timestamp.Date)
+            .OrderByDescending(g => g.Key)
+            .Take(5)
+            .Select(g =>
+            {
+                var total = g.Count();
+                var correct = g.Count(r => r.IsCorrect);
+                return new HomeRecentSessionItem
+                {
+                    DateText = g.Key.ToString("MMM dd, yyyy"),
+                    ScoreText = $"{correct}/{total}",
+                    AccuracyText = total > 0 ? $"{correct * 100.0 / total:F0}%" : "—"
+                };
+            })
+            .ToList();
+
+        RecentSessions = new ObservableCollection<HomeRecentSessionItem>(sessions);
+        HasRecentSessions = sessions.Count > 0;
+    }
+}
+
+public class HomeRecentSessionItem : ViewModelBase
+{
+    public string DateText { get; init; } = string.Empty;
+    public string ScoreText { get; init; } = string.Empty;
+    public string AccuracyText { get; init; } = string.Empty;
 }
