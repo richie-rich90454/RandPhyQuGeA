@@ -270,8 +270,22 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
 
     private void OnExport()
     {
-        StatusMessage = "Export not yet implemented.";
+        if (CurrentQuestion is null && History.Count == 0)
+        {
+            StatusMessage = "No questions to export.";
+            return;
+        }
+
+        var questions = History.ToList();
+        if (questions.Count == 0 && CurrentQuestion is not null)
+        {
+            questions.Add(CurrentQuestion);
+        }
+
+        ExportRequested?.Invoke(this, questions);
     }
+
+    public event EventHandler<IReadOnlyList<Core.Domain.GeneratedQuestion>>? ExportRequested;
 
     private void OnClearHistory()
     {

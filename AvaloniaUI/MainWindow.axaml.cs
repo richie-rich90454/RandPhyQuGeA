@@ -26,6 +26,7 @@ public partial class MainWindow : Window
         {
             viewModel.CopyToClipboardRequested += OnCopyToClipboardRequested;
             viewModel.Navigation.PropertyChanged += OnNavigationPropertyChanged;
+            viewModel.ExportRequested += OnExportRequested;
         }
 
         DataContextChanged += OnDataContextChanged;
@@ -55,6 +56,7 @@ public partial class MainWindow : Window
         {
             vm.CopyToClipboardRequested += OnCopyToClipboardRequested;
             vm.Navigation.PropertyChanged += OnNavigationPropertyChanged;
+            vm.ExportRequested += OnExportRequested;
         }
     }
 
@@ -158,7 +160,52 @@ public partial class MainWindow : Window
             {
                 vm.Navigation.Navigate(viewKey);
                 e.Handled = true;
+                return;
             }
+        }
+
+        // Escape: back/cancel
+        if (e.Key == Key.Escape)
+        {
+            if (DataContext is MainWindowViewModel vm)
+            {
+                vm.Navigation.Navigate("Home");
+                e.Handled = true;
+            }
+            return;
+        }
+
+        // ? or Ctrl+/ to show shortcuts overlay
+        if (e.Key == Key.OemQuestion && !e.KeyModifiers.HasFlag(KeyModifiers.Shift))
+        {
+            ToggleShortcutOverlay();
+            e.Handled = true;
+            return;
+        }
+
+        if (e.KeyModifiers.HasFlag(KeyModifiers.Control) && e.Key == Key.OemQuestion)
+        {
+            ToggleShortcutOverlay();
+            e.Handled = true;
+            return;
+        }
+    }
+
+    private void ToggleShortcutOverlay()
+    {
+        var overlay = this.FindControl<Border>("ShortcutOverlay");
+        if (overlay is not null)
+        {
+            overlay.IsVisible = !overlay.IsVisible;
+        }
+    }
+
+    private void OnShortcutOverlayDismiss(object? sender, PointerPressedEventArgs e)
+    {
+        var overlay = this.FindControl<Border>("ShortcutOverlay");
+        if (overlay is not null)
+        {
+            overlay.IsVisible = false;
         }
     }
 
@@ -192,6 +239,15 @@ public partial class MainWindow : Window
                 await clipboard.SetTextAsync(text);
             }
         }
+    }
+
+    private void OnExportRequested(object? sender, IReadOnlyList<Core.Domain.GeneratedQuestion> questions)
+    {
+        var exportVm = new ViewModels.ExportViewModel();
+        exportVm.OpenExportPanel(questions, "Export Questions");
+
+        var dialog = new Views.ExportDialog(exportVm);
+        dialog.ShowDialog(this);
     }
 
     private void Help_Click(object? sender, RoutedEventArgs e)
