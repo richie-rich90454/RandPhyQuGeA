@@ -476,7 +476,7 @@ public class MentalPracticeViewModel : ViewModelBase
         StartTimerLoop();
 
         // Show first question
-        ShowNextQuestion();
+        await ShowNextQuestion();
     }
 
     private string? ResolveTopicId()
@@ -503,7 +503,7 @@ public class MentalPracticeViewModel : ViewModelBase
         return null;
     }
 
-    private void ShowNextQuestion()
+    private async Task ShowNextQuestion()
     {
         if (CurrentQuestionIndex >= _questionQueue.Count)
         {
@@ -511,7 +511,7 @@ public class MentalPracticeViewModel : ViewModelBase
             if (IsEndlessMode && _questionGenerator is not null)
             {
                 string? topicId = ResolveTopicId();
-                var more = _questionGenerator.GenerateBatch(10, topicId);
+                var more = await Task.Run(() => _questionGenerator.GenerateBatch(10, topicId));
                 _questionQueue.AddRange(more);
             }
 
@@ -641,7 +641,7 @@ public class MentalPracticeViewModel : ViewModelBase
         }
         else
         {
-            ShowNextQuestion();
+            await ShowNextQuestion();
         }
 
         IsTransitioning = false;
