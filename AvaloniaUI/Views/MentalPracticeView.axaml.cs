@@ -144,8 +144,8 @@ public partial class MentalPracticeView : UserControl
             }
         }
 
-        // Enter for SA answer submission
-        if (e.Key == Key.Enter && !vm.IsMultipleChoice)
+        // Enter for SA answer submission (skip if already handled by OnSaAnswerKeyDown)
+        if (e.Key == Key.Enter && !e.Handled && !vm.IsMultipleChoice)
         {
             if (!string.IsNullOrWhiteSpace(vm.CurrentAnswer))
             {
@@ -179,18 +179,9 @@ public partial class MentalPracticeView : UserControl
         if (DataContext is not MentalPracticeViewModel vm) return;
         if (!vm.IsInPractice || !vm.IsMultipleChoice) return;
 
-        // Find the index of the clicked choice
-        if (sender is Border border)
+        if (sender is Border border && border.DataContext is ChoiceItem choice)
         {
-            var itemsControl = border.FindAncestorOfType<ItemsControl>();
-            if (itemsControl is not null)
-            {
-                var index = itemsControl.IndexFromContainer(border);
-                if (index >= 0 && index < vm.Choices.Count)
-                {
-                    vm.AnswerCommand.Execute(index.ToString());
-                }
-            }
+            vm.AnswerCommand.Execute(choice.Index.ToString());
         }
     }
 
