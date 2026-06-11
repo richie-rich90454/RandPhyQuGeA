@@ -175,13 +175,16 @@ public class MentalPracticeViewModel : ViewModelBase
         get => _currentQuestion;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentQuestion, value);
-            this.RaisePropertyChanged(nameof(QuestionText));
-            this.RaisePropertyChanged(nameof(QuestionHasLaTeX));
-            this.RaisePropertyChanged(nameof(IsMultipleChoice));
-            this.RaisePropertyChanged(nameof(Choices));
-            this.RaisePropertyChanged(nameof(ChoiceItems));
-            this.RaisePropertyChanged(nameof(HasChoices));
+            using (SuppressChangeNotifications())
+            {
+                this.RaiseAndSetIfChanged(ref _currentQuestion, value);
+                this.RaisePropertyChanged(nameof(QuestionText));
+                this.RaisePropertyChanged(nameof(QuestionHasLaTeX));
+                this.RaisePropertyChanged(nameof(IsMultipleChoice));
+                this.RaisePropertyChanged(nameof(Choices));
+                this.RaisePropertyChanged(nameof(ChoiceItems));
+                this.RaisePropertyChanged(nameof(HasChoices));
+            }
         }
     }
 
@@ -271,9 +274,12 @@ public class MentalPracticeViewModel : ViewModelBase
         get => _currentStreak;
         set
         {
-            this.RaiseAndSetIfChanged(ref _currentStreak, value);
-            this.RaisePropertyChanged(nameof(HasStreak));
-            this.RaisePropertyChanged(nameof(HasFireStreak));
+            using (SuppressChangeNotifications())
+            {
+                this.RaiseAndSetIfChanged(ref _currentStreak, value);
+                this.RaisePropertyChanged(nameof(HasStreak));
+                this.RaisePropertyChanged(nameof(HasFireStreak));
+            }
         }
     }
 
@@ -298,8 +304,11 @@ public class MentalPracticeViewModel : ViewModelBase
         get => _correctCount;
         set
         {
-            this.RaiseAndSetIfChanged(ref _correctCount, value);
-            this.RaisePropertyChanged(nameof(AccuracyText));
+            using (SuppressChangeNotifications())
+            {
+                this.RaiseAndSetIfChanged(ref _correctCount, value);
+                this.RaisePropertyChanged(nameof(AccuracyText));
+            }
         }
     }
 
@@ -610,9 +619,12 @@ public class MentalPracticeViewModel : ViewModelBase
                 correct));
         }
 
-        this.RaisePropertyChanged(nameof(SpeedRating));
-        this.RaisePropertyChanged(nameof(SpeedRatingIcon));
-        this.RaisePropertyChanged(nameof(ProgressText));
+        using (SuppressChangeNotifications())
+        {
+            this.RaisePropertyChanged(nameof(SpeedRating));
+            this.RaisePropertyChanged(nameof(SpeedRatingIcon));
+            this.RaisePropertyChanged(nameof(ProgressText));
+        }
 
         // Save result to repository
         if (_resultRepository is not null && CurrentQuestion is not null)
@@ -725,8 +737,11 @@ public class MentalPracticeViewModel : ViewModelBase
         IsSessionOver = true;
         IsPaused = false;
 
-        this.RaisePropertyChanged(nameof(SpeedRating));
-        this.RaisePropertyChanged(nameof(SpeedRatingIcon));
+        using (SuppressChangeNotifications())
+        {
+            this.RaisePropertyChanged(nameof(SpeedRating));
+            this.RaisePropertyChanged(nameof(SpeedRatingIcon));
+        }
 
         // Perfect score celebration
         if (QuestionsAnswered > 0 && CorrectCount == QuestionsAnswered)
