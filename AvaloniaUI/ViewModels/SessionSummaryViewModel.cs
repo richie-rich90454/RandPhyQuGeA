@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Text;
+using AvaloniaUI.Controls;
 using Core.Services;
 using ReactiveUI;
 
@@ -38,6 +39,7 @@ public class SessionSummaryViewModel : ViewModelBase
         ReviewMistakesCommand = ReactiveCommand.Create(OnReviewMistakes, this.WhenAnyValue(x => x.HasMistakes));
         ExportCommand = ReactiveCommand.Create(OnExport);
         BackToHomeCommand = ReactiveCommand.Create(OnBackToHome);
+        CopyExportCommand = ReactiveCommand.Create(OnCopyExport);
     }
 
     // ─── Score Properties ────────────────────────────────────────────────
@@ -195,6 +197,9 @@ public class SessionSummaryViewModel : ViewModelBase
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> ReviewMistakesCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> ExportCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> BackToHomeCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> CopyExportCommand { get; }
+
+    public event EventHandler<string>? CopyToClipboardRequested;
 
     // ─── Command Handlers ────────────────────────────────────────────────
 
@@ -256,6 +261,14 @@ public class SessionSummaryViewModel : ViewModelBase
     private void OnBackToHome()
     {
         _navigationViewModel?.Navigate("Home");
+    }
+
+    private void OnCopyExport()
+    {
+        if (!string.IsNullOrEmpty(ExportText))
+        {
+            CopyToClipboardRequested?.Invoke(this, ExportText);
+        }
     }
 
     // ─── Export ──────────────────────────────────────────────────────────
@@ -334,6 +347,8 @@ public class QuestionResultItem : ViewModelBase
         get => _wasCorrect;
         set => this.RaiseAndSetIfChanged(ref _wasCorrect, value);
     }
+
+    public bool QuestionHasLaTeX => LaTeXImage.ContainsLaTeX(_questionText);
 
     private static string FormatTime(double seconds)
     {

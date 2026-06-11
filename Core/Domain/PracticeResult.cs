@@ -11,6 +11,7 @@ public sealed class PracticeResult
     public string UserAnswer { get; init; } = string.Empty;
     public DateTime Timestamp { get; init; } = DateTime.UtcNow;
     public PracticeMode Mode { get; init; }
+    public int Difficulty { get; init; }
 }
 
 public enum PracticeMode
