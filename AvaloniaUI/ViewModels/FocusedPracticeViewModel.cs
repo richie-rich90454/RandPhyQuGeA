@@ -356,14 +356,11 @@ public class FocusedPracticeViewModel : ViewModelBase
             for (int attempt = 0; attempt < 3; attempt++)
             {
                 var question = await Task.Run(() =>
-                    _questionGenerator.Generate(skillItem.ParentId, skillId, null, qType));
+                    _questionGenerator.Generate(skillItem.ParentId, skillId, MinDifficulty, MaxDifficulty, qType));
 
                 if (question is not null)
                 {
-                    if (question.Difficulty >= MinDifficulty && question.Difficulty <= MaxDifficulty)
-                    {
-                        questions.Add(question);
-                    }
+                    questions.Add(question);
                     break;
                 }
             }
@@ -381,9 +378,9 @@ public class FocusedPracticeViewModel : ViewModelBase
 
                 string? qType = QuestionType == "Mixed" ? null : QuestionType;
                 var question = await Task.Run(() =>
-                    _questionGenerator.Generate(skillItem.ParentId, skillId, null, qType));
+                    _questionGenerator.Generate(skillItem.ParentId, skillId, MinDifficulty, MaxDifficulty, qType));
 
-                if (question is not null && question.Difficulty >= MinDifficulty && question.Difficulty <= MaxDifficulty)
+                if (question is not null)
                 {
                     questions.Add(question);
                 }
