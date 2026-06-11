@@ -1,137 +1,118 @@
 using System;
-using System.Reactive.Disposables;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.VisualTree;
 using AvaloniaUI.ViewModels;
-using ReactiveUI;
 
 namespace AvaloniaUI.Views;
 
-public partial class ProgressView : UserControl, IViewFor<ProgressViewModel>
+public partial class ProgressView : UserControl
 {
+    private IDisposable? _clearSubscription;
+
     public ProgressView()
     {
         InitializeComponent();
-
-        this.WhenActivated(d =>
-        {
-            if (DataContext is ProgressViewModel vm)
-            {
-                vm.LoadCommand.Execute().Subscribe().DisposeWith(d);
-
-                vm.ConfirmClear.RegisterHandler(async interaction =>
-                {
-                    var result = await ShowConfirmDialog("Clear Progress", interaction.Input);
-                    interaction.SetOutput(result);
-                }).DisposeWith(d);
-            }
-        });
+        DataContextChanged += OnDataContextChanged;
     }
 
-    private async Task<bool> ShowConfirmDialog(string title, string message)
+    private void OnDataContextChanged(object? sender, EventArgs e)
     {
+        _clearSubscription?.Dispose();
+        _clearSubscription = null;
+
+        if (DataContext is ProgressViewModel vm)
+        {
+            vm.LoadCommand.Execute().Subscribe();
+
+            _clearSubscription = vm.ConfirmClear.RegisterHandler(async interaction =>
+            {
+                var confirmed = await ShowConfirmDialog(interaction.Input);
+                interaction.SetOutput(confirmed);
+            });
+        }
+    }
+
+    private async Task<bool> ShowConfirmDialog(string message)
+    {
+        var window = new Window
+        {
+            Title = "Clear Progress",
+            Width = 400,
+            Height = 180,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            CanResize = false,
+            Background = Application.Current?.FindResource("CardBackgroundBrush") as IBrush ?? Brushes.White
+        };
+
         var tcs = new TaskCompletionSource<bool>();
 
-        var overlay = new Border
-        {
-            Background = new SolidColorBrush(Color.FromArgb(128, 0, 0, 0)),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-            ZIndex = 1000
-        };
-
-        var dialog = new Border
-        {
-            Background = Brushes.White,
-            CornerRadius = new CornerRadius(12),
-            Padding = new Thickness(32),
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-            MinWidth = 360,
-            MaxWidth = 440,
-            BoxShadow = new BoxShadows(new BoxShadow { Color = Colors.Black, BlurX = 16, BlurY = 16, SpreadX = 0, SpreadY = 0, OffsetX = 0, OffsetY = 4 })
-        };
-
-        var noButton = new Button
+        var cancelBtn = new Button
         {
             Content = "Cancel",
-            Padding = new Thickness(16, 10),
-            CornerRadius = new CornerRadius(8),
-            Background = new SolidColorBrush(Color.FromRgb(0xF0, 0xF0, 0xF0)),
-            Foreground = Brushes.Black,
+            Padding = new Avalonia.Thickness(16, 8),
+            CornerRadius = new Avalonia.CornerRadius(6),
+            Background = Application.Current?.FindResource("Neutral20Brush") as IBrush,
+            Foreground = Application.Current?.FindResource("TextPrimaryBrush") as IBrush
+        };
+        cancelBtn.Click += (_, _) =>
+        {
+            tcs.TrySetResult(false);
+            window.Close();
         };
 
-        var yesButton = new Button
+        var clearBtn = new Button
         {
             Content = "Clear",
-            Padding = new Thickness(16, 10),
-            CornerRadius = new CornerRadius(8),
-            Background = Brushes.Red,
-            Foreground = Brushes.White,
-            FontWeight = FontWeight.SemiBold,
+            Padding = new Avalonia.Thickness(16, 8),
+            CornerRadius = new Avalonia.CornerRadius(6),
+            Background = Application.Current?.FindResource("ErrorBrush") as IBrush,
+            Foreground = Brushes.White
         };
-
-        noButton.Click += (s, e) =>
+        clearBtn.Click += (_, _) =>
         {
-            RemoveOverlay();
-            tcs.TrySetResult(false);
-        };
-
-        yesButton.Click += (s, e) =>
-        {
-            RemoveOverlay();
             tcs.TrySetResult(true);
+            window.Close();
         };
 
-        dialog.Child = new StackPanel
+        window.Content = new StackPanel
         {
+            Margin = new Avalonia.Thickness(24),
             Spacing = 20,
+            VerticalAlignment = VerticalAlignment.Center,
             Children =
             {
-                new TextBlock { Text = title, FontSize = 20, FontWeight = FontWeight.Bold },
-                new TextBlock { Text = message, FontSize = 14, TextWrapping = TextWrapping.Wrap },
+                new TextBlock
+                {
+                    Text = message,
+                    TextWrapping = TextWrapping.Wrap,
+                    FontSize = 14,
+                    Foreground = Application.Current?.FindResource("TextPrimaryBrush") as IBrush
+                },
                 new StackPanel
                 {
                     Orientation = Orientation.Horizontal,
-                    Spacing = 12,
                     HorizontalAlignment = HorizontalAlignment.Right,
-                    Children = { noButton, yesButton }
+                    Spacing = 8,
+                    Children = { cancelBtn, clearBtn }
                 }
             }
         };
 
-        overlay.Child = dialog;
-
-        var parent = this.VisualParent as Panel ?? this.Parent as Panel;
-        if (parent is not null)
+        var owner = this.FindAncestorOfType<Window>();
+        if (owner is not null)
         {
-            parent.Children.Add(overlay);
+            await window.ShowDialog(owner);
         }
         else
         {
-            tcs.TrySetResult(false);
-        }
-
-        void RemoveOverlay()
-        {
-            var p = this.VisualParent as Panel ?? this.Parent as Panel;
-            p?.Children.Remove(overlay);
+            window.Show();
+            await tcs.Task;
         }
 
         return await tcs.Task;
-    }
-
-    ProgressViewModel? IViewFor<ProgressViewModel>.ViewModel
-    {
-        get => DataContext as ProgressViewModel;
-        set => DataContext = value;
-    }
-
-    object? IViewFor.ViewModel
-    {
-        get => DataContext;
-        set => DataContext = value;
     }
 }
