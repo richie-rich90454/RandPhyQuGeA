@@ -64,6 +64,10 @@ public class SessionSummaryViewModel : ViewModelBase
 
     public bool HasMistakes => IncorrectCount > 0;
 
+    public bool HasResults => _questionResults.Count > 0;
+
+    public string EmptyMessage => "No questions were answered in this session.";
+
     // ─── Time Statistics ─────────────────────────────────────────────────
 
     public double TotalTimeSeconds => _questionResults.Sum(r => r.TimeTakenSeconds);

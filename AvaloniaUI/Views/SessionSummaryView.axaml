@@ -11,6 +11,25 @@
   <ScrollViewer Background="{DynamicResource ContentBackgroundBrush}">
     <StackPanel Spacing="24" Margin="48,32" MaxWidth="800" HorizontalAlignment="Center">
 
+      <!-- ═══ Empty State ═══ -->
+      <StackPanel IsVisible="{Binding !HasResults}" Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,48">
+        <TextBlock Text="&#xE9D9;" FontFamily="Segoe MDL2 Assets" FontSize="48"
+                   Foreground="{DynamicResource TextTertiaryBrush}"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="{Binding EmptyMessage}" FontSize="18" FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextPrimaryBrush}"
+                   HorizontalAlignment="Center" />
+        <Button Command="{Binding BackToHomeCommand}" HorizontalAlignment="Center"
+                Padding="20,10" CornerRadius="8"
+                Background="{DynamicResource PrimaryBrush}"
+                Foreground="{DynamicResource TextOnPrimaryBrush}">
+          <TextBlock Text="Back to Home" FontSize="13" FontWeight="SemiBold" />
+        </Button>
+      </StackPanel>
+
+      <!-- ═══ Normal Content ═══ -->
+      <Panel IsVisible="{Binding HasResults}">
+
       <!-- ═══ Score Display ═══ -->
       <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="16"
               Padding="32,40" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
@@ -346,6 +365,8 @@
           </StackPanel>
         </Grid>
       </Border>
+
+      </Panel>
 
     </StackPanel>
   </ScrollViewer>
