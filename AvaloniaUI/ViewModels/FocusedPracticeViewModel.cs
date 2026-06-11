@@ -148,6 +148,7 @@ public class FocusedPracticeViewModel : ViewModelBase
             this.RaisePropertyChanged(nameof(CurrentQuestion));
             this.RaisePropertyChanged(nameof(QuestionHasLaTeX));
             this.RaisePropertyChanged(nameof(SolutionHasLaTeX));
+            this.RaisePropertyChanged(nameof(IsMcQuestion));
             this.RaisePropertyChanged(nameof(IsLastQuestion));
             this.RaisePropertyChanged(nameof(ProgressText));
             this.RaisePropertyChanged(nameof(ProgressPercent));
@@ -162,6 +163,8 @@ public class FocusedPracticeViewModel : ViewModelBase
     public bool QuestionHasLaTeX => CurrentQuestion is not null && LaTeXImage.ContainsLaTeX(CurrentQuestion.Text);
 
     public bool SolutionHasLaTeX => CurrentQuestion is not null && LaTeXImage.ContainsLaTeX(CurrentQuestion.SolutionLaTeX);
+
+    public bool IsMcQuestion => CurrentQuestion?.Choices is { Count: > 0 };
 
     public bool IsLastQuestion => CurrentQuestionIndex >= Questions.Count - 1;
 
