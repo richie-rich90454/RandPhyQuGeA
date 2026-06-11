@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Text.Json;
 using ReactiveUI;
 
@@ -21,6 +22,8 @@ public class SettingsViewModel : ViewModelBase
     private bool _isTimerVisible = true;
     private bool _isResetConfirmationVisible;
 
+    private readonly CompositeDisposable _autoSaveSubscriptions = new();
+
     public SettingsViewModel()
     {
         LoadSettings();
@@ -29,6 +32,13 @@ public class SettingsViewModel : ViewModelBase
         ResetSettingsCommand = ReactiveCommand.Create(OnResetSettings);
         ConfirmResetCommand = ReactiveCommand.Create(OnConfirmReset);
         CancelResetCommand = ReactiveCommand.Create(OnCancelReset);
+
+        _autoSaveSubscriptions.Add(this.WhenAnyValue(x => x.DefaultQuestionCount).Subscribe(_ => SaveSettings()));
+        _autoSaveSubscriptions.Add(this.WhenAnyValue(x => x.DefaultMinDifficulty).Subscribe(_ => SaveSettings()));
+        _autoSaveSubscriptions.Add(this.WhenAnyValue(x => x.DefaultMaxDifficulty).Subscribe(_ => SaveSettings()));
+        _autoSaveSubscriptions.Add(this.WhenAnyValue(x => x.DefaultQuestionType).Subscribe(_ => SaveSettings()));
+        _autoSaveSubscriptions.Add(this.WhenAnyValue(x => x.IsSoundEnabled).Subscribe(_ => SaveSettings()));
+        _autoSaveSubscriptions.Add(this.WhenAnyValue(x => x.IsTimerVisible).Subscribe(_ => SaveSettings()));
     }
 
     // ─── Theme Properties ──────────────────────────────────────────────
