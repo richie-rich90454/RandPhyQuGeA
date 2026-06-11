@@ -26,7 +26,10 @@ public partial class ProgressView : UserControl
 
         if (DataContext is ProgressViewModel vm)
         {
-            vm.LoadCommand.Execute().Subscribe();
+            if (vm.NeedsReload)
+            {
+                vm.LoadCommand.Execute().Subscribe();
+            }
 
             _clearSubscription = vm.ConfirmClear.RegisterHandler(async interaction =>
             {

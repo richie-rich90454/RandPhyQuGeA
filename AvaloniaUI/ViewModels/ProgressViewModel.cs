@@ -26,6 +26,7 @@ public class ProgressViewModel : ViewModelBase
     private int _currentStreak;
     private bool _isLoading;
     private bool _hasData;
+    private bool _isLoaded;
     private ObservableCollection<RecentSessionItem> _recentResults = new();
     private ObservableCollection<TopicPerformanceItem> _topicPerformances = new();
     private ObservableCollection<DifficultyBarItem> _difficultyBars = new();
@@ -34,6 +35,7 @@ public class ProgressViewModel : ViewModelBase
     public ProgressViewModel()
     {
         LoadCommand = ReactiveCommand.CreateFromTask(LoadDataAsync);
+        RefreshCommand = ReactiveCommand.CreateFromTask(RefreshDataAsync);
         ClearCommand = ReactiveCommand.CreateFromTask(ClearDataAsync);
         ConfirmClear = new Interaction<string, bool>();
     }
@@ -44,6 +46,7 @@ public class ProgressViewModel : ViewModelBase
         _specificationViewModel = specificationViewModel;
 
         LoadCommand = ReactiveCommand.CreateFromTask(LoadDataAsync);
+        RefreshCommand = ReactiveCommand.CreateFromTask(RefreshDataAsync);
         ClearCommand = ReactiveCommand.CreateFromTask(ClearDataAsync);
         ConfirmClear = new Interaction<string, bool>();
     }
@@ -134,11 +137,27 @@ public class ProgressViewModel : ViewModelBase
 
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> LoadCommand { get; }
 
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> RefreshCommand { get; }
+
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> ClearCommand { get; }
+
+    public bool NeedsReload => !_isLoaded;
 
     public Interaction<string, bool> ConfirmClear { get; }
 
     private async Task LoadDataAsync()
+    {
+        if (_isLoaded) return;
+        await LoadDataCoreAsync();
+    }
+
+    private async Task RefreshDataAsync()
+    {
+        _isLoaded = false;
+        await LoadDataCoreAsync();
+    }
+
+    private async Task LoadDataCoreAsync()
     {
         if (_resultRepository is null) return;
 
@@ -160,6 +179,7 @@ public class ProgressViewModel : ViewModelBase
                 TopicPerformances.Clear();
                 DifficultyBars.Clear();
                 CalendarWeeks.Clear();
+                _isLoaded = true;
                 return;
             }
 
@@ -217,6 +237,7 @@ public class ProgressViewModel : ViewModelBase
 
             // Calendar
             ComputeCalendar(results);
+            _isLoaded = true;
         }
         finally
         {
@@ -240,7 +261,8 @@ public class ProgressViewModel : ViewModelBase
         }
 
         await _resultRepository.ClearAsync();
-        await LoadDataAsync();
+        _isLoaded = false;
+        await LoadDataCoreAsync();
     }
 
     private void ComputeTopicPerformance(IReadOnlyList<PracticeResult> results)
