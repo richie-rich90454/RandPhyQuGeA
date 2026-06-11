@@ -19,6 +19,21 @@
                    MaxWidth="600" />
       </StackPanel>
 
+      <!-- Daily Physics Quote -->
+      <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+              Padding="24,20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+              MaxWidth="700" BoxShadow="0 2 4 0 rgba(0,0,0,0.06)">
+        <StackPanel Spacing="8">
+          <TextBlock Text="&#xE8BD;" FontFamily="Segoe MDL2 Assets" FontSize="16"
+                     Foreground="{DynamicResource PrimaryBrush}" Opacity="0.6" />
+          <TextBlock Text="{Binding DailyQuote}" FontSize="15" FontStyle="Italic"
+                     Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"
+                     MaxWidth="650" />
+          <TextBlock Text="{Binding DailyQuoteAuthor}" FontSize="12"
+                     Foreground="{DynamicResource TextTertiaryBrush}" />
+        </StackPanel>
+      </Border>
+
       <!-- Quick Start Cards -->
       <TextBlock Text="Quick Start" FontSize="16" FontWeight="SemiBold"
                  Foreground="{DynamicResource TextPrimaryBrush}" />
