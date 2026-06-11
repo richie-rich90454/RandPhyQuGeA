@@ -94,7 +94,12 @@ public partial class App : Application
         var resources = Current?.Resources;
         if (resources is null) return;
 
-        var themeResources = IsDarkTheme(actualTheme) ? _darkThemeResources : _lightThemeResources;
+        // Determine if we should use dark resources
+        // For System theme, check the actual OS theme
+        bool useDark = theme == AppTheme.Dark ||
+            (theme == AppTheme.System && ActualThemeVariant == ThemeVariant.Dark);
+
+        var themeResources = useDark ? _darkThemeResources : _lightThemeResources;
 
         if (themeResources is not null)
         {
@@ -103,11 +108,6 @@ public partial class App : Application
                 resources[key] = themeResources[key];
             }
         }
-    }
-
-    private static bool IsDarkTheme(ThemeVariant variant)
-    {
-        return variant == ThemeVariant.Dark;
     }
 
     private static (MainWindowViewModel mainWindowViewModel, SpecificationViewModel specViewModel, InMemoryTemplateRepository repository) CreateViewModel()
