@@ -139,13 +139,13 @@
 
           <!-- Controls -->
           <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="4">
-            <Button Command="{Binding PauseCommand}" Padding="8,4" CornerRadius="6"
-                    Background="Transparent" ToolTip.Tip="Pause">
+            <Button Command="{Binding PauseCommand}" Padding="8,4" Classes="subtle"
+                    ToolTip.Tip="Pause">
               <TextBlock Text="&#xE769;" FontFamily="Segoe MDL2 Assets" FontSize="14"
                          Foreground="{DynamicResource TextSecondaryBrush}" />
             </Button>
-            <Button Command="{Binding GiveUpCommand}" Padding="8,4" CornerRadius="6"
-                    Background="Transparent" ToolTip.Tip="Give Up (Esc)">
+            <Button Command="{Binding GiveUpCommand}" Padding="8,4" Classes="subtle"
+                    ToolTip.Tip="Give Up (Esc)">
               <StackPanel Orientation="Horizontal" Spacing="4">
                 <TextBlock Text="&#xE7BA;" FontFamily="Segoe MDL2 Assets" FontSize="12"
                            Foreground="{DynamicResource WarningBrush}"
@@ -155,8 +155,8 @@
                            VerticalAlignment="Center" />
               </StackPanel>
             </Button>
-            <Button Command="{Binding EndSessionCommand}" Padding="8,4" CornerRadius="6"
-                    Background="Transparent" ToolTip.Tip="End Session">
+            <Button Command="{Binding EndSessionCommand}" Padding="8,4" Classes="subtle"
+                    ToolTip.Tip="End Session">
               <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="14"
                          Foreground="{DynamicResource ErrorBrush}" />
             </Button>
