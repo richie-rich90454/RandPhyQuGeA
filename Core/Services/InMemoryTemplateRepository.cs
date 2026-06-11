@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Core.Domain;
 using Core.Interfaces;
 
@@ -5,11 +6,16 @@ namespace Core.Services;
 
 public sealed class InMemoryTemplateRepository : ITemplateRepository
 {
-    private readonly IReadOnlyList<QuestionTemplate> _templates;
+    private readonly List<QuestionTemplate> _templates;
 
     public InMemoryTemplateRepository(IReadOnlyList<QuestionTemplate> templates)
     {
-        _templates = templates;
+        _templates = new List<QuestionTemplate>(templates);
+    }
+
+    public void AddRange(IEnumerable<QuestionTemplate> templates)
+    {
+        _templates.AddRange(templates);
     }
 
     public IReadOnlyList<QuestionTemplate> GetAll() => _templates;

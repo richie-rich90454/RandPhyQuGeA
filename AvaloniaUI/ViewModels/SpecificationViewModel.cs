@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -334,6 +335,8 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
             OverallAvgDifficulty = allSpecTemplates.Average(t => t.Difficulty);
         }
     }
+
+    public IReadOnlyList<QuestionTemplate> GetLoadedTemplates() => Templates.ToList();
 
     public void Dispose()
     {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -33,14 +32,22 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var (viewModel, specViewModel) = CreateViewModel();
+            var (viewModel, specViewModel, repository) = CreateViewModel();
             desktop.MainWindow = new MainWindow(viewModel);
 
-            // Auto-load the specification at startup
-            _ = specViewModel.LoadCommand.Execute(System.Reactive.Unit.Default);
+            // Auto-load the specification and populate the template repository
+            InitializeAsync(specViewModel, repository);
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private static void InitializeAsync(SpecificationViewModel specViewModel, InMemoryTemplateRepository repository)
+    {
+        specViewModel.LoadCommand.Execute(System.Reactive.Unit.Default).Subscribe(_ =>
+        {
+            repository.AddRange(specViewModel.GetLoadedTemplates());
+        });
     }
 
     /// <summary>
@@ -94,7 +101,7 @@ public partial class App : Application
         return variant == ThemeVariant.Dark;
     }
 
-    private static (MainWindowViewModel mainWindowViewModel, SpecificationViewModel specViewModel) CreateViewModel()
+    private static (MainWindowViewModel mainWindowViewModel, SpecificationViewModel specViewModel, InMemoryTemplateRepository repository) CreateViewModel()
     {
         var random = new SeededRandomGenerator(42);
         var evaluator = new NCalcEvaluator();
@@ -106,7 +113,7 @@ public partial class App : Application
         var latexRenderer = new DummyRenderer();
         var specViewModel = new SpecificationViewModel(loader);
 
-        return (new MainWindowViewModel(questionGenerator, latexRenderer, loader, specViewModel), specViewModel);
+        return (new MainWindowViewModel(questionGenerator, latexRenderer, loader, specViewModel), specViewModel, repository);
     }
 }
 
