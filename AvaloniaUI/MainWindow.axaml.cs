@@ -122,8 +122,9 @@ public partial class MainWindow : Window
         }
         else
         {
-            // Always update DataContext for cached views (e.g., SessionSummary changes)
-            view.DataContext = currentVm;
+            // Update DataContext only if it changed (prevents re-triggering DataContextChanged subscriptions)
+            if (view.DataContext != currentVm)
+                view.DataContext = currentVm;
         }
 
         // Set the cached view directly on the ContentControl
