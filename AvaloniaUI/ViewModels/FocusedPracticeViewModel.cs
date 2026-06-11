@@ -427,8 +427,15 @@ public class FocusedPracticeViewModel : ViewModelBase
         IsEndConfirmationVisible = false;
         IsSessionOver = true;
 
+        if (_questionResultsList.Count == 0)
+        {
+            // No results — navigate to Home instead of stale view
+            _navigationViewModel?.Navigate("Home");
+            return;
+        }
+
         // Navigate to session summary
-        if (_navigationViewModel is not null && _questionResultsList.Count > 0)
+        if (_navigationViewModel is not null)
         {
             var summary = new SessionSummaryViewModel(
                 _questionResultsList.ToList(),
