@@ -188,6 +188,7 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
 
             Specification = spec;
 
+            // Batch-populate collections to minimize layout invalidations
             Units.Clear();
             foreach (var unit in spec.Units)
                 Units.Add(unit);
@@ -204,6 +205,7 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
             foreach (var template in spec.Templates)
                 Templates.Add(template);
 
+            // Build hierarchy last — this populates UnitNodes which triggers ApplyFilters
             BuildHierarchy(spec);
 
             IsLoaded = true;
@@ -245,8 +247,7 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
 
     private void BuildHierarchy(Specification spec)
     {
-        UnitNodes.Clear();
-
+        // Build the entire hierarchy off-screen first, then set in one shot
         var skillNodes = spec.Skills.Select(s => new SkillNode(s)).ToList();
         var topicNodes = spec.Topics.Select(t => new TopicNode(t)).ToList();
         var unitNodes = spec.Units.Select(u => new UnitNode(u)).ToList();
@@ -316,6 +317,8 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
             }
         }
 
+        // Batch-add all unit nodes at once to fire only ONE CollectionChanged
+        UnitNodes.Clear();
         foreach (var unitNode in unitNodes)
             UnitNodes.Add(unitNode);
 
