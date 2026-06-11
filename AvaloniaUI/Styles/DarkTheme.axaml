@@ -21,6 +21,7 @@
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="#1E2A45" />
     <SolidColorBrush x:Key="CardHoverBrush" Color="#243352" />
     <SolidColorBrush x:Key="OverlayBrush" Color="#1E2A45" />
+    <SolidColorBrush x:Key="OverlayScrimBrush" Color="#E0000000" />
 
     <!-- Borders & Dividers -->
     <SolidColorBrush x:Key="BorderBrush" Color="#2D3A54" />

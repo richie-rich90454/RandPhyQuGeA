@@ -318,7 +318,7 @@
 
       <!-- Konami Code Easter Egg Overlay -->
       <Border x:Name="KonamiOverlay" IsVisible="False"
-              Background="#E0000000"
+              Background="{DynamicResource OverlayScrimBrush}"
               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
               ZIndex="300" Cursor="Hand"
               PointerPressed="KonamiOverlayDismiss">

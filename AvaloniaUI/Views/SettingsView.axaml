@@ -357,7 +357,7 @@
 
     <!-- ═══ Reset Confirmation Overlay ═══ -->
     <Border IsVisible="{Binding IsResetConfirmationVisible}"
-            Background="#80000000"
+            Background="{DynamicResource OverlayScrimBrush}"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
             ZIndex="100">
       <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"

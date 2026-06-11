@@ -445,7 +445,7 @@
 
       <!-- End Session Confirmation Dialog (Commit 52) -->
       <Border IsVisible="{Binding IsEndConfirmationVisible}"
-              Background="#80000000"
+              Background="{DynamicResource OverlayScrimBrush}"
               HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
               ZIndex="100">
         <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
