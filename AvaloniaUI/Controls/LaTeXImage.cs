@@ -47,4 +47,16 @@ public class LaTeXImage : UserControl
     }
 
     public Image? GetImage() => Content as Image;
+
+    public static bool ContainsLaTeX(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return false;
+        return text.Contains("$$") ||
+               text.Contains(@"\frac") ||
+               text.Contains(@"\sqrt") ||
+               text.Contains(@"\int") ||
+               text.Contains(@"\sum") ||
+               text.Contains(@"^{") ||
+               text.Contains("_{");
+    }
 }
