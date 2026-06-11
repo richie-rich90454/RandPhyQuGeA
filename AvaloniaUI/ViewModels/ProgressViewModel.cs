@@ -384,7 +384,7 @@ public class ProgressViewModel : ViewModelBase
         }
 
         CalendarWeeks.Clear();
-        foreach (var week in weeks)
+        foreach (var week in weeks.TakeLast(12))
         {
             CalendarWeeks.Add(week);
         }

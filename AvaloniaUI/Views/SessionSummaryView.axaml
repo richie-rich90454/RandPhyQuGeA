@@ -8,6 +8,13 @@
              x:Class="AvaloniaUI.Views.SessionSummaryView"
              x:DataType="vm:SessionSummaryViewModel">
 
+  <UserControl.Resources>
+    <conv:CorrectToBackgroundBrushConverter x:Key="CorrectToBackgroundConverter" />
+    <conv:CorrectToBorderBrushConverter x:Key="CorrectToBorderConverter" />
+    <conv:CorrectToTextBrushConverter x:Key="CorrectToTextConverter" />
+    <conv:CorrectToIconConverter x:Key="CorrectToIconConverter" />
+  </UserControl.Resources>
+
   <ScrollViewer Background="{DynamicResource ContentBackgroundBrush}">
     <StackPanel Spacing="24" Margin="48,32" MaxWidth="800" HorizontalAlignment="Center">
 
@@ -149,8 +156,8 @@
       <!-- ═══ Per-Question Review List ═══ -->
       <TextBlock Text="Question Review" FontSize="18" FontWeight="SemiBold"
                  Foreground="{DynamicResource TextPrimaryBrush}" />
-      <ItemsControl ItemsSource="{Binding QuestionResults}">
-        <ItemsControl.ItemTemplate>
+      <ListBox ItemsSource="{Binding QuestionResults}" Background="Transparent" BorderThickness="0" Padding="0" SelectionMode="Toggle">
+        <ListBox.ItemTemplate>
           <DataTemplate x:DataType="vm:QuestionResultItem">
             <Panel>
             <!-- Correct Item -->
@@ -226,8 +233,8 @@
             </Border>
             </Panel>
           </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
+        </ListBox.ItemTemplate>
+      </ListBox>
 
       <!-- ═══ Action Buttons ═══ -->
       <StackPanel Spacing="12" HorizontalAlignment="Center" Margin="0,8,0,0">
