@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
 using Avalonia.Media;
+using Avalonia.Styling;
+using Avalonia.VisualTree;
 
 namespace AvaloniaUI.Controls;
 
@@ -15,6 +17,13 @@ public class LaTeXImage : UserControl
 
     public static readonly StyledProperty<bool> HasErrorProperty =
         AvaloniaProperty.Register<LaTeXImage, bool>(nameof(HasError));
+
+    public static readonly StyledProperty<bool> ShowAsTextProperty =
+        AvaloniaProperty.Register<LaTeXImage, bool>(nameof(ShowAsText), defaultValue: true);
+
+    private readonly Image _image;
+    private readonly TextBlock _textBlock;
+    private readonly Border _textBorder;
 
     public string LaTeXSource
     {
@@ -34,19 +43,85 @@ public class LaTeXImage : UserControl
         set => SetValue(HasErrorProperty, value);
     }
 
+    public bool ShowAsText
+    {
+        get => GetValue(ShowAsTextProperty);
+        set => SetValue(ShowAsTextProperty, value);
+    }
+
     public LaTeXImage()
     {
-        var image = new Image
+        _image = new Image
         {
             Stretch = Stretch.Uniform,
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
+            IsVisible = false,
         };
 
-        Content = image;
+        _textBlock = new TextBlock
+        {
+            FontFamily = new FontFamily("Consolas, Courier New, monospace"),
+            FontStyle = FontStyle.Italic,
+            FontSize = 14,
+            TextWrapping = TextWrapping.Wrap,
+        };
+
+        _textBorder = new Border
+        {
+            Child = _textBlock,
+            CornerRadius = new CornerRadius(6),
+            Padding = new Thickness(12, 8),
+            Background = new SolidColorBrush(Color.FromArgb(40, 128, 128, 128)),
+        };
+
+        var panel = new Panel
+        {
+            Children = { _image, _textBorder },
+        };
+
+        Content = panel;
+
+        _textBorder.IsVisible = true;
+
+        LaTeXSourceProperty.Changed.AddClassHandler<LaTeXImage>(OnLaTeXSourceChanged);
+        ShowAsTextProperty.Changed.AddClassHandler<LaTeXImage>(OnShowAsTextChanged);
     }
 
-    public Image? GetImage() => Content as Image;
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        ApplyThemeBrushes();
+    }
+
+    public Image? GetImage() => _image;
+
+    private void OnLaTeXSourceChanged(LaTeXImage sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        var text = e.NewValue as string ?? string.Empty;
+        _textBlock.Text = text;
+    }
+
+    private void OnShowAsTextChanged(LaTeXImage sender, AvaloniaPropertyChangedEventArgs e)
+    {
+        UpdateVisibility();
+    }
+
+    private void UpdateVisibility()
+    {
+        var showText = ShowAsText;
+        _textBorder.IsVisible = showText;
+        _image.IsVisible = !showText;
+    }
+
+    private void ApplyThemeBrushes()
+    {
+        if (TryGetResource("TextPrimaryBrush", ActualThemeVariant, out var fg) && fg is IBrush fgBrush)
+            _textBlock.Foreground = fgBrush;
+
+        if (TryGetResource("Neutral10Brush", ActualThemeVariant, out var bg) && bg is IBrush bgBrush)
+            _textBorder.Background = bgBrush;
+    }
 
     public static bool ContainsLaTeX(string? text)
     {
