@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -130,21 +131,62 @@ public partial class FocusedPracticeView : UserControl
 
     // ─── MC Answer Selection ─────────────────────────────────────────
 
-    private void OnMcChoiceClick(object? sender, PointerPressedEventArgs e)
+    private void OnChoiceCardLoaded(object? sender, global::Avalonia.Interactivity.RoutedEventArgs e)
     {
-        if (DataContext is not FocusedPracticeViewModel vm) return;
-        if (vm.IsAnswerSubmitted) return;
-
+        // Set the choice letter (A, B, C, D...) based on the item index
         if (sender is Border border)
         {
             var itemsControl = border.FindAncestorOfType<ItemsControl>();
             if (itemsControl is not null)
             {
-                var index = itemsControl.IndexFromContainer(border);
-                if (index >= 0 && vm.CurrentQuestion?.Choices is { Count: > 0 } && index < vm.CurrentQuestion.Choices.Count)
+                // Find the index by iterating containers
+                var index = -1;
+                for (int i = 0; i < itemsControl.ItemCount; i++)
                 {
-                    var choice = vm.CurrentQuestion.Choices[index];
-                    vm.SelectedAnswer = choice;
+                    var container = itemsControl.ContainerFromIndex(i);
+                    if (container is ContentPresenter cp && cp.Child == border)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index >= 0 && index < ChoiceLetters.Length)
+                {
+                    var letterText = border.FindControl<TextBlock>("ChoiceLetter");
+                    if (letterText is not null)
+                        letterText.Text = ChoiceLetters[index];
+                }
+            }
+        }
+    }
+
+    private void OnMcChoiceClick(object? sender, PointerPressedEventArgs e)
+    {
+        if (DataContext is not FocusedPracticeViewModel vm) return;
+        if (vm.IsAnswerSubmitted) return;
+
+        // Walk up from the clicked element to find the ItemsControl
+        if (sender is Border border)
+        {
+            var itemsControl = border.FindAncestorOfType<ItemsControl>();
+            if (itemsControl is not null && vm.CurrentQuestion?.Choices is { Count: > 0 })
+            {
+                // Find the index by iterating containers
+                var index = -1;
+                for (int i = 0; i < vm.CurrentQuestion.Choices.Count; i++)
+                {
+                    var container = itemsControl.ContainerFromIndex(i);
+                    if (container is ContentPresenter cp && cp.Child is Border childBorder && childBorder == border)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index >= 0 && index < vm.CurrentQuestion.Choices.Count)
+                {
+                    vm.SelectedAnswer = vm.CurrentQuestion.Choices[index];
                 }
             }
         }

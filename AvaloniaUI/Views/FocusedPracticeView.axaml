@@ -127,13 +127,11 @@
                       FontWeight="SemiBold" FontSize="13"
                       Click="OnQuestionTypeMCClick" />
               <Button x:Name="BtnTypeSA" Content="SA" Padding="20,8" CornerRadius="6"
-                      Background="{DynamicResource Neutral10Brush}"
-                      Foreground="{DynamicResource TextPrimaryBrush}"
+                      Classes="secondary"
                       FontSize="13"
                       Click="OnQuestionTypeSAClick" />
               <Button x:Name="BtnTypeMixed" Content="Mixed" Padding="20,8" CornerRadius="6"
-                      Background="{DynamicResource Neutral10Brush}"
-                      Foreground="{DynamicResource TextPrimaryBrush}"
+                      Classes="secondary"
                       FontSize="13"
                       Click="OnQuestionTypeMixedClick" />
             </StackPanel>
@@ -166,8 +164,7 @@
           <Button Command="{Binding StartPracticeCommand}"
                   HorizontalAlignment="Center"
                   Padding="32,14" CornerRadius="8"
-                  Background="{DynamicResource PrimaryBrush}"
-                  Foreground="{DynamicResource TextOnPrimaryBrush}"
+                  Classes="primary"
                   MinWidth="200">
             <TextBlock Text="Start Practice" FontSize="16" FontWeight="SemiBold"
                        HorizontalAlignment="Center" />
@@ -239,15 +236,17 @@
           </StackPanel>
         </Border>
 
-        <!-- MC Answer Selection (Commit 46) -->
-        <ItemsControl IsVisible="{Binding CurrentQuestion.Choices.Count, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}"
+        <!-- MC Answer Selection -->
+        <ItemsControl x:Name="McChoicesList"
+                      IsVisible="{Binding IsMcQuestion}"
                       ItemsSource="{Binding CurrentQuestion.Choices}">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
               <Border x:Name="ChoiceCard" Background="{DynamicResource CardBackgroundBrush}"
                       CornerRadius="8" Padding="16,12" Margin="0,4"
                       BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
-                      Cursor="Hand" PointerPressed="OnMcChoiceClick">
+                      Cursor="Hand" PointerPressed="OnMcChoiceClick"
+                      Loaded="OnChoiceCardLoaded">
                 <Grid ColumnDefinitions="36,*">
                   <Border Background="{DynamicResource PrimarySubtleBrush}" CornerRadius="4"
                           Width="32" Height="32" VerticalAlignment="Center"
@@ -270,13 +269,12 @@
         <Button x:Name="McConfirmBtn" Click="OnMcConfirmClick"
                 HorizontalAlignment="Center"
                 Padding="24,10" CornerRadius="8"
-                Background="{DynamicResource PrimaryBrush}"
-                Foreground="{DynamicResource TextOnPrimaryBrush}"
-                IsVisible="{Binding CurrentQuestion.Choices.Count, Converter={x:Static ObjectConverters.IsNotNull}, FallbackValue=False}">
+                Classes="primary"
+                IsVisible="{Binding IsMcQuestion}">
           <TextBlock Text="Confirm Answer" FontSize="14" FontWeight="SemiBold" />
         </Button>
 
-        <!-- SA Answer Input (Commit 47) -->
+        <!-- SA Answer Input -->
         <StackPanel Spacing="8" MaxWidth="700" HorizontalAlignment="Center">
           <StackPanel.IsVisible>
             <Binding Path="CurrentQuestion" Converter="{x:Static ObjectConverters.IsNotNull}" />
@@ -285,13 +283,12 @@
                    Watermark="Type your answer..."
                    FontSize="16" Padding="12,10" CornerRadius="8"
                    KeyDown="OnSaAnswerKeyDown"
-                   IsVisible="{Binding CurrentQuestion.Choices.Count, Converter={x:Static ObjectConverters.IsNull}, FallbackValue=True}" />
+                   IsVisible="{Binding !IsMcQuestion}" />
           <Button x:Name="SaSubmitBtn" Click="OnSaSubmitClick"
                   HorizontalAlignment="Center"
                   Padding="24,10" CornerRadius="8"
-                  Background="{DynamicResource PrimaryBrush}"
-                  Foreground="{DynamicResource TextOnPrimaryBrush}"
-                  IsVisible="{Binding CurrentQuestion.Choices.Count, Converter={x:Static ObjectConverters.IsNull}, FallbackValue=True}">
+                  Classes="primary"
+                  IsVisible="{Binding !IsMcQuestion}">
             <TextBlock Text="Submit Answer" FontSize="14" FontWeight="SemiBold" />
           </Button>
         </StackPanel>
@@ -300,8 +297,7 @@
         <Button Command="{Binding ShowSolutionCommand}"
                 HorizontalAlignment="Center"
                 Padding="20,10" CornerRadius="8"
-                Background="{DynamicResource Neutral10Brush}"
-                Foreground="{DynamicResource TextPrimaryBrush}"
+                Classes="secondary"
                 IsVisible="{Binding !IsSolutionVisible}">
           <StackPanel Orientation="Horizontal" Spacing="8">
             <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" FontSize="14"
@@ -354,8 +350,7 @@
         <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
           <Button Command="{Binding NextQuestionCommand}"
                   Padding="24,10" CornerRadius="8"
-                  Background="{DynamicResource PrimaryBrush}"
-                  Foreground="{DynamicResource TextOnPrimaryBrush}">
+                  Classes="primary">
             <StackPanel Orientation="Horizontal" Spacing="8">
               <TextBlock Text="Next Question" FontSize="14" FontWeight="SemiBold"
                          VerticalAlignment="Center" />
@@ -365,8 +360,7 @@
           </Button>
           <Button Command="{Binding EndSessionCommand}"
                   Padding="24,10" CornerRadius="8"
-                  Background="{DynamicResource Neutral10Brush}"
-                  Foreground="{DynamicResource TextPrimaryBrush}">
+                  Classes="secondary">
             <StackPanel Orientation="Horizontal" Spacing="8">
               <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets" FontSize="14"
                          VerticalAlignment="Center" />
@@ -380,8 +374,7 @@
         <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
           <Button Command="{Binding CopyQuestionCommand}"
                   Padding="12,6" CornerRadius="6"
-                  Background="{DynamicResource Neutral10Brush}"
-                  Foreground="{DynamicResource TextSecondaryBrush}"
+                  Classes="secondary"
                   ToolTip.Tip="Copy question text">
             <StackPanel Orientation="Horizontal" Spacing="4">
               <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="12"
@@ -391,8 +384,7 @@
           </Button>
           <Button Command="{Binding CopyAnswerCommand}"
                   Padding="12,6" CornerRadius="6"
-                  Background="{DynamicResource Neutral10Brush}"
-                  Foreground="{DynamicResource TextSecondaryBrush}"
+                  Classes="secondary"
                   ToolTip.Tip="Copy answer">
             <StackPanel Orientation="Horizontal" Spacing="4">
               <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="12"
@@ -402,8 +394,7 @@
           </Button>
           <Button Command="{Binding CopyFullCommand}"
                   Padding="12,6" CornerRadius="6"
-                  Background="{DynamicResource Neutral10Brush}"
-                  Foreground="{DynamicResource TextSecondaryBrush}"
+                  Classes="secondary"
                   ToolTip.Tip="Copy question, answer, and solution">
             <StackPanel Orientation="Horizontal" Spacing="4">
               <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="12"
@@ -430,8 +421,7 @@
           <Button Command="{Binding ViewSummaryCommand}"
                   HorizontalAlignment="Center"
                   Padding="24,12" CornerRadius="8"
-                  Background="{DynamicResource PrimaryBrush}"
-                  Foreground="{DynamicResource TextOnPrimaryBrush}">
+                  Classes="primary">
             <StackPanel Orientation="Horizontal" Spacing="8">
               <TextBlock Text="&#xE9D9;" FontFamily="Segoe MDL2 Assets" FontSize="14"
                          VerticalAlignment="Center" />
@@ -467,14 +457,12 @@
             <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Right">
               <Button Command="{Binding CancelEndSessionCommand}"
                       Padding="16,10" CornerRadius="8"
-                      Background="{DynamicResource Neutral10Brush}"
-                      Foreground="{DynamicResource TextPrimaryBrush}">
+                      Classes="secondary">
                 <TextBlock Text="No, Continue" FontSize="13" />
               </Button>
               <Button Command="{Binding ConfirmEndSessionCommand}"
                       Padding="16,10" CornerRadius="8"
-                      Background="{DynamicResource ErrorBrush}"
-                      Foreground="{DynamicResource TextOnPrimaryBrush}">
+                      Classes="danger">
                 <TextBlock Text="Yes, End" FontSize="13" FontWeight="SemiBold" />
               </Button>
             </StackPanel>
