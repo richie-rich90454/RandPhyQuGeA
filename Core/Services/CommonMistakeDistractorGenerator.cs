@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text.RegularExpressions;
 using Core.Domain;
 using Core.Interfaces;
 
@@ -62,25 +64,24 @@ public class CommonMistakeDistractorGenerator : IDistractorGenerator
 
     private string? TrySwapTrig(string expression)
     {
-        bool hasSin = expression.Contains("sin", StringComparison.OrdinalIgnoreCase);
-        bool hasCos = expression.Contains("cos", StringComparison.OrdinalIgnoreCase);
+        bool hasSin = Regex.IsMatch(expression, @"\bsin\b", RegexOptions.IgnoreCase);
+        bool hasCos = Regex.IsMatch(expression, @"\bcos\b", RegexOptions.IgnoreCase);
 
         if (hasSin && hasCos)
         {
             // Swap both: sin→cos, cos→sin using placeholders
-            var swapped = expression
-                .Replace("sin", "___SIN_PLACEHOLDER___", StringComparison.OrdinalIgnoreCase)
-                .Replace("cos", "sin", StringComparison.OrdinalIgnoreCase)
-                .Replace("___SIN_PLACEHOLDER___", "cos");
+            var swapped = Regex.Replace(expression, @"\bsin\b", "___SIN_PLACEHOLDER___", RegexOptions.IgnoreCase);
+            swapped = Regex.Replace(swapped, @"\bcos\b", "sin", RegexOptions.IgnoreCase);
+            swapped = Regex.Replace(swapped, @"___SIN_PLACEHOLDER___", "cos", RegexOptions.IgnoreCase);
             return swapped;
         }
         else if (hasSin)
         {
-            return expression.Replace("sin", "cos", StringComparison.OrdinalIgnoreCase);
+            return Regex.Replace(expression, @"\bsin\b", "cos", RegexOptions.IgnoreCase);
         }
         else if (hasCos)
         {
-            return expression.Replace("cos", "sin", StringComparison.OrdinalIgnoreCase);
+            return Regex.Replace(expression, @"\bcos\b", "sin", RegexOptions.IgnoreCase);
         }
 
         return null;
@@ -119,7 +120,7 @@ public class CommonMistakeDistractorGenerator : IDistractorGenerator
     private static string FormatValue(double value)
     {
         if (Math.Abs(value - Math.Round(value)) < 1e-9)
-            return Math.Round(value).ToString();
-        return value.ToString("G");
+            return Math.Round(value).ToString(CultureInfo.InvariantCulture);
+        return value.ToString("G", CultureInfo.InvariantCulture);
     }
 }

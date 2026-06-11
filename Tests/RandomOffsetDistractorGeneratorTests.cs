@@ -1,3 +1,4 @@
+using System.Globalization;
 using Core.Domain;
 using Core.Interfaces;
 using Core.Services;
@@ -126,5 +127,38 @@ public class RandomOffsetDistractorGeneratorTests
         Assert.Contains("-3", distractors);
         Assert.Contains("-2", distractors);
         Assert.Contains("-1", distractors);
+    }
+
+    [Fact]
+    public void Generate_UsesInvariantCultureForParsingAndFormatting()
+    {
+        // Verify that the generator correctly parses and formats numbers using
+        // InvariantCulture (dot as decimal separator), regardless of the current thread culture.
+        var originalCulture = CultureInfo.CurrentCulture;
+        try
+        {
+            // Set a culture that uses comma as decimal separator (e.g., de-DE)
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-DE");
+
+            var random = new MockRandomValueGenerator();
+            random.EnqueueInt(0);
+            random.EnqueueInt(0);
+            random.EnqueueInt(0);
+
+            var generator = new RandomOffsetDistractorGenerator(random);
+            var template = MakeTemplate();
+            var variables = MakeVariables();
+
+            // "3.14" uses dot as decimal separator (InvariantCulture format)
+            var distractors = generator.Generate("3.14", template, variables).ToList();
+
+            // Should successfully parse "3.14" and produce distractors with dot-formatted numbers
+            Assert.NotEmpty(distractors);
+            Assert.All(distractors, d => Assert.DoesNotContain(",", d));
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = originalCulture;
+        }
     }
 }

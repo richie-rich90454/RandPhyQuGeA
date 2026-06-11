@@ -1,9 +1,10 @@
+using System.Globalization;
 using Core.Domain;
 using Core.Interfaces;
 
 namespace Core.Services;
 
-public class RandomOffsetDistractorGenerator
+public class RandomOffsetDistractorGenerator : IDistractorGenerator
 {
     private readonly IRandomValueGenerator _random;
 
@@ -17,7 +18,7 @@ public class RandomOffsetDistractorGenerator
         var distractors = new List<string>();
         double correctValue;
 
-        if (!double.TryParse(correctAnswer, out correctValue))
+        if (!double.TryParse(correctAnswer, CultureInfo.InvariantCulture, out correctValue))
         {
             return distractors;
         }
@@ -54,7 +55,7 @@ public class RandomOffsetDistractorGenerator
     private static string FormatValue(double value)
     {
         if (Math.Abs(value - Math.Round(value)) < 1e-9)
-            return Math.Round(value).ToString();
-        return value.ToString("G");
+            return Math.Round(value).ToString(CultureInfo.InvariantCulture);
+        return value.ToString("G", CultureInfo.InvariantCulture);
     }
 }

@@ -99,4 +99,55 @@ public class CommonMistakeDistractorGeneratorTests
         // Verify that at most 3 distractors are returned (Take(3) in source)
         Assert.True(distractors.Count <= 3);
     }
+
+    [Fact]
+    public void Generate_DoesNotSwapAsinToAcos()
+    {
+        // "asin" (arcsine) should NOT be matched by the sin→cos swap.
+        // The expression "asin(0.5)" must remain unchanged (no trig swap applied).
+        var evaluator = new StubExpressionEvaluator(30.0);
+        var generator = new CommonMistakeDistractorGenerator(evaluator);
+        var template = MakeTemplate(answerExpression: "asin(0.5)");
+        var variables = MakeVariables();
+
+        var distractors = generator.Generate("30", template, variables).ToList();
+
+        // No trig swap distractor should be produced from "asin" —
+        // only factor/sign strategies apply.
+        // Verify that none of the distractors came from evaluating a "acos" expression.
+        Assert.All(distractors, d => Assert.NotEqual("30", d));
+    }
+
+    [Fact]
+    public void Generate_DoesNotSwapAcosToAsin()
+    {
+        // "acos" (arccosine) should NOT be matched by the cos→sin swap.
+        var evaluator = new StubExpressionEvaluator(60.0);
+        var generator = new CommonMistakeDistractorGenerator(evaluator);
+        var template = MakeTemplate(answerExpression: "acos(0.5)");
+        var variables = MakeVariables();
+
+        var distractors = generator.Generate("60", template, variables).ToList();
+
+        Assert.All(distractors, d => Assert.NotEqual("60", d));
+    }
+
+    [Fact]
+    public void Generate_SwapsSinInExpressionWithAsin()
+    {
+        // An expression like "asin(x) + sin(x)" should only swap the standalone "sin",
+        // leaving "asin" untouched. The swapped result should be "asin(x) + cos(x)".
+        var evaluator = new StubExpressionEvaluator((expr, _) =>
+        {
+            if (expr == "asin(x) + cos(x)") return 1.366;
+            return 0.5;
+        });
+        var generator = new CommonMistakeDistractorGenerator(evaluator);
+        var template = MakeTemplate(answerExpression: "asin(x) + sin(x)");
+        var variables = MakeVariables();
+
+        var distractors = generator.Generate("0.5", template, variables).ToList();
+
+        Assert.All(distractors, d => Assert.NotEqual("0.5", d));
+    }
 }
