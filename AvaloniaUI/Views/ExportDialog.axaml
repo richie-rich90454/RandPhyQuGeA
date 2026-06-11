@@ -30,8 +30,7 @@
       <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
         <Button Command="{Binding CloseCommand}"
                 Padding="16,8" CornerRadius="6"
-                Background="{DynamicResource Neutral10Brush}"
-                Foreground="{DynamicResource TextPrimaryBrush}">
+                Classes="secondary">
           <TextBlock Text="Cancel" FontSize="13" />
         </Button>
         <Button Command="{Binding CopyToClipboardCommand}"
@@ -47,8 +46,7 @@
         </Button>
         <Button Command="{Binding ExportCommand}"
                 Padding="16,8" CornerRadius="6"
-                Background="{DynamicResource PrimaryBrush}"
-                Foreground="{DynamicResource TextOnPrimaryBrush}">
+                Classes="primary">
           <StackPanel Orientation="Horizontal" Spacing="6">
             <TextBlock Text="&#xE898;" FontFamily="Segoe MDL2 Assets" FontSize="12"
                        VerticalAlignment="Center" />
