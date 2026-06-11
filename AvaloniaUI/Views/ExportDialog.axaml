@@ -1,0 +1,151 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AvaloniaUI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="560" d:DesignHeight="520"
+        x:Class="AvaloniaUI.Views.ExportDialog"
+        x:DataType="vm:ExportViewModel"
+        Title="Export Questions"
+        Width="560" Height="520"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        Background="{DynamicResource WindowBackgroundBrush}">
+
+  <DockPanel>
+    <!-- Header -->
+    <Border DockPanel.Dock="Top" Background="{DynamicResource PaneBackgroundBrush}"
+            Padding="20,16" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1">
+      <StackPanel Spacing="4">
+        <TextBlock Text="{Binding ExportTitle}" FontSize="18" FontWeight="Bold"
+                   Foreground="{DynamicResource TextPrimaryBrush}" />
+        <TextBlock Text="Choose a format and export your questions" FontSize="12"
+                   Foreground="{DynamicResource TextTertiaryBrush}" />
+      </StackPanel>
+    </Border>
+
+    <!-- Footer Buttons -->
+    <Border DockPanel.Dock="Bottom" Padding="16" Background="{DynamicResource PaneBackgroundBrush}"
+            BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0">
+      <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+        <Button Command="{Binding CloseCommand}"
+                Padding="16,8" CornerRadius="6"
+                Background="{DynamicResource Neutral10Brush}"
+                Foreground="{DynamicResource TextPrimaryBrush}">
+          <TextBlock Text="Cancel" FontSize="13" />
+        </Button>
+        <Button Command="{Binding CopyToClipboardCommand}"
+                Padding="16,8" CornerRadius="6"
+                Background="{DynamicResource PrimarySubtleBrush}"
+                Foreground="{DynamicResource PrimaryBrush}">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="Copy" FontSize="13" FontWeight="SemiBold"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+        <Button Command="{Binding ExportCommand}"
+                Padding="16,8" CornerRadius="6"
+                Background="{DynamicResource PrimaryBrush}"
+                Foreground="{DynamicResource TextOnPrimaryBrush}">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="&#xE898;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="Save" FontSize="13" FontWeight="SemiBold"
+                       VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+      </StackPanel>
+    </Border>
+
+    <!-- Content -->
+    <ScrollViewer Padding="20,16">
+      <StackPanel Spacing="20">
+
+        <!-- Format Selection -->
+        <StackPanel Spacing="8">
+          <TextBlock Text="Format" FontSize="13" FontWeight="SemiBold"
+                     Foreground="{DynamicResource TextPrimaryBrush}" />
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <!-- Markdown -->
+            <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8"
+                    Padding="16,12" Cursor="Hand" MinWidth="120"
+                    PointerPressed="OnMarkdownClick"
+                    BorderBrush="{DynamicResource PrimaryBrush}"
+                    BorderThickness="2"
+                    x:Name="FormatMarkdown"
+                    AutomationProperties.Name="Markdown format">
+              <StackPanel Spacing="4" HorizontalAlignment="Center">
+                <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                           Foreground="{DynamicResource PrimaryBrush}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="Markdown" FontSize="12" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text=".md" FontSize="10"
+                           Foreground="{DynamicResource TextTertiaryBrush}"
+                           HorizontalAlignment="Center" />
+              </StackPanel>
+            </Border>
+
+            <!-- HTML -->
+            <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8"
+                    Padding="16,12" Cursor="Hand" MinWidth="120"
+                    PointerPressed="OnHtmlClick"
+                    x:Name="FormatHtml"
+                    AutomationProperties.Name="HTML format">
+              <StackPanel Spacing="4" HorizontalAlignment="Center">
+                <TextBlock Text="&#xEB41;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                           Foreground="{DynamicResource InfoBrush}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="HTML" FontSize="12" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text=".html" FontSize="10"
+                           Foreground="{DynamicResource TextTertiaryBrush}"
+                           HorizontalAlignment="Center" />
+              </StackPanel>
+            </Border>
+
+            <!-- Plain Text -->
+            <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8"
+                    Padding="16,12" Cursor="Hand" MinWidth="120"
+                    PointerPressed="OnPlainTextClick"
+                    x:Name="FormatPlainText"
+                    AutomationProperties.Name="Plain text format">
+              <StackPanel Spacing="4" HorizontalAlignment="Center">
+                <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="Plain Text" FontSize="12" FontWeight="SemiBold"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text=".txt" FontSize="10"
+                           Foreground="{DynamicResource TextTertiaryBrush}"
+                           HorizontalAlignment="Center" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </StackPanel>
+
+        <!-- Preview -->
+        <StackPanel Spacing="8">
+          <TextBlock Text="Preview" FontSize="13" FontWeight="SemiBold"
+                     Foreground="{DynamicResource TextPrimaryBrush}" />
+          <Border Background="{DynamicResource InputBackgroundBrush}" CornerRadius="8"
+                  BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1"
+                  MinHeight="200" MaxHeight="300">
+            <TextBox Text="{Binding ExportContent}" IsReadOnly="True"
+                     AcceptsReturn="True" TextWrapping="Wrap"
+                     FontSize="12" FontFamily="Consolas"
+                     Padding="12" BorderThickness="0"
+                     Background="Transparent"
+                     Foreground="{DynamicResource TextPrimaryBrush}" />
+          </Border>
+        </StackPanel>
+
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</Window>
