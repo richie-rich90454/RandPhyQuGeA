@@ -27,7 +27,7 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
     private string _errorMessage = string.Empty;
     private bool _isLoading;
     private Specification? _specification;
-    private string _specFilePath = "part_one.txt";
+    private string _specFilePath = Path.Combine(AppContext.BaseDirectory, "Data", "part_one.txt");
 
     public SpecificationViewModel(ISpecificationLoader loader)
     {

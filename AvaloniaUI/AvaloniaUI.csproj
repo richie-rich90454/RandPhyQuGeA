@@ -25,4 +25,10 @@
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\LaTeX\LaTeX.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Data\part_one.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

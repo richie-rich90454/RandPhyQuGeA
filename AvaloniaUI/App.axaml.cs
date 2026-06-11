@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -32,8 +33,11 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var viewModel = CreateViewModel();
+            var (viewModel, specViewModel) = CreateViewModel();
             desktop.MainWindow = new MainWindow(viewModel);
+
+            // Auto-load the specification at startup
+            _ = specViewModel.LoadCommand.Execute(System.Reactive.Unit.Default);
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -90,7 +94,7 @@ public partial class App : Application
         return variant == ThemeVariant.Dark;
     }
 
-    private static MainWindowViewModel CreateViewModel()
+    private static (MainWindowViewModel mainWindowViewModel, SpecificationViewModel specViewModel) CreateViewModel()
     {
         var random = new SeededRandomGenerator(42);
         var evaluator = new NCalcEvaluator();
@@ -102,7 +106,7 @@ public partial class App : Application
         var latexRenderer = new DummyRenderer();
         var specViewModel = new SpecificationViewModel(loader);
 
-        return new MainWindowViewModel(questionGenerator, latexRenderer, loader, specViewModel);
+        return (new MainWindowViewModel(questionGenerator, latexRenderer, loader, specViewModel), specViewModel);
     }
 }
 
