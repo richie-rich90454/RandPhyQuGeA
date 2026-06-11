@@ -77,7 +77,7 @@ Distractor: v / t
             Assert.Equal("Q1", template.Id);
             Assert.Equal("T1", template.TopicId);
             Assert.Equal("S1", template.SkillId);
-            Assert.Equal("MultipleChoice", template.QuestionType);
+            Assert.Equal("MC", template.QuestionType);
             Assert.Equal(2, template.Difficulty);
             Assert.Equal(3, template.VariableDefinitions.Count);
             Assert.Equal(2, template.DistractorExpressions.Count);

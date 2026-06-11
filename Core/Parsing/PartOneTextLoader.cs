@@ -165,6 +165,12 @@ public sealed class PartOneTextLoader : ISpecificationLoader
         var topicId = GetSingle(block, "TopicId");
         var skillId = GetSingle(block, "SkillId");
         var questionType = GetSingle(block, "QuestionType");
+        questionType = questionType?.Trim() switch
+        {
+            "MultipleChoice" => "MC",
+            "ShortAnswer" => "SA",
+            var x => x
+        };
         var difficultyStr = GetSingle(block, "Difficulty");
         var textTemplate = GetSingle(block, "TextTemplate");
         var answerExpression = GetSingle(block, "AnswerExpression");
