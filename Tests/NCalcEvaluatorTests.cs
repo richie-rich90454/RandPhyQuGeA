@@ -59,6 +59,24 @@ public class NCalcEvaluatorTests
         Assert.True(double.IsInfinity(result) || result > 1e15);
     }
 
+    [Theory]
+    [InlineData("asin(0)", 0)]
+    [InlineData("asin(0.5)", 30)]
+    [InlineData("asin(1)", 90)]
+    [InlineData("asin(-1)", -90)]
+    [InlineData("acos(1)", 0)]
+    [InlineData("acos(0.5)", 60)]
+    [InlineData("acos(0)", 90)]
+    [InlineData("acos(-1)", 180)]
+    [InlineData("atan(0)", 0)]
+    [InlineData("atan(1)", 45)]
+    [InlineData("atan(-1)", -45)]
+    public void InverseTrigDegrees_ReturnsExpected(string expression, double expected)
+    {
+        double result = _evaluator.Evaluate(expression, new Dictionary<string, object>());
+        Assert.Equal(expected, result, precision: 10);
+    }
+
     #endregion
 
     #region Sqrt / Power / Constants
@@ -221,6 +239,35 @@ public class NCalcEvaluatorTests
     #endregion
 
     #region Caching
+
+    #region Parameter Validation
+
+    [Theory]
+    [InlineData("sin()")]
+    [InlineData("cos()")]
+    [InlineData("tan()")]
+    [InlineData("asin()")]
+    [InlineData("acos()")]
+    [InlineData("atan()")]
+    [InlineData("sqrt()")]
+    public void ParameterValidation_ZeroParams_ThrowsFormatException(string expression)
+    {
+        Assert.Throws<FormatException>(() => _evaluator.Evaluate(expression, new Dictionary<string, object>()));
+    }
+
+    [Fact]
+    public void ParameterValidation_PowOneParam_ThrowsFormatException()
+    {
+        Assert.Throws<FormatException>(() => _evaluator.Evaluate("pow(5)", new Dictionary<string, object>()));
+    }
+
+    [Fact]
+    public void ParameterValidation_SinTwoParams_ThrowsFormatException()
+    {
+        Assert.Throws<FormatException>(() => _evaluator.Evaluate("sin(1, 2)", new Dictionary<string, object>()));
+    }
+
+    #endregion
 
     [Fact]
     public void CachedExpression_EvaluatesConsistently()
