@@ -188,23 +188,26 @@ public class ProgressViewModel : ViewModelBase
             CurrentStreak = ComputeCurrentStreak(sortedResults);
 
             // Recent sessions
-            RecentResults = new ObservableCollection<RecentSessionItem>(
-                sessions.Take(10).Select(g =>
+            RecentResults.Clear();
+            foreach (var item in sessions.Take(10).Select(g =>
+            {
+                var total = g.Count();
+                var correct = g.Count(r => r.IsCorrect);
+                return new RecentSessionItem
                 {
-                    var total = g.Count();
-                    var correct = g.Count(r => r.IsCorrect);
-                    return new RecentSessionItem
-                    {
-                        Date = g.Key,
-                        DateText = g.Key.ToString("MMM dd, yyyy"),
-                        ScoreText = $"{correct}/{total}",
-                        Accuracy = total > 0 ? Math.Round(correct * 100.0 / total, 1) : 0,
-                        AccuracyText = total > 0 ? $"{correct * 100.0 / total:F0}%" : "\u2014",
-                        TimeText = FormatTime(g.Sum(r => r.TimeTaken.TotalSeconds)),
-                        QuestionCount = total,
-                        CorrectCount = correct
-                    };
-                }));
+                    Date = g.Key,
+                    DateText = g.Key.ToString("MMM dd, yyyy"),
+                    ScoreText = $"{correct}/{total}",
+                    Accuracy = total > 0 ? Math.Round(correct * 100.0 / total, 1) : 0,
+                    AccuracyText = total > 0 ? $"{correct * 100.0 / total:F0}%" : "\u2014",
+                    TimeText = FormatTime(g.Sum(r => r.TimeTaken.TotalSeconds)),
+                    QuestionCount = total,
+                    CorrectCount = correct
+                };
+            }))
+            {
+                RecentResults.Add(item);
+            }
 
             // Topic performance
             ComputeTopicPerformance(results);
@@ -256,22 +259,25 @@ public class ProgressViewModel : ViewModelBase
 
         var maxCount = topicGroups.Count > 0 ? topicGroups.Max(g => g.Count()) : 1;
 
-        TopicPerformances = new ObservableCollection<TopicPerformanceItem>(
-            topicGroups.Select(g =>
+        TopicPerformances.Clear();
+        foreach (var item in topicGroups.Select(g =>
+        {
+            var total = g.Count();
+            var correct = g.Count(r => r.IsCorrect);
+            var name = topicNames.TryGetValue(g.Key, out var n) ? n : g.Key;
+            return new TopicPerformanceItem
             {
-                var total = g.Count();
-                var correct = g.Count(r => r.IsCorrect);
-                var name = topicNames.TryGetValue(g.Key, out var n) ? n : g.Key;
-                return new TopicPerformanceItem
-                {
-                    TopicName = name,
-                    TotalQuestions = total,
-                    CorrectQuestions = correct,
-                    Accuracy = total > 0 ? Math.Round(correct * 100.0 / total, 1) : 0,
-                    AccuracyText = total > 0 ? $"{correct * 100.0 / total:F0}%" : "\u2014",
-                    BarWidth = maxCount > 0 ? (double)total / maxCount : 0
-                };
-            }));
+                TopicName = name,
+                TotalQuestions = total,
+                CorrectQuestions = correct,
+                Accuracy = total > 0 ? Math.Round(correct * 100.0 / total, 1) : 0,
+                AccuracyText = total > 0 ? $"{correct * 100.0 / total:F0}%" : "\u2014",
+                BarWidth = maxCount > 0 ? (double)total / maxCount : 0
+            };
+        }))
+        {
+            TopicPerformances.Add(item);
+        }
     }
 
     private void ComputeDifficultyDistribution(IReadOnlyList<PracticeResult> results)
@@ -308,7 +314,11 @@ public class ProgressViewModel : ViewModelBase
             });
         }
 
-        DifficultyBars = new ObservableCollection<DifficultyBarItem>(bars);
+        DifficultyBars.Clear();
+        foreach (var bar in bars)
+        {
+            DifficultyBars.Add(bar);
+        }
     }
 
     private void ComputeCalendar(IReadOnlyList<PracticeResult> results)
@@ -351,7 +361,11 @@ public class ProgressViewModel : ViewModelBase
             current = current.AddDays(7);
         }
 
-        CalendarWeeks = new ObservableCollection<CalendarWeekItem>(weeks);
+        CalendarWeeks.Clear();
+        foreach (var week in weeks)
+        {
+            CalendarWeeks.Add(week);
+        }
     }
 
     private static int ComputeBestStreak(List<PracticeResult> results)

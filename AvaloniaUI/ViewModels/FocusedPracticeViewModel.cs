@@ -359,7 +359,11 @@ public class FocusedPracticeViewModel : ViewModelBase
             }
         }
 
-        Questions = new ObservableCollection<GeneratedQuestion>(questions);
+        Questions.Clear();
+        foreach (var q in questions)
+        {
+            Questions.Add(q);
+        }
         CurrentQuestionIndex = Questions.Count > 0 ? 0 : -1;
         IsSelectingScope = false;
         IsSessionOver = false;
