@@ -226,8 +226,7 @@
         <!-- ─── Clear Progress ─── -->
         <Button Command="{Binding ClearCommand}" HorizontalAlignment="Center"
                 Padding="20,10" CornerRadius="8"
-                Background="{DynamicResource Neutral10Brush}"
-                Foreground="{DynamicResource TextSecondaryBrush}">
+                Classes="secondary">
           <StackPanel Orientation="Horizontal" Spacing="8">
             <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="14"
                        VerticalAlignment="Center" />
