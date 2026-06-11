@@ -1,10 +1,236 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:AvaloniaUI.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
-             x:Class="AvaloniaUI.Views.ProgressView">
-  <Panel>
-    <TextBlock Text="Progress" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
-  </Panel>
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+             x:Class="AvaloniaUI.Views.ProgressView"
+             x:DataType="vm:ProgressViewModel">
+
+  <ScrollViewer Background="{DynamicResource ContentBackgroundBrush}">
+    <Panel>
+      <!-- ═══ Empty State ═══ -->
+      <StackPanel IsVisible="{Binding !HasData}" Spacing="16" Margin="48"
+                  HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Text="&#xE9D9;" FontFamily="Segoe MDL2 Assets" FontSize="48"
+                   Foreground="{DynamicResource TextTertiaryBrush}"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="No Practice History Yet" FontSize="24" FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextPrimaryBrush}"
+                   HorizontalAlignment="Center" />
+        <TextBlock Text="Start a practice session to see your progress here." FontSize="14"
+                   Foreground="{DynamicResource TextSecondaryBrush}"
+                   HorizontalAlignment="Center" />
+      </StackPanel>
+
+      <!-- ═══ Dashboard ═══ -->
+      <StackPanel IsVisible="{Binding HasData}" Spacing="24" Margin="48,32" MaxWidth="900" HorizontalAlignment="Center">
+
+        <!-- ─── Key Stats Row ─── -->
+        <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto" Margin="0,-4,0,0">
+          <!-- Accuracy -->
+          <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                  Padding="20" Margin="4" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <StackPanel Spacing="4" HorizontalAlignment="Center">
+              <TextBlock Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                         Foreground="{DynamicResource SuccessBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="{Binding OverallAccuracyText}" FontSize="28" FontWeight="Bold"
+                         Foreground="{DynamicResource PrimaryBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="Accuracy" FontSize="11"
+                         Foreground="{DynamicResource TextTertiaryBrush}" HorizontalAlignment="Center" />
+            </StackPanel>
+          </Border>
+
+          <!-- Total Questions -->
+          <Border Grid.Column="1" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                  Padding="20" Margin="4" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <StackPanel Spacing="4" HorizontalAlignment="Center">
+              <TextBlock Text="&#xE8F1;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                         Foreground="{DynamicResource PrimaryBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="{Binding TotalQuestions}" FontSize="28" FontWeight="Bold"
+                         Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="Questions" FontSize="11"
+                         Foreground="{DynamicResource TextTertiaryBrush}" HorizontalAlignment="Center" />
+            </StackPanel>
+          </Border>
+
+          <!-- Sessions -->
+          <Border Grid.Column="2" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                  Padding="20" Margin="4" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <StackPanel Spacing="4" HorizontalAlignment="Center">
+              <TextBlock Text="&#xE7BA;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                         Foreground="{DynamicResource WarningBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="{Binding TotalSessions}" FontSize="28" FontWeight="Bold"
+                         Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="Sessions" FontSize="11"
+                         Foreground="{DynamicResource TextTertiaryBrush}" HorizontalAlignment="Center" />
+            </StackPanel>
+          </Border>
+
+          <!-- Best Streak -->
+          <Border Grid.Column="3" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                  Padding="20" Margin="4" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <StackPanel Spacing="4" HorizontalAlignment="Center">
+              <TextBlock Text="&#xE8C3;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                         Foreground="{DynamicResource WarningBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="{Binding BestStreak}" FontSize="28" FontWeight="Bold"
+                         Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="Best Streak" FontSize="11"
+                         Foreground="{DynamicResource TextTertiaryBrush}" HorizontalAlignment="Center" />
+            </StackPanel>
+          </Border>
+        </Grid>
+
+        <!-- ─── Average Time + Current Streak ─── -->
+        <Grid ColumnDefinitions="*,*" Margin="0,-8,0,0">
+          <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8"
+                  Padding="16" Margin="4" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <StackPanel Spacing="4" HorizontalAlignment="Center">
+              <TextBlock Text="Avg. Time per Question" FontSize="11"
+                         Foreground="{DynamicResource TextTertiaryBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="{Binding AverageTimeText}" FontSize="22" FontWeight="Bold"
+                         Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Center" />
+            </StackPanel>
+          </Border>
+          <Border Grid.Column="1" Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8"
+                  Padding="16" Margin="4" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+            <StackPanel Spacing="4" HorizontalAlignment="Center">
+              <TextBlock Text="Current Streak" FontSize="11"
+                         Foreground="{DynamicResource TextTertiaryBrush}" HorizontalAlignment="Center" />
+              <TextBlock Text="{Binding CurrentStreak}" FontSize="22" FontWeight="Bold"
+                         Foreground="{DynamicResource PrimaryBrush}" HorizontalAlignment="Center" />
+            </StackPanel>
+          </Border>
+        </Grid>
+
+        <!-- ─── Recent Sessions ─── -->
+        <TextBlock Text="Recent Sessions" FontSize="18" FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextPrimaryBrush}" />
+        <ItemsControl ItemsSource="{Binding RecentResults}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:RecentSessionItem">
+              <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="8"
+                      Padding="16" Margin="0,3" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto" MinHeight="36">
+                  <StackPanel Spacing="2" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding DateText}" FontSize="13" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}" />
+                  </StackPanel>
+                  <TextBlock Grid.Column="1" Text="{Binding ScoreText}" FontSize="14" FontWeight="Bold"
+                             Foreground="{DynamicResource PrimaryBrush}" VerticalAlignment="Center" Margin="16,0" />
+                  <TextBlock Grid.Column="2" Text="{Binding AccuracyText}" FontSize="13"
+                             Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                  <TextBlock Grid.Column="3" Text="{Binding TimeText}" FontSize="12"
+                             Foreground="{DynamicResource TextTertiaryBrush}" VerticalAlignment="Center" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- ─── Topic Performance ─── -->
+        <TextBlock Text="Topic Performance" FontSize="18" FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextPrimaryBrush}" />
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <ItemsControl ItemsSource="{Binding TopicPerformances}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:TopicPerformanceItem">
+                <Grid ColumnDefinitions="160,*,Auto" Margin="0,4" MinHeight="28">
+                  <TextBlock Text="{Binding TopicName}" FontSize="12"
+                             Foreground="{DynamicResource TextPrimaryBrush}"
+                             VerticalAlignment="Center" TextTrimming="CharacterEllipsis" MaxWidth="150" />
+                  <Border Grid.Column="1" Background="{DynamicResource Neutral10Brush}" CornerRadius="4"
+                          Height="16" VerticalAlignment="Center" Margin="8,0">
+                    <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="4"
+                            HorizontalAlignment="Left"
+                            Width="{Binding BarWidth, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                            MinWidth="4">
+                    </Border>
+                  </Border>
+                  <TextBlock Grid.Column="2" Text="{Binding AccuracyText}" FontSize="12" FontWeight="SemiBold"
+                             Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="8,0,0,0" Width="40" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Border>
+
+        <!-- ─── Difficulty Distribution ─── -->
+        <TextBlock Text="Difficulty Distribution" FontSize="18" FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextPrimaryBrush}" />
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <ItemsControl ItemsSource="{Binding DifficultyBars}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:DifficultyBarItem">
+                <Grid ColumnDefinitions="24,*,Auto" Margin="0,2" MinHeight="20">
+                  <TextBlock Text="{Binding Difficulty}" FontSize="11"
+                             Foreground="{DynamicResource TextTertiaryBrush}"
+                             HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  <Border Grid.Column="1" Background="{DynamicResource Neutral10Brush}" CornerRadius="3"
+                          Height="14" VerticalAlignment="Center" Margin="6,0">
+                    <Border Background="{DynamicResource PrimarySubtleBrush}" CornerRadius="3"
+                            HorizontalAlignment="Left" MinWidth="2">
+                    </Border>
+                  </Border>
+                  <TextBlock Grid.Column="2" Text="{Binding Count}" FontSize="11"
+                             Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"
+                             Margin="8,0,0,0" Width="32" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Border>
+
+        <!-- ─── Practice Calendar ─── -->
+        <TextBlock Text="Practice Calendar" FontSize="18" FontWeight="SemiBold"
+                   Foreground="{DynamicResource TextPrimaryBrush}" />
+        <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
+                Padding="20" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
+          <ItemsControl ItemsSource="{Binding CalendarWeeks}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="3" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:CalendarWeekItem">
+                <ItemsControl ItemsSource="{Binding Days}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <StackPanel Spacing="3" />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CalendarDayItem">
+                      <Border Width="12" Height="12" CornerRadius="2"
+                              Background="{DynamicResource Neutral10Brush}"
+                              ToolTip.Tip="{Binding Tooltip}">
+                        <Border IsVisible="{Binding QuestionCount, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                CornerRadius="2" />
+                      </Border>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Border>
+
+        <!-- ─── Clear Progress ─── -->
+        <Button Command="{Binding ClearCommand}" HorizontalAlignment="Center"
+                Padding="20,10" CornerRadius="8"
+                Background="{DynamicResource Neutral10Brush}"
+                Foreground="{DynamicResource TextSecondaryBrush}">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                       VerticalAlignment="Center" />
+            <TextBlock Text="Clear All Progress" FontSize="13" VerticalAlignment="Center" />
+          </StackPanel>
+        </Button>
+
+      </StackPanel>
+    </Panel>
+  </ScrollViewer>
 </UserControl>
