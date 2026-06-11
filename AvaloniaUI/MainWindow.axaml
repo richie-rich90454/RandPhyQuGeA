@@ -10,6 +10,7 @@
         Width="1100" Height="750"
         MinWidth="800" MinHeight="550"
         Background="{DynamicResource WindowBackgroundBrush}"
+        ExtendClientAreaToDecorationsHint="True"
         WindowStartupLocation="CenterScreen">
 
   <Design.DataContext>
@@ -45,7 +46,7 @@
               <!-- Home -->
               <Button Click="NavButton_Click" Tag="Home" HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
-                      Background="Transparent" x:Name="NavHome"
+                      Classes="nav-item" x:Name="NavHome"
                       ToolTip.Tip="Home (Ctrl+1)"
                       AutomationProperties.Name="Navigate to Home">
                 <Grid ColumnDefinitions="48,*" MinHeight="44">
@@ -62,7 +63,7 @@
               <!-- Mental Practice -->
               <Button Click="NavButton_Click" Tag="MentalPractice" HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
-                      Background="Transparent" x:Name="NavMentalPractice"
+                      Classes="nav-item" x:Name="NavMentalPractice"
                       ToolTip.Tip="Mental Practice (Ctrl+2)"
                       AutomationProperties.Name="Navigate to Mental Practice">
                 <Grid ColumnDefinitions="48,*" MinHeight="44">
@@ -79,7 +80,7 @@
               <!-- Focused Practice -->
               <Button Click="NavButton_Click" Tag="FocusedPractice" HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
-                      Background="Transparent" x:Name="NavFocusedPractice"
+                      Classes="nav-item" x:Name="NavFocusedPractice"
                       ToolTip.Tip="Focused Practice (Ctrl+3)"
                       AutomationProperties.Name="Navigate to Focused Practice">
                 <Grid ColumnDefinitions="48,*" MinHeight="44">
@@ -96,7 +97,7 @@
               <!-- Question Bank -->
               <Button Click="NavButton_Click" Tag="QuestionBank" HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
-                      Background="Transparent" x:Name="NavQuestionBank"
+                      Classes="nav-item" x:Name="NavQuestionBank"
                       ToolTip.Tip="Question Bank (Ctrl+4)"
                       AutomationProperties.Name="Navigate to Question Bank">
                 <Grid ColumnDefinitions="48,*" MinHeight="44">
@@ -113,7 +114,7 @@
               <!-- Progress -->
               <Button Click="NavButton_Click" Tag="Progress" HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
-                      Background="Transparent" x:Name="NavProgress"
+                      Classes="nav-item" x:Name="NavProgress"
                       ToolTip.Tip="Progress (Ctrl+5)"
                       AutomationProperties.Name="Navigate to Progress">
                 <Grid ColumnDefinitions="48,*" MinHeight="44">
@@ -130,7 +131,7 @@
               <!-- Settings -->
               <Button Click="NavButton_Click" Tag="Settings" HorizontalAlignment="Stretch"
                       HorizontalContentAlignment="Left" Padding="0" CornerRadius="6"
-                      Background="Transparent" x:Name="NavSettings"
+                      Classes="nav-item" x:Name="NavSettings"
                       ToolTip.Tip="Settings (Ctrl+6)"
                       AutomationProperties.Name="Navigate to Settings">
                 <Grid ColumnDefinitions="48,*" MinHeight="44">
@@ -153,14 +154,14 @@
       <Grid>
         <DockPanel>
           <!-- Header Bar with Hamburger Toggle -->
-        <Border DockPanel.Dock="Top" Background="{DynamicResource PaneBackgroundBrush}"
+        <Border DockPanel.Dock="Top" Background="{DynamicResource HeaderBarBackgroundBrush}"
                 BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,0,1"
                 Padding="8,0" MinHeight="48">
           <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
             <!-- Hamburger Toggle Button -->
             <Button Grid.Column="0" Click="TogglePane_Click"
                     VerticalAlignment="Center" Padding="8"
-                    CornerRadius="6" Background="Transparent"
+                    Classes="subtle"
                     ToolTip.Tip="Toggle navigation pane"
                     AutomationProperties.Name="Toggle navigation pane">
               <Grid Width="20" Height="16">
@@ -192,13 +193,13 @@
 
             <!-- Right Actions -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-              <Button Click="Help_Click" Padding="8" CornerRadius="6" Background="Transparent"
+              <Button Click="Help_Click" Padding="8" Classes="subtle"
                       ToolTip.Tip="Help (F1)"
                       AutomationProperties.Name="Open help window">
                 <TextBlock Text="&#xE897;" FontFamily="Segoe MDL2 Assets" FontSize="14"
                            Foreground="{DynamicResource TextSecondaryBrush}" />
               </Button>
-              <Button Click="About_Click" Padding="8" CornerRadius="6" Background="Transparent"
+              <Button Click="About_Click" Padding="8" Classes="subtle"
                       ToolTip.Tip="About"
                       AutomationProperties.Name="About this application">
                 <TextBlock Text="&#xE946;" FontFamily="Segoe MDL2 Assets" FontSize="14"
