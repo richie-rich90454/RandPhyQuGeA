@@ -5,6 +5,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.VisualTree;
 using AvaloniaUI.ViewModels;
+using System;
 
 using ReactiveUnit = System.Reactive.Unit;
 
@@ -22,6 +23,30 @@ public partial class FocusedPracticeView : UserControl
         if (combo is not null)
         {
             combo.SelectionChanged += OnQuestionCountChanged;
+        }
+
+        DataContextChanged += OnDataContextChanged;
+    }
+
+    private void OnDataContextChanged(object? sender, EventArgs e)
+    {
+        if (DataContext is FocusedPracticeViewModel vm)
+        {
+            vm.CopyToClipboardRequested -= OnCopyToClipboardRequested;
+            vm.CopyToClipboardRequested += OnCopyToClipboardRequested;
+        }
+    }
+
+    private async void OnCopyToClipboardRequested(object? sender, string text)
+    {
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel is not null)
+        {
+            var clipboard = topLevel.Clipboard;
+            if (clipboard is not null)
+            {
+                await clipboard.SetTextAsync(text);
+            }
         }
     }
 

@@ -70,6 +70,22 @@ public partial class MentalPracticeView : UserControl
                         panel.Opacity = trans ? 0.3 : 1.0;
                     }
                 });
+
+            vm.CopyToClipboardRequested -= OnCopyToClipboardRequested;
+            vm.CopyToClipboardRequested += OnCopyToClipboardRequested;
+        }
+    }
+
+    private async void OnCopyToClipboardRequested(object? sender, string text)
+    {
+        var topLevel = TopLevel.GetTopLevel(this);
+        if (topLevel is not null)
+        {
+            var clipboard = topLevel.Clipboard;
+            if (clipboard is not null)
+            {
+                await clipboard.SetTextAsync(text);
+            }
         }
     }
 

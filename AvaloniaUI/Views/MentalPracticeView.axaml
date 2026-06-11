@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:AvaloniaUI.ViewModels"
+             xmlns:ctrl="using:AvaloniaUI.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
@@ -207,9 +208,15 @@
           <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
                   Padding="32,24" BorderBrush="{DynamicResource BorderBrush}"
                   BorderThickness="1" MaxWidth="700" HorizontalAlignment="Center">
-            <TextBlock Text="{Binding QuestionText}" FontSize="18"
-                       Foreground="{DynamicResource TextPrimaryBrush}"
-                       TextWrapping="Wrap" />
+            <Panel>
+              <ctrl:LaTeXImage LaTeXSource="{Binding QuestionText}"
+                               IsVisible="{Binding QuestionHasLaTeX}"
+                               HorizontalAlignment="Center" />
+              <TextBlock Text="{Binding QuestionText}" FontSize="18"
+                         Foreground="{DynamicResource TextPrimaryBrush}"
+                         TextWrapping="Wrap"
+                         IsVisible="{Binding !QuestionHasLaTeX}" />
+            </Panel>
           </Border>
 
           <!-- MC Answer Cards -->
@@ -257,6 +264,33 @@
             <TextBlock Text="Press Enter to submit" FontSize="11"
                        Foreground="{DynamicResource TextTertiaryBrush}"
                        HorizontalAlignment="Center" />
+          </StackPanel>
+
+          <!-- Clipboard Copy Buttons -->
+          <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center"
+                      IsVisible="{Binding IsInPractice}">
+            <Button Command="{Binding CopyQuestionCommand}"
+                    Padding="10,4" CornerRadius="6"
+                    Background="{DynamicResource Neutral10Brush}"
+                    Foreground="{DynamicResource TextSecondaryBrush}"
+                    ToolTip.Tip="Copy question text">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="11"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="Copy Q" FontSize="10" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
+            <Button Command="{Binding CopyAnswerCommand}"
+                    Padding="10,4" CornerRadius="6"
+                    Background="{DynamicResource Neutral10Brush}"
+                    Foreground="{DynamicResource TextSecondaryBrush}"
+                    ToolTip.Tip="Copy answer">
+              <StackPanel Orientation="Horizontal" Spacing="4">
+                <TextBlock Text="&#xE8C8;" FontFamily="Segoe MDL2 Assets" FontSize="11"
+                           VerticalAlignment="Center" />
+                <TextBlock Text="Copy A" FontSize="10" VerticalAlignment="Center" />
+              </StackPanel>
+            </Button>
           </StackPanel>
 
         </StackPanel>
@@ -393,7 +427,7 @@
         </Border>
 
         <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
-          <Button Command="{Binding ViewSummaryCommand}"
+          <Button Command="{Binding StartCommand}"
                   HorizontalAlignment="Center"
                   Padding="24,12" CornerRadius="8"
                   Background="{DynamicResource PrimaryBrush}"
