@@ -16,6 +16,15 @@ public partial class MainWindow : Window
     private Button[]? _navButtons;
     private readonly Dictionary<string, Control> _viewCache = new();
 
+    // Konami code easter egg
+    private static readonly Key[] KonamiSequence =
+    {
+        Key.Up, Key.Up, Key.Down, Key.Down,
+        Key.Left, Key.Right, Key.Left, Key.Right,
+        Key.B, Key.A
+    };
+    private int _konamiIndex;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -135,6 +144,27 @@ public partial class MainWindow : Window
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
     {
+        // Konami code easter egg
+        if (e.Key == KonamiSequence[_konamiIndex] && !e.KeyModifiers.HasFlag(KeyModifiers.Control))
+        {
+            _konamiIndex++;
+            if (_konamiIndex >= KonamiSequence.Length)
+            {
+                _konamiIndex = 0;
+                ShowKonamiEasterEgg();
+                e.Handled = true;
+                return;
+            }
+        }
+        else if (Array.IndexOf(KonamiSequence, e.Key) >= 0)
+        {
+            _konamiIndex = e.Key == KonamiSequence[0] ? 1 : 0;
+        }
+        else
+        {
+            _konamiIndex = 0;
+        }
+
         if (e.Key == Key.F1)
         {
             var helpWindow = new Views.HelpWindow();
@@ -265,5 +295,23 @@ public partial class MainWindow : Window
     private void Exit_Click(object? sender, RoutedEventArgs e)
     {
         Close();
+    }
+
+    private void ShowKonamiEasterEgg()
+    {
+        var overlay = this.FindControl<Border>("KonamiOverlay");
+        if (overlay is not null)
+        {
+            overlay.IsVisible = true;
+        }
+    }
+
+    private void KonamiOverlayDismiss(object? sender, PointerPressedEventArgs e)
+    {
+        var overlay = this.FindControl<Border>("KonamiOverlay");
+        if (overlay is not null)
+        {
+            overlay.IsVisible = false;
+        }
     }
 }
