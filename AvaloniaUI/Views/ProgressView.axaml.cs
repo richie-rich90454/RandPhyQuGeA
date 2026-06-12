@@ -41,6 +41,10 @@ public partial class ProgressView : UserControl
 
     private async Task<bool> ShowConfirmDialog(string message)
     {
+        var app = Application.Current;
+        var backgroundBrush = app?.FindResource("CardBackgroundBrush") as IBrush
+                              ?? new SolidColorBrush(0xFF202020);
+
         var window = new Window
         {
             Title = "Clear Progress",
@@ -48,18 +52,27 @@ public partial class ProgressView : UserControl
             Height = 180,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             CanResize = false,
-            Background = Application.Current?.FindResource("CardBackgroundBrush") as IBrush ?? Brushes.White
+            Background = backgroundBrush
         };
 
         var tcs = new TaskCompletionSource<bool>();
+
+        // Handle Alt+F4 or window close button
+        window.Closing += (_, e) =>
+        {
+            if (!tcs.Task.IsCompleted)
+            {
+                tcs.TrySetResult(false);
+            }
+        };
 
         var cancelBtn = new Button
         {
             Content = "Cancel",
             Padding = new Avalonia.Thickness(16, 8),
             CornerRadius = new Avalonia.CornerRadius(6),
-            Background = Application.Current?.FindResource("Neutral20Brush") as IBrush,
-            Foreground = Application.Current?.FindResource("TextPrimaryBrush") as IBrush
+            Background = app?.FindResource("Neutral20Brush") as IBrush,
+            Foreground = app?.FindResource("TextPrimaryBrush") as IBrush
         };
         cancelBtn.Click += (_, _) =>
         {
@@ -72,8 +85,8 @@ public partial class ProgressView : UserControl
             Content = "Clear",
             Padding = new Avalonia.Thickness(16, 8),
             CornerRadius = new Avalonia.CornerRadius(6),
-            Background = Application.Current?.FindResource("ErrorBrush") as IBrush,
-            Foreground = Brushes.White
+            Background = app?.FindResource("ErrorBrush") as IBrush,
+            Foreground = app?.FindResource("TextOnPrimaryBrush") as IBrush ?? Brushes.White
         };
         clearBtn.Click += (_, _) =>
         {
@@ -93,7 +106,7 @@ public partial class ProgressView : UserControl
                     Text = message,
                     TextWrapping = TextWrapping.Wrap,
                     FontSize = 14,
-                    Foreground = Application.Current?.FindResource("TextPrimaryBrush") as IBrush
+                    Foreground = app?.FindResource("TextPrimaryBrush") as IBrush
                 },
                 new StackPanel
                 {

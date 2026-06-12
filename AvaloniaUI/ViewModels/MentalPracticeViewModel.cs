@@ -113,6 +113,7 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
         var canEnd = this.WhenAnyValue(
             x => x.IsInPractice, x => x.IsInFeedback, x => x.IsSessionOver,
             (p, f, over) => (p || f) && !over);
+        var canSkipFeedback = this.WhenAnyValue(x => x.IsInFeedback);
 
         StartCommand = ReactiveCommand.CreateFromTask(OnStart, canStart);
         AnswerCommand = ReactiveCommand.Create<string>(OnAnswer, canAnswer);
@@ -120,6 +121,7 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
         ResumeCommand = ReactiveCommand.Create(OnResume, canResume);
         GiveUpCommand = ReactiveCommand.Create(OnGiveUp, canGiveUp);
         EndSessionCommand = ReactiveCommand.Create(OnEndSession, canEnd);
+        SkipFeedbackCommand = ReactiveCommand.Create(OnSkipFeedback, canSkipFeedback);
         SelectQuestionCountCommand = ReactiveCommand.Create<int>(OnSelectQuestionCount);
         ViewSummaryCommand = ReactiveCommand.Create(OnViewSummary);
         CopyQuestionCommand = ReactiveCommand.Create(OnCopyQuestion);
@@ -429,6 +431,7 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> ResumeCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> GiveUpCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> EndSessionCommand { get; }
+    public ReactiveCommand<ReactiveUnit, ReactiveUnit> SkipFeedbackCommand { get; }
     public ReactiveCommand<int, ReactiveUnit> SelectQuestionCountCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> ViewSummaryCommand { get; }
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> CopyQuestionCommand { get; }
@@ -686,25 +689,37 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
 
     private async Task AutoAdvanceAsync()
     {
-        await Task.Delay(1500);
-
-        if (IsSessionOver || IsPaused) return;
-
-        IsTransitioning = true;
-        await Task.Delay(300); // Brief fade-out
-
-        CurrentQuestionIndex++;
-
-        if (!IsEndlessMode && CurrentQuestionIndex >= SelectedQuestionCount)
+        _isAutoAdvancing = true;
+        try
         {
-            EndSession();
-        }
-        else
-        {
-            await ShowNextQuestion();
-        }
+            await Task.Delay(1500);
 
-        IsTransitioning = false;
+            // Feedback was already dismissed by skip
+            if (!IsInFeedback || IsSessionOver || IsPaused)
+            {
+                return;
+            }
+
+            IsTransitioning = true;
+            await Task.Delay(300); // Brief fade-out
+
+            CurrentQuestionIndex++;
+
+            if (!IsEndlessMode && CurrentQuestionIndex >= SelectedQuestionCount)
+            {
+                EndSession();
+            }
+            else
+            {
+                await ShowNextQuestion();
+            }
+
+            IsTransitioning = false;
+        }
+        finally
+        {
+            _isAutoAdvancing = false;
+        }
     }
 
     private async Task AutoAdvanceAsyncSafe()
@@ -747,6 +762,48 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
         IsInFeedback = true;
 
         _ = AutoAdvanceAsyncSafe();
+    }
+
+    private void OnSkipFeedback()
+    {
+        if (!IsInFeedback || IsSessionOver) return;
+
+        // Prevent double-advance if auto-advance is already running
+        if (_isAutoAdvancing) return;
+
+        AdvanceToNextQuestion();
+    }
+
+    private void AdvanceToNextQuestion()
+    {
+        IsInFeedback = false;
+        IsTransitioning = true;
+
+        CurrentQuestionIndex++;
+
+        if (!IsEndlessMode && CurrentQuestionIndex >= SelectedQuestionCount)
+        {
+            EndSession();
+        }
+        else
+        {
+            _ = ShowNextQuestionSafe();
+        }
+
+        IsTransitioning = false;
+    }
+
+    private async Task ShowNextQuestionSafe()
+    {
+        try
+        {
+            await ShowNextQuestion();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to show next question: {ex.Message}");
+            ErrorMessage = $"Navigation error: {ex.Message}";
+        }
     }
 
     private void OnEndSession()
