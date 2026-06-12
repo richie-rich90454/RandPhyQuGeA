@@ -547,7 +547,7 @@ public class FocusedPracticeViewModel : ViewModelBase, IDisposable
             _soundService?.PlayIncorrect();
 
         // Track result for session summary
-        var userAnswer = CurrentQuestion.Choices is { Count: > 0 } ? SelectedAnswer : ShortAnswer.Trim();
+        var userAnswer = CurrentQuestion.Choices is { Count: > 0 } ? SelectedAnswer ?? "" : ShortAnswer.Trim();
         _questionResultsList.Add(new QuestionResultItem(
             CurrentQuestion.Text,
             userAnswer,

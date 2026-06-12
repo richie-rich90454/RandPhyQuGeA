@@ -158,11 +158,12 @@ public partial class App : Application
 
     private (MainWindowViewModel mainWindowViewModel, SpecificationViewModel specViewModel, InMemoryTemplateRepository repository) CreateViewModel()
     {
-        var repository = (InMemoryTemplateRepository)_serviceProvider!.GetRequiredService<ITemplateRepository>();
-        var questionGenerator = _serviceProvider.GetRequiredService<QuestionGenerator>();
-        var latexRenderer = _serviceProvider.GetRequiredService<ILaTeXRenderer>();
-        var loader = _serviceProvider.GetRequiredService<ISpecificationLoader>();
-        var resultRepository = _serviceProvider.GetRequiredService<IPracticeResultRepository>();
+        var sp = _serviceProvider!;
+        var repository = (InMemoryTemplateRepository)sp.GetRequiredService<ITemplateRepository>();
+        var questionGenerator = sp.GetRequiredService<QuestionGenerator>();
+        var latexRenderer = sp.GetRequiredService<ILaTeXRenderer>();
+        var loader = sp.GetRequiredService<ISpecificationLoader>();
+        var resultRepository = sp.GetRequiredService<IPracticeResultRepository>();
         var specViewModel = new SpecificationViewModel(loader);
 
         return (new MainWindowViewModel(questionGenerator, latexRenderer, loader, specViewModel, resultRepository), specViewModel, repository);
