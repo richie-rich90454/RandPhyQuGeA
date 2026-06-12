@@ -232,15 +232,9 @@
             </StackPanel>
 
             <!-- Question Text -->
-            <Panel>
-              <ctrl:LaTeXImage LaTeXSource="{Binding CurrentQuestion.Text}"
-                               IsVisible="{Binding QuestionHasLaTeX}"
-                               HorizontalAlignment="Left" />
-              <TextBlock Text="{Binding CurrentQuestion.Text}" FontSize="18"
-                         Foreground="{DynamicResource TextPrimaryBrush}"
-                         TextWrapping="Wrap" LineHeight="26"
-                         IsVisible="{Binding !QuestionHasLaTeX}" />
-            </Panel>
+            <TextBlock Text="{Binding CurrentQuestion.Text}" FontSize="18"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       TextWrapping="Wrap" LineHeight="26" />
           </StackPanel>
         </Border>
 
@@ -335,24 +329,13 @@
                     Padding="16" BorderBrush="{DynamicResource CorrectBorderBrush}" BorderThickness="1">
               <StackPanel Spacing="8">
                 <TextBlock Text="Answer" FontSize="11" Foreground="{DynamicResource TextTertiaryBrush}" />
-                <Panel>
-                  <ctrl:LaTeXImage LaTeXSource="{Binding CurrentQuestion.Answer}"
-                                   IsVisible="{Binding SolutionHasLaTeX}"
-                                   HorizontalAlignment="Left" />
-                  <TextBlock Text="{Binding CurrentQuestion.Answer}" FontSize="16" FontWeight="Bold"
-                             Foreground="{DynamicResource CorrectTextBrush}"
-                             IsVisible="{Binding !SolutionHasLaTeX}" />
-                </Panel>
+                <TextBlock Text="{Binding CurrentQuestion.Answer}" FontSize="16" FontWeight="Bold"
+                           Foreground="{DynamicResource CorrectTextBrush}" />
               </StackPanel>
             </Border>
-            <Panel IsVisible="{Binding SolutionHasLaTeX}">
-              <ctrl:LaTeXImage LaTeXSource="{Binding CurrentQuestion.SolutionLaTeX}"
-                               HorizontalAlignment="Left" />
-            </Panel>
             <TextBlock Text="{Binding CurrentQuestion.SolutionText}" FontSize="13"
                        Foreground="{DynamicResource TextPrimaryBrush}"
-                       TextWrapping="Wrap" LineHeight="20"
-                       IsVisible="{Binding !SolutionHasLaTeX}" />
+                       TextWrapping="Wrap" LineHeight="20" />
           </StackPanel>
         </Border>
 

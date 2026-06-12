@@ -212,15 +212,9 @@
           <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
                   Padding="32,24" BorderBrush="{DynamicResource BorderBrush}"
                   BorderThickness="1" MaxWidth="700" HorizontalAlignment="Center">
-            <Panel>
-              <ctrl:LaTeXImage LaTeXSource="{Binding QuestionText}"
-                               IsVisible="{Binding QuestionHasLaTeX}"
-                               HorizontalAlignment="Center" />
-              <TextBlock Text="{Binding QuestionText}" FontSize="18"
-                         Foreground="{DynamicResource TextPrimaryBrush}"
-                         TextWrapping="Wrap" LineHeight="26"
-                         IsVisible="{Binding !QuestionHasLaTeX}" />
-            </Panel>
+            <TextBlock Text="{Binding QuestionText}" FontSize="18"
+                       Foreground="{DynamicResource TextPrimaryBrush}"
+                       TextWrapping="Wrap" LineHeight="26" />
           </Border>
 
           <!-- MC Answer Cards -->
