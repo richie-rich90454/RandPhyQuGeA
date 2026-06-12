@@ -1,8 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using AvaloniaUI.ViewModels;
 
 namespace AvaloniaUI.Views;
@@ -16,7 +13,7 @@ public partial class SettingsView : UserControl
 
     // ─── Theme Click Handlers ──────────────────────────────────────────
 
-    private void OnLightThemeClick(object? sender, PointerPressedEventArgs e)
+    private void OnLightThemeClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is SettingsViewModel vm)
         {
@@ -24,7 +21,7 @@ public partial class SettingsView : UserControl
         }
     }
 
-    private void OnDarkThemeClick(object? sender, PointerPressedEventArgs e)
+    private void OnDarkThemeClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is SettingsViewModel vm)
         {
@@ -32,7 +29,7 @@ public partial class SettingsView : UserControl
         }
     }
 
-    private void OnSystemThemeClick(object? sender, PointerPressedEventArgs e)
+    private void OnSystemThemeClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is SettingsViewModel vm)
         {
@@ -84,34 +81,20 @@ public partial class SettingsView : UserControl
 
     private void UpdateCountButtonStyles(int selected)
     {
-        var app = Application.Current;
-        if (app is null) return;
-
-        var selectedBrush = app.FindResource("PrimarySubtleBrush") as IBrush;
-        var normalBrush = app.FindResource("Neutral10Brush") as IBrush;
-        var selectedFg = app.FindResource("PrimaryBrush") as IBrush;
-        var normalFg = app.FindResource("TextPrimaryBrush") as IBrush;
-
-        void Style(Button btn, bool isActive)
-        {
-            if (isActive)
-            {
-                btn.Background = selectedBrush;
-                btn.Foreground = selectedFg;
-                btn.FontWeight = FontWeight.SemiBold;
-            }
-            else
-            {
-                btn.Background = normalBrush;
-                btn.Foreground = normalFg;
-                btn.FontWeight = FontWeight.Normal;
-            }
-        }
-
         var btn5 = this.FindControl<Button>("BtnCount5");
         var btn10 = this.FindControl<Button>("BtnCount10");
         var btn15 = this.FindControl<Button>("BtnCount15");
         var btn20 = this.FindControl<Button>("BtnCount20");
+
+        void Style(Button btn, bool isActive)
+        {
+            btn.Classes.Remove("selected");
+            btn.Classes.Remove("secondary");
+            if (isActive)
+                btn.Classes.Add("selected");
+            else
+                btn.Classes.Add("secondary");
+        }
 
         if (btn5 is not null) Style(btn5, selected == 5);
         if (btn10 is not null) Style(btn10, selected == 10);
@@ -153,35 +136,30 @@ public partial class SettingsView : UserControl
 
     private void UpdateQuestionTypeButtons(string selected)
     {
-        var app = Application.Current;
-        if (app is null) return;
-
-        var activeBrush = app.FindResource("BadgeMCBrush") as IBrush;
-        var inactiveBrush = app.FindResource("Neutral10Brush") as IBrush;
-        var activeFg = app.FindResource("TextOnPrimaryBrush") as IBrush;
-        var inactiveFg = app.FindResource("TextPrimaryBrush") as IBrush;
-
         var mcBtn = this.FindControl<Button>("BtnTypeMC");
         var saBtn = this.FindControl<Button>("BtnTypeSA");
         var mixedBtn = this.FindControl<Button>("BtnTypeMixed");
 
         if (mcBtn is not null)
         {
-            mcBtn.Background = selected == "MC" ? activeBrush : inactiveBrush;
-            mcBtn.Foreground = selected == "MC" ? activeFg : inactiveFg;
-            mcBtn.FontWeight = selected == "MC" ? FontWeight.SemiBold : FontWeight.Normal;
+            mcBtn.Classes.Remove("type-selected");
+            mcBtn.Classes.Remove("secondary");
+            if (selected == "MC") mcBtn.Classes.Add("type-selected");
+            else mcBtn.Classes.Add("secondary");
         }
         if (saBtn is not null)
         {
-            saBtn.Background = selected == "SA" ? activeBrush : inactiveBrush;
-            saBtn.Foreground = selected == "SA" ? activeFg : inactiveFg;
-            saBtn.FontWeight = selected == "SA" ? FontWeight.SemiBold : FontWeight.Normal;
+            saBtn.Classes.Remove("type-selected");
+            saBtn.Classes.Remove("secondary");
+            if (selected == "SA") saBtn.Classes.Add("type-selected");
+            else saBtn.Classes.Add("secondary");
         }
         if (mixedBtn is not null)
         {
-            mixedBtn.Background = selected == "Mixed" ? activeBrush : inactiveBrush;
-            mixedBtn.Foreground = selected == "Mixed" ? activeFg : inactiveFg;
-            mixedBtn.FontWeight = selected == "Mixed" ? FontWeight.SemiBold : FontWeight.Normal;
+            mixedBtn.Classes.Remove("type-selected");
+            mixedBtn.Classes.Remove("secondary");
+            if (selected == "Mixed") mixedBtn.Classes.Add("type-selected");
+            else mixedBtn.Classes.Add("secondary");
         }
     }
 }

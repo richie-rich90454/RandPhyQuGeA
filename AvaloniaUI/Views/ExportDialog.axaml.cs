@@ -2,11 +2,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using AvaloniaUI.ViewModels;
 
@@ -91,7 +89,7 @@ public partial class ExportDialog : Window
 
     // ─── Format Selection Click Handlers ───────────────────────────────
 
-    private void OnMarkdownClick(object? sender, PointerPressedEventArgs e)
+    private void OnMarkdownClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is ExportViewModel vm)
         {
@@ -100,7 +98,7 @@ public partial class ExportDialog : Window
         }
     }
 
-    private void OnHtmlClick(object? sender, PointerPressedEventArgs e)
+    private void OnHtmlClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is ExportViewModel vm)
         {
@@ -109,7 +107,7 @@ public partial class ExportDialog : Window
         }
     }
 
-    private void OnPlainTextClick(object? sender, PointerPressedEventArgs e)
+    private void OnPlainTextClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is ExportViewModel vm)
         {
@@ -120,21 +118,10 @@ public partial class ExportDialog : Window
 
     private void UpdateFormatBorders(string selected)
     {
-        var app = Application.Current;
-        if (app is null) return;
+        var markdown = this.FindControl<RadioButton>("FormatMarkdown");
+        var html = this.FindControl<RadioButton>("FormatHtml");
+        var plainText = this.FindControl<RadioButton>("FormatPlainText");
 
-        var primaryBrush = app.FindResource("PrimaryBrush") as IBrush;
-        var borderBrush = app.FindResource("InputBorderBrush") as IBrush;
-
-        var markdown = this.FindControl<Border>("FormatMarkdown");
-        var html = this.FindControl<Border>("FormatHtml");
-        var plainText = this.FindControl<Border>("FormatPlainText");
-
-        if (markdown is not null)
-            markdown.BorderBrush = selected == "Markdown" ? primaryBrush : borderBrush;
-        if (html is not null)
-            html.BorderBrush = selected == "HTML" ? primaryBrush : borderBrush;
-        if (plainText is not null)
-            plainText.BorderBrush = selected == "Plain Text" ? primaryBrush : borderBrush;
+        // RadioButton selection is handled by IsChecked binding, no manual border updates needed
     }
 }

@@ -11,6 +11,7 @@
 
   <UserControl.Resources>
     <conv:LevelToVisibilityConverter x:Key="LevelToVisibilityConverter" />
+    <conv:DifficultyToBrushConverter x:Key="DifficultyToBrushConverter" />
   </UserControl.Resources>
 
   <ScrollViewer Background="{DynamicResource ContentBackgroundBrush}">
@@ -97,20 +98,28 @@
           <StackPanel Spacing="12">
             <TextBlock Text="Difficulty Range" FontSize="13" FontWeight="SemiBold"
                        Foreground="{DynamicResource TextPrimaryBrush}" />
-            <Grid ColumnDefinitions="Auto,16,*,16,Auto" VerticalAlignment="Center">
-              <StackPanel Grid.Column="0" Spacing="4">
-                <TextBlock Text="Min" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
-                <NumericUpDown Value="{Binding MinDifficulty}" Minimum="1" Maximum="10"
-                               Width="80" FormatString="0" />
-              </StackPanel>
-              <Border Grid.Column="2" Height="2" Background="{DynamicResource ProgressBarFillBrush}"
-                      VerticalAlignment="Center" CornerRadius="1" />
-              <StackPanel Grid.Column="4" Spacing="4">
-                <TextBlock Text="Max" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
-                <NumericUpDown Value="{Binding MaxDifficulty}" Minimum="1" Maximum="10"
-                               Width="80" FormatString="0" />
-              </StackPanel>
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="Min" FontSize="12"
+                         Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"
+                         Width="36" />
+              <Slider Grid.Row="0" Grid.Column="1" Minimum="1" Maximum="10"
+                      Value="{Binding MinDifficulty}" TickFrequency="1" IsSnapToTickEnabled="True"
+                      Margin="8,0,0,0" />
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="Max" FontSize="12"
+                         Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"
+                         Width="36" />
+              <Slider Grid.Row="1" Grid.Column="1" Minimum="1" Maximum="10"
+                      Value="{Binding MaxDifficulty}" TickFrequency="1" IsSnapToTickEnabled="True"
+                      Margin="8,0,0,0" />
             </Grid>
+            <TextBlock FontSize="11" Foreground="{DynamicResource TextTertiaryBrush}" HorizontalAlignment="Center">
+              <TextBlock.Text>
+                <MultiBinding StringFormat="{}{0} – {1}">
+                  <Binding Path="MinDifficulty" />
+                  <Binding Path="MaxDifficulty" />
+                </MultiBinding>
+              </TextBlock.Text>
+            </TextBlock>
           </StackPanel>
         </Border>
 
@@ -122,9 +131,8 @@
                        Foreground="{DynamicResource TextPrimaryBrush}" />
             <StackPanel Orientation="Horizontal" Spacing="8">
               <Button x:Name="BtnTypeMC" Content="MC" Padding="20,8" CornerRadius="6"
-                      Background="{DynamicResource BadgeMCBrush}"
-                      Foreground="{DynamicResource TextOnPrimaryBrush}"
-                      FontWeight="SemiBold" FontSize="13"
+                      Classes="type-selected"
+                      FontSize="13"
                       Click="OnQuestionTypeMCClick" />
               <Button x:Name="BtnTypeSA" Content="SA" Padding="20,8" CornerRadius="6"
                       Classes="secondary"
@@ -211,7 +219,7 @@
               </Border>
               <Border CornerRadius="4" Padding="6,2" x:Name="DifficultyBadge">
                 <Border.Background>
-                  <DynamicResource ResourceKey="BadgeMediumBrush" />
+                  <Binding Path="CurrentQuestion.Difficulty" Converter="{StaticResource DifficultyToBrushConverter}" />
                 </Border.Background>
                 <TextBlock FontSize="10" Foreground="{DynamicResource TextOnPrimaryBrush}" FontWeight="SemiBold">
                   <TextBlock.Text>
@@ -246,6 +254,8 @@
                       CornerRadius="8" Padding="16,12" Margin="0,4"
                       BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                       Cursor="Hand" PointerPressed="OnMcChoiceClick"
+                      KeyDown="OnChoiceKeyDown"
+                      IsTabStop="True"
                       Loaded="OnChoiceCardLoaded">
                 <Grid ColumnDefinitions="36,*">
                   <Border Background="{DynamicResource PrimarySubtleBrush}" CornerRadius="4"

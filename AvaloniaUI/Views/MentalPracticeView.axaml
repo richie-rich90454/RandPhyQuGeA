@@ -52,8 +52,7 @@
                        Foreground="{DynamicResource TextPrimaryBrush}" />
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
               <Button x:Name="BtnCount10" Content="10" Padding="16,8" CornerRadius="6"
-                      Background="{DynamicResource PrimarySubtleBrush}"
-                      Foreground="{DynamicResource PrimaryBrush}" FontWeight="SemiBold" />
+                      Classes="selected" />
               <Button x:Name="BtnCount20" Content="20" Padding="16,8" CornerRadius="6"
                       Classes="secondary" />
               <Button x:Name="BtnCount30" Content="30" Padding="16,8" CornerRadius="6"
@@ -83,15 +82,18 @@
     <Border IsVisible="{Binding IsCountdown}"
             Background="{DynamicResource ContentBackgroundBrush}"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
-        <TextBlock Text="{Binding CountdownValue}"
-                   FontSize="120" FontWeight="Bold"
-                   Foreground="{DynamicResource PrimaryBrush}"
-                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-        <TextBlock Text="Get Ready!"
-                   FontSize="16" Foreground="{DynamicResource TextTertiaryBrush}"
-                   HorizontalAlignment="Center" />
-      </StackPanel>
+      <Viewbox StretchDirection="DownOnly" MaxWidth="400" MaxHeight="400"
+               HorizontalAlignment="Center" VerticalAlignment="Center">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+          <TextBlock Text="{Binding CountdownValue}"
+                     FontSize="120" FontWeight="Bold"
+                     Foreground="{DynamicResource PrimaryBrush}"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" />
+          <TextBlock Text="Get Ready!"
+                     FontSize="16" Foreground="{DynamicResource TextTertiaryBrush}"
+                     HorizontalAlignment="Center" />
+        </StackPanel>
+      </Viewbox>
     </Border>
 
     <!-- ═══ Practice Area ═══ -->
@@ -173,6 +175,7 @@
           <!-- Question Timer -->
           <TextBlock x:Name="QuestionTimerText" Text="{Binding QuestionTimerText}" FontSize="36" FontWeight="Bold"
                      Foreground="{DynamicResource TimerNormalBrush}"
+                     IsVisible="{Binding IsTimerVisible}"
                      HorizontalAlignment="Center" />
 
           <!-- Streak Display -->
@@ -215,7 +218,7 @@
                                HorizontalAlignment="Center" />
               <TextBlock Text="{Binding QuestionText}" FontSize="18"
                          Foreground="{DynamicResource TextPrimaryBrush}"
-                         TextWrapping="Wrap"
+                         TextWrapping="Wrap" LineHeight="26"
                          IsVisible="{Binding !QuestionHasLaTeX}" />
             </Panel>
           </Border>
@@ -229,7 +232,9 @@
                 <Border Background="{DynamicResource CardBackgroundBrush}"
                         CornerRadius="8" Padding="16,12" Margin="0,4"
                         BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
-                        Cursor="Hand" PointerPressed="OnChoiceClick">
+                        Cursor="Hand" PointerPressed="OnChoiceClick"
+                        KeyDown="OnChoiceKeyDown"
+                        IsTabStop="True">
                   <Grid ColumnDefinitions="36,*,Auto">
                     <Border Background="{DynamicResource PrimarySubtleBrush}" CornerRadius="4"
                             Width="32" Height="32" VerticalAlignment="Center"
@@ -327,7 +332,8 @@
     <!-- ═══ Feedback Overlay ═══ -->
     <Border IsVisible="{Binding IsInFeedback}"
             Background="{DynamicResource ContentBackgroundBrush}"
-            HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            PointerPressed="OnFeedbackOverlayClick">
       <StackPanel Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
         <!-- Correct -->
         <Border IsVisible="{Binding LastAnswerCorrect}"
@@ -366,7 +372,7 @@
           </StackPanel>
         </Border>
 
-        <TextBlock Text="Next question..." FontSize="12"
+        <TextBlock Text="Tap to skip..." FontSize="12"
                    Foreground="{DynamicResource TextTertiaryBrush}"
                    HorizontalAlignment="Center" />
       </StackPanel>
@@ -425,7 +431,7 @@
         </Border>
 
         <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
-          <Button Command="{Binding StartCommand}"
+          <Button Command="{Binding ViewSummaryCommand}"
                   HorizontalAlignment="Center"
                   Padding="24,12" CornerRadius="8"
                   Classes="primary">

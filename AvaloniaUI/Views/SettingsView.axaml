@@ -19,7 +19,7 @@
                    FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}" />
       </StackPanel>
 
-      <!-- ═══ Theme Section ═══ -->
+      <!-- 鈺愨晲鈺?Theme Section 鈺愨晲鈺?-->
       <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
               Padding="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
         <StackPanel Spacing="16">
@@ -42,16 +42,15 @@
           <!-- Theme Options -->
           <StackPanel Spacing="8">
             <!-- Light -->
-            <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8"
-                    Padding="16,12" Cursor="Hand"
-                    PointerPressed="OnLightThemeClick"
-                    AutomationProperties.Name="Light theme">
-              <Grid ColumnDefinitions="Auto,*,Auto">
+            <RadioButton GroupName="ThemeGroup" IsChecked="{Binding IsLightSelected}"
+                         Click="OnLightThemeClick"
+                         AutomationProperties.Name="Light theme">
+              <Grid ColumnDefinitions="Auto,*">
                 <Border Width="32" Height="32" CornerRadius="6"
-                        Background="#FFFFFF" BorderBrush="#DADCE0" BorderThickness="1"
+                        Background="{DynamicResource SurfaceBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                         VerticalAlignment="Center">
                   <TextBlock Text="&#xE706;" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                             Foreground="#F57C00" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                             Foreground="{DynamicResource AccentOrangeBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
                 <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
                   <TextBlock Text="Light" FontSize="14" FontWeight="SemiBold"
@@ -59,27 +58,19 @@
                   <TextBlock Text="Bright, clean interface" FontSize="11"
                              Foreground="{DynamicResource TextTertiaryBrush}" />
                 </StackPanel>
-                <Border Grid.Column="2" Width="20" Height="20" CornerRadius="10"
-                        BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="2"
-                        VerticalAlignment="Center"
-                        IsVisible="{Binding IsLightSelected}">
-                  <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="8"
-                          Margin="3" />
-                </Border>
               </Grid>
-            </Border>
+            </RadioButton>
 
             <!-- Dark -->
-            <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8"
-                    Padding="16,12" Cursor="Hand"
-                    PointerPressed="OnDarkThemeClick"
-                    AutomationProperties.Name="Dark theme">
-              <Grid ColumnDefinitions="Auto,*,Auto">
+            <RadioButton GroupName="ThemeGroup" IsChecked="{Binding IsDarkSelected}"
+                         Click="OnDarkThemeClick"
+                         AutomationProperties.Name="Dark theme">
+              <Grid ColumnDefinitions="Auto,*">
                 <Border Width="32" Height="32" CornerRadius="6"
-                        Background="#1A1A2E" BorderBrush="#2D3A54" BorderThickness="1"
+                        Background="{DynamicResource DarkSurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                         VerticalAlignment="Center">
                   <TextBlock Text="&#xE708;" FontFamily="Segoe MDL2 Assets" FontSize="14"
-                             Foreground="#9AA0A6" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                             Foreground="{DynamicResource SecondaryTextBrush}" HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
                 <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center">
                   <TextBlock Text="Dark" FontSize="14" FontWeight="SemiBold"
@@ -87,22 +78,14 @@
                   <TextBlock Text="Easy on the eyes, reduced glare" FontSize="11"
                              Foreground="{DynamicResource TextTertiaryBrush}" />
                 </StackPanel>
-                <Border Grid.Column="2" Width="20" Height="20" CornerRadius="10"
-                        BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="2"
-                        VerticalAlignment="Center"
-                        IsVisible="{Binding IsDarkSelected}">
-                  <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="8"
-                          Margin="3" />
-                </Border>
               </Grid>
-            </Border>
+            </RadioButton>
 
             <!-- System -->
-            <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8"
-                    Padding="16,12" Cursor="Hand"
-                    PointerPressed="OnSystemThemeClick"
-                    AutomationProperties.Name="System theme">
-              <Grid ColumnDefinitions="Auto,*,Auto">
+            <RadioButton GroupName="ThemeGroup" IsChecked="{Binding IsSystemSelected}"
+                         Click="OnSystemThemeClick"
+                         AutomationProperties.Name="System theme">
+              <Grid ColumnDefinitions="Auto,*">
                 <Border Width="32" Height="32" CornerRadius="6"
                         Background="{DynamicResource PrimarySubtleBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
                         VerticalAlignment="Center">
@@ -115,20 +98,13 @@
                   <TextBlock Text="Follow your operating system setting" FontSize="11"
                              Foreground="{DynamicResource TextTertiaryBrush}" />
                 </StackPanel>
-                <Border Grid.Column="2" Width="20" Height="20" CornerRadius="10"
-                        BorderBrush="{DynamicResource PrimaryBrush}" BorderThickness="2"
-                        VerticalAlignment="Center"
-                        IsVisible="{Binding IsSystemSelected}">
-                  <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="8"
-                          Margin="3" />
-                </Border>
               </Grid>
-            </Border>
+            </RadioButton>
           </StackPanel>
         </StackPanel>
       </Border>
 
-      <!-- ═══ Practice Defaults Section ═══ -->
+      <!-- 鈺愨晲鈺?Practice Defaults Section 鈺愨晲鈺?-->
       <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
               Padding="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
         <StackPanel Spacing="16">
@@ -158,8 +134,7 @@
                       Click="OnQuestionCount5Click"
                       AutomationProperties.Name="5 questions" />
               <Button x:Name="BtnCount10" Content="10" Padding="16,8" CornerRadius="6"
-                      Background="{DynamicResource PrimarySubtleBrush}"
-                      Foreground="{DynamicResource PrimaryBrush}" FontWeight="SemiBold"
+                      Classes="selected"
                       Click="OnQuestionCount10Click"
                       AutomationProperties.Name="10 questions" />
               <Button x:Name="BtnCount15" Content="15" Padding="16,8" CornerRadius="6"
@@ -177,22 +152,30 @@
           <StackPanel Spacing="8">
             <TextBlock Text="Default Difficulty Range" FontSize="13" FontWeight="SemiBold"
                        Foreground="{DynamicResource TextPrimaryBrush}" />
-            <Grid ColumnDefinitions="Auto,16,*,16,Auto" VerticalAlignment="Center">
-              <StackPanel Grid.Column="0" Spacing="4">
-                <TextBlock Text="Min" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
-                <NumericUpDown Value="{Binding DefaultMinDifficulty}" Minimum="1" Maximum="10"
-                               Width="80" FormatString="0"
-                               AutomationProperties.Name="Minimum difficulty" />
-              </StackPanel>
-              <Border Grid.Column="2" Height="2" Background="{DynamicResource ProgressBarFillBrush}"
-                      VerticalAlignment="Center" CornerRadius="1" />
-              <StackPanel Grid.Column="4" Spacing="4">
-                <TextBlock Text="Max" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" />
-                <NumericUpDown Value="{Binding DefaultMaxDifficulty}" Minimum="1" Maximum="10"
-                               Width="80" FormatString="0"
-                               AutomationProperties.Name="Maximum difficulty" />
-              </StackPanel>
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
+              <TextBlock Grid.Row="0" Grid.Column="0" Text="Min" FontSize="12"
+                         Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"
+                         Width="36" />
+              <Slider Grid.Row="0" Grid.Column="1" Minimum="1" Maximum="10"
+                      Value="{Binding DefaultMinDifficulty}" TickFrequency="1" IsSnapToTickEnabled="True"
+                      Margin="8,0,0,0"
+                      AutomationProperties.Name="Minimum difficulty" />
+              <TextBlock Grid.Row="1" Grid.Column="0" Text="Max" FontSize="12"
+                         Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"
+                         Width="36" />
+              <Slider Grid.Row="1" Grid.Column="1" Minimum="1" Maximum="10"
+                      Value="{Binding DefaultMaxDifficulty}" TickFrequency="1" IsSnapToTickEnabled="True"
+                      Margin="8,0,0,0"
+                      AutomationProperties.Name="Maximum difficulty" />
             </Grid>
+            <TextBlock FontSize="11" Foreground="{DynamicResource TextTertiaryBrush}" HorizontalAlignment="Center">
+              <TextBlock.Text>
+                <MultiBinding StringFormat="{}{0} 鈥?{1}">
+                  <Binding Path="DefaultMinDifficulty" />
+                  <Binding Path="DefaultMaxDifficulty" />
+                </MultiBinding>
+              </TextBlock.Text>
+            </TextBlock>
           </StackPanel>
 
           <!-- Default Question Type -->
@@ -201,9 +184,7 @@
                        Foreground="{DynamicResource TextPrimaryBrush}" />
             <StackPanel Orientation="Horizontal" Spacing="8">
               <Button x:Name="BtnTypeMC" Content="MC" Padding="20,8" CornerRadius="6"
-                      Background="{DynamicResource BadgeMCBrush}"
-                      Foreground="{DynamicResource TextOnPrimaryBrush}"
-                      FontWeight="SemiBold" FontSize="13"
+                      Classes="type-selected" FontSize="13"
                       Click="OnTypeMCClick"
                       AutomationProperties.Name="Multiple choice" />
               <Button x:Name="BtnTypeSA" Content="SA" Padding="20,8" CornerRadius="6"
@@ -219,7 +200,7 @@
         </StackPanel>
       </Border>
 
-      <!-- ═══ UI Preferences Section ═══ -->
+      <!-- 鈺愨晲鈺?UI Preferences Section 鈺愨晲鈺?-->
       <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
               Padding="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
         <StackPanel Spacing="16">
@@ -269,7 +250,7 @@
         </StackPanel>
       </Border>
 
-      <!-- ═══ About Section ═══ -->
+      <!-- 鈺愨晲鈺?About Section 鈺愨晲鈺?-->
       <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
               Padding="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
         <StackPanel Spacing="16">
@@ -300,7 +281,7 @@
             <TextBlock Text="Physics Question Generator" FontSize="18" FontWeight="Bold"
                        Foreground="{DynamicResource TextPrimaryBrush}"
                        HorizontalAlignment="Center" />
-            <TextBlock Text="Version 1.0.0" FontSize="13"
+            <TextBlock Text="{Binding AppVersion, StringFormat='Version {0}'}" FontSize="13"
                        Foreground="{DynamicResource TextSecondaryBrush}"
                        HorizontalAlignment="Center" />
             <TextBlock Text="A cross-platform physics question generator built with .NET 8 and Avalonia UI. Generates practice questions from specification files with LaTeX support and multiple export formats."
@@ -314,7 +295,7 @@
         </StackPanel>
       </Border>
 
-      <!-- ═══ Reset Section ═══ -->
+      <!-- 鈺愨晲鈺?Reset Section 鈺愨晲鈺?-->
       <Border Background="{DynamicResource CardBackgroundBrush}" CornerRadius="12"
               Padding="24" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1">
         <StackPanel Spacing="16">
@@ -350,7 +331,7 @@
 
     </StackPanel>
 
-    <!-- ═══ Reset Confirmation Overlay ═══ -->
+    <!-- 鈺愨晲鈺?Reset Confirmation Overlay 鈺愨晲鈺?-->
     <Border IsVisible="{Binding IsResetConfirmationVisible}"
             Background="{DynamicResource OverlayScrimBrush}"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"

@@ -67,13 +67,9 @@
                      Foreground="{DynamicResource TextPrimaryBrush}" />
           <StackPanel Orientation="Horizontal" Spacing="8">
             <!-- Markdown -->
-            <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8"
-                    Padding="16,12" Cursor="Hand" MinWidth="120"
-                    PointerPressed="OnMarkdownClick"
-                    BorderBrush="{DynamicResource PrimaryBrush}"
-                    BorderThickness="2"
-                    x:Name="FormatMarkdown"
-                    AutomationProperties.Name="Markdown format">
+            <RadioButton GroupName="FormatGroup" IsChecked="{Binding IsMarkdownSelected}"
+                         Click="OnMarkdownClick"
+                         AutomationProperties.Name="Markdown format">
               <StackPanel Spacing="4" HorizontalAlignment="Center">
                 <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets" FontSize="20"
                            Foreground="{DynamicResource PrimaryBrush}"
@@ -85,14 +81,12 @@
                            Foreground="{DynamicResource TextTertiaryBrush}"
                            HorizontalAlignment="Center" />
               </StackPanel>
-            </Border>
+            </RadioButton>
 
             <!-- HTML -->
-            <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8"
-                    Padding="16,12" Cursor="Hand" MinWidth="120"
-                    PointerPressed="OnHtmlClick"
-                    x:Name="FormatHtml"
-                    AutomationProperties.Name="HTML format">
+            <RadioButton GroupName="FormatGroup" IsChecked="{Binding IsHtmlSelected}"
+                         Click="OnHtmlClick"
+                         AutomationProperties.Name="HTML format">
               <StackPanel Spacing="4" HorizontalAlignment="Center">
                 <TextBlock Text="&#xEB41;" FontFamily="Segoe MDL2 Assets" FontSize="20"
                            Foreground="{DynamicResource InfoBrush}"
@@ -104,14 +98,12 @@
                            Foreground="{DynamicResource TextTertiaryBrush}"
                            HorizontalAlignment="Center" />
               </StackPanel>
-            </Border>
+            </RadioButton>
 
             <!-- Plain Text -->
-            <Border Background="{DynamicResource CardHoverBrush}" CornerRadius="8"
-                    Padding="16,12" Cursor="Hand" MinWidth="120"
-                    PointerPressed="OnPlainTextClick"
-                    x:Name="FormatPlainText"
-                    AutomationProperties.Name="Plain text format">
+            <RadioButton GroupName="FormatGroup" IsChecked="{Binding IsPlainTextSelected}"
+                         Click="OnPlainTextClick"
+                         AutomationProperties.Name="Plain text format">
               <StackPanel Spacing="4" HorizontalAlignment="Center">
                 <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets" FontSize="20"
                            Foreground="{DynamicResource TextSecondaryBrush}"
@@ -123,7 +115,7 @@
                            Foreground="{DynamicResource TextTertiaryBrush}"
                            HorizontalAlignment="Center" />
               </StackPanel>
-            </Border>
+            </RadioButton>
           </StackPanel>
         </StackPanel>
 

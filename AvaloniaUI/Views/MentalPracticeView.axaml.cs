@@ -1,10 +1,8 @@
 using System;
 using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-using Avalonia.Media;
 using Avalonia.VisualTree;
 using AvaloniaUI.ViewModels;
 using ReactiveUI;
@@ -109,14 +107,13 @@ public partial class MentalPracticeView : UserControl
         var timerText = this.FindControl<TextBlock>("QuestionTimerText");
         if (timerText is null) return;
 
-        var app = Application.Current;
-        if (app is null) return;
+        timerText.Classes.Remove("timer-warning");
+        timerText.Classes.Remove("timer-critical");
 
-        var brush = app.FindResource(brushKey) as IBrush;
-        if (brush is not null)
-        {
-            timerText.Foreground = brush;
-        }
+        if (brushKey == "TimerWarningBrush")
+            timerText.Classes.Add("timer-warning");
+        else if (brushKey == "TimerCriticalBrush")
+            timerText.Classes.Add("timer-critical");
     }
 
     private void OnKeyDown(object? sender, KeyEventArgs e)
@@ -185,6 +182,27 @@ public partial class MentalPracticeView : UserControl
         }
     }
 
+    private void OnFeedbackOverlayClick(object? sender, PointerPressedEventArgs e)
+    {
+        if (DataContext is MentalPracticeViewModel vm && vm.IsInFeedback)
+        {
+            vm.SkipFeedbackCommand.Execute();
+        }
+    }
+
+    private void OnChoiceKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Enter && e.Key != Key.Space) return;
+        if (DataContext is not MentalPracticeViewModel vm) return;
+        if (!vm.IsInPractice || !vm.IsMultipleChoice) return;
+
+        if (sender is Border border && border.DataContext is ChoiceItem choice)
+        {
+            vm.AnswerCommand.Execute(choice.Index.ToString());
+            e.Handled = true;
+        }
+    }
+
     // Question count selector handlers
     private void SelectQuestionCount10(object? sender, RoutedEventArgs e)
     {
@@ -227,34 +245,20 @@ public partial class MentalPracticeView : UserControl
 
     private void UpdateCountButtonStyles(int selected)
     {
-        var app = Application.Current;
-        if (app is null) return;
-
-        var selectedBrush = app.FindResource("PrimarySubtleBrush") as Avalonia.Media.IBrush;
-        var normalBrush = app.FindResource("Neutral10Brush") as Avalonia.Media.IBrush;
-        var selectedForeground = app.FindResource("PrimaryBrush") as Avalonia.Media.IBrush;
-        var normalForeground = app.FindResource("TextPrimaryBrush") as Avalonia.Media.IBrush;
-
-        void Style(Button btn, bool isSelected)
-        {
-            if (isSelected)
-            {
-                btn.Background = selectedBrush as Avalonia.Media.IBrush;
-                btn.Foreground = selectedForeground as Avalonia.Media.IBrush;
-                btn.FontWeight = Avalonia.Media.FontWeight.SemiBold;
-            }
-            else
-            {
-                btn.Background = normalBrush as Avalonia.Media.IBrush;
-                btn.Foreground = normalForeground as Avalonia.Media.IBrush;
-                btn.FontWeight = Avalonia.Media.FontWeight.Normal;
-            }
-        }
-
         var btn10 = this.FindControl<Button>("BtnCount10");
         var btn20 = this.FindControl<Button>("BtnCount20");
         var btn30 = this.FindControl<Button>("BtnCount30");
         var btnEndless = this.FindControl<Button>("BtnCountEndless");
+
+        void Style(Button btn, bool isSelected)
+        {
+            btn.Classes.Remove("selected");
+            btn.Classes.Remove("secondary");
+            if (isSelected)
+                btn.Classes.Add("selected");
+            else
+                btn.Classes.Add("secondary");
+        }
 
         if (btn10 is not null) Style(btn10, selected == 10);
         if (btn20 is not null) Style(btn20, selected == 20);

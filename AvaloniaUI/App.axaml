@@ -82,6 +82,42 @@
         <Style Selector="Button.danger:pointerover /template/ ContentPresenter#PART_ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource ErrorBrush}" />
         </Style>
+
+        <!-- Selected toggle button (for count/type selectors) -->
+        <Style Selector="Button.selected">
+            <Setter Property="Background" Value="{DynamicResource PrimarySubtleBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <!-- Selected toggle button for question type (uses accent color) -->
+        <Style Selector="Button.type-selected">
+            <Setter Property="Background" Value="{DynamicResource BadgeMCBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextOnPrimaryBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <!-- Timer warning state -->
+        <Style Selector="TextBlock.timer-warning">
+            <Setter Property="Foreground" Value="{DynamicResource TimerWarningBrush}" />
+        </Style>
+
+        <!-- Timer critical state -->
+        <Style Selector="TextBlock.timer-critical">
+            <Setter Property="Foreground" Value="{DynamicResource TimerCriticalBrush}" />
+        </Style>
+
+        <!-- Format card selected state -->
+        <Style Selector="Border.format-selected">
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+
+        <!-- Format card unselected state -->
+        <Style Selector="Border.format-unselected">
+            <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
     </Application.Styles>
 
     <Application.Resources>
@@ -113,6 +149,9 @@
         </DataTemplate>
         <DataTemplate x:DataType="vm:SessionSummaryViewModel">
             <v:SessionSummaryView />
+        </DataTemplate>
+        <DataTemplate x:DataType="vm:ExportViewModel">
+            <v:ExportDialog />
         </DataTemplate>
     </Application.DataTemplates>
 </Application>
