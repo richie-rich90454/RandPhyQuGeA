@@ -15,6 +15,8 @@ public class UniformRandomGenerator : IRandomValueGenerator
     {
         if (min > max)
             throw new ArgumentException("min must be less than or equal to max", nameof(min));
+        if (min == max)
+            return min;
         return _random.Next(min, max + 1);
     }
 
@@ -26,7 +28,7 @@ public class UniformRandomGenerator : IRandomValueGenerator
             throw new ArgumentException("step must be positive", nameof(step));
 
         double range = max - min;
-        long steps = (long)(range / step);
+        long steps = (long)Math.Round(range / step);
         long selectedStep = _random.NextInt64(0, steps + 1);
         double value = min + selectedStep * step;
         return Math.Clamp(value, min, max);

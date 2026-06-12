@@ -8,12 +8,16 @@ public sealed class PartOneTextLoader : ISpecificationLoader
 {
     public Specification Load(string filePath)
     {
+        if (string.IsNullOrEmpty(filePath))
+            throw new ArgumentException("File path must not be null or empty.", nameof(filePath));
         var lines = File.ReadAllLines(filePath);
         return Parse(lines);
     }
 
     public async Task<Specification> LoadAsync(string filePath, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrEmpty(filePath))
+            throw new ArgumentException("File path must not be null or empty.", nameof(filePath));
         var lines = await File.ReadAllLinesAsync(filePath, cancellationToken);
         return Parse(lines);
     }
@@ -40,12 +44,19 @@ public sealed class PartOneTextLoader : ISpecificationLoader
 
             if (line.StartsWith('[') && line.EndsWith(']'))
             {
+                var sectionName = line[1..^1];
+                if (string.IsNullOrEmpty(sectionName))
+                {
+                    errors.Add(new ParseError(lineNumber, "Empty section header []."));
+                    continue;
+                }
+
                 if (currentSection != null && currentBlock.Count > 0)
                 {
                     ProcessBlock(currentSection, currentBlock, lineNumber - 1, units, topics, skills, templates, errors);
                 }
 
-                currentSection = line[1..^1].ToUpperInvariant();
+                currentSection = sectionName.ToUpperInvariant();
                 currentBlock = new Dictionary<string, List<string>>();
                 continue;
             }

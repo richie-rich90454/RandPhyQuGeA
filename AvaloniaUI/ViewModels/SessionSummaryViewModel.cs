@@ -217,8 +217,20 @@ public class SessionSummaryViewModel : ViewModelBase
         var mistakes = _questionResults.Where(r => !r.WasCorrect).ToList();
         if (mistakes.Count == 0) return;
 
-        // Navigate to Focused Practice with mistake topics
-        _navigationViewModel?.Navigate("FocusedPractice");
+        var skillIds = mistakes
+            .Where(r => !string.IsNullOrEmpty(r.SkillId))
+            .Select(r => r.SkillId!)
+            .Distinct()
+            .ToArray();
+        var topicIds = mistakes
+            .Where(r => !string.IsNullOrEmpty(r.TopicId))
+            .Select(r => r.TopicId!)
+            .Distinct()
+            .ToArray();
+
+        _navigationViewModel?.NavigateToFocusedPractice(
+            skillIds.Length > 0 ? skillIds : null,
+            topicIds.Length > 0 ? topicIds : null);
     }
 
     private void OnExport()
@@ -228,7 +240,7 @@ public class SessionSummaryViewModel : ViewModelBase
         sb.AppendLine("         SESSION SUMMARY REPORT        ");
         sb.AppendLine("═══════════════════════════════════════");
         sb.AppendLine();
-        sb.AppendLine($"Date: {DateTime.Now:yyyy-MM-dd HH:mm}");
+        sb.AppendLine($"Date: {DateTime.UtcNow:yyyy-MM-dd HH:mm}");
         sb.AppendLine();
         sb.AppendLine($"Score: {ScoreText} ({AccuracyText})");
         sb.AppendLine($"Speed Rating: {SpeedRatingIcon} {SpeedRating}");
@@ -306,14 +318,18 @@ public class QuestionResultItem : ViewModelBase
     private string _correctAnswer;
     private double _timeTakenSeconds;
     private bool _wasCorrect;
+    private string _topicId;
+    private string _skillId;
 
-    public QuestionResultItem(string questionText, string userAnswer, string correctAnswer, double timeTakenSeconds, bool wasCorrect)
+    public QuestionResultItem(string questionText, string userAnswer, string correctAnswer, double timeTakenSeconds, bool wasCorrect, string topicId = "", string skillId = "")
     {
         _questionText = questionText;
         _userAnswer = userAnswer;
         _correctAnswer = correctAnswer;
         _timeTakenSeconds = timeTakenSeconds;
         _wasCorrect = wasCorrect;
+        _topicId = topicId;
+        _skillId = skillId;
     }
 
     public string QuestionText
@@ -350,6 +366,18 @@ public class QuestionResultItem : ViewModelBase
     {
         get => _wasCorrect;
         set => this.RaiseAndSetIfChanged(ref _wasCorrect, value);
+    }
+
+    public string TopicId
+    {
+        get => _topicId;
+        set => this.RaiseAndSetIfChanged(ref _topicId, value);
+    }
+
+    public string SkillId
+    {
+        get => _skillId;
+        set => this.RaiseAndSetIfChanged(ref _skillId, value);
     }
 
     public bool QuestionHasLaTeX => LaTeXImage.ContainsLaTeX(_questionText);

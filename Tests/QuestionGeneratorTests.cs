@@ -20,8 +20,8 @@ public class QuestionGeneratorTests
             _templates.Where(t => t.SkillId == skillId).ToList();
         public IReadOnlyList<QuestionTemplate> GetByDifficulty(int difficulty) =>
             _templates.Where(t => t.Difficulty == difficulty).ToList();
-        public IEnumerable<QuestionTemplate> GetByDifficultyRange(int minDifficulty, int maxDifficulty) =>
-            _templates.Where(t => t.Difficulty >= minDifficulty && t.Difficulty <= maxDifficulty);
+        public IReadOnlyList<QuestionTemplate> GetByDifficultyRange(int minDifficulty, int maxDifficulty) =>
+            _templates.Where(t => t.Difficulty >= minDifficulty && t.Difficulty <= maxDifficulty).ToList();
         public QuestionTemplate? GetRandom(Random? random = null) =>
             _templates.Count == 0 ? null : _templates[0];
         public QuestionTemplate? GetRandomByTopic(string topicId, Random? random = null)

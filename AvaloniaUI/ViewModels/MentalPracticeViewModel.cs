@@ -640,7 +640,9 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
                 correct ? CurrentQuestion.Answer : _currentAnswer,
                 CurrentQuestion.Answer,
                 timeSeconds,
-                correct));
+                correct,
+                CurrentQuestion.TopicId,
+                CurrentQuestion.SkillId));
         }
 
         using (SuppressChangeNotifications())

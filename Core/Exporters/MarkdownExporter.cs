@@ -29,11 +29,14 @@ public sealed class MarkdownExporter : IQuestionExporter
             if (q.Choices is { Count: > 0 })
             {
                 writer.WriteLine("**Choices:**");
-                var letter = 'A';
+                var choiceIndex = 0;
                 foreach (var choice in q.Choices)
                 {
-                    writer.WriteLine($"- {letter}) {choice}");
-                    letter++;
+                    var label = choiceIndex < 26
+                        ? ((char)('A' + choiceIndex)).ToString()
+                        : $"A{choiceIndex - 25}";
+                    writer.WriteLine($"- {label}) {choice}");
+                    choiceIndex++;
                 }
                 writer.WriteLine();
             }

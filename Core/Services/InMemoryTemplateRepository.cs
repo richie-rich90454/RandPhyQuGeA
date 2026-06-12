@@ -21,7 +21,7 @@ public sealed class InMemoryTemplateRepository : ITemplateRepository
 
     public IReadOnlyList<QuestionTemplate> GetAll()
     {
-        lock (_lock) { return _templates.ToList(); }
+        lock (_lock) { return _templates.AsReadOnly(); }
     }
 
     public IReadOnlyList<QuestionTemplate> GetByTopic(string topicId)
@@ -39,7 +39,7 @@ public sealed class InMemoryTemplateRepository : ITemplateRepository
         lock (_lock) { return _templates.Where(t => t.Difficulty == difficulty).ToList(); }
     }
 
-    public IEnumerable<QuestionTemplate> GetByDifficultyRange(int minDifficulty, int maxDifficulty)
+    public IReadOnlyList<QuestionTemplate> GetByDifficultyRange(int minDifficulty, int maxDifficulty)
     {
         lock (_lock) { return _templates.Where(t => t.Difficulty >= minDifficulty && t.Difficulty <= maxDifficulty).ToList(); }
     }
