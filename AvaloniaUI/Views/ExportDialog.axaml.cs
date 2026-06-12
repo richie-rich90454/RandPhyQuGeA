@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using AvaloniaUI.Services;
 using AvaloniaUI.ViewModels;
 
 namespace AvaloniaUI.Views;

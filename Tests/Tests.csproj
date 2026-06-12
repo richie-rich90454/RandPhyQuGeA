@@ -30,9 +30,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\LaTeX\LaTeX.csproj" />
-    <ProjectReference Include="..\AvaloniaUI\AvaloniaUI.csproj" />
-    <ProjectReference Include="..\Console\Console.csproj" />
-    <ProjectReference Include="..\Web\Web.csproj" />
   </ItemGroup>
 
 </Project>

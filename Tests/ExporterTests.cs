@@ -198,4 +198,90 @@ public class ExporterTests
         Assert.Contains("C)", result);
         Assert.Contains("D)", result);
     }
+
+    // === Edge case tests ===
+
+    [Fact]
+    public void TextExporter_EmptyQuestionList_ProducesNoQuestionOutput()
+    {
+        var exporter = new TextExporter();
+        var result = ExportToString(s => exporter.Export(Array.Empty<GeneratedQuestion>(), s));
+
+        // No question content should appear (may contain BOM or whitespace from UTF-8 encoding)
+        Assert.DoesNotContain("Question", result);
+    }
+
+    [Fact]
+    public void HtmlExporter_EmptyQuestionList_ContainsHtmlStructure()
+    {
+        var exporter = new HtmlExporter();
+        var result = ExportToString(s => exporter.Export(Array.Empty<GeneratedQuestion>(), s));
+
+        Assert.Contains("<!DOCTYPE html>", result);
+        Assert.Contains("<h1>Physics Questions</h1>", result);
+    }
+
+    [Fact]
+    public void MarkdownExporter_EmptyQuestionList_ContainsHeader()
+    {
+        var exporter = new MarkdownExporter();
+        var result = ExportToString(s => exporter.Export(Array.Empty<GeneratedQuestion>(), s));
+
+        Assert.Contains("# Physics Questions", result);
+    }
+
+    [Fact]
+    public void HtmlExporter_EscapesSpecialCharacters()
+    {
+        var question = new GeneratedQuestion(
+            Id: "q1", TopicId: "t1", SkillId: "s1", QuestionType: "SA", Difficulty: 1,
+            Text: "What is <html> & 'quotes' \"double\"?",
+            Answer: "<script>alert('xss')</script>",
+            Choices: null,
+            SolutionText: "Use & < > \" ' carefully.",
+            SolutionLaTeX: "$<test>$",
+            Variables: new Dictionary<string, object>()
+        );
+        var exporter = new HtmlExporter();
+        var result = ExportToString(s => exporter.Export(new[] { question }, s));
+
+        Assert.DoesNotContain("<html>", result.Substring(result.IndexOf("<div class=\"question\">")));
+        Assert.Contains("&lt;html&gt;", result);
+        Assert.Contains("&amp;", result);
+        Assert.Contains("&quot;", result);
+        Assert.Contains("&#39;", result);
+    }
+
+    [Fact]
+    public void TextExporter_NullEmptyFields_DoesNotCrash()
+    {
+        var question = new GeneratedQuestion(
+            Id: "", TopicId: "", SkillId: "", QuestionType: "", Difficulty: 0,
+            Text: "", Answer: "",
+            Choices: null,
+            SolutionText: "", SolutionLaTeX: "",
+            Variables: new Dictionary<string, object>()
+        );
+        var exporter = new TextExporter();
+
+        // Should not throw
+        var result = ExportToString(s => exporter.Export(new[] { question }, s));
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public void MarkdownExporter_NullEmptyFields_DoesNotCrash()
+    {
+        var question = new GeneratedQuestion(
+            Id: "", TopicId: "", SkillId: "", QuestionType: "", Difficulty: 0,
+            Text: "", Answer: "",
+            Choices: null,
+            SolutionText: "", SolutionLaTeX: "",
+            Variables: new Dictionary<string, object>()
+        );
+        var exporter = new MarkdownExporter();
+
+        var result = ExportToString(s => exporter.Export(new[] { question }, s));
+        Assert.NotNull(result);
+    }
 }

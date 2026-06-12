@@ -26,6 +26,7 @@ public class QuestionBankViewModel : ViewModelBase, IDisposable
         FilteredUnitNodes = new ObservableCollection<UnitNode>();
 
         _subscriptions.Add(this.WhenAnyValue(x => x.SearchText)
+            .Throttle(TimeSpan.FromMilliseconds(300))
             .Subscribe(_ => ApplyFilters()));
 
         _subscriptions.Add(this.WhenAnyValue(
