@@ -10,13 +10,16 @@
 
   <UserControl.Resources>
     <cvt:DifficultyToBrushConverter x:Key="DifficultyToBrushConverter" />
+  </UserControl.Resources>
+
+  <UserControl.Styles>
     <Style Selector="ToggleButton">
       <Setter Property="Opacity" Value="0.5" />
     </Style>
     <Style Selector="ToggleButton:checked">
       <Setter Property="Opacity" Value="1.0" />
     </Style>
-  </UserControl.Resources>
+  </UserControl.Styles>
 
   <UserControl.DataTemplates>
     <!-- Unit → Topics hierarchy with colored header -->
