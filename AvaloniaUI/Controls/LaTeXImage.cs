@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
@@ -91,25 +92,48 @@ public class LaTeXImage : UserControl
     {
         if (string.IsNullOrWhiteSpace(text)) return false;
 
-        // $$ display math delimiter
-        if (text.Contains("$$")) return true;
+        // $$ display math delimiter (must have closing $$)
+        if (text.Contains("$$") && text.IndexOf("$$") != text.LastIndexOf("$$"))
+            return true;
 
-        // $...$ inline math delimiter
-        if (text.Contains("$")) return true;
+        // $...$ inline math - only if content between $ looks like LaTeX (contains backslash)
+        // Variable placeholders like ${v}$ don't have backslashes
+        var dollarIndices = new List<int>();
+        for (int i = 0; i < text.Length; i++)
+        {
+            if (text[i] == '$')
+                dollarIndices.Add(i);
+        }
 
-        // Common LaTeX commands with backslash prefix
+        // Check pairs of $ delimiters
+        for (int i = 0; i + 1 < dollarIndices.Count; i += 2)
+        {
+            var start = dollarIndices[i];
+            var end = dollarIndices[i + 1];
+            if (end - start > 1)
+            {
+                var content = text.Substring(start + 1, end - start - 1);
+                // If content contains backslash commands, it's LaTeX
+                if (content.Contains('\\'))
+                    return true;
+            }
+        }
+
+        // Common LaTeX commands with backslash prefix (without $ delimiters)
         string[] latexCommands =
         [
             @"\frac{", @"\sqrt{", @"\int{", @"\sum{",
             @"\frac ", @"\sqrt ", @"\int ", @"\sum ",
-            @"\alpha", @"\beta", @"\pi",
+            @"\alpha", @"\beta", @"\gamma", @"\delta", @"\pi",
             @"\cdot", @"\times", @"\div",
             @"\left", @"\right",
-            @"\begin{",
-            @"\text{", @"\mathrm{",
+            @"\begin{", @"\end{",
+            @"\text{", @"\mathrm{", @"\mathbf{",
             @"\overline{", @"\vec{", @"\hat{",
             @"\overrightarrow{", @"\dot{", @"\ddot{",
             @"\bar{", @"\tilde{",
+            @"\sin", @"\cos", @"\tan",
+            @"\log", @"\ln", @"\exp",
         ];
 
         foreach (var cmd in latexCommands)
