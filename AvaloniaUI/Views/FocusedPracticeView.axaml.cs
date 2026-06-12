@@ -3,6 +3,7 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.VisualTree;
+using AvaloniaUI.Services;
 using AvaloniaUI.ViewModels;
 using System;
 
