@@ -57,6 +57,8 @@ public class FocusedPracticeViewModel : ViewModelBase, IDisposable
     // Concurrency guard
     private bool _isGenerating;
 
+    private string _errorMessage = string.Empty;
+
     public FocusedPracticeViewModel(SpecificationViewModel specificationViewModel, QuestionGenerator questionGenerator, IPracticeResultRepository? resultRepository = null, NavigationViewModel? navigationViewModel = null, int questionCount = 10, int minDifficulty = 1, int maxDifficulty = 10, string questionType = "Mixed", SoundService? soundService = null)
     {
         _specificationViewModel = specificationViewModel;
@@ -88,12 +90,20 @@ public class FocusedPracticeViewModel : ViewModelBase, IDisposable
         CopyAnswerCommand = ReactiveCommand.Create(OnCopyAnswer);
         CopyFullCommand = ReactiveCommand.Create(OnCopyFull);
 
-        _ = InitializeAsync();
+        _ = InitializeAsyncSafe();
     }
 
-    private async Task InitializeAsync()
+    private async Task InitializeAsyncSafe()
     {
-        await InitializeScopeItemsAsync();
+        try
+        {
+            await InitializeScopeItemsAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to initialize focused practice: {ex.Message}");
+            ErrorMessage = $"Failed to initialize: {ex.Message}";
+        }
     }
 
     // ─── Scope Selection Properties ──────────────────────────────────
@@ -241,6 +251,12 @@ public class FocusedPracticeViewModel : ViewModelBase, IDisposable
     {
         get => _isGenerating;
         set => this.RaiseAndSetIfChanged(ref _isGenerating, value);
+    }
+
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set => this.RaiseAndSetIfChanged(ref _errorMessage, value);
     }
 
     private bool _isSessionOver;
@@ -537,7 +553,9 @@ public class FocusedPracticeViewModel : ViewModelBase, IDisposable
             userAnswer,
             CurrentQuestion.Answer,
             0,
-            IsCorrect));
+            IsCorrect,
+            CurrentQuestion.TopicId,
+            CurrentQuestion.SkillId));
 
         // Save result to repository
         if (_resultRepository is not null)
@@ -554,7 +572,20 @@ public class FocusedPracticeViewModel : ViewModelBase, IDisposable
                 Mode = PracticeMode.Focused,
                 Difficulty = CurrentQuestion?.Difficulty ?? 0
             };
-            _ = _resultRepository.SaveAsync(result);
+            _ = SaveResultAsync(result);
+        }
+    }
+
+    private async Task SaveResultAsync(PracticeResult result)
+    {
+        try
+        {
+            await _resultRepository!.SaveAsync(result);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to save practice result: {ex.Message}");
+            ErrorMessage = $"Failed to save result: {ex.Message}";
         }
     }
 

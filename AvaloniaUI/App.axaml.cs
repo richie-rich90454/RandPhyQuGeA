@@ -40,13 +40,13 @@ public partial class App : Application
             desktop.MainWindow = new MainWindow(viewModel);
 
             // Then load spec asynchronously — the window will show a loading state
-            _ = InitializeSpecAsync(specViewModel, repository);
+            _ = InitializeSpecAsync(specViewModel, repository, viewModel);
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
-    private static async Task InitializeSpecAsync(SpecificationViewModel specViewModel, InMemoryTemplateRepository repository)
+    private static async Task InitializeSpecAsync(SpecificationViewModel specViewModel, InMemoryTemplateRepository repository, MainWindowViewModel mainWindowViewModel)
     {
         try
         {
@@ -56,6 +56,8 @@ public partial class App : Application
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Failed to load spec: {ex.Message}");
+            mainWindowViewModel.HasLoadError = true;
+            mainWindowViewModel.LoadErrorMessage = $"Failed to load specification: {ex.Message}";
         }
     }
 

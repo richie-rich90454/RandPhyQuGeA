@@ -27,6 +27,7 @@ public class ProgressViewModel : ViewModelBase
     private bool _isLoading;
     private bool _hasData;
     private bool _isLoaded;
+    private string _errorMessage = string.Empty;
     private ObservableCollection<RecentSessionItem> _recentResults = new();
     private ObservableCollection<TopicPerformanceItem> _topicPerformances = new();
     private ObservableCollection<DifficultyBarItem> _difficultyBars = new();
@@ -109,6 +110,12 @@ public class ProgressViewModel : ViewModelBase
     {
         get => _hasData;
         set => this.RaiseAndSetIfChanged(ref _hasData, value);
+    }
+
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set => this.RaiseAndSetIfChanged(ref _errorMessage, value);
     }
 
     public ObservableCollection<RecentSessionItem> RecentResults
@@ -239,6 +246,12 @@ public class ProgressViewModel : ViewModelBase
             ComputeCalendar(results);
             _isLoaded = true;
         }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load progress data: {ex.Message}");
+            ErrorMessage = $"Failed to load progress data: {ex.Message}";
+            HasData = false;
+        }
         finally
         {
             IsLoading = false;
@@ -255,8 +268,9 @@ public class ProgressViewModel : ViewModelBase
                 "Are you sure you want to clear all progress data? This action cannot be undone.").FirstAsync();
             if (!confirmed) return;
         }
-        catch
+        catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"Clear confirmation failed: {ex.Message}");
             return;
         }
 

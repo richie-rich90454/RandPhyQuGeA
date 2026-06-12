@@ -169,9 +169,22 @@ public class SpecificationViewModel : ViewModelBase, IDisposable
 
         RxApp.MainThreadScheduler.Schedule(ReactiveUnit.Default, (_, _) =>
         {
-            _ = LoadSpecification();
+            _ = LoadSpecificationSafe();
             return Disposable.Empty;
         });
+    }
+
+    private async Task LoadSpecificationSafe()
+    {
+        try
+        {
+            await LoadSpecification();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to reload specification: {ex.Message}");
+            ErrorMessage = $"Failed to reload specification: {ex.Message}";
+        }
     }
 
     private async Task LoadSpecification()

@@ -222,9 +222,9 @@ public class SettingsViewModel : ViewModelBase, IDisposable
             var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(SettingsFilePath, json);
         }
-        catch
+        catch (Exception ex)
         {
-            // Silently fail — settings are not critical
+            System.Diagnostics.Debug.WriteLine($"Failed to save settings: {ex.Message}");
         }
     }
 
@@ -238,7 +238,9 @@ public class SettingsViewModel : ViewModelBase, IDisposable
             var data = JsonSerializer.Deserialize<SettingsData>(json);
             if (data is null) return;
 
-            SelectedTheme = (AppTheme)data.SelectedTheme;
+            SelectedTheme = Enum.IsDefined(typeof(AppTheme), data.SelectedTheme)
+                ? (AppTheme)data.SelectedTheme
+                : AppTheme.Light;
             DefaultQuestionCount = data.DefaultQuestionCount;
             DefaultMinDifficulty = data.DefaultMinDifficulty;
             DefaultMaxDifficulty = data.DefaultMaxDifficulty;
@@ -249,9 +251,9 @@ public class SettingsViewModel : ViewModelBase, IDisposable
             // Apply loaded theme
             App.SwitchTheme(SelectedTheme);
         }
-        catch
+        catch (Exception ex)
         {
-            // Use defaults if loading fails
+            System.Diagnostics.Debug.WriteLine($"Failed to load settings: {ex.Message}");
         }
     }
 

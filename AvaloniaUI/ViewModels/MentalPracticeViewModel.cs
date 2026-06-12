@@ -83,6 +83,8 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
     // Concurrency guard
     private volatile bool _isAutoAdvancing;
 
+    private string _errorMessage = string.Empty;
+
     // Scope options
     private List<string> _scopeOptions = new() { "All Topics" };
     private List<ScopeItem> _unitScopeItems = new();
@@ -393,6 +395,12 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
         set => this.RaiseAndSetIfChanged(ref _feedbackMessage, value);
     }
 
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set => this.RaiseAndSetIfChanged(ref _errorMessage, value);
+    }
+
     // ─── Scope Options ──────────────────────────────────────────────────
 
     public List<string> ScopeOptions
@@ -584,7 +592,7 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
         IsInFeedback = true;
 
         // Auto-advance after 2 seconds
-        _ = AutoAdvanceAsync();
+        _ = AutoAdvanceAsyncSafe();
     }
 
     private bool CheckAnswer(string answer)
@@ -657,7 +665,20 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
                 Mode = PracticeMode.Mental,
                 Difficulty = CurrentQuestion.Difficulty
             };
-            _ = _resultRepository.SaveAsync(result);
+            _ = SaveResultAsync(result);
+        }
+    }
+
+    private async Task SaveResultAsync(PracticeResult result)
+    {
+        try
+        {
+            await _resultRepository!.SaveAsync(result);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to save practice result: {ex.Message}");
+            ErrorMessage = $"Failed to save result: {ex.Message}";
         }
     }
 
@@ -682,6 +703,19 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
         }
 
         IsTransitioning = false;
+    }
+
+    private async Task AutoAdvanceAsyncSafe()
+    {
+        try
+        {
+            await AutoAdvanceAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to auto-advance: {ex.Message}");
+            ErrorMessage = $"Navigation error: {ex.Message}";
+        }
     }
 
     private void OnPause()
@@ -710,7 +744,7 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
         IsInPractice = false;
         IsInFeedback = true;
 
-        _ = AutoAdvanceAsync();
+        _ = AutoAdvanceAsyncSafe();
     }
 
     private void OnEndSession()

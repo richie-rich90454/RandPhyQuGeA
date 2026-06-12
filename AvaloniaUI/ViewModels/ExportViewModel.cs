@@ -161,6 +161,11 @@ public class ExportViewModel : ViewModelBase
             SaveRequested?.Invoke(this, new ExportSaveRequestedEventArgs(
                 ExportContent, extension, $"physics_questions.{extension}"));
         }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to export: {ex.Message}");
+            ErrorMessage = $"Failed to export: {ex.Message}";
+        }
         finally
         {
             IsExporting = false;

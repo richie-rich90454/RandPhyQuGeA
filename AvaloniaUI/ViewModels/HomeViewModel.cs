@@ -19,6 +19,7 @@ public class HomeViewModel : ViewModelBase
     private string _dailyQuoteAuthor = string.Empty;
     private ObservableCollection<HomeRecentSessionItem> _recentSessions = new();
     private bool _hasRecentSessions;
+    private string _errorMessage = string.Empty;
 
     private static readonly (string Quote, string Author)[] Quotes =
     {
@@ -76,33 +77,47 @@ public class HomeViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _hasRecentSessions, value);
     }
 
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set => this.RaiseAndSetIfChanged(ref _errorMessage, value);
+    }
+
     public ReactiveCommand<ReactiveUnit, ReactiveUnit> LoadRecentSessionsCommand { get; }
 
     private async Task LoadRecentSessionsAsync()
     {
         if (_resultRepository is null) return;
 
-        var results = await _resultRepository.LoadAsync();
+        try
+        {
+            var results = await _resultRepository.LoadAsync();
 
-        var sessions = results
-            .GroupBy(r => r.Timestamp.Date)
-            .OrderByDescending(g => g.Key)
-            .Take(5)
-            .Select(g =>
-            {
-                var total = g.Count();
-                var correct = g.Count(r => r.IsCorrect);
-                return new HomeRecentSessionItem
+            var sessions = results
+                .GroupBy(r => r.Timestamp.Date)
+                .OrderByDescending(g => g.Key)
+                .Take(5)
+                .Select(g =>
                 {
-                    DateText = g.Key.ToString("MMM dd, yyyy"),
-                    ScoreText = $"{correct}/{total}",
-                    AccuracyText = total > 0 ? $"{correct * 100.0 / total:F0}%" : "—"
-                };
-            })
-            .ToList();
+                    var total = g.Count();
+                    var correct = g.Count(r => r.IsCorrect);
+                    return new HomeRecentSessionItem
+                    {
+                        DateText = g.Key.ToString("MMM dd, yyyy"),
+                        ScoreText = $"{correct}/{total}",
+                        AccuracyText = total > 0 ? $"{correct * 100.0 / total:F0}%" : "—"
+                    };
+                })
+                .ToList();
 
-        RecentSessions = new ObservableCollection<HomeRecentSessionItem>(sessions);
-        HasRecentSessions = sessions.Count > 0;
+            RecentSessions = new ObservableCollection<HomeRecentSessionItem>(sessions);
+            HasRecentSessions = sessions.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load recent sessions: {ex.Message}");
+            ErrorMessage = $"Failed to load recent sessions: {ex.Message}";
+        }
     }
 }
 

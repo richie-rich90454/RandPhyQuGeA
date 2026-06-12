@@ -21,6 +21,8 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     private readonly ISpecificationLoader? _specificationLoader;
     private readonly SpecificationViewModel? _specificationViewModel;
 
+    private bool _hasLoadError;
+    private string _loadErrorMessage = string.Empty;
     private string? _selectedTopicId;
     private string? _selectedSkillId;
     private decimal? _selectedDifficulty;
@@ -70,6 +72,18 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     public ViewModelActivator Activator { get; }
 
     public NavigationViewModel Navigation { get; }
+
+    public bool HasLoadError
+    {
+        get => _hasLoadError;
+        set => this.RaiseAndSetIfChanged(ref _hasLoadError, value);
+    }
+
+    public string LoadErrorMessage
+    {
+        get => _loadErrorMessage;
+        set => this.RaiseAndSetIfChanged(ref _loadErrorMessage, value);
+    }
 
     public string? SelectedTopicId
     {
@@ -313,8 +327,9 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
             AvailableTopics = spec.Topics.Select(t => t.Id).ToList();
             AvailableSkills = spec.Skills.Select(s => s.Id).ToList();
         }
-        catch
+        catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"Failed to load topics and skills: {ex.Message}");
             AvailableTopics = Array.Empty<string>();
             AvailableSkills = Array.Empty<string>();
         }
