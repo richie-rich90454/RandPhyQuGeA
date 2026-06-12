@@ -70,7 +70,7 @@ public class QuestionGenerator
         var answer = FormatAnswer(answerValue);
 
         IReadOnlyList<string>? choices = null;
-        if (template.QuestionType == "MC")
+        if (template.QuestionType == "MC" || template.QuestionType == "MultipleChoice")
         {
             var distractors = _distractorGenerator.Generate(answer, template, variables).ToList();
             var allChoices = new List<string>(distractors) { answer };

@@ -204,7 +204,7 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
 
     public bool QuestionHasLaTeX => LaTeXImage.ContainsLaTeX(QuestionText);
 
-    public bool IsMultipleChoice => CurrentQuestion?.QuestionType == "MC";
+    public bool IsMultipleChoice => CurrentQuestion?.QuestionType == "MC" || CurrentQuestion?.QuestionType == "MultipleChoice";
 
     public IReadOnlyList<string> Choices => CurrentQuestion?.Choices ?? Array.Empty<string>();
 
