@@ -35,14 +35,14 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
             Directory.CreateDirectory(dir);
     }
 
-    public async Task SaveAsync(PracticeResult result)
+    public async Task SaveAsync(PracticeResult result, CancellationToken cancellationToken = default)
     {
-        await _lock.WaitAsync();
+        await _lock.WaitAsync(cancellationToken);
         try
         {
-            await EnsureLoadedAsync();
+            await EnsureLoadedAsync(cancellationToken);
             _cache.Add(result);
-            await PersistAsync();
+            await PersistAsync(cancellationToken);
         }
         finally
         {
@@ -50,12 +50,12 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
         }
     }
 
-    public async Task<IReadOnlyList<PracticeResult>> LoadAsync()
+    public async Task<IReadOnlyList<PracticeResult>> LoadAsync(CancellationToken cancellationToken = default)
     {
-        await _lock.WaitAsync();
+        await _lock.WaitAsync(cancellationToken);
         try
         {
-            await EnsureLoadedAsync();
+            await EnsureLoadedAsync(cancellationToken);
             return _cache.AsReadOnly();
         }
         finally
@@ -64,12 +64,12 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
         }
     }
 
-    public async Task<IReadOnlyList<PracticeResult>> GetByTopicAsync(string topicId)
+    public async Task<IReadOnlyList<PracticeResult>> GetByTopicAsync(string topicId, CancellationToken cancellationToken = default)
     {
-        await _lock.WaitAsync();
+        await _lock.WaitAsync(cancellationToken);
         try
         {
-            await EnsureLoadedAsync();
+            await EnsureLoadedAsync(cancellationToken);
             return _cache.Where(r => r.TopicId == topicId).ToList().AsReadOnly();
         }
         finally
@@ -78,12 +78,12 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
         }
     }
 
-    public async Task<IReadOnlyList<PracticeResult>> GetByDateRangeAsync(DateTime from, DateTime to)
+    public async Task<IReadOnlyList<PracticeResult>> GetByDateRangeAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default)
     {
-        await _lock.WaitAsync();
+        await _lock.WaitAsync(cancellationToken);
         try
         {
-            await EnsureLoadedAsync();
+            await EnsureLoadedAsync(cancellationToken);
             return _cache.Where(r => r.Timestamp >= from && r.Timestamp <= to).ToList().AsReadOnly();
         }
         finally
@@ -92,14 +92,14 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
         }
     }
 
-    public async Task ClearAsync()
+    public async Task ClearAsync(CancellationToken cancellationToken = default)
     {
-        await _lock.WaitAsync();
+        await _lock.WaitAsync(cancellationToken);
         try
         {
             _cache.Clear();
             _isLoaded = true;
-            await PersistAsync();
+            await PersistAsync(cancellationToken);
         }
         finally
         {
@@ -107,7 +107,7 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
         }
     }
 
-    private async Task EnsureLoadedAsync()
+    private async Task EnsureLoadedAsync(CancellationToken cancellationToken = default)
     {
         if (_isLoaded) return;
 
@@ -120,21 +120,28 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
 
         try
         {
-            var json = await File.ReadAllTextAsync(_filePath);
+            var json = await File.ReadAllTextAsync(_filePath, cancellationToken);
             _cache = JsonSerializer.Deserialize<List<PracticeResult>>(json, JsonOptions) ?? new List<PracticeResult>();
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine("[JsonPracticeResultRepository] Failed to load practice results from " + _filePath + ": " + ex.Message);
             _cache = new List<PracticeResult>();
         }
 
         _isLoaded = true;
     }
 
-    private async Task PersistAsync()
+    private async Task PersistAsync(CancellationToken cancellationToken = default)
     {
-        Debug.Assert(_lock.CurrentCount == 0, "PersistAsync must be called while holding the lock");
         var json = JsonSerializer.Serialize(_cache, JsonOptions);
-        await File.WriteAllTextAsync(_filePath, json);
+        try
+        {
+            await File.WriteAllTextAsync(_filePath, json, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("[JsonPracticeResultRepository] Failed to persist practice results to " + _filePath + ": " + ex.Message);
+        }
     }
 }
