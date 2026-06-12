@@ -90,17 +90,9 @@ public partial class MentalPracticeView : UserControl
             _currentViewModel.StopTimerLoop();
     }
 
-    private async void OnCopyToClipboardRequested(object? sender, string text)
+    private void OnCopyToClipboardRequested(object? sender, string text)
     {
-        var topLevel = TopLevel.GetTopLevel(this);
-        if (topLevel is not null)
-        {
-            var clipboard = topLevel.Clipboard;
-            if (clipboard is not null)
-            {
-                await clipboard.SetTextAsync(text);
-            }
-        }
+        ClipboardService.CopyToClipboard(text, this);
     }
 
     private void UpdateTimerBrush(string brushKey)

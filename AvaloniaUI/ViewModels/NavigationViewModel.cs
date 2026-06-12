@@ -39,6 +39,13 @@ public class NavigationViewModel : ViewModelBase, IDisposable
         _settingsViewModel = settingsViewModel;
         _soundService = new SoundService(settingsViewModel?.IsSoundEnabled ?? true);
 
+        // Keep SoundService.IsSoundEnabled in sync with settings
+        if (settingsViewModel is not null)
+        {
+            settingsViewModel.WhenAnyValue(x => x.IsSoundEnabled)
+                .Subscribe(enabled => _soundService.IsSoundEnabled = enabled);
+        }
+
         _navigationItems = new List<NavigationItem>
         {
             new("Home", "\uE80F", "Home"),

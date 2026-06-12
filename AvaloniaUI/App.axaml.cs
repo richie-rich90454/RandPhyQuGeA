@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -42,11 +41,21 @@ public partial class App : Application
 
             var (viewModel, specViewModel, repository) = CreateViewModel();
 
-            // Set the window first so Avalonia has a main window
-            desktop.MainWindow = new MainWindow(viewModel);
+            // Load spec synchronously before showing window
+            try
+            {
+                specViewModel.EnsureLoadedAsync().GetAwaiter().GetResult();
+                repository.AddRange(specViewModel.GetLoadedTemplates());
+            }
+            catch (Exception ex)
+            {
+                var logger = _serviceProvider?.GetService<ILogger<App>>();
+                logger?.LogError(ex, "Failed to load specification");
+                viewModel.HasLoadError = true;
+                viewModel.LoadErrorMessage = $"Failed to load specification: {ex.Message}";
+            }
 
-            // Then load spec asynchronously �?the window will show a loading state
-            _ = InitializeSpecAsync(specViewModel, repository, viewModel);
+            desktop.MainWindow = new MainWindow(viewModel);
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -95,21 +104,6 @@ public partial class App : Application
         return services.BuildServiceProvider();
     }
 
-    private async Task InitializeSpecAsync(SpecificationViewModel specViewModel, InMemoryTemplateRepository repository, MainWindowViewModel mainWindowViewModel)
-    {
-        try
-        {
-            await specViewModel.EnsureLoadedAsync();
-            repository.AddRange(specViewModel.GetLoadedTemplates());
-        }
-        catch (Exception ex)
-        {
-            var logger = _serviceProvider?.GetService<ILogger<App>>();
-            logger?.LogError(ex, "Failed to load specification");
-            mainWindowViewModel.HasLoadError = true;
-            mainWindowViewModel.LoadErrorMessage = $"Failed to load specification: {ex.Message}";
-        }
-    }
 
     /// <summary>
     /// Switches the application theme between Light, Dark, and System.
@@ -168,9 +162,10 @@ public partial class App : Application
         var questionGenerator = _serviceProvider.GetRequiredService<QuestionGenerator>();
         var latexRenderer = _serviceProvider.GetRequiredService<ILaTeXRenderer>();
         var loader = _serviceProvider.GetRequiredService<ISpecificationLoader>();
+        var resultRepository = _serviceProvider.GetRequiredService<IPracticeResultRepository>();
         var specViewModel = new SpecificationViewModel(loader);
 
-        return (new MainWindowViewModel(questionGenerator, latexRenderer, loader, specViewModel), specViewModel, repository);
+        return (new MainWindowViewModel(questionGenerator, latexRenderer, loader, specViewModel, resultRepository), specViewModel, repository);
     }
 }
 

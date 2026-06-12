@@ -533,11 +533,11 @@ public class FocusedPracticeViewModel : ViewModelBase, IDisposable
 
         if (CurrentQuestion.Choices is { Count: > 0 })
         {
-            IsCorrect = string.Equals(SelectedAnswer, CurrentQuestion.Answer, StringComparison.OrdinalIgnoreCase);
+            IsCorrect = AreAnswersEquivalent(SelectedAnswer ?? "", CurrentQuestion.Answer);
         }
         else
         {
-            IsCorrect = string.Equals(ShortAnswer.Trim(), CurrentQuestion.Answer, StringComparison.OrdinalIgnoreCase);
+            IsCorrect = AreAnswersEquivalent(ShortAnswer.Trim(), CurrentQuestion.Answer);
         }
 
         // Play sound feedback
@@ -574,6 +574,28 @@ public class FocusedPracticeViewModel : ViewModelBase, IDisposable
             };
             _ = SaveResultAsync(result);
         }
+    }
+
+    /// <summary>
+    /// Compares two answers, handling numerical equivalence (e.g., "3.14" == "3.1400").
+    /// </summary>
+    private static bool AreAnswersEquivalent(string userAnswer, string correctAnswer)
+    {
+        if (string.Equals(userAnswer, correctAnswer, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (double.TryParse(userAnswer, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var userVal) &&
+            double.TryParse(correctAnswer, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var correctVal))
+        {
+            if (Math.Abs(userVal - correctVal) < 1e-6)
+                return true;
+            if (correctVal != 0 && Math.Abs((userVal - correctVal) / correctVal) < 1e-4)
+                return true;
+            if (Math.Abs(userVal) < 1e-10 && Math.Abs(correctVal) < 1e-10)
+                return true;
+        }
+
+        return false;
     }
 
     private async Task SaveResultAsync(PracticeResult result)

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -20,6 +21,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     private readonly ILaTeXRenderer? _laTeXRenderer;
     private readonly ISpecificationLoader? _specificationLoader;
     private readonly SpecificationViewModel? _specificationViewModel;
+    private readonly IPracticeResultRepository? _resultRepository;
 
     private bool _hasLoadError;
     private string _loadErrorMessage = string.Empty;
@@ -49,16 +51,18 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
         QuestionGenerator? questionGenerator,
         ILaTeXRenderer? laTeXRenderer,
         ISpecificationLoader? specificationLoader,
-        SpecificationViewModel? specificationViewModel = null)
+        SpecificationViewModel? specificationViewModel = null,
+        IPracticeResultRepository? resultRepository = null)
     {
         _questionGenerator = questionGenerator;
         _laTeXRenderer = laTeXRenderer;
         _specificationLoader = specificationLoader;
         _specificationViewModel = specificationViewModel;
+        _resultRepository = resultRepository;
 
         Activator = new ViewModelActivator();
         var settingsViewModel = new SettingsViewModel();
-        Navigation = new NavigationViewModel(specificationViewModel, questionGenerator, new JsonPracticeResultRepository(), settingsViewModel);
+        Navigation = new NavigationViewModel(specificationViewModel, questionGenerator, _resultRepository, settingsViewModel);
 
         GenerateCommand = ReactiveCommand.CreateFromTask(OnGenerate, this.WhenAnyValue(x => x.IsGenerating).Select(b => !b));
         ToggleSolutionCommand = ReactiveCommand.Create(OnToggleSolution);
@@ -323,7 +327,7 @@ public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
         if (_specificationLoader is null) return;
         try
         {
-            var spec = _specificationLoader.Load("part_one.txt");
+            var spec = _specificationLoader.Load(Path.Combine(AppContext.BaseDirectory, "Data", "part_one.txt"));
             AvailableTopics = spec.Topics.Select(t => t.Id).ToList();
             AvailableSkills = spec.Skills.Select(s => s.Id).ToList();
         }

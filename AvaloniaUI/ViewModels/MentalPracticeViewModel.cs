@@ -487,10 +487,22 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
         // Pre-generate questions
         string? topicId = ResolveTopicId();
         var count = IsEndlessMode ? 50 : SelectedQuestionCount;
-        _questionQueue = (await Task.Run(() =>
-            _questionGenerator.GenerateBatch(count, topicId))).ToList();
+        try
+        {
+            _questionQueue = (await Task.Run(() =>
+                _questionGenerator.GenerateBatch(count, topicId))).ToList();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to generate questions: {ex.Message}";
+            return;
+        }
 
-        if (_questionQueue.Count == 0) return;
+        if (_questionQueue.Count == 0)
+        {
+            ErrorMessage = "No questions could be generated. Please check that the specification file is loaded and try different filters.";
+            return;
+        }
 
         // Transition to countdown
         IsInSetup = false;
@@ -527,16 +539,10 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
         if (unitItem is not null)
         {
             SelectedUnitId = unitItem.Id;
-            // Get first topic from this unit
-            if (_specificationViewModel is not null)
-            {
-                var unit = _specificationViewModel.Units.FirstOrDefault(u => u.Id == unitItem.Id);
-                if (unit is not null)
-                {
-                    var topics = _specificationViewModel.Topics.Where(t => t.UnitId == unit.Id).ToList();
-                    if (topics.Count > 0) return topics[0].Id;
-                }
-            }
+            // Return null to allow all topics in the unit
+            // The QuestionGenerator will filter by topic, and returning null
+            // means it generates from all available topics
+            return null;
         }
 
         return null;
@@ -607,16 +613,40 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
             // answer is the index (0-based) as string
             if (int.TryParse(answer, out var index) && index >= 0 && index < CurrentQuestion.Choices.Count)
             {
-                return string.Equals(
-                    CurrentQuestion.Choices[index].Trim(),
-                    CurrentQuestion.Answer.Trim(),
-                    StringComparison.OrdinalIgnoreCase);
+                return AreAnswersEquivalent(CurrentQuestion.Choices[index].Trim(), CurrentQuestion.Answer.Trim());
             }
             return false;
         }
 
-        // Short answer: compare trimmed, case-insensitive
-        return string.Equals(answer.Trim(), CurrentQuestion.Answer.Trim(), StringComparison.OrdinalIgnoreCase);
+        // Short answer: try numerical comparison first, then fall back to string
+        return AreAnswersEquivalent(answer.Trim(), CurrentQuestion.Answer.Trim());
+    }
+
+    /// <summary>
+    /// Compares two answers, handling numerical equivalence (e.g., "3.14" == "3.1400").
+    /// </summary>
+    private static bool AreAnswersEquivalent(string userAnswer, string correctAnswer)
+    {
+        // Exact string match (case-insensitive)
+        if (string.Equals(userAnswer, correctAnswer, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        // Try numerical comparison
+        if (double.TryParse(userAnswer, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var userVal) &&
+            double.TryParse(correctAnswer, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var correctVal))
+        {
+            // Compare with relative tolerance to handle floating-point formatting differences
+            if (Math.Abs(userVal - correctVal) < 1e-6)
+                return true;
+            // Relative tolerance for larger values
+            if (correctVal != 0 && Math.Abs((userVal - correctVal) / correctVal) < 1e-4)
+                return true;
+            // Both are effectively zero
+            if (Math.Abs(userVal) < 1e-10 && Math.Abs(correctVal) < 1e-10)
+                return true;
+        }
+
+        return false;
     }
 
     private void RecordAnswer(bool correct, double timeSeconds)
