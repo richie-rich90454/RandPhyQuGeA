@@ -1,5 +1,7 @@
 using System.Globalization;
 using Core.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NCalc;
 using NCalc.Handlers;
 
@@ -7,12 +9,23 @@ namespace Core.Services;
 
 public class NCalcEvaluator : IExpressionEvaluator
 {
+    private readonly ILogger<NCalcEvaluator> _logger;
     private static readonly HashSet<string> AllowedFunctions = new(StringComparer.OrdinalIgnoreCase)
     {
         "sin", "cos", "tan", "sqrt", "pow", "pi", "e", "abs", "acos", "asin", "atan",
         "ceiling", "exp", "floor", "ieeeremainder", "ln", "log", "log10", "max", "min",
         "round", "sign", "truncate", "in", "if", "ifs"
     };
+
+    public NCalcEvaluator()
+        : this(NullLogger<NCalcEvaluator>.Instance)
+    {
+    }
+
+    public NCalcEvaluator(ILogger<NCalcEvaluator> logger)
+    {
+        _logger = logger;
+    }
 
     public double Evaluate(string expression, IReadOnlyDictionary<string, object> variables)
     {
@@ -25,7 +38,10 @@ public class NCalcEvaluator : IExpressionEvaluator
         workingExpr.EvaluateFunction += (string name, FunctionArgs args) =>
         {
             if (!AllowedFunctions.Contains(name))
+            {
+                _logger.LogWarning("Function '{FunctionName}' is not allowed in expression", name);
                 throw new FormatException($"Function '{name}' is not allowed.");
+            }
 
             switch (name.ToLowerInvariant())
             {
@@ -102,6 +118,14 @@ public class NCalcEvaluator : IExpressionEvaluator
             workingExpr.Parameters[variable.Key] = variable.Value;
         }
 
-        return Convert.ToDouble(workingExpr.Evaluate(), CultureInfo.InvariantCulture);
+        try
+        {
+            return Convert.ToDouble(workingExpr.Evaluate(), CultureInfo.InvariantCulture);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to evaluate expression '{Expression}'", expression);
+            throw;
+        }
     }
 }

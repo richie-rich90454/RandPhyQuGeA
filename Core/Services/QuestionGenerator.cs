@@ -2,6 +2,8 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using Core.Domain;
 using Core.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Core.Services;
 
@@ -12,6 +14,7 @@ public class QuestionGenerator
     private readonly IExpressionEvaluator _evaluator;
     private readonly IDistractorGenerator _distractorGenerator;
     private readonly ISolutionBuilder _solutionBuilder;
+    private readonly ILogger<QuestionGenerator> _logger;
     private readonly Random _shuffleRandom = new();
 
     public QuestionGenerator(
@@ -20,19 +23,35 @@ public class QuestionGenerator
         IExpressionEvaluator evaluator,
         IDistractorGenerator distractorGenerator,
         ISolutionBuilder solutionBuilder)
+        : this(templateRepository, random, evaluator, distractorGenerator, solutionBuilder,
+            NullLogger<QuestionGenerator>.Instance)
+    {
+    }
+
+    public QuestionGenerator(
+        ITemplateRepository templateRepository,
+        IRandomValueGenerator random,
+        IExpressionEvaluator evaluator,
+        IDistractorGenerator distractorGenerator,
+        ISolutionBuilder solutionBuilder,
+        ILogger<QuestionGenerator> logger)
     {
         _templateRepository = templateRepository;
         _random = random;
         _evaluator = evaluator;
         _distractorGenerator = distractorGenerator;
         _solutionBuilder = solutionBuilder;
+        _logger = logger;
     }
 
     public GeneratedQuestion? Generate(string? topicId = null, string? skillId = null, int? minDifficulty = null, int? maxDifficulty = null, string? questionType = null)
     {
         var template = GetRandomTemplate(topicId, skillId, minDifficulty, maxDifficulty, questionType);
         if (template is null)
+        {
+            _logger.LogWarning("No matching template found for topicId={TopicId}, skillId={SkillId}, questionType={QuestionType}", topicId, skillId, questionType);
             return null;
+        }
 
         var variables = GenerateVariables(template.VariableDefinitions);
         var text = SubstituteVariables(template.TextTemplate, variables);
@@ -42,8 +61,9 @@ public class QuestionGenerator
         {
             answerValue = _evaluator.Evaluate(template.AnswerExpression, variables);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Failed to evaluate answer expression '{Expression}' for template {TemplateId}", template.AnswerExpression, template.Id);
             return null;
         }
 
@@ -85,6 +105,7 @@ public class QuestionGenerator
             if (question is not null)
                 results.Add(question);
         }
+        _logger.LogInformation("Generated {SuccessCount}/{RequestedCount} questions", results.Count, count);
         return results;
     }
 

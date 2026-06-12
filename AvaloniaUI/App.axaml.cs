@@ -9,10 +9,13 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using AvaloniaUI.ViewModels;
 using Core.Domain;
+using Core.Exporters;
 using Core.Interfaces;
 using Core.Parsing;
 using Core.Services;
 using LaTeX.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace AvaloniaUI;
 
@@ -20,6 +23,7 @@ public partial class App : Application
 {
     private ResourceDictionary? _lightThemeResources;
     private ResourceDictionary? _darkThemeResources;
+    private ServiceProvider? _serviceProvider;
 
     public static AppTheme CurrentTheme { get; private set; } = AppTheme.System;
 
@@ -34,19 +38,64 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            _serviceProvider = ConfigureServices();
+
             var (viewModel, specViewModel, repository) = CreateViewModel();
 
             // Set the window first so Avalonia has a main window
             desktop.MainWindow = new MainWindow(viewModel);
 
-            // Then load spec asynchronously — the window will show a loading state
+            // Then load spec asynchronously �?the window will show a loading state
             _ = InitializeSpecAsync(specViewModel, repository, viewModel);
         }
 
         base.OnFrameworkInitializationCompleted();
     }
 
-    private static async Task InitializeSpecAsync(SpecificationViewModel specViewModel, InMemoryTemplateRepository repository, MainWindowViewModel mainWindowViewModel)
+    private static ServiceProvider ConfigureServices()
+    {
+        var services = new ServiceCollection();
+
+        // Logging
+        services.AddLogging(builder =>
+        {
+            builder.AddDebug();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
+
+        // Random seed: fixed in DEBUG for reproducibility, random in RELEASE
+#if DEBUG
+        var seed = 42;
+#else
+        var seed = Environment.TickCount;
+#endif
+        services.AddSingleton<IRandomValueGenerator>(_ => new SeededRandomGenerator(seed));
+
+        services.AddSingleton<IExpressionEvaluator, NCalcEvaluator>();
+        services.AddSingleton<ITemplateRepository>(_ => new InMemoryTemplateRepository(new List<QuestionTemplate>()));
+        services.AddSingleton<IDistractorGenerator, CommonMistakeDistractorGenerator>();
+        services.AddSingleton<ILaTeXRenderer, DummyRenderer>();
+        services.AddSingleton<IPracticeResultRepository, JsonPracticeResultRepository>();
+        services.AddSingleton<ISpecificationLoader, PartOneTextLoader>();
+
+        // Solution builders
+        services.AddSingleton<PlainTextSolutionBuilder>();
+        services.AddSingleton<LaTeXSolutionBuilder>();
+
+        // Question generator (depends on ISolutionBuilder �?register as the primary builder)
+        services.AddSingleton<ISolutionBuilder, PlainTextSolutionBuilder>();
+        services.AddSingleton<QuestionGenerator>();
+
+        // Exporters
+        services.AddSingleton<IQuestionExporter, TextExporter>();
+        services.AddSingleton<IQuestionExporter, MarkdownExporter>();
+        services.AddSingleton<IQuestionExporter, HtmlExporter>();
+        services.AddSingleton<IQuestionExporter, PdfExporter>();
+
+        return services.BuildServiceProvider();
+    }
+
+    private async Task InitializeSpecAsync(SpecificationViewModel specViewModel, InMemoryTemplateRepository repository, MainWindowViewModel mainWindowViewModel)
     {
         try
         {
@@ -55,7 +104,8 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Failed to load spec: {ex.Message}");
+            var logger = _serviceProvider?.GetService<ILogger<App>>();
+            logger?.LogError(ex, "Failed to load specification");
             mainWindowViewModel.HasLoadError = true;
             mainWindowViewModel.LoadErrorMessage = $"Failed to load specification: {ex.Message}";
         }
@@ -112,16 +162,12 @@ public partial class App : Application
         }
     }
 
-    private static (MainWindowViewModel mainWindowViewModel, SpecificationViewModel specViewModel, InMemoryTemplateRepository repository) CreateViewModel()
+    private (MainWindowViewModel mainWindowViewModel, SpecificationViewModel specViewModel, InMemoryTemplateRepository repository) CreateViewModel()
     {
-        var random = new SeededRandomGenerator(42);
-        var evaluator = new NCalcEvaluator();
-        var loader = new PartOneTextLoader();
-        var repository = new InMemoryTemplateRepository(new List<QuestionTemplate>());
-        var distractorGenerator = new CommonMistakeDistractorGenerator(evaluator);
-        var solutionBuilder = new PlainTextSolutionBuilder();
-        var questionGenerator = new QuestionGenerator(repository, random, evaluator, distractorGenerator, solutionBuilder);
-        var latexRenderer = new DummyRenderer();
+        var repository = (InMemoryTemplateRepository)_serviceProvider!.GetRequiredService<ITemplateRepository>();
+        var questionGenerator = _serviceProvider.GetRequiredService<QuestionGenerator>();
+        var latexRenderer = _serviceProvider.GetRequiredService<ILaTeXRenderer>();
+        var loader = _serviceProvider.GetRequiredService<ISpecificationLoader>();
         var specViewModel = new SpecificationViewModel(loader);
 
         return (new MainWindowViewModel(questionGenerator, latexRenderer, loader, specViewModel), specViewModel, repository);

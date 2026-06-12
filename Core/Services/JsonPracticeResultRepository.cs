@@ -1,8 +1,9 @@
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Core.Domain;
 using Core.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Core.Services;
 
@@ -16,10 +17,12 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
 
     private readonly string _filePath;
     private readonly SemaphoreSlim _lock = new(1, 1);
+    private readonly ILogger<JsonPracticeResultRepository> _logger;
     private List<PracticeResult> _cache = new();
     private bool _isLoaded;
 
     public JsonPracticeResultRepository()
+        : this(NullLogger<JsonPracticeResultRepository>.Instance)
     {
         var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         var dir = Path.Combine(appData, "RandPhyQuGeA");
@@ -28,11 +31,27 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
     }
 
     public JsonPracticeResultRepository(string filePath)
+        : this(NullLogger<JsonPracticeResultRepository>.Instance, filePath)
     {
-        _filePath = filePath;
-        var dir = Path.GetDirectoryName(filePath);
-        if (!string.IsNullOrEmpty(dir))
+    }
+
+    public JsonPracticeResultRepository(ILogger<JsonPracticeResultRepository> logger, string? filePath = null)
+    {
+        _logger = logger;
+        if (filePath is not null)
+        {
+            _filePath = filePath;
+            var dir = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrEmpty(dir))
+                Directory.CreateDirectory(dir);
+        }
+        else
+        {
+            var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var dir = Path.Combine(appData, "RandPhyQuGeA");
             Directory.CreateDirectory(dir);
+            _filePath = Path.Combine(dir, "practice_results.json");
+        }
     }
 
     public async Task SaveAsync(PracticeResult result, CancellationToken cancellationToken = default)
@@ -125,7 +144,7 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
         }
         catch (Exception ex)
         {
-            Debug.WriteLine("[JsonPracticeResultRepository] Failed to load practice results from " + _filePath + ": " + ex.Message);
+            _logger.LogError(ex, "Failed to load practice results from {FilePath}", _filePath);
             _cache = new List<PracticeResult>();
         }
 
@@ -141,7 +160,7 @@ public class JsonPracticeResultRepository : IPracticeResultRepository
         }
         catch (Exception ex)
         {
-            Debug.WriteLine("[JsonPracticeResultRepository] Failed to persist practice results to " + _filePath + ": " + ex.Message);
+            _logger.LogError(ex, "Failed to persist practice results to {FilePath}", _filePath);
         }
     }
 }

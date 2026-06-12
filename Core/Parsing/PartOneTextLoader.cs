@@ -1,17 +1,31 @@
 using System.Globalization;
 using Core.Domain;
 using Core.Interfaces;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Core.Parsing;
 
 public sealed class PartOneTextLoader : ISpecificationLoader
 {
+    private readonly ILogger<PartOneTextLoader> _logger;
+
+    public PartOneTextLoader()
+        : this(NullLogger<PartOneTextLoader>.Instance)
+    {
+    }
+
+    public PartOneTextLoader(ILogger<PartOneTextLoader> logger)
+    {
+        _logger = logger;
+    }
+
     public Specification Load(string filePath)
     {
         if (string.IsNullOrEmpty(filePath))
             throw new ArgumentException("File path must not be null or empty.", nameof(filePath));
         var lines = File.ReadAllLines(filePath);
-        return Parse(lines);
+        return Parse(lines, filePath);
     }
 
     public async Task<Specification> LoadAsync(string filePath, CancellationToken cancellationToken = default)
@@ -19,10 +33,10 @@ public sealed class PartOneTextLoader : ISpecificationLoader
         if (string.IsNullOrEmpty(filePath))
             throw new ArgumentException("File path must not be null or empty.", nameof(filePath));
         var lines = await File.ReadAllLinesAsync(filePath, cancellationToken);
-        return Parse(lines);
+        return Parse(lines, filePath);
     }
 
-    private static Specification Parse(string[] lines)
+    private Specification Parse(string[] lines, string filePath)
     {
         var errors = new List<ParseError>();
         var units = new List<Unit>();
@@ -94,8 +108,12 @@ public sealed class PartOneTextLoader : ISpecificationLoader
 
         if (errors.Count > 0)
         {
+            _logger.LogError("Parse errors in {FilePath}: {ErrorCount} errors found", filePath, errors.Count);
             throw new ParseException(errors);
         }
+
+        _logger.LogInformation("Successfully loaded specification from {FilePath} with {UnitCount} units, {TopicCount} topics, {SkillCount} skills, {TemplateCount} templates",
+            filePath, units.Count, topics.Count, skills.Count, templates.Count);
 
         return new Specification(units, topics, skills, templates);
     }
