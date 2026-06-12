@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -41,11 +43,19 @@ public partial class App : Application
 
             var (viewModel, specViewModel, repository) = CreateViewModel();
 
-            // Load spec synchronously before showing window
+            // Load spec synchronously — this is fast (just reads a text file and parses it)
+            // We do NOT use specViewModel.EnsureLoadedAsync() here because that uses
+            // async/await which deadlocks when called with .GetAwaiter().GetResult()
+            // on the UI thread (the continuation needs the UI thread which is blocked).
             try
             {
-                specViewModel.EnsureLoadedAsync().GetAwaiter().GetResult();
-                repository.AddRange(specViewModel.GetLoadedTemplates());
+                var loader = _serviceProvider!.GetRequiredService<ISpecificationLoader>();
+                var specPath = Path.Combine(AppContext.BaseDirectory, "Data", "part_one.txt");
+                if (File.Exists(specPath))
+                {
+                    var spec = loader.Load(specPath);
+                    repository.AddRange(spec.Templates);
+                }
             }
             catch (Exception ex)
             {
@@ -56,9 +66,26 @@ public partial class App : Application
             }
 
             desktop.MainWindow = new MainWindow(viewModel);
+
+            // Now load the spec into SpecificationViewModel asynchronously (for UI collections)
+            // This runs after the window is shown, so no deadlock
+            _ = LoadSpecIntoViewModelAsync(specViewModel);
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private async Task LoadSpecIntoViewModelAsync(SpecificationViewModel specViewModel)
+    {
+        try
+        {
+            await specViewModel.EnsureLoadedAsync();
+        }
+        catch (Exception ex)
+        {
+            var logger = _serviceProvider?.GetService<ILogger<App>>();
+            logger?.LogError(ex, "Failed to load specification into ViewModel");
+        }
     }
 
     private static ServiceProvider ConfigureServices()
