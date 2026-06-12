@@ -185,13 +185,9 @@
                              HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
                 <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
-                  <ctrl:LaTeXImage LaTeXSource="{Binding QuestionText}"
-                                   IsVisible="{Binding QuestionHasLaTeX}"
-                                   HorizontalAlignment="Left" />
                   <TextBlock Text="{Binding QuestionText}" FontSize="13"
                              Foreground="{Binding WasCorrect, Converter={StaticResource CorrectToTextConverter}}"
-                             TextWrapping="Wrap" MaxLines="2"
-                             IsVisible="{Binding !QuestionHasLaTeX}" />
+                             TextWrapping="Wrap" MaxLines="2" />
                   <!-- Correct answer display -->
                   <TextBlock Text="{Binding UserAnswer}" FontSize="11"
                              Foreground="{Binding WasCorrect, Converter={StaticResource CorrectToTextConverter}}" Opacity="0.7"
