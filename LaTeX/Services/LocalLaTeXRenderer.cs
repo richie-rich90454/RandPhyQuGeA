@@ -88,9 +88,21 @@ public class LocalLaTeXRenderer : ILaTeXRenderer
         }
     }
 
+    private static readonly string[] _dangerousPatterns = ["\\input", "\\include", "\\write", "\\openout", "\\immediate"];
+
+    private static string SanitizeLatex(string latex)
+    {
+        foreach (var pattern in _dangerousPatterns)
+        {
+            if (latex.Contains(pattern, StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException($"LaTeX input contains potentially dangerous command: {pattern}");
+        }
+        return latex;
+    }
+
     private static string WrapLatex(string latex)
     {
-        return $"\\documentclass{{standalone}}\n\\begin{{document}}\n{latex}\n\\end{{document}}";
+        return $"\\documentclass{{standalone}}\n\\begin{{document}}\n{SanitizeLatex(latex)}\n\\end{{document}}";
     }
 
     private static async Task<int> RunProcessAsync(string fileName, string arguments, CancellationToken cancellationToken)

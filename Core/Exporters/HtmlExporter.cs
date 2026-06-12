@@ -49,6 +49,6 @@ public sealed class HtmlExporter : IQuestionExporter
 
     private static string EscapeHtml(string text)
     {
-        return text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;");
+        return text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&#39;");
     }
 }
