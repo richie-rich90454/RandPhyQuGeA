@@ -36,7 +36,17 @@ public class QuestionGenerator
 
         var variables = GenerateVariables(template.VariableDefinitions);
         var text = SubstituteVariables(template.TextTemplate, variables);
-        var answerValue = _evaluator.Evaluate(template.AnswerExpression, variables);
+
+        double answerValue;
+        try
+        {
+            answerValue = _evaluator.Evaluate(template.AnswerExpression, variables);
+        }
+        catch
+        {
+            return null;
+        }
+
         var answer = FormatAnswer(answerValue);
 
         IReadOnlyList<string>? choices = null;

@@ -77,15 +77,11 @@ public class CommonMistakeDistractorGeneratorTests
     [Fact]
     public void Generate_ReturnsEmptyForSimpleExpressionsWithoutTrigFunctions()
     {
-        // For a simple expression with no trig or sqrt, the generator still applies
+        // For a simple expression with no trig or sqrt, the generator applies
         // sign-flip and factor strategies. With a positive answer like "5",
-        // sign flip gives -5 (filtered because wrong sign), but factor-of-2 and
-        // factor-of-10 strategies produce valid distractors.
-        // To get an empty result, we need a scenario where all strategies fail.
-        // With correctValue = 0, sign flip gives -0 which may format as "-0" (≠ "0"),
-        // but factor strategies all produce 0 (same as answer, filtered).
-        // However, -0 can format as "-0" which differs from "0", producing one distractor.
-        // Instead, test that for a simple expression (no trig), no trig-swap distractors appear.
+        // sign flip gives -5 (now allowed as a sign-flip distractor), and
+        // factor-of-2 and factor-of-10 strategies also produce valid distractors.
+        // Test that for a simple expression (no trig), no trig-swap distractors appear.
         var evaluator = new StubExpressionEvaluator(5.0);
         var generator = new CommonMistakeDistractorGenerator(evaluator);
         var template = MakeTemplate(answerExpression: "[x]");
@@ -98,6 +94,8 @@ public class CommonMistakeDistractorGeneratorTests
         Assert.All(distractors, d => Assert.NotEqual("5", d));
         // Verify that at most 3 distractors are returned (Take(3) in source)
         Assert.True(distractors.Count <= 3);
+        // Sign-flip distractors are now allowed
+        Assert.Contains(distractors, d => d == "-5");
     }
 
     [Fact]

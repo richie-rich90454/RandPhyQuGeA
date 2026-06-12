@@ -662,7 +662,7 @@ public class MentalPracticeViewModel : ViewModelBase, IDisposable
                 SkillId = CurrentQuestion.SkillId,
                 IsCorrect = correct,
                 TimeTaken = TimeSpan.FromSeconds(timeSeconds),
-                UserAnswer = correct ? CurrentQuestion.Answer : (IsMultipleChoice ? _currentAnswer : _currentAnswer),
+                UserAnswer = correct ? CurrentQuestion.Answer : _currentAnswer,
                 Timestamp = DateTime.UtcNow,
                 Mode = PracticeMode.Mental,
                 Difficulty = CurrentQuestion.Difficulty

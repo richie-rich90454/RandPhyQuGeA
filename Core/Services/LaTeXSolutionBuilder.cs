@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Core.Domain;
 using Core.Interfaces;
 
@@ -6,6 +7,8 @@ namespace Core.Services;
 
 public class LaTeXSolutionBuilder : ISolutionBuilder
 {
+    private static readonly Regex PlaceholderPattern = new(@"\{(\w+)\}", RegexOptions.Compiled);
+
     public string BuildPlainText(QuestionTemplate template, IReadOnlyDictionary<string, object> variables)
     {
         return SubstituteVariables(template.SolutionTemplate, variables);
@@ -13,28 +16,17 @@ public class LaTeXSolutionBuilder : ISolutionBuilder
 
     public string BuildLaTeX(QuestionTemplate template, IReadOnlyDictionary<string, object> variables)
     {
-        var result = template.SolutionTemplate;
-
-        foreach (var kvp in variables)
-        {
-            var placeholder = $"{{{kvp.Key}}}";
-            var value = FormatLaTeXValue(kvp.Value);
-            result = result.Replace(placeholder, value, StringComparison.Ordinal);
-        }
-
-        return result;
+        return SubstituteVariables(template.SolutionTemplate, variables, FormatLaTeXValue);
     }
 
-    private static string SubstituteVariables(string template, IReadOnlyDictionary<string, object> variables)
+    private static string SubstituteVariables(string template, IReadOnlyDictionary<string, object> variables, Func<object, string>? formatter = null)
     {
-        var result = template;
-        foreach (var kvp in variables)
+        formatter ??= PlainTextSolutionBuilder.FormatValue;
+        return PlaceholderPattern.Replace(template, match =>
         {
-            var placeholder = $"{{{kvp.Key}}}";
-            var value = PlainTextSolutionBuilder.FormatValue(kvp.Value);
-            result = result.Replace(placeholder, value, StringComparison.Ordinal);
-        }
-        return result;
+            var varName = match.Groups[1].Value;
+            return variables.TryGetValue(varName, out var value) ? formatter(value) : match.Value;
+        });
     }
 
     private static string FormatLaTeXValue(object value)

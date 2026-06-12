@@ -96,8 +96,6 @@ public class CommonMistakeDistractorGenerator : IDistractorGenerator
             string formatted = FormatValue(value);
             if (formatted != correctAnswer && !distractors.Contains(formatted))
             {
-                if (correctIsPositive && value < 0) return;
-                if (correctIsNegative && value > 0) return;
                 distractors.Add(formatted);
             }
         }
@@ -112,8 +110,6 @@ public class CommonMistakeDistractorGenerator : IDistractorGenerator
     {
         if (formatted == correctAnswer) return;
         if (distractors.Contains(formatted)) return;
-        if (correctIsPositive && value < 0) return;
-        if (correctIsNegative && value > 0) return;
         distractors.Add(formatted);
     }
 

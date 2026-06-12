@@ -24,6 +24,9 @@ public class NCalcEvaluator : IExpressionEvaluator
         // Register custom degree-based trig functions and constants.
         workingExpr.EvaluateFunction += (string name, FunctionArgs args) =>
         {
+            if (!AllowedFunctions.Contains(name))
+                throw new FormatException($"Function '{name}' is not allowed.");
+
             switch (name.ToLowerInvariant())
             {
                 case "sin":
@@ -99,17 +102,6 @@ public class NCalcEvaluator : IExpressionEvaluator
             workingExpr.Parameters[variable.Key] = variable.Value;
         }
 
-        // Security: catch disallowed functions during evaluation.
-        try
-        {
-            var result = workingExpr.Evaluate();
-            return Convert.ToDouble(result, CultureInfo.InvariantCulture);
-        }
-        catch (NCalc.Exceptions.NCalcException ex) when (ex.Message.Contains("not found", StringComparison.OrdinalIgnoreCase)
-                                                         || ex.Message.Contains("Unknown", StringComparison.OrdinalIgnoreCase)
-                                                         || ex.Message.Contains("not a function", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException($"Disallowed or unknown function in expression: {expression}", ex);
-        }
+        return Convert.ToDouble(workingExpr.Evaluate(), CultureInfo.InvariantCulture);
     }
 }
