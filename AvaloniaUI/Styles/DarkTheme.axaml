@@ -53,6 +53,21 @@
     <!-- Neutral overrides for dark theme -->
     <SolidColorBrush x:Key="Neutral10Brush" Color="#1E2A45" />
     <SolidColorBrush x:Key="Neutral20Brush" Color="#243352" />
+    <SolidColorBrush x:Key="Neutral30Brush" Color="#2D3A54" />
+    <SolidColorBrush x:Key="Neutral40Brush" Color="#3C4043" />
+    <SolidColorBrush x:Key="Neutral50Brush" Color="#5F6368" />
+    <SolidColorBrush x:Key="Neutral60Brush" Color="#80868B" />
+    <SolidColorBrush x:Key="Neutral70Brush" Color="#9AA0A6" />
+    <SolidColorBrush x:Key="Neutral80Brush" Color="#BDC1C6" />
+    <SolidColorBrush x:Key="Neutral90Brush" Color="#E8EAED" />
+
+    <!-- Semantic Brushes (dark overrides) -->
+    <SolidColorBrush x:Key="ErrorBrush" Color="#EF5350" />
+    <SolidColorBrush x:Key="ErrorLightBrush" Color="#3A1B1B" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#66BB6A" />
+    <SolidColorBrush x:Key="SuccessLightBrush" Color="#1B3A26" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#FFA726" />
+    <SolidColorBrush x:Key="WarningLightBrush" Color="#3A2A1B" />
 
     <!-- Primary overrides for dark theme -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="#3B7DDD" />
@@ -87,5 +102,11 @@
     <!-- Scrollbar -->
     <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#3C4043" />
     <SolidColorBrush x:Key="ScrollBarTrackBrush" Color="Transparent" />
+
+    <!-- Theme Preview Brushes -->
+    <SolidColorBrush x:Key="SurfaceBackgroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="DarkSurfaceBrush" Color="#1A1A2E" />
+    <SolidColorBrush x:Key="AccentOrangeBrush" Color="#F57C00" />
+    <SolidColorBrush x:Key="SecondaryTextBrush" Color="#9AA0A6" />
 
 </ResourceDictionary>

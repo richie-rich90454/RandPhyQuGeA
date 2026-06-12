@@ -157,6 +157,20 @@
       <TextBlock Text="Question Review" FontSize="18" FontWeight="SemiBold"
                  Foreground="{DynamicResource TextPrimaryBrush}" />
       <ListBox ItemsSource="{Binding QuestionResults}" Background="Transparent" BorderThickness="0" Padding="0" SelectionMode="Toggle">
+        <ListBox.Styles>
+          <Style Selector="ListBoxItem:focus /template/ Border#FocusVisual">
+            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+          </Style>
+          <Style Selector="ListBoxItem:selected /template/ Border#FocusVisual">
+            <Setter Property="IsVisible" Value="True" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="8" />
+          </Style>
+        </ListBox.Styles>
         <ListBox.ItemTemplate>
           <DataTemplate x:DataType="vm:QuestionResultItem">
             <Border Background="{Binding WasCorrect, Converter={StaticResource CorrectToBackgroundConverter}}"
@@ -273,7 +287,7 @@
           <TextBlock Text="Export Preview" FontSize="13" FontWeight="SemiBold"
                      Foreground="{DynamicResource TextPrimaryBrush}" />
           <TextBox Text="{Binding ExportText}" IsReadOnly="True"
-                   FontFamily="Consolas" FontSize="11"
+                   FontFamily="Consolas,Courier New,monospace" FontSize="11"
                    AcceptsReturn="True" TextWrapping="Wrap"
                    MaxHeight="300" />
         </StackPanel>

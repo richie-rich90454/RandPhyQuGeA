@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Text.Json;
@@ -10,6 +11,9 @@ namespace AvaloniaUI.ViewModels;
 public class SettingsViewModel : ViewModelBase, IDisposable
 {
     private bool _isDisposed;
+
+    public static string AppVersion { get; } =
+        Assembly.GetEntryAssembly()?.GetName().Version?.ToString() ?? "1.0.0";
 
     private static readonly string SettingsFilePath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
