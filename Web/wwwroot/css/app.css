@@ -14,3 +14,15 @@ h1 { color: #2c3e50; }
 .solution { background: #f0f9f0; padding: 15px; border-radius: 4px; margin: 10px 0; }
 .answer { color: #27ae60; font-weight: bold; font-size: 1.1em; }
 .error { color: #e74c3c; padding: 10px; background: #fdeaea; border-radius: 4px; }
+
+@media (max-width: 768px) {
+    .container { padding: 12px; }
+    h1 { font-size: 1.4em; }
+    .filters { flex-direction: column; align-items: stretch; gap: 10px; }
+    .filter-group { width: 100%; }
+    .filter-group input, .filter-group select { width: 100%; box-sizing: border-box; }
+    .btn-primary { width: 100%; padding: 10px 20px; }
+    .question-card { padding: 14px; }
+    .question-text { font-size: 1em; }
+    .choice { padding: 10px 12px; }
+}

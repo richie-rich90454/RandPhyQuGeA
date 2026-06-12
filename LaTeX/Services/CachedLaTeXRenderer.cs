@@ -10,8 +10,8 @@ public class CachedLaTeXRenderer : ILaTeXRenderer
     private readonly Dictionary<string, (LinkedListNode<string> Key, string Value)> _svgCache = new();
     private readonly LinkedList<string> _imageLru = new();
     private readonly LinkedList<string> _svgLru = new();
-    private readonly object _imageLock = new();
-    private readonly object _svgLock = new();
+    private readonly SemaphoreSlim _imageSemaphore = new(1, 1);
+    private readonly SemaphoreSlim _svgSemaphore = new(1, 1);
 
     public CachedLaTeXRenderer(ILaTeXRenderer innerRenderer, int maxCacheSize = 100)
     {
@@ -21,9 +21,13 @@ public class CachedLaTeXRenderer : ILaTeXRenderer
 
     public async Task<byte[]> RenderToImageAsync(string latex, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(latex))
+            throw new ArgumentException("LaTeX input must not be null or empty.", nameof(latex));
+
         var key = ComputeKey(latex);
 
-        lock (_imageLock)
+        await _imageSemaphore.WaitAsync(cancellationToken);
+        try
         {
             if (_imageCache.TryGetValue(key, out var entry))
             {
@@ -32,10 +36,15 @@ public class CachedLaTeXRenderer : ILaTeXRenderer
                 return entry.Value;
             }
         }
+        finally
+        {
+            _imageSemaphore.Release();
+        }
 
         var result = await _innerRenderer.RenderToImageAsync(latex, cancellationToken);
 
-        lock (_imageLock)
+        await _imageSemaphore.WaitAsync(cancellationToken);
+        try
         {
             if (_imageCache.TryGetValue(key, out var existing))
             {
@@ -56,15 +65,23 @@ public class CachedLaTeXRenderer : ILaTeXRenderer
                 _imageCache[key] = (node, result);
             }
         }
+        finally
+        {
+            _imageSemaphore.Release();
+        }
 
         return result;
     }
 
     public async Task<string> RenderToSvgAsync(string latex, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(latex))
+            throw new ArgumentException("LaTeX input must not be null or empty.", nameof(latex));
+
         var key = ComputeKey(latex);
 
-        lock (_svgLock)
+        await _svgSemaphore.WaitAsync(cancellationToken);
+        try
         {
             if (_svgCache.TryGetValue(key, out var entry))
             {
@@ -73,10 +90,15 @@ public class CachedLaTeXRenderer : ILaTeXRenderer
                 return entry.Value;
             }
         }
+        finally
+        {
+            _svgSemaphore.Release();
+        }
 
         var result = await _innerRenderer.RenderToSvgAsync(latex, cancellationToken);
 
-        lock (_svgLock)
+        await _svgSemaphore.WaitAsync(cancellationToken);
+        try
         {
             if (_svgCache.TryGetValue(key, out var existing))
             {
@@ -96,6 +118,10 @@ public class CachedLaTeXRenderer : ILaTeXRenderer
                 var node = _svgLru.AddFirst(key);
                 _svgCache[key] = (node, result);
             }
+        }
+        finally
+        {
+            _svgSemaphore.Release();
         }
 
         return result;

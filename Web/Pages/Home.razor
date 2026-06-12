@@ -67,7 +67,7 @@
     private string? selectedType = null;
     private string? errorMessage;
 
-    private void GenerateQuestion()
+    private async Task GenerateQuestion()
     {
         try
         {
@@ -83,12 +83,27 @@
 
             if (currentQuestion == null)
             {
-                errorMessage = "No matching template found. Try different filters.";
+                errorMessage = "No matching template found. Try different filters or ensure specification data is loaded.";
+                return;
             }
+
+            // Re-render MathJax after dynamic content update
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("mathJaxTypeset");
+            }
+            catch (Exception)
+            {
+                // MathJax may not be loaded yet; ignore
+            }
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("No matching template"))
+        {
+            errorMessage = "No matching template found for the selected criteria. Try adjusting the difficulty or question type.";
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error: {ex.Message}";
+            errorMessage = $"Error generating question: {ex.Message}";
         }
     }
 }

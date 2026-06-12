@@ -22,4 +22,29 @@ builder.Services.AddSingleton<IDistractorGenerator, CommonMistakeDistractorGener
 builder.Services.AddSingleton<ISolutionBuilder, PlainTextSolutionBuilder>();
 builder.Services.AddSingleton<QuestionGenerator>();
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+
+// Load specification data on startup
+var specLoader = host.Services.GetRequiredService<ISpecificationLoader>();
+var templateRepo = host.Services.GetRequiredService<InMemoryTemplateRepository>();
+var specFilePath = builder.Configuration["SpecFilePath"]
+    ?? Path.Combine(AppContext.BaseDirectory, "Data", "part_one.txt");
+
+try
+{
+    if (File.Exists(specFilePath))
+    {
+        var spec = await specLoader.LoadAsync(specFilePath);
+        templateRepo.AddRange(spec.Templates);
+    }
+    else
+    {
+        Console.Error.WriteLine($"Warning: Specification file not found at '{specFilePath}'. Question generation will be unavailable until a valid spec file is provided.");
+    }
+}
+catch (Exception ex)
+{
+    Console.Error.WriteLine($"Error loading specification file '{specFilePath}': {ex.Message}");
+}
+
+await host.RunAsync();
