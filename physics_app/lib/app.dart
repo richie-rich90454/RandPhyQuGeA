@@ -31,6 +31,35 @@ class PhysicsApp extends StatelessWidget {
             '/question-bank': (context) => const QuestionBankView(),
             '/settings': (context) => const SettingsView(),
           },
+          onGenerateRoute: (settings) {
+            return PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) {
+                switch (settings.name) {
+                  case '/focused-practice': return const FocusedPracticeView();
+                  case '/mental-practice': return const MentalPracticeView();
+                  case '/progress': return const ProgressView();
+                  case '/question-bank': return const QuestionBankView();
+                  case '/settings': return const SettingsView();
+                  default: return const HomeView();
+                }
+              },
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0.1, 0.0),
+                    end: Offset.zero,
+                  ).animate(CurvedAnimation(
+                    parent: animation,
+                    curve: Curves.easeOutCubic,
+                  )),
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: child,
+                  ),
+                );
+              },
+            );
+          },
         );
       },
     );
