@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingView extends StatefulWidget {
-  const OnboardingView({super.key});
+  final VoidCallback? onComplete;
+
+  const OnboardingView({super.key, this.onComplete});
 
   static Future<bool> shouldShow() async {
     final prefs = await SharedPreferences.getInstance();
@@ -137,7 +139,7 @@ class _OnboardingViewState extends State<OnboardingView> {
 
   void _finishOnboarding() {
     OnboardingView.markShown();
-    Navigator.of(context).pushReplacementNamed('/');
+    widget.onComplete?.call();
   }
 }
 

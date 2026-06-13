@@ -9,12 +9,44 @@ import 'views/progress_view.dart';
 import 'views/question_bank_view.dart';
 import 'views/settings_view.dart';
 import 'views/export_dialog.dart';
+import 'views/onboarding_view.dart';
 
-class PhysicsApp extends StatelessWidget {
+class PhysicsApp extends StatefulWidget {
   const PhysicsApp({super.key});
 
   @override
+  State<PhysicsApp> createState() => _PhysicsAppState();
+}
+
+class _PhysicsAppState extends State<PhysicsApp> {
+  bool _showOnboarding = false;
+  bool _checked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    final shouldShow = await OnboardingView.shouldShow();
+    if (mounted) {
+      setState(() {
+        _showOnboarding = shouldShow;
+        _checked = true;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (!_checked) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+      );
+    }
+
     return Consumer<SettingsProvider>(
       builder: (context, settings, _) {
         return MaterialApp(
@@ -23,7 +55,11 @@ class PhysicsApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: const HomeView(),
+          home: _showOnboarding
+              ? OnboardingView(
+                  onComplete: () => setState(() => _showOnboarding = false),
+                )
+              : const HomeView(),
           routes: {
             '/focused-practice': (context) => const FocusedPracticeView(),
             '/mental-practice': (context) => const MentalPracticeView(),

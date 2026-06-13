@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'themes/app_theme.dart';
 import 'services/settings_provider.dart';
+import 'views/onboarding_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
