@@ -3,6 +3,8 @@ name = "physics_core"
 version = "0.1.0"
 edition = "2021"
 description = "Physics question generation core library with WASM support"
+readme = "README.md"
+repository = "https://github.com/randphyqugea/physics-question-generator"
 
 [lib]
 crate-type = ["cdylib", "rlib", "staticlib"]
