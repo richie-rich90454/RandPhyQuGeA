@@ -13,6 +13,7 @@ pub mod cache;
 pub mod metadata;
 pub mod difficulty;
 pub mod formula_library;
+pub mod weighted_selection;
 
 #[cfg(target_arch = "wasm32")]
 pub mod wasm_bridge;
