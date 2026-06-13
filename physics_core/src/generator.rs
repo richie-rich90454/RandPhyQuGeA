@@ -1,3 +1,9 @@
+//! Question generation engine.
+//!
+//! Selects random templates matching user filters, generates random
+//! variable values within defined ranges, evaluates answer expressions,
+//! and produces complete questions with distractors and solutions.
+
 use crate::domain::*;
 use crate::evaluator::ExpressionEvaluator;
 use crate::random::{RandomGenerator, UniformRandomGenerator, VariableGenerator};
