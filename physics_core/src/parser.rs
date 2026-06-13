@@ -527,4 +527,235 @@ Var.x: Type=double;Min=1;Max=5
         let err = result.unwrap_err();
         assert!(err.errors.iter().any(|e| e.message.contains("unknown Unit")));
     }
+
+    #[test]
+    fn test_parse_invalid_skill_ref() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: Skill
+TopicId: T99
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: Test
+AnswerExpression: 1
+Var.x: Type=double;Min=1;Max=5
+"#;
+
+        let result = SpecificationParser::parse(input);
+        assert!(result.is_err());
+        let err = result.unwrap_err();
+        assert!(err.errors.iter().any(|e| e.message.contains("unknown Topic")));
+    }
+
+    #[test]
+    fn test_parse_enum_variable() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: Test
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: Direction {dir}
+AnswerExpression: dir
+Var.dir: Type=enum;Values=North,South,East,West
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let template = &spec.templates[0];
+        let vd = &template.variable_definitions[0];
+        assert_eq!(vd.var_type, "enum");
+        assert_eq!(
+            vd.enum_values.as_ref().unwrap(),
+            &vec!["North", "South", "East", "West"]
+        );
+    }
+
+    #[test]
+    fn test_parse_multiple_units_topics() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[UNIT]
+Id: U2
+Name: Electromagnetism
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[TOPIC]
+Id: T2
+Name: Circuits
+UnitId: U2
+
+[SKILL]
+Id: S1
+Name: Test1
+TopicId: T1
+
+[SKILL]
+Id: S2
+Name: Test2
+TopicId: T2
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: A
+AnswerExpression: 1
+Var.x: Type=double;Min=1;Max=5
+
+[TEMPLATE]
+Id: Q2
+TopicId: T2
+SkillId: S2
+QuestionType: ShortAnswer
+Difficulty: 2
+TextTemplate: B
+AnswerExpression: 2
+Var.x: Type=double;Min=1;Max=5
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        assert_eq!(spec.units.len(), 2);
+        assert_eq!(spec.topics.len(), 2);
+        assert_eq!(spec.skills.len(), 2);
+        assert_eq!(spec.templates.len(), 2);
+    }
+
+    #[test]
+    fn test_parse_int_variable() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: Test
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: Count {n}
+AnswerExpression: n
+Var.n: Type=int;Min=1;Max=100
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let template = &spec.templates[0];
+        let vd = &template.variable_definitions[0];
+        assert_eq!(vd.var_type, "int");
+        assert_eq!(vd.min, Some(1.0));
+        assert_eq!(vd.max, Some(100.0));
+    }
+
+    #[test]
+    fn test_parse_empty_template_text() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: Test
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate:
+AnswerExpression: 1
+Var.x: Type=double;Min=1;Max=5
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        assert_eq!(spec.templates[0].text_template, "");
+    }
+
+    #[test]
+    fn test_parse_unknown_question_type() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: Test
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: TrueFalse
+Difficulty: 1
+TextTemplate: Test
+AnswerExpression: 1
+Var.x: Type=double;Min=1;Max=5
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        assert_eq!(spec.templates[0].question_type, "TrueFalse");
+    }
 }
