@@ -283,6 +283,22 @@ impl ExpressionEvaluator {
                     Err("min requires 2 arguments".to_string())
                 }
             }
+            "log2" => {
+                if arg1 <= 0.0 {
+                    return Err("log2 of non-positive number".to_string());
+                }
+                Ok(arg1.log2())
+            }
+            "cbrt" => Ok(arg1.cbrt()),
+            "hypot" => {
+                if let Some(a2) = arg2 {
+                    Ok(arg1.hypot(a2))
+                } else {
+                    Err("hypot requires 2 arguments".to_string())
+                }
+            }
+            "deg" => Ok(arg1 * 180.0 / std::f64::consts::PI),
+            "rad" => Ok(arg1 * std::f64::consts::PI / 180.0),
             _ => Err(format!("Unknown function: {}", name)),
         }
     }
@@ -538,5 +554,40 @@ mod tests {
     fn test_compare_answers_non_numeric() {
         assert!(!ExpressionEvaluator::compare_answers("abc", "5.0", 0.001));
         assert!(!ExpressionEvaluator::compare_answers("5.0", "abc", 0.001));
+    }
+
+    #[test]
+    fn test_log2() {
+        let vars = HashMap::new();
+        assert_eq!(
+            ExpressionEvaluator::evaluate("log2(8)", &vars).unwrap(),
+            3.0
+        );
+        assert!(ExpressionEvaluator::evaluate("log2(0)", &vars).is_err());
+    }
+
+    #[test]
+    fn test_cbrt() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("cbrt(27)", &vars).unwrap();
+        assert!((result - 3.0).abs() < 1e-10);
+        let result = ExpressionEvaluator::evaluate("cbrt(-8)", &vars).unwrap();
+        assert!((result - (-2.0)).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_hypot() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("hypot(3, 4)", &vars).unwrap();
+        assert!((result - 5.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_deg_rad() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("deg(pi)", &vars).unwrap();
+        assert!((result - 180.0).abs() < 1e-10);
+        let result = ExpressionEvaluator::evaluate("rad(180)", &vars).unwrap();
+        assert!((result - std::f64::consts::PI).abs() < 1e-10);
     }
 }
