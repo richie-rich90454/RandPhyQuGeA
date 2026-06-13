@@ -10,6 +10,7 @@ pub mod error;
 pub mod validation;
 pub mod config;
 pub mod cache;
+pub mod metadata;
 
 #[cfg(target_arch = "wasm32")]
 pub mod wasm_bridge;
