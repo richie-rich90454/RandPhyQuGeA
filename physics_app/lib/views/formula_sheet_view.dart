@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../models/models.dart';
 
 /// View for browsing the physics formula library.
 class FormulaSheetView extends StatefulWidget {

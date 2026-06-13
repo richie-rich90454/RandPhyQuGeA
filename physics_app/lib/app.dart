@@ -8,7 +8,6 @@ import 'views/mental_practice_view.dart';
 import 'views/progress_view.dart';
 import 'views/question_bank_view.dart';
 import 'views/settings_view.dart';
-import 'views/export_dialog.dart';
 import 'views/onboarding_view.dart';
 
 class PhysicsApp extends StatefulWidget {

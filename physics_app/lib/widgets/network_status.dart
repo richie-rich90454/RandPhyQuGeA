@@ -43,8 +43,8 @@ class OfflineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: NetworkStatusNotifier(),
+    return AnimatedBuilder(
+      animation: NetworkStatusNotifier(),
       builder: (context, _) {
         if (NetworkStatusNotifier().isOnline) {
           return const SizedBox.shrink();

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import '../models/models.dart';
 
 /// Pure Dart implementation of the physics question generation logic.
@@ -563,6 +562,89 @@ class DartPhysicsCore {
     }
     buf.writeln('</body></html>');
     return buf.toString();
+  }
+
+  static String exportJson(List<GeneratedQuestion> questions) {
+    if (questions.isEmpty) return '[]';
+    final buf = StringBuffer();
+    buf.writeln('[');
+    for (var i = 0; i < questions.length; i++) {
+      if (i > 0) buf.writeln(',');
+      buf.write(_questionToJson(questions[i]));
+    }
+    buf.writeln('');
+    buf.writeln(']');
+    return buf.toString();
+  }
+
+  static String _questionToJson(GeneratedQuestion q) {
+    final choicesJson = q.choices != null
+        ? '[${q.choices!.map((c) => '"$_escapeJson(c)"').join(',')}]'
+        : 'null';
+    return '''  {
+    "id": "${_escapeJson(q.id)}",
+    "topic_id": "${_escapeJson(q.topicId)}",
+    "skill_id": "${_escapeJson(q.skillId)}",
+    "question_type": "${_escapeJson(q.questionType)}",
+    "difficulty": ${q.difficulty},
+    "text": "${_escapeJson(q.text)}",
+    "answer": "${_escapeJson(q.answer)}",
+    "choices": $choicesJson,
+    "solution_text": "${_escapeJson(q.solutionText)}",
+    "solution_latex": "${_escapeJson(q.solutionLatex)}"
+  }''';
+  }
+
+  static String exportCsv(List<GeneratedQuestion> questions) {
+    final buf = StringBuffer();
+    buf.writeln('id,topic_id,skill_id,question_type,difficulty,text,answer');
+    for (final q in questions) {
+      buf.writeln('${_escapeCsv(q.id)},${_escapeCsv(q.topicId)},${_escapeCsv(q.skillId)},${_escapeCsv(q.questionType)},${q.difficulty},"${_escapeCsv(q.text)}","${_escapeCsv(q.answer)}"');
+    }
+    return buf.toString();
+  }
+
+  static String exportLatex(List<GeneratedQuestion> questions) {
+    final buf = StringBuffer();
+    buf.writeln(r'\documentclass[12pt]{exam}');
+    buf.writeln(r'\usepackage{amsmath}');
+    buf.writeln(r'\begin{document}');
+    buf.writeln(r'\title{Physics Questions}');
+    buf.writeln(r'\maketitle');
+    buf.writeln(r'\begin{questions}');
+    for (final q in questions) {
+      buf.writeln(r'\question[{$q.difficulty}] ${_escapeLatex(q.text)}');
+      if (q.choices != null) {
+        buf.writeln(r'\begin{choices}');
+        for (final c in q.choices!) {
+          buf.writeln(r'\choice ${_escapeLatex(c)}');
+        }
+        buf.writeln(r'\end{choices}');
+      }
+      buf.writeln('');
+    }
+    buf.writeln(r'\end{questions}');
+    buf.writeln(r'\end{document}');
+    return buf.toString();
+  }
+
+  static String _escapeJson(String s) {
+    return s.replaceAll('\\', '\\\\').replaceAll('"', '\\"').replaceAll('\n', '\\n');
+  }
+
+  static String _escapeCsv(String s) {
+    return s.replaceAll('"', '""');
+  }
+
+  static String _escapeLatex(String s) {
+    return s
+        .replaceAll('\\', '\\textbackslash{}')
+        .replaceAll('{', '\\{')
+        .replaceAll('}', '\\}')
+        .replaceAll('_', '\\_')
+        .replaceAll('&', '\\&')
+        .replaceAll('%', '\\%')
+        .replaceAll('#', '\\#');
   }
 
   static String _escapeHtml(String text) {

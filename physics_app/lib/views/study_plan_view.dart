@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dart_date/dart_date.dart';
 
 /// View for displaying and managing a weekly study plan.
 class StudyPlanView extends StatefulWidget {

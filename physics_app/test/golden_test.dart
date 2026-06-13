@@ -24,7 +24,7 @@ void main() {
             theme: AppTheme.lightTheme,
             home: Scaffold(
               body: Center(
-                child: DifficultyBadge(level: level),
+                child: DifficultyBadge(difficulty: level),
               ),
             ),
           ),
@@ -118,13 +118,8 @@ void main() {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: QuestionCard(
-                  questionText: 'A car accelerates from 10 m/s to 30 m/s in 5 s. What is the acceleration?',
-                  questionType: 'MC',
-                  difficulty: 3,
-                  variables: const {'v0': '10', 'v': '30', 't': '5'},
-                  choices: const ['2 m/s²', '4 m/s²', '6 m/s²', '8 m/s²'],
-                  answer: '4 m/s²',
-                  solutionText: 'a = (v - v0) / t = (30 - 10) / 5 = 4 m/s²',
+                  text: 'A car accelerates from 10 m/s to 30 m/s in 5 s. What is the acceleration?',
+                  questionNumber: 1,
                 ),
               ),
             ),
@@ -148,12 +143,8 @@ void main() {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: QuestionCard(
-                  questionText: 'A 5 kg object experiences a net force of 25 N. What is its acceleration?',
-                  questionType: 'SA',
-                  difficulty: 2,
-                  variables: const {'m': '5', 'F': '25'},
-                  answer: '5 m/s²',
-                  solutionText: 'a = F / m = 25 / 5 = 5 m/s²',
+                  text: 'A 5 kg object experiences a net force of 25 N. What is its acceleration?',
+                  questionNumber: 2,
                 ),
               ),
             ),
@@ -181,6 +172,8 @@ void main() {
                 correctAnswer: '5 m/s²',
                 userAnswer: '5 m/s²',
                 solutionText: 'a = F / m = 25 / 5 = 5 m/s²',
+                onNext: () {},
+                isLastQuestion: false,
               ),
             ),
           ),
@@ -205,6 +198,8 @@ void main() {
                 correctAnswer: '5 m/s²',
                 userAnswer: '3 m/s²',
                 solutionText: 'a = F / m = 25 / 5 = 5 m/s²',
+                onNext: () {},
+                isLastQuestion: false,
               ),
             ),
           ),
@@ -365,9 +360,7 @@ void main() {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: DifficultyRangeSlider(
-                  minDifficulty: 1,
-                  maxDifficulty: 7,
-                  onChanged: (min, max) {},
+                  onChanged: (_) {},
                 ),
               ),
             ),
@@ -393,13 +386,8 @@ void main() {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: QuestionCard(
-                  questionText: 'What is the voltage across a 10 ohm resistor with 2 A current?',
-                  questionType: 'MC',
-                  difficulty: 1,
-                  variables: const {'R': '10', 'I': '2'},
-                  choices: const ['5 V', '10 V', '20 V', '40 V'],
-                  answer: '20 V',
-                  solutionText: 'V = I * R = 2 * 10 = 20 V',
+                  text: 'What is the voltage across a 10 ohm resistor with 2 A current?',
+                  questionNumber: 1,
                 ),
               ),
             ),

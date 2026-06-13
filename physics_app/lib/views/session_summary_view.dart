@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../services/settings_provider.dart';
 import '../models/models.dart';
 
 class SessionSummaryView extends StatelessWidget {

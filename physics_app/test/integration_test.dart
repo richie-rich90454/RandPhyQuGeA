@@ -284,7 +284,7 @@ void main() {
   // ===========================================================================
   group('Export Integration', () {
     late Specification spec;
-    late List<Question> questions;
+    late List<GeneratedQuestion> questions;
 
     setUp(() {
       spec = DartPhysicsCore.parseSpecification(testSpec);
@@ -292,52 +292,52 @@ void main() {
     });
 
     test('exports to HTML', () {
-      final html = DartPhysicsCore.exportQuestions(questions, 'html');
+      final html = DartPhysicsCore.exportHtml(questions);
       expect(html, isNotEmpty);
       expect(html.contains('<!DOCTYPE html>'), isTrue);
       expect(html.toLowerCase().contains('mathjax'), isTrue);
     });
 
     test('exports to Markdown', () {
-      final md = DartPhysicsCore.exportQuestions(questions, 'markdown');
+      final md = DartPhysicsCore.exportMarkdown(questions);
       expect(md, isNotEmpty);
       expect(md.contains('# Physics Questions'), isTrue);
     });
 
     test('exports to plain text', () {
-      final text = DartPhysicsCore.exportQuestions(questions, 'text');
+      final text = DartPhysicsCore.exportText(questions);
       expect(text, isNotEmpty);
       expect(text.contains('PHYSICS QUESTIONS'), isTrue);
     });
 
     test('exports to JSON', () {
-      final json = DartPhysicsCore.exportQuestions(questions, 'json');
+      final json = DartPhysicsCore.exportJson(questions);
       expect(json, startsWith('['));
       expect(json.contains('"id"'), isTrue);
       expect(json.contains('"text"'), isTrue);
     });
 
     test('exports to CSV', () {
-      final csv = DartPhysicsCore.exportQuestions(questions, 'csv');
+      final csv = DartPhysicsCore.exportCsv(questions);
       expect(csv, isNotEmpty);
       expect(csv.startsWith('id,topic_id'), isTrue);
     });
 
     test('exports to LaTeX', () {
-      final latex = DartPhysicsCore.exportQuestions(questions, 'latex');
+      final latex = DartPhysicsCore.exportLatex(questions);
       expect(latex, contains('\\documentclass'));
       expect(latex, contains('\\begin{questions}'));
     });
 
     test('empty questions list exports correctly', () {
-      final html = DartPhysicsCore.exportQuestions([], 'html');
+      final html = DartPhysicsCore.exportHtml([]);
       expect(html, isNotEmpty);
       expect(html.contains('Question'), isTrue);
 
-      final json = DartPhysicsCore.exportQuestions([], 'json');
+      final json = DartPhysicsCore.exportJson([]);
       expect(json, '[]');
 
-      final csv = DartPhysicsCore.exportQuestions([], 'csv');
+      final csv = DartPhysicsCore.exportCsv([]);
       expect(csv.startsWith('id'), isTrue);
     });
   });
@@ -362,7 +362,7 @@ void main() {
       }
     });
 
-    test('Question toJson produces valid JSON', () {
+    test('GeneratedQuestion toJson produces valid JSON', () {
       final spec = DartPhysicsCore.parseSpecification(testSpec);
       final question = DartPhysicsCore.generateQuestion(spec)!;
 
@@ -374,12 +374,12 @@ void main() {
       expect(json['difficulty'], question.difficulty);
     });
 
-    test('Question fromJson restores correctly', () {
+    test('GeneratedQuestion fromJson restores correctly', () {
       final spec = DartPhysicsCore.parseSpecification(testSpec);
       final original = DartPhysicsCore.generateQuestion(spec)!;
 
       final json = original.toJson();
-      final restored = Question.fromJson(json);
+      final restored = GeneratedQuestion.fromJson(json);
 
       expect(restored.id, original.id);
       expect(restored.text, original.text);
@@ -388,17 +388,17 @@ void main() {
     });
 
     test('PracticeResult toJson/fromJson roundtrip', () {
+      final now = DateTime.now().toIso8601String();
       final result = PracticeResult(
         id: 'test-id',
         questionId: 'Q1',
-        questionText: 'What is 2+2?',
-        correctAnswer: '4',
         userAnswer: '4',
         isCorrect: true,
-        timeSpentSeconds: 30,
-        timestamp: DateTime.now(),
-        mode: 'focused',
+        timeTakenMs: 30000,
+        timestamp: now,
+        mode: 'Focused',
         topicId: 'T1',
+        skillId: 'S1',
         difficulty: 2,
       );
 
@@ -407,7 +407,7 @@ void main() {
 
       expect(restored.id, result.id);
       expect(restored.isCorrect, result.isCorrect);
-      expect(restored.timeSpentSeconds, result.timeSpentSeconds);
+      expect(restored.timeTakenMs, result.timeTakenMs);
       expect(restored.mode, result.mode);
     });
   });
@@ -428,7 +428,6 @@ void main() {
         ),
       );
 
-      expect(settings.themeMode, ThemeMode.system);
       expect(settings.isDarkMode, isFalse);
     });
 
@@ -449,11 +448,11 @@ void main() {
       expect(settings.isDarkMode, isFalse);
 
       // Toggle
-      settings.toggleDarkMode(true);
+      await settings.toggleDarkMode();
       expect(settings.isDarkMode, isTrue);
 
       // Toggle back
-      settings.toggleDarkMode(false);
+      await settings.toggleDarkMode();
       expect(settings.isDarkMode, isFalse);
     });
   });

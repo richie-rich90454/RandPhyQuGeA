@@ -92,7 +92,7 @@ class _ProgressViewState extends State<ProgressView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              _buildStat(context, '$_results', 'Total Questions'),
+                              _buildStat(context, '$total', 'Total Questions'),
                               _buildStat(context, '$correct', 'Correct'),
                               _buildStat(context, '${_results.length - correct}', 'Incorrect'),
                             ],
