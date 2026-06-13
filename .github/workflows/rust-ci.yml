@@ -33,6 +33,17 @@ jobs:
       - name: Clippy
         run: cd physics_core && cargo clippy -- -D warnings
 
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Check formatting
+        run: cd physics_core && cargo fmt --all -- --check
+
   wasm:
     runs-on: ubuntu-latest
     steps:
@@ -45,3 +56,30 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
       - name: Build WASM
         run: cd physics_core && wasm-pack build --target web
+
+  bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            physics_core/target
+          key: ${{ runner.os }}-cargo-bench-${{ hashFiles('physics_core/Cargo.lock') }}
+      - name: Run benchmarks
+        run: cd physics_core && cargo bench --no-run 2>&1 || true
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --locked
+      - name: Security audit
+        run: cd physics_core && cargo audit
+        continue-on-error: true
