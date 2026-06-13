@@ -323,4 +323,168 @@ mod tests {
         let result = ExpressionEvaluator::evaluate("pi", &vars).unwrap();
         assert!((result - std::f64::consts::PI).abs() < 1e-10);
     }
+
+    #[test]
+    fn test_empty_expression() {
+        let vars = HashMap::new();
+        assert!(ExpressionEvaluator::evaluate("", &vars).is_err());
+        assert!(ExpressionEvaluator::evaluate("   ", &vars).is_err());
+    }
+
+    #[test]
+    fn test_division_by_zero() {
+        let vars = HashMap::new();
+        assert!(ExpressionEvaluator::evaluate("5 / 0", &vars).is_err());
+    }
+
+    #[test]
+    fn test_unary_minus() {
+        let vars = HashMap::new();
+        assert_eq!(ExpressionEvaluator::evaluate("-5", &vars).unwrap(), -5.0);
+        assert_eq!(ExpressionEvaluator::evaluate("--5", &vars).unwrap(), 5.0);
+        assert_eq!(ExpressionEvaluator::evaluate("-3 + 7", &vars).unwrap(), 4.0);
+    }
+
+    #[test]
+    fn test_operator_precedence() {
+        let vars = HashMap::new();
+        assert_eq!(
+            ExpressionEvaluator::evaluate("2 + 3 * 4", &vars).unwrap(),
+            14.0
+        );
+        assert_eq!(
+            ExpressionEvaluator::evaluate("10 - 2 * 3", &vars).unwrap(),
+            4.0
+        );
+        assert_eq!(
+            ExpressionEvaluator::evaluate("(2 + 3) * 4", &vars).unwrap(),
+            20.0
+        );
+    }
+
+    #[test]
+    fn test_nested_parentheses() {
+        let vars = HashMap::new();
+        assert_eq!(
+            ExpressionEvaluator::evaluate("((2 + 3))", &vars).unwrap(),
+            5.0
+        );
+        assert_eq!(
+            ExpressionEvaluator::evaluate("(2 * (3 + 4))", &vars).unwrap(),
+            14.0
+        );
+    }
+
+    #[test]
+    fn test_floor_ceiling() {
+        let vars = HashMap::new();
+        assert_eq!(
+            ExpressionEvaluator::evaluate("floor(3.7)", &vars).unwrap(),
+            3.0
+        );
+        assert_eq!(
+            ExpressionEvaluator::evaluate("ceiling(3.1)", &vars).unwrap(),
+            4.0
+        );
+        assert_eq!(
+            ExpressionEvaluator::evaluate("truncate(-3.7)", &vars).unwrap(),
+            -3.0
+        );
+    }
+
+    #[test]
+    fn test_pow_function() {
+        let vars = HashMap::new();
+        assert_eq!(
+            ExpressionEvaluator::evaluate("pow(2, 3)", &vars).unwrap(),
+            8.0
+        );
+        assert_eq!(
+            ExpressionEvaluator::evaluate("pow(5, 0)", &vars).unwrap(),
+            1.0
+        );
+    }
+
+    #[test]
+    fn test_log_functions() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("ln(e)", &vars).unwrap();
+        assert!((result - 1.0).abs() < 1e-10);
+        assert_eq!(
+            ExpressionEvaluator::evaluate("log(1000)", &vars).unwrap(),
+            3.0
+        );
+        assert!(ExpressionEvaluator::evaluate("ln(-1)", &vars).is_err());
+        assert!(ExpressionEvaluator::evaluate("log(0)", &vars).is_err());
+    }
+
+    #[test]
+    fn test_min_max() {
+        let vars = HashMap::new();
+        assert_eq!(
+            ExpressionEvaluator::evaluate("min(3, 7)", &vars).unwrap(),
+            3.0
+        );
+        assert_eq!(
+            ExpressionEvaluator::evaluate("max(3, 7)", &vars).unwrap(),
+            7.0
+        );
+    }
+
+    #[test]
+    fn test_round_function() {
+        let vars = HashMap::new();
+        assert_eq!(
+            ExpressionEvaluator::evaluate("round(3.14159)", &vars).unwrap(),
+            3.0
+        );
+        let result =
+            ExpressionEvaluator::evaluate("round(3.14159, 2)", &vars).unwrap();
+        assert!((result - 3.14).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_sign_function() {
+        let vars = HashMap::new();
+        assert_eq!(ExpressionEvaluator::evaluate("sign(5)", &vars).unwrap(), 1.0);
+        assert_eq!(
+            ExpressionEvaluator::evaluate("sign(-3)", &vars).unwrap(),
+            -1.0
+        );
+        assert_eq!(ExpressionEvaluator::evaluate("sign(0)", &vars).unwrap(), 0.0);
+    }
+
+    #[test]
+    fn test_unknown_token() {
+        let vars = HashMap::new();
+        assert!(ExpressionEvaluator::evaluate("foo", &vars).is_err());
+    }
+
+    #[test]
+    fn test_sqrt_negative() {
+        let vars = HashMap::new();
+        assert!(ExpressionEvaluator::evaluate("sqrt(-4)", &vars).is_err());
+    }
+
+    #[test]
+    fn test_large_numbers() {
+        let vars = HashMap::new();
+        let result =
+            ExpressionEvaluator::evaluate("1000000 * 1000000", &vars).unwrap();
+        assert_eq!(result, 1_000_000_000_000.0);
+    }
+
+    #[test]
+    fn test_negative_variable() {
+        let mut vars = HashMap::new();
+        vars.insert("x".to_string(), -10.0);
+        assert_eq!(
+            ExpressionEvaluator::evaluate("x * 2", &vars).unwrap(),
+            -20.0
+        );
+        assert_eq!(
+            ExpressionEvaluator::evaluate("abs(x)", &vars).unwrap(),
+            10.0
+        );
+    }
 }
