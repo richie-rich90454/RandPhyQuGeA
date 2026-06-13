@@ -146,11 +146,64 @@ mod tests {
     }
 
     #[test]
+    fn test_int_min_equals_max() {
+        let mut rng = UniformRandomGenerator::with_seed(42);
+        let val = rng.next_int(5, 5);
+        assert_eq!(val, 5);
+    }
+
+    #[test]
+    fn test_int_min_greater_than_max() {
+        let mut rng = UniformRandomGenerator::with_seed(42);
+        let val = rng.next_int(10, 1);
+        assert_eq!(val, 10);
+    }
+
+    #[test]
     fn test_double_generation() {
         let mut rng = UniformRandomGenerator::with_seed(42);
         for _ in 0..100 {
             let val = rng.next_double(0.0, 10.0, 0.5);
             assert!(val >= 0.0 && val <= 10.0);
+        }
+    }
+
+    #[test]
+    fn test_double_min_equals_max() {
+        let mut rng = UniformRandomGenerator::with_seed(42);
+        let val = rng.next_double(3.0, 3.0, 0.5);
+        assert_eq!(val, 3.0);
+    }
+
+    #[test]
+    fn test_double_zero_step() {
+        let mut rng = UniformRandomGenerator::with_seed(42);
+        let val = rng.next_double(0.0, 10.0, 0.0);
+        assert_eq!(val, 0.0);
+    }
+
+    #[test]
+    fn test_enum_generation() {
+        let mut rng = UniformRandomGenerator::with_seed(42);
+        let values = vec!["A".to_string(), "B".to_string(), "C".to_string()];
+        let val = rng.next_from_set(&values);
+        assert!(values.contains(&val));
+    }
+
+    #[test]
+    fn test_enum_empty_set() {
+        let mut rng = UniformRandomGenerator::with_seed(42);
+        let values: Vec<String> = vec![];
+        let val = rng.next_from_set(&values);
+        assert_eq!(val, "");
+    }
+
+    #[test]
+    fn test_seeded_reproducibility() {
+        let mut rng1 = UniformRandomGenerator::with_seed(42);
+        let mut rng2 = UniformRandomGenerator::with_seed(42);
+        for _ in 0..20 {
+            assert_eq!(rng1.next_int(0, 100), rng2.next_int(0, 100));
         }
     }
 
@@ -166,5 +219,65 @@ mod tests {
             &vars,
         );
         assert_eq!(result, "A car accelerates from 10 m/s to 30 m/s in 5 s.");
+    }
+
+    #[test]
+    fn test_substitute_unknown_variable() {
+        let vars = HashMap::new();
+        let result = VariableGenerator::substitute_variables("Value: {x}", &vars);
+        assert_eq!(result, "Value: {x}");
+    }
+
+    #[test]
+    fn test_substitute_multiple_occurrences() {
+        let mut vars = HashMap::new();
+        vars.insert("x".to_string(), 5.0);
+        let result = VariableGenerator::substitute_variables("{x} plus {x} = 2*{x}", &vars);
+        assert_eq!(result, "5 plus 5 = 2*5");
+    }
+
+    #[test]
+    fn test_format_double_value() {
+        let mut vars = HashMap::new();
+        vars.insert("x".to_string(), 3.1400);
+        let result = VariableGenerator::substitute_variables("{x}", &vars);
+        assert_eq!(result, "3.14");
+    }
+
+    #[test]
+    fn test_generate_int_variables() {
+        let defs = vec![
+            VariableDefinition {
+                name: "x".to_string(),
+                var_type: "int".to_string(),
+                min: Some(1.0),
+                max: Some(10.0),
+                step: None,
+                enum_values: None,
+            },
+        ];
+        let mut rng = UniformRandomGenerator::with_seed(42);
+        let vars = VariableGenerator::generate_variables(&defs, &mut rng);
+        let val = vars["x"];
+        assert!(val >= 1.0 && val <= 10.0);
+        assert_eq!(val, val.trunc());
+    }
+
+    #[test]
+    fn test_generate_enum_variables() {
+        let defs = vec![
+            VariableDefinition {
+                name: "dir".to_string(),
+                var_type: "enum".to_string(),
+                min: None,
+                max: None,
+                step: None,
+                enum_values: Some(vec!["1.0".to_string(), "2.0".to_string(), "3.0".to_string()]),
+            },
+        ];
+        let mut rng = UniformRandomGenerator::with_seed(42);
+        let vars = VariableGenerator::generate_variables(&defs, &mut rng);
+        let val = vars["dir"];
+        assert!(val == 1.0 || val == 2.0 || val == 3.0);
     }
 }
