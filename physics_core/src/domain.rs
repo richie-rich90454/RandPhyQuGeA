@@ -1,3 +1,8 @@
+//! Core domain model types for the physics question generator.
+//!
+//! Defines the data structures for units, topics, skills, question templates,
+//! variable definitions, generated questions, and practice results.
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
