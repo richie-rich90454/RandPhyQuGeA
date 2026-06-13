@@ -1,3 +1,8 @@
+//! Export modules for converting generated questions to various formats.
+//!
+//! Supports HTML (with MathJax), Markdown, plain text, and PDF-ready HTML
+//! formats for printing, sharing, and further processing.
+
 use crate::domain::GeneratedQuestion;
 
 pub fn export_html(questions: &[GeneratedQuestion]) -> String {
