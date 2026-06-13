@@ -94,3 +94,29 @@ pub struct Specification {
     pub skills: Vec<Skill>,
     pub templates: Vec<QuestionTemplate>,
 }
+
+/// A group of related templates for organizational purposes.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct TemplateGroup {
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    pub template_ids: Vec<String>,
+}
+
+/// A tag for categorizing and filtering questions.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub struct QuestionTag {
+    pub name: String,
+    pub category: String,
+}
+
+/// A formula reference for the formula library.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct FormulaEntry {
+    pub name: String,
+    pub latex: String,
+    pub description: String,
+    pub variables: Vec<String>,
+    pub topic_id: Option<String>,
+}

@@ -12,6 +12,7 @@ pub mod config;
 pub mod cache;
 pub mod metadata;
 pub mod difficulty;
+pub mod formula_library;
 
 #[cfg(target_arch = "wasm32")]
 pub mod wasm_bridge;
