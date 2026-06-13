@@ -1,0 +1,38 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [main, flutter]
+    paths: ['physics_app/**', '.github/workflows/flutter-ci.yml']
+  pull_request:
+    branches: [main, flutter]
+    paths: ['physics_app/**']
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24'
+          channel: 'stable'
+      - name: Install dependencies
+        run: cd physics_app && flutter pub get
+      - name: Analyze
+        run: cd physics_app && flutter analyze
+      - name: Format check
+        run: cd physics_app && dart format --set-exit-if-changed lib/
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24'
+          channel: 'stable'
+      - name: Install dependencies
+        run: cd physics_app && flutter pub get
+      - name: Run tests
+        run: cd physics_app && flutter test
