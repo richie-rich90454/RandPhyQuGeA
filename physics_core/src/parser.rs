@@ -1,3 +1,9 @@
+//! Specification file parser for the part_one.txt format.
+//!
+//! Parses a hierarchical specification of physics questions organized into
+//! Units > Topics > Skills > Templates, with variable definitions and
+//! distractor expressions for multiple-choice questions.
+
 use crate::domain::*;
 use std::collections::HashMap;
 
