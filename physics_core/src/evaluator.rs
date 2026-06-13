@@ -1,3 +1,9 @@
+//! Expression evaluator with support for mathematical functions.
+//!
+//! Supports arithmetic, trigonometric (degree-based), logarithmic,
+//! and rounding functions. Variables are substituted from a provided
+//! HashMap before evaluation.
+
 use std::collections::HashMap;
 
 pub struct ExpressionEvaluator;
