@@ -195,6 +195,27 @@ impl ExpressionEvaluator {
         }
     }
 
+    /// Compare two numeric answers with a relative tolerance.
+    /// Returns true if the answers are within the specified relative tolerance
+    /// or if the absolute difference is within an epsilon for small values.
+    pub fn compare_answers(user_answer: &str, correct_answer: &str, tolerance: f64) -> bool {
+        let user = match user_answer.trim().parse::<f64>() {
+            Ok(v) => v,
+            Err(_) => return false,
+        };
+        let correct = match correct_answer.trim().parse::<f64>() {
+            Ok(v) => v,
+            Err(_) => return false,
+        };
+
+        if correct == 0.0 {
+            return user.abs() < 1e-9;
+        }
+
+        let relative_error = (user - correct).abs() / correct.abs();
+        relative_error < tolerance
+    }
+
     fn eval_function(name: &str, arg1: f64, arg2: Option<f64>) -> Result<f64, String> {
         match name.to_lowercase().as_str() {
             "sin" => Ok((arg1 * std::f64::consts::PI / 180.0).sin()),
@@ -486,5 +507,36 @@ mod tests {
             ExpressionEvaluator::evaluate("abs(x)", &vars).unwrap(),
             10.0
         );
+    }
+
+    #[test]
+    fn test_compare_answers_exact_match() {
+        assert!(ExpressionEvaluator::compare_answers("5.0", "5.0", 0.001));
+        assert!(ExpressionEvaluator::compare_answers("3.14", "3.14", 0.001));
+    }
+
+    #[test]
+    fn test_compare_answers_within_tolerance() {
+        assert!(ExpressionEvaluator::compare_answers("3.1415", "3.1416", 0.001));
+        assert!(ExpressionEvaluator::compare_answers("9.81", "9.82", 0.01));
+    }
+
+    #[test]
+    fn test_compare_answers_outside_tolerance() {
+        assert!(!ExpressionEvaluator::compare_answers("5.0", "6.0", 0.001));
+        assert!(!ExpressionEvaluator::compare_answers("100.0", "101.0", 0.001));
+    }
+
+    #[test]
+    fn test_compare_answers_zero() {
+        assert!(ExpressionEvaluator::compare_answers("0.0", "0.0", 0.001));
+        assert!(ExpressionEvaluator::compare_answers("0.0000000001", "0.0", 0.001));
+        assert!(!ExpressionEvaluator::compare_answers("1.0", "0.0", 0.001));
+    }
+
+    #[test]
+    fn test_compare_answers_non_numeric() {
+        assert!(!ExpressionEvaluator::compare_answers("abc", "5.0", 0.001));
+        assert!(!ExpressionEvaluator::compare_answers("5.0", "abc", 0.001));
     }
 }
