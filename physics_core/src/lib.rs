@@ -4,6 +4,7 @@ pub mod exporters;
 pub mod generator;
 pub mod parser;
 pub mod random;
+pub mod spec_builder;
 pub mod template_builder;
 
 #[cfg(target_arch = "wasm32")]
