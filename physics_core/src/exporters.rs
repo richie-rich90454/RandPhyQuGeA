@@ -154,6 +154,87 @@ fn escape_html(text: &str) -> String {
         .replace('\'', "&#39;")
 }
 
+/// Export questions as a JSON array.
+pub fn export_json(questions: &[GeneratedQuestion]) -> String {
+    serde_json::to_string_pretty(questions).unwrap_or_else(|_| "[]".to_string())
+}
+
+/// Export questions as CSV with columns for id, topic, skill, type, difficulty, text, answer, solution.
+pub fn export_csv(questions: &[GeneratedQuestion]) -> String {
+    let mut csv = String::from("id,topic_id,skill_id,type,difficulty,text,answer,solution,choices\n");
+
+    for q in questions {
+        let choices_str = q.choices.as_ref()
+            .map(|c| c.join(" | "))
+            .unwrap_or_default();
+
+        let escaped_text = q.text.replace('"', "\"\"");
+        let escaped_answer = q.answer.replace('"', "\"\"");
+        let escaped_solution = q.solution_text.replace('"', "\"\"");
+        let escaped_choices = choices_str.replace('"', "\"\"");
+
+        csv.push_str(&format!(
+            "\"{}\",\"{}\",\"{}\",\"{}\",{},\"{}\",\"{}\",\"{}\",\"{}\"\n",
+            q.id,
+            q.topic_id,
+            q.skill_id,
+            q.question_type,
+            q.difficulty,
+            escaped_text,
+            escaped_answer,
+            escaped_solution,
+            escaped_choices,
+        ));
+    }
+
+    csv
+}
+
+/// Export questions as LaTeX document with exam class.
+pub fn export_latex(questions: &[GeneratedQuestion]) -> String {
+    let mut latex = String::new();
+    latex.push_str("\\documentclass[12pt]{exam}\n");
+    latex.push_str("\\usepackage{amsmath}\n");
+    latex.push_str("\\usepackage[margin=1in]{geometry}\n");
+    latex.push_str("\\begin{document}\n");
+    latex.push_str("\\title{Physics Questions}\n");
+    latex.push_str("\\maketitle\n\n");
+
+    latex.push_str("\\begin{questions}\n");
+
+    for (i, q) in questions.iter().enumerate() {
+        latex.push_str(&format!("\\question[{}] {}\n", q.difficulty, escape_latex(&q.text)));
+
+        if let Some(ref choices) = q.choices {
+            latex.push_str("\\begin{choices}\n");
+            for choice in choices {
+                latex.push_str(&format!("\\choice {}\n", escape_latex(choice)));
+            }
+            latex.push_str("\\end{choices}\n");
+        }
+
+        latex.push_str(&format!("\\begin{{solution}}\n{}\n\\end{{solution}}\n\n",
+            escape_latex(&q.solution_text)));
+    }
+
+    latex.push_str("\\end{questions}\n");
+    latex.push_str("\\end{document}\n");
+    latex
+}
+
+fn escape_latex(text: &str) -> String {
+    text.replace('\\', "\\textbackslash{}")
+        .replace('&', "\\&")
+        .replace('%', "\\%")
+        .replace('$', "\\$")
+        .replace('#', "\\#")
+        .replace('_', "\\_")
+        .replace('{', "\\{")
+        .replace('}', "\\}")
+        .replace('~', "\\textasciitilde{}")
+        .replace('^', "\\textasciicircum{}")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -277,5 +358,122 @@ Var.t: Type=double;Min=1;Max=5;Step=0.5
         let text = export_text(&questions);
         assert!(text.contains("PHYSICS QUESTIONS"));
         assert!(text.contains("Answer:"));
+    }
+
+    #[test]
+    fn test_json_export() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: UA
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: Test {x}
+AnswerExpression: x
+SolutionTemplate: Solution
+Var.x: Type=int;Min=1;Max=10
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let gen = QuestionGenerator::new(spec.templates);
+        let questions = gen.generate_batch(2, None, None, None, None, None);
+
+        let json = export_json(&questions);
+        assert!(json.starts_with('['));
+        assert!(json.contains("\"id\""));
+        assert!(json.contains("\"topic_id\""));
+        assert!(json.contains("\"text\""));
+    }
+
+    #[test]
+    fn test_csv_export() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: UA
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: Test {x}
+AnswerExpression: x
+SolutionTemplate: Solution
+Var.x: Type=int;Min=1;Max=10
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let gen = QuestionGenerator::new(spec.templates);
+        let questions = gen.generate_batch(1, None, None, None, None, None);
+
+        let csv = export_csv(&questions);
+        assert!(csv.starts_with("id,topic_id,skill_id,type,difficulty"));
+        assert!(csv.contains("SA"));
+    }
+
+    #[test]
+    fn test_latex_export() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: UA
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: Test {x}
+AnswerExpression: x
+SolutionTemplate: Solution
+Var.x: Type=int;Min=1;Max=10
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let gen = QuestionGenerator::new(spec.templates);
+        let questions = gen.generate_batch(1, None, None, None, None, None);
+
+        let latex = export_latex(&questions);
+        assert!(latex.contains("\\documentclass"));
+        assert!(latex.contains("\\begin{questions}"));
+        assert!(latex.contains("\\begin{solution}"));
     }
 }
