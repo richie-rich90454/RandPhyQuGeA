@@ -59,7 +59,7 @@ pub fn filter_by_topics(spec: &Specification, topic_ids: &[&str]) -> Specificati
         .filter(|t| topic_id_set.contains(t.id.as_str()))
         .map(|t| t.unit_id.clone())
         .collect();
-    let skill_ids: std::collections::HashSet<String> = spec.skills.iter()
+    let _skill_ids: std::collections::HashSet<String> = spec.skills.iter()
         .filter(|s| topic_id_set.contains(s.topic_id.as_str()))
         .map(|s| s.id.clone())
         .collect();

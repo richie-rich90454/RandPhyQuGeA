@@ -202,7 +202,7 @@ pub fn export_latex(questions: &[GeneratedQuestion]) -> String {
 
     latex.push_str("\\begin{questions}\n");
 
-    for (i, q) in questions.iter().enumerate() {
+    for (_i, q) in questions.iter().enumerate() {
         latex.push_str(&format!("\\question[{}] {}\n", q.difficulty, escape_latex(&q.text)));
 
         if let Some(ref choices) = q.choices {
