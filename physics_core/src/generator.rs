@@ -204,7 +204,7 @@ impl QuestionGenerator {
         distractors
     }
 
-    fn shuffle<T>(list: &mut Vec<T>, rng: &mut UniformRandomGenerator) {
+    pub(crate) fn shuffle<T>(list: &mut Vec<T>, rng: &mut UniformRandomGenerator) {
         for i in (1..list.len()).rev() {
             let j = rng.next_int(0, i as i32) as usize;
             list.swap(i, j);
@@ -342,5 +342,133 @@ Var.x: Type=double;Min=1;Max=10;Step=1
         let gen = QuestionGenerator::new(spec.templates);
         let questions = gen.generate_batch(10, None, None, None, None, None);
         assert_eq!(questions.len(), 10);
+    }
+
+    #[test]
+    fn test_generate_with_seed_reproducibility() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: UA
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: Test {x}
+AnswerExpression: x * 2
+SolutionTemplate: Solution
+Var.x: Type=int;Min=1;Max=100
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let gen = QuestionGenerator::new(spec.templates.clone());
+
+        let mut rng1 = UniformRandomGenerator::with_seed(42);
+        let mut rng2 = UniformRandomGenerator::with_seed(42);
+
+        let q1 = gen
+            .generate_with_rng(None, None, None, None, None, &mut rng1)
+            .unwrap();
+        let q2 = gen
+            .generate_with_rng(None, None, None, None, None, &mut rng2)
+            .unwrap();
+
+        assert_eq!(q1.text, q2.text);
+        assert_eq!(q1.answer, q2.answer);
+    }
+
+    #[test]
+    fn test_no_matching_templates() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: UA
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 3
+TextTemplate: Test {x}
+AnswerExpression: x
+Var.x: Type=int;Min=1;Max=10
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let gen = QuestionGenerator::new(spec.templates);
+        let q = gen.generate(None, None, Some(10), None, None);
+        assert!(q.is_none());
+    }
+
+    #[test]
+    fn test_filter_by_question_type() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: UA
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: MultipleChoice
+Difficulty: 1
+TextTemplate: MC {x}
+AnswerExpression: x
+Var.x: Type=int;Min=1;Max=10
+Distractor: x+1
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let gen = QuestionGenerator::new(spec.templates);
+        let q = gen.generate(None, None, None, None, Some("MC")).unwrap();
+        assert_eq!(q.question_type, "MC");
+        assert!(q.choices.is_some());
+    }
+
+    #[test]
+    fn test_shuffle_preserves_elements() {
+        let mut rng = UniformRandomGenerator::with_seed(42);
+        let mut list = vec!["A", "B", "C", "D"];
+        let original = list.clone();
+        QuestionGenerator::shuffle(&mut list, &mut rng);
+        assert_eq!(list.len(), original.len());
+        for item in &original {
+            assert!(list.contains(item));
+        }
     }
 }
