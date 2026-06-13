@@ -243,10 +243,10 @@ mod tests {
 
     #[test]
     fn test_metadata_default() {
-        let meta = SpecMetadata::default();
-        assert_eq!(meta.version, "1.0.0");
-        assert_eq!(meta.language, "en");
-        assert_eq!(meta.license, "MIT");
+        let _meta = SpecMetadata::default();
+        assert_eq!(_meta.version, "1.0.0");
+        assert_eq!(_meta.language, "en");
+        assert_eq!(_meta.license, "MIT");
     }
 
     #[test]
@@ -269,9 +269,7 @@ mod tests {
 
     #[test]
     fn test_metadata_invalid() {
-        let meta = SpecMetadata::default();
-        // Default has title "Untitled Specification" and author "Unknown", so it IS valid
-        // Let's test one with empty title
+        // An empty title makes the metadata invalid
         let invalid = SpecMetadata {
             title: "".to_string(),
             ..Default::default()

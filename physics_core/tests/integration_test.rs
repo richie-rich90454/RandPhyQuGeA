@@ -2,13 +2,10 @@
 //!
 //! Tests the full pipeline: parse -> generate -> export.
 
-use physics_core::domain::*;
-use physics_core::evaluator::ExpressionEvaluator;
 use physics_core::exporters;
 use physics_core::generator::QuestionGenerator;
 use physics_core::parser::SpecificationParser;
 use physics_core::random::UniformRandomGenerator;
-use std::collections::HashMap;
 
 const FULL_SPEC: &str = r#"
 [UNIT]
@@ -182,7 +179,8 @@ fn test_answer_expression_matches() {
     let actual: f64 = q.answer.parse().unwrap();
     let diff = (actual - expected).abs() / expected.abs().max(1e-10);
 
-    assert!(diff < 1e-6, "Expected {}, got {}", expected, actual);
+    // Answer is formatted to 4 decimal places, so use a relaxed tolerance
+    assert!(diff < 1e-3, "Expected ~{}, got {}", expected, actual);
 }
 
 #[test]
