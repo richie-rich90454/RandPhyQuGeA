@@ -11,6 +11,7 @@ pub mod validation;
 pub mod config;
 pub mod cache;
 pub mod metadata;
+pub mod difficulty;
 
 #[cfg(target_arch = "wasm32")]
 pub mod wasm_bridge;
