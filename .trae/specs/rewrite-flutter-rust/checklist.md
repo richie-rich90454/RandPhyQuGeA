@@ -1,0 +1,32 @@
+# Checklist
+
+- [x] Rust `physics_core` library compiles without errors
+- [x] Specification parser correctly parses all UNIT, TOPIC, SKILL, and TEMPLATE sections from `part_one.txt`
+- [x] Expression evaluator correctly computes all math functions (sin, cos, tan in degrees, sqrt, pow, etc.)
+- [x] Question generator produces valid questions with correct answers for all 12 existing templates
+- [x] Random variable generation respects Min, Max, Step ranges for all variable types
+- [x] Distractor generation produces valid distractors for MC questions
+- [x] Solution text and LaTeX are correctly built for all templates
+- [x] HTML exporter produces valid HTML with MathJax support
+- [x] Markdown exporter produces valid Markdown with LaTeX math
+- [x] Plain text exporter produces readable output
+- [x] PDF exporter produces a PDF-ready HTML document
+- [x] Rust core compiles for native target (cargo build + cargo test pass)
+- [x] WASM bridge module defined with all required functions (parse_specification, generate_question, generate_batch, export_questions)
+- [x] Rust FFI layer exposes all required functions via C-compatible API
+- [x] Flutter project structure created with pubspec.yaml and all dart source files
+- [x] Flutter app entry point (main.dart, app.dart) loads and wires providers
+- [x] Navigation between all views works (routes configured in app.dart)
+- [x] Focused Practice view generates and displays questions with answer feedback
+- [x] Mental Practice view generates timed questions with session summary
+- [x] Progress view tracks and displays practice results with statistics
+- [x] Question Bank view displays the full specification tree
+- [x] Export dialog generates and saves files in all supported formats
+- [x] Settings view persists theme and specification file path
+- [x] Dark theme defined and wired to SettingsProvider
+- [x] Light theme defined and wired to SettingsProvider
+- [x] LaTeX math rendering integrated via flutter_math_fork
+- [x] Default `part_one.txt` specification file bundled in assets
+- [x] All old .NET code removed from the repository
+- [x] Rust unit tests pass: 18 tests, all passing (parser, evaluator, generator, exporters, random)
+- [x] README updated with new build and run instructions
