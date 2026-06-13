@@ -1,0 +1,95 @@
+name: Version Bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: 'patch'
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Get current version
+        id: current_version
+        run: |
+          VERSION=$(grep '^version:' physics_app/pubspec.yaml | head -1 | awk '{print $2}' | sed 's/+.*//')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $VERSION"
+
+      - name: Calculate new version
+        id: new_version
+        run: |
+          OLD=${{ steps.current_version.outputs.version }}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$OLD"
+
+          case "${{ inputs.bump_type }}" in
+            major)
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+              ;;
+            minor)
+              MINOR=$((MINOR + 1))
+              PATCH=0
+              ;;
+            patch)
+              PATCH=$((PATCH + 1))
+              ;;
+          esac
+
+          NEW="$MAJOR.$MINOR.$PATCH"
+          echo "version=$NEW" >> $GITHUB_OUTPUT
+          echo "New version: $NEW"
+
+      - name: Update pubspec.yaml version
+        run: |
+          sed -i "s/^version: .*/version: ${{ steps.new_version.outputs.version }}+1/" physics_app/pubspec.yaml
+
+      - name: Update Cargo.toml version
+        run: |
+          sed -i "s/^version = .*/version = \"${{ steps.new_version.outputs.version }}\"/" physics_core/Cargo.toml
+
+      - name: Update CHANGELOG.md
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+          sed -i "s/## \[Unreleased\]/## [Unreleased]\n\n## [${{ steps.new_version.outputs.version }}] - $TODAY/" CHANGELOG.md
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "chore: bump version to ${{ steps.new_version.outputs.version }}"
+          body: |
+            Automated version bump: ${{ steps.current_version.outputs.version }} → ${{ steps.new_version.outputs.version }}
+
+            Bump type: ${{ inputs.bump_type }}
+
+            Updates:
+            - `physics_app/pubspec.yaml`
+            - `physics_core/Cargo.toml`
+            - `CHANGELOG.md`
+          branch: "chore/bump-version-${{ steps.new_version.outputs.version }}"
+          labels: "chore,automated"
+          commit-message: "chore: bump version to ${{ steps.new_version.outputs.version }}"
+          delete-branch: true
