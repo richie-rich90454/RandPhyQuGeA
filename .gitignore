@@ -35,3 +35,4 @@ node_modules/
 # WASM
 *.wasm
 *.wasm.map
+flutter
