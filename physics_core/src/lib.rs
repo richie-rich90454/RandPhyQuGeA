@@ -14,6 +14,8 @@ pub mod metadata;
 pub mod difficulty;
 pub mod formula_library;
 pub mod weighted_selection;
+pub mod spec_merger;
+pub mod unit_conversion;
 
 #[cfg(target_arch = "wasm32")]
 pub mod wasm_bridge;
