@@ -25,6 +25,7 @@ class _FocusedPracticeViewState extends State<FocusedPracticeView> {
   int _minDifficulty = 1;
   int _maxDifficulty = 7;
   int _questionCount = 10;
+  String? _selectedQuestionType;
 
   // Session state
   bool _inSession = false;
@@ -128,6 +129,7 @@ Var.t: Type=double;Min=1;Max=5;Step=0.5
       skillId: _selectedSkillId,
       minDifficulty: _minDifficulty,
       maxDifficulty: _maxDifficulty,
+      questionType: _selectedQuestionType,
     );
 
     if (questions.isEmpty) {
@@ -295,6 +297,31 @@ Var.t: Type=double;Min=1;Max=5;Step=0.5
                         ..._filteredSkills.map((s) => DropdownMenuItem(value: s.id, child: Text(s.name))),
                       ],
                       onChanged: (v) => setState(() => _selectedSkillId = v),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Question Type', style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    DropdownButtonFormField<String>(
+                      value: _selectedQuestionType,
+                      decoration: const InputDecoration(border: OutlineInputBorder()),
+                      hint: const Text('All Types'),
+                      isExpanded: true,
+                      items: [
+                        const DropdownMenuItem(value: null, child: Text('All Types')),
+                        const DropdownMenuItem(value: 'MC', child: Text('Multiple Choice')),
+                        const DropdownMenuItem(value: 'SA', child: Text('Short Answer')),
+                      ],
+                      onChanged: (v) => setState(() => _selectedQuestionType = v),
                     ),
                   ],
                 ),
