@@ -22,6 +22,8 @@ class _FocusedPracticeViewState extends State<FocusedPracticeView> {
   String? _selectedUnitId;
   String? _selectedTopicId;
   String? _selectedSkillId;
+  int _minDifficulty = 1;
+  int _maxDifficulty = 7;
   int _questionCount = 10;
 
   // Session state
@@ -124,6 +126,8 @@ Var.t: Type=double;Min=1;Max=5;Step=0.5
       _questionCount,
       topicId: _selectedTopicId,
       skillId: _selectedSkillId,
+      minDifficulty: _minDifficulty,
+      maxDifficulty: _maxDifficulty,
     );
 
     if (questions.isEmpty) {
@@ -292,6 +296,31 @@ Var.t: Type=double;Min=1;Max=5;Step=0.5
                       ],
                       onChanged: (v) => setState(() => _selectedSkillId = v),
                     ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Difficulty Range', style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    RangeSlider(
+                      values: RangeValues(_minDifficulty.toDouble(), _maxDifficulty.toDouble()),
+                      min: 1,
+                      max: 7,
+                      divisions: 6,
+                      labels: RangeLabels('$_minDifficulty', '$_maxDifficulty'),
+                      onChanged: (v) => setState(() {
+                        _minDifficulty = v.start.round();
+                        _maxDifficulty = v.end.round();
+                      }),
+                    ),
+                    Center(child: Text('Difficulty $_minDifficulty - $_maxDifficulty')),
                   ],
                 ),
               ),
