@@ -9,6 +9,55 @@ use crate::evaluator::ExpressionEvaluator;
 use crate::random::{RandomGenerator, UniformRandomGenerator, VariableGenerator};
 use std::collections::HashMap;
 
+/// Structured filter for question generation with builder-like API.
+#[derive(Debug, Clone, Default)]
+pub struct QuestionFilter {
+    pub topic_id: Option<String>,
+    pub skill_id: Option<String>,
+    pub min_difficulty: Option<i32>,
+    pub max_difficulty: Option<i32>,
+    pub question_type: Option<String>,
+    pub exclude_ids: Vec<String>,
+    pub template_ids: Option<Vec<String>>,
+}
+
+impl QuestionFilter {
+    pub fn new() -> Self {
+        QuestionFilter::default()
+    }
+
+    pub fn with_topic(mut self, topic_id: &str) -> Self {
+        self.topic_id = Some(topic_id.to_string());
+        self
+    }
+
+    pub fn with_skill(mut self, skill_id: &str) -> Self {
+        self.skill_id = Some(skill_id.to_string());
+        self
+    }
+
+    pub fn with_difficulty_range(mut self, min: i32, max: i32) -> Self {
+        self.min_difficulty = Some(min);
+        self.max_difficulty = Some(max);
+        self
+    }
+
+    pub fn with_question_type(mut self, qt: &str) -> Self {
+        self.question_type = Some(qt.to_string());
+        self
+    }
+
+    pub fn exclude(mut self, ids: Vec<String>) -> Self {
+        self.exclude_ids = ids;
+        self
+    }
+
+    pub fn with_template_ids(mut self, ids: Vec<String>) -> Self {
+        self.template_ids = Some(ids);
+        self
+    }
+}
+
 pub struct QuestionGenerator {
     templates: Vec<QuestionTemplate>,
 }
@@ -60,6 +109,28 @@ impl QuestionGenerator {
         Some(Self::generate_from_template(template, rng))
     }
 
+    pub fn generate_with_filter(&self, filter: &QuestionFilter) -> Option<GeneratedQuestion> {
+        let mut rng = UniformRandomGenerator::new();
+        self.generate_with_filter_rng(filter, &mut rng)
+    }
+
+    pub fn generate_with_filter_rng(
+        &self,
+        filter: &QuestionFilter,
+        rng: &mut UniformRandomGenerator,
+    ) -> Option<GeneratedQuestion> {
+        let candidates = self.filter_templates_by_struct(filter);
+
+        if candidates.is_empty() {
+            return None;
+        }
+
+        let idx = rng.next_int(0, candidates.len() as i32 - 1) as usize;
+        let template = &candidates[idx];
+
+        Some(Self::generate_from_template(template, rng))
+    }
+
     pub fn generate_batch(
         &self,
         count: usize,
@@ -86,6 +157,76 @@ impl QuestionGenerator {
         }
 
         results
+    }
+
+    pub fn generate_batch_with_filter(
+        &self,
+        count: usize,
+        filter: &QuestionFilter,
+    ) -> Vec<GeneratedQuestion> {
+        let mut rng = UniformRandomGenerator::new();
+        let mut results = Vec::new();
+
+        for _ in 0..count {
+            if let Some(q) = self.generate_with_filter_rng(filter, &mut rng) {
+                results.push(q);
+            }
+        }
+
+        results
+    }
+
+    /// Generate unique questions without duplicate templates.
+    pub fn generate_unique(
+        &self,
+        count: usize,
+        filter: &QuestionFilter,
+    ) -> Vec<GeneratedQuestion> {
+        let mut rng = UniformRandomGenerator::new();
+        let mut results = Vec::new();
+        let mut used_template_ids: Vec<String> = Vec::new();
+
+        let base_candidates = self.filter_templates_by_struct(filter);
+        if base_candidates.is_empty() {
+            return results;
+        }
+
+        let max_attempts = count * 3;
+        let mut attempts = 0;
+
+        while results.len() < count && attempts < max_attempts {
+            let available: Vec<&&QuestionTemplate> = base_candidates
+                .iter()
+                .filter(|t| !used_template_ids.contains(&t.id))
+                .collect();
+
+            if available.is_empty() {
+                break;
+            }
+
+            let idx = rng.next_int(0, available.len() as i32 - 1) as usize;
+            let template = available[idx];
+            used_template_ids.push(template.id.clone());
+
+            let q = Self::generate_from_template(template, &mut rng);
+            results.push(q);
+            attempts += 1;
+        }
+
+        results
+    }
+
+    /// Count templates matching the given filter criteria.
+    pub fn count_templates(&self, filter: &QuestionFilter) -> usize {
+        self.filter_templates_by_struct(filter).len()
+    }
+
+    /// Get available template IDs matching the filter.
+    pub fn get_template_ids(&self, filter: &QuestionFilter) -> Vec<String> {
+        self.filter_templates_by_struct(filter)
+            .iter()
+            .map(|t| t.id.clone())
+            .collect()
     }
 
     fn filter_templates(
@@ -121,6 +262,51 @@ impl QuestionGenerator {
                 }
                 if let Some(qt) = question_type {
                     if t.question_type != qt {
+                        return false;
+                    }
+                }
+                true
+            })
+            .collect()
+    }
+
+    fn filter_templates_by_struct(
+        &self,
+        filter: &QuestionFilter,
+    ) -> Vec<&QuestionTemplate> {
+        self.templates
+            .iter()
+            .filter(|t| {
+                if let Some(ref tid) = filter.topic_id {
+                    if t.topic_id != *tid {
+                        return false;
+                    }
+                }
+                if let Some(ref sid) = filter.skill_id {
+                    if t.skill_id != *sid {
+                        return false;
+                    }
+                }
+                if let Some(min_d) = filter.min_difficulty {
+                    if t.difficulty < min_d {
+                        return false;
+                    }
+                }
+                if let Some(max_d) = filter.max_difficulty {
+                    if t.difficulty > max_d {
+                        return false;
+                    }
+                }
+                if let Some(ref qt) = filter.question_type {
+                    if t.question_type != *qt {
+                        return false;
+                    }
+                }
+                if !filter.exclude_ids.is_empty() && filter.exclude_ids.contains(&t.id) {
+                    return false;
+                }
+                if let Some(ref ids) = filter.template_ids {
+                    if !ids.contains(&t.id) {
                         return false;
                     }
                 }
@@ -470,5 +656,163 @@ Distractor: x+1
         for item in &original {
             assert!(list.contains(item));
         }
+    }
+
+    #[test]
+    fn test_question_filter_builder() {
+        let filter = QuestionFilter::new()
+            .with_topic("T1")
+            .with_skill("S1")
+            .with_difficulty_range(1, 3)
+            .with_question_type("MC");
+
+        assert_eq!(filter.topic_id, Some("T1".to_string()));
+        assert_eq!(filter.skill_id, Some("S1".to_string()));
+        assert_eq!(filter.min_difficulty, Some(1));
+        assert_eq!(filter.max_difficulty, Some(3));
+        assert_eq!(filter.question_type, Some("MC".to_string()));
+    }
+
+    #[test]
+    fn test_question_filter_exclude() {
+        let filter = QuestionFilter::new()
+            .exclude(vec!["Q1".to_string(), "Q2".to_string()]);
+
+        assert_eq!(filter.exclude_ids.len(), 2);
+        assert!(filter.exclude_ids.contains(&"Q1".to_string()));
+    }
+
+    #[test]
+    fn test_generate_with_filter() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: UA
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: Test {x}
+AnswerExpression: x * 2
+SolutionTemplate: Solution
+Var.x: Type=int;Min=1;Max=10
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let gen = QuestionGenerator::new(spec.templates);
+
+        let filter = QuestionFilter::new()
+            .with_topic("T1")
+            .with_difficulty_range(1, 5);
+
+        let q = gen.generate_with_filter(&filter).unwrap();
+        assert_eq!(q.topic_id, "T1");
+    }
+
+    #[test]
+    fn test_generate_unique() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: UA
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: A {x}
+AnswerExpression: x
+Var.x: Type=int;Min=1;Max=10
+
+[TEMPLATE]
+Id: Q2
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 2
+TextTemplate: B {x}
+AnswerExpression: x * 2
+Var.x: Type=int;Min=1;Max=10
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let gen = QuestionGenerator::new(spec.templates);
+        let filter = QuestionFilter::new();
+
+        let questions = gen.generate_unique(2, &filter);
+        assert_eq!(questions.len(), 2);
+        assert_ne!(questions[0].id, questions[1].id);
+    }
+
+    #[test]
+    fn test_count_templates() {
+        let input = r#"
+[UNIT]
+Id: U1
+Name: Mechanics
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+
+[SKILL]
+Id: S1
+Name: UA
+TopicId: T1
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: A {x}
+AnswerExpression: x
+Var.x: Type=int;Min=1;Max=10
+
+[TEMPLATE]
+Id: Q2
+TopicId: T1
+SkillId: S1
+QuestionType: MultipleChoice
+Difficulty: 3
+TextTemplate: B {x}
+AnswerExpression: x * 2
+Var.x: Type=int;Min=1;Max=10
+Distractor: x+1
+"#;
+
+        let spec = SpecificationParser::parse(input).unwrap();
+        let gen = QuestionGenerator::new(spec.templates);
+
+        assert_eq!(gen.count_templates(&QuestionFilter::new()), 2);
+        assert_eq!(gen.count_templates(&QuestionFilter::new().with_question_type("MC")), 1);
+        assert_eq!(gen.count_templates(&QuestionFilter::new().with_difficulty_range(3, 5)), 1);
     }
 }
