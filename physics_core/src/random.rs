@@ -1,3 +1,9 @@
+//! Random value generation and text template substitution.
+//!
+//! Provides seeded and entropy-based random generators for reproducible
+//! and non-reproducible question generation, plus variable substitution
+//! in question text and solution templates.
+
 use crate::domain::VariableDefinition;
 use rand::Rng;
 use rand::SeedableRng;
