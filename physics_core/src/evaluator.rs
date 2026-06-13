@@ -299,6 +299,22 @@ impl ExpressionEvaluator {
             }
             "deg" => Ok(arg1 * 180.0 / std::f64::consts::PI),
             "rad" => Ok(arg1 * std::f64::consts::PI / 180.0),
+            "sinh" => Ok(arg1.sinh()),
+            "cosh" => Ok(arg1.cosh()),
+            "tanh" => Ok(arg1.tanh()),
+            "asinh" => Ok(arg1.asinh()),
+            "acosh" => {
+                if arg1 < 1.0 {
+                    return Err("acosh requires argument >= 1".to_string());
+                }
+                Ok(arg1.acosh())
+            }
+            "atanh" => {
+                if arg1 <= -1.0 || arg1 >= 1.0 {
+                    return Err("atanh requires argument in (-1, 1)".to_string());
+                }
+                Ok(arg1.atanh())
+            }
             _ => Err(format!("Unknown function: {}", name)),
         }
     }
@@ -589,5 +605,54 @@ mod tests {
         assert!((result - 180.0).abs() < 1e-10);
         let result = ExpressionEvaluator::evaluate("rad(180)", &vars).unwrap();
         assert!((result - std::f64::consts::PI).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_sinh() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("sinh(0)", &vars).unwrap();
+        assert!((result - 0.0).abs() < 1e-10);
+        let result = ExpressionEvaluator::evaluate("sinh(1)", &vars).unwrap();
+        assert!((result - 1.0_f64.sinh()).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_cosh() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("cosh(0)", &vars).unwrap();
+        assert!((result - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_tanh() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("tanh(0)", &vars).unwrap();
+        assert!((result - 0.0).abs() < 1e-10);
+        let result = ExpressionEvaluator::evaluate("tanh(100)", &vars).unwrap();
+        assert!((result - 1.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_asinh() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("asinh(0)", &vars).unwrap();
+        assert!((result - 0.0).abs() < 1e-10);
+    }
+
+    #[test]
+    fn test_acosh() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("acosh(1)", &vars).unwrap();
+        assert!((result - 0.0).abs() < 1e-10);
+        assert!(ExpressionEvaluator::evaluate("acosh(0)", &vars).is_err());
+    }
+
+    #[test]
+    fn test_atanh() {
+        let vars = HashMap::new();
+        let result = ExpressionEvaluator::evaluate("atanh(0)", &vars).unwrap();
+        assert!((result - 0.0).abs() < 1e-10);
+        assert!(ExpressionEvaluator::evaluate("atanh(1)", &vars).is_err());
+        assert!(ExpressionEvaluator::evaluate("atanh(-1)", &vars).is_err());
     }
 }
