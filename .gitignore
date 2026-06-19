@@ -36,3 +36,6 @@ node_modules/
 *.wasm
 *.wasm.map
 flutter
+# Web / Tauri build output
+dist/
+src-tauri/target
