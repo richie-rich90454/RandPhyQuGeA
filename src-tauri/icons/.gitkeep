@@ -1,0 +1,2 @@
+# Placeholder to keep the icons directory in version control.
+# Generate real icons later with: npm run tauri icon <path-to-source-image>
