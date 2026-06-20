@@ -41,3 +41,4 @@ flutter
 # Web / Tauri build output
 dist/
 src-tauri/target
+src-tauri/gen/

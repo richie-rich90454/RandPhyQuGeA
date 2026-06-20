@@ -1,7 +1,4 @@
-﻿// Icons will be added later via `npm run tauri icon`.
-// Bundle is currently disabled in tauri.conf.json to avoid missing-icon build errors.
-
-mod commands;
+﻿mod commands;
 
 pub fn run() {
     tauri::Builder::default()
