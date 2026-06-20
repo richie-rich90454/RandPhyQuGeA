@@ -35,6 +35,8 @@ node_modules/
 # WASM
 *.wasm
 *.wasm.map
+src/wasm/*
+!src/wasm/.gitkeep
 flutter
 # Web / Tauri build output
 dist/

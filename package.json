@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "eslint src --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "wasm:build": "wasm-pack build physics_core --target web --out-dir src/wasm",
+    "wasm:build:dev": "wasm-pack build physics_core --target web --out-dir src/wasm --dev"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.0.0",
