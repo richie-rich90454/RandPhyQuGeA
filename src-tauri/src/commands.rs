@@ -1,3 +1,18 @@
+﻿//! Tauri command wrappers around the `physics_core` crate.
+//!
+//! Each function is a thin `#[tauri::command]` adapter that accepts
+//! JSON-serializable inputs (or primitives), delegates to the corresponding
+//! `physics_core` API, and returns `Result<String, String>`. The `Ok` variant
+//! is a JSON-serialized payload and the `Err` variant is a human-readable
+//! message suitable for surfacing to the frontend.
+//!
+//! Command overview:
+//! - `parse_specification`: parse a spec text file into a `Specification`.
+//! - `generate_question`: generate a single `GeneratedQuestion` from a spec.
+//! - `generate_batch`: generate multiple questions from a spec.
+//! - `export_questions`: render questions to html/markdown/text/pdf/json/csv/latex.
+//! - `get_formula_library`: return the standard physics formula library.
+
 use physics_core::domain::{Specification, GeneratedQuestion, QuestionTemplate};
 use physics_core::parser::SpecificationParser;
 use physics_core::generator::QuestionGenerator;
