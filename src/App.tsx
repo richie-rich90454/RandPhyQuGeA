@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
+import { useTheme } from "./hooks/useTheme";
 import Home from "./views/Home";
 import FocusedPractice from "./views/FocusedPractice";
 import MentalPractice from "./views/MentalPractice";
@@ -11,6 +12,8 @@ import SessionSummary from "./views/SessionSummary";
 import Onboarding from "./views/Onboarding";
 
 function App() {
+  useTheme();
+
   return (
     <BrowserRouter>
       <Routes>
