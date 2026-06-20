@@ -4,6 +4,29 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+      },
+      fontSize: {
+        display: ["36px", { lineHeight: "1.2", fontWeight: "700", letterSpacing: "-0.02em" }],
+        h1: ["28px", { lineHeight: "1.25", fontWeight: "600", letterSpacing: "-0.01em" }],
+        h2: ["22px", { lineHeight: "1.3", fontWeight: "600", letterSpacing: "0em" }],
+        h3: ["20px", { lineHeight: "1.4", fontWeight: "600", letterSpacing: "0em" }],
+        h4: ["16px", { lineHeight: "1.5", fontWeight: "500", letterSpacing: "0em" }],
+        body: ["14px", { lineHeight: "1.5", fontWeight: "400", letterSpacing: "0em" }],
+        small: ["12px", { lineHeight: "1.5", fontWeight: "400", letterSpacing: "0em" }],
+        caption: ["11px", { lineHeight: "1.5", fontWeight: "400", letterSpacing: "0.01em" }],
+      },
+      transitionDuration: {
+        fast: "150ms",
+        normal: "300ms",
+        slow: "500ms",
+      },
+      transitionTimingFunction: {
+        standard: "ease-in-out",
+        decelerate: "cubic-bezier(0.33, 1, 0.68, 1)",
+        accelerate: "cubic-bezier(0.32, 0, 0.67, 0)",
+      },
       colors: {
         primary: {
           50: "#E3F2FD",
