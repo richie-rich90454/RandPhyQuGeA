@@ -517,8 +517,7 @@ impl QuestionTypeHandler for ShortAnswerHandler {
 /// Handler for true/false questions.
 ///
 /// Choices are always `["True", "False"]`. The correct answer is encoded as a
-/// non-zero (True) or zero (False) numeric value. Full validation logic is
-/// implemented in SubTask 8.3.
+/// non-zero (True) or zero (False) numeric value.
 pub struct TrueFalseHandler;
 
 impl QuestionTypeHandler for TrueFalseHandler {
@@ -536,8 +535,15 @@ impl QuestionTypeHandler for TrueFalseHandler {
         vec!["True".to_string(), "False".to_string()]
     }
 
-    fn validate_answer(&self, _user_answer: &str, _correct_answer: f64, _tolerance: f64) -> bool {
-        false
+    fn validate_answer(&self, user_answer: &str, correct_answer: f64, _tolerance: f64) -> bool {
+        let trimmed = user_answer.trim().to_lowercase();
+        let user_is_true = match trimmed.as_str() {
+            "true" => true,
+            "false" => false,
+            _ => return false,
+        };
+        let correct_is_true = correct_answer != 0.0;
+        user_is_true == correct_is_true
     }
 
     fn format_answer(&self, answer: f64) -> String {
@@ -551,8 +557,8 @@ impl QuestionTypeHandler for TrueFalseHandler {
 
 /// Handler for fill-in-the-blank questions.
 ///
-/// Behaves like short-answer but the UI renders `___` where the blank is. Full
-/// validation logic is implemented in SubTask 8.3.
+/// Behaves like short-answer but the UI renders `___` where the blank is.
+/// Validation is a case-insensitive trimmed string comparison.
 pub struct FillInBlankHandler;
 
 impl QuestionTypeHandler for FillInBlankHandler {
@@ -570,8 +576,10 @@ impl QuestionTypeHandler for FillInBlankHandler {
         Vec::new()
     }
 
-    fn validate_answer(&self, _user_answer: &str, _correct_answer: f64, _tolerance: f64) -> bool {
-        false
+    fn validate_answer(&self, user_answer: &str, correct_answer: f64, _tolerance: f64) -> bool {
+        let user = user_answer.trim().to_lowercase();
+        let correct = self.format_answer(correct_answer).to_lowercase();
+        user == correct
     }
 
     fn format_answer(&self, answer: f64) -> String {
@@ -581,8 +589,7 @@ impl QuestionTypeHandler for FillInBlankHandler {
 
 /// Handler for numeric-entry questions.
 ///
-/// Like short-answer but only numeric input is accepted. Full validation logic
-/// is implemented in SubTask 8.3.
+/// Like short-answer but only numeric input is accepted.
 pub struct NumericEntryHandler;
 
 impl QuestionTypeHandler for NumericEntryHandler {
@@ -600,8 +607,12 @@ impl QuestionTypeHandler for NumericEntryHandler {
         Vec::new()
     }
 
-    fn validate_answer(&self, _user_answer: &str, _correct_answer: f64, _tolerance: f64) -> bool {
-        false
+    fn validate_answer(&self, user_answer: &str, correct_answer: f64, tolerance: f64) -> bool {
+        ExpressionEvaluator::compare_answers(
+            user_answer,
+            &format_numeric_answer(correct_answer),
+            tolerance,
+        )
     }
 
     fn format_answer(&self, answer: f64) -> String {

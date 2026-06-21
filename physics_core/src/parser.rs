@@ -233,8 +233,11 @@ impl SpecificationParser {
         let skill_id = Self::get_single(block, "SkillId")?.to_string();
         let question_type_raw = Self::get_single(block, "QuestionType")?.trim();
         let question_type = match question_type_raw {
-            "MultipleChoice" => "MC".to_string(),
-            "ShortAnswer" => "SA".to_string(),
+            "MultipleChoice" | "MC" => "MC".to_string(),
+            "ShortAnswer" | "SA" => "SA".to_string(),
+            "TrueFalse" | "TF" => "TF".to_string(),
+            "FillInBlank" | "FB" => "FB".to_string(),
+            "NumericEntry" | "NE" => "NE".to_string(),
             x => x.to_string(),
         };
         let difficulty_str = Self::get_single(block, "Difficulty")?;
@@ -748,7 +751,7 @@ TopicId: T1
 Id: Q1
 TopicId: T1
 SkillId: S1
-QuestionType: TrueFalse
+QuestionType: CustomType
 Difficulty: 1
 TextTemplate: Test
 AnswerExpression: 1
@@ -756,6 +759,6 @@ Var.x: Type=double;Min=1;Max=5
 "#;
 
         let spec = SpecificationParser::parse(input).unwrap();
-        assert_eq!(spec.templates[0].question_type, "TrueFalse");
+        assert_eq!(spec.templates[0].question_type, "CustomType");
     }
 }
