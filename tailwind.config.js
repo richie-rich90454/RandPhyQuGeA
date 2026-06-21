@@ -5,8 +5,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"IBM Plex Sans"', "Inter", "system-ui", "-apple-system", "sans-serif"],
-        mono: ['"IBM Plex Mono"', "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        sans: ['"Noto Sans"', "Inter", "system-ui", "-apple-system", "sans-serif"],
+        mono: ['"Noto Sans Mono"', "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       letterSpacing: {
         tight: "-0.02em",
