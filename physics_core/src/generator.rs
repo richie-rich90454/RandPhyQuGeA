@@ -58,6 +58,52 @@ impl QuestionFilter {
     }
 }
 
+/// Format a numeric answer, truncating trailing zeros.
+///
+/// Integers are rendered without a decimal point; other values are
+/// rendered with up to four decimal places, stripping trailing zeros.
+fn format_numeric_answer(value: f64) -> String {
+    if value == value.trunc() {
+        return format!("{}", value as i64);
+    }
+    let mut formatted = format!("{:.4}", value);
+    formatted = formatted.trim_end_matches('0').to_string();
+    if formatted.ends_with('.') {
+        formatted.pop();
+    }
+    formatted
+}
+
+/// Trait abstraction over question types.
+///
+/// Each handler knows how to generate choices, validate a user's answer,
+/// and format the correct answer for a specific question type. New question
+/// types can be added by implementing this trait and registering with the
+/// `QuestionTypeRegistry` (see SubTask 8.2) without modifying the core
+/// generator logic.
+pub trait QuestionTypeHandler: Send + Sync {
+    /// Returns the question type identifier (e.g., "MC", "SA", "TF").
+    fn type_id(&self) -> &str;
+
+    /// Generate the choices for the question.
+    ///
+    /// Returns an empty vector for types without choices (e.g., SA), or the
+    /// full set of choices (distractors plus the answer, shuffled) for MC.
+    fn generate_choices(
+        &self,
+        template: &QuestionTemplate,
+        variables: &HashMap<String, f64>,
+        answer: f64,
+        evaluator: &ExpressionEvaluator,
+    ) -> Vec<String>;
+
+    /// Validate the user's answer against the correct answer.
+    fn validate_answer(&self, user_answer: &str, correct_answer: f64, tolerance: f64) -> bool;
+
+    /// Format the answer for display.
+    fn format_answer(&self, answer: f64) -> String;
+}
+
 pub struct QuestionGenerator {
     templates: Vec<QuestionTemplate>,
 }
@@ -332,16 +378,22 @@ impl QuestionGenerator {
         )
         .unwrap_or(0.0);
 
-        let answer = Self::format_answer(answer_value);
+        // Dispatch to the appropriate handler based on question type.
+        // The full registry-based dispatch arrives in SubTask 8.2; for now we
+        // match directly on the question type string.
+        let handler: Box<dyn QuestionTypeHandler> = match template.question_type.as_str() {
+            "MC" => Box::new(MultipleChoiceHandler),
+            _ => Box::new(ShortAnswerHandler),
+        };
+        let evaluator = ExpressionEvaluator;
 
-        let choices = if template.question_type == "MC" {
-            let distractors = Self::generate_distractors(template, answer_value, &variables);
-            let mut all_choices = distractors;
-            all_choices.push(answer.clone());
-            Self::shuffle(&mut all_choices, rng);
-            Some(all_choices)
-        } else {
+        let answer = handler.format_answer(answer_value);
+
+        let choices_vec = handler.generate_choices(template, &variables, answer_value, &evaluator);
+        let choices = if choices_vec.is_empty() {
             None
+        } else {
+            Some(choices_vec)
         };
 
         let solution_text = VariableGenerator::substitute_variables(
@@ -373,40 +425,91 @@ impl QuestionGenerator {
         }
     }
 
-    fn generate_distractors(
-        template: &QuestionTemplate,
-        answer: f64,
-        variables: &HashMap<String, f64>,
-    ) -> Vec<String> {
-        let mut distractors = Vec::new();
-        for expr in &template.distractor_expressions {
-            if let Ok(val) = ExpressionEvaluator::evaluate(expr, variables) {
-                let formatted = Self::format_answer(val);
-                if formatted != Self::format_answer(answer) {
-                    distractors.push(formatted);
-                }
-            }
-        }
-        distractors
-    }
-
     pub(crate) fn shuffle<T>(list: &mut Vec<T>, rng: &mut UniformRandomGenerator) {
         for i in (1..list.len()).rev() {
             let j = rng.next_int(0, i as i32) as usize;
             list.swap(i, j);
         }
     }
+}
 
-    fn format_answer(value: f64) -> String {
-        if value == value.trunc() {
-            return format!("{}", value as i64);
+/// Handler for multiple-choice questions.
+///
+/// Generates distractors from the template's distractor expressions, drops any
+/// that equal the answer, appends the answer, and shuffles the result.
+pub struct MultipleChoiceHandler;
+
+impl QuestionTypeHandler for MultipleChoiceHandler {
+    fn type_id(&self) -> &str {
+        "MC"
+    }
+
+    fn generate_choices(
+        &self,
+        template: &QuestionTemplate,
+        variables: &HashMap<String, f64>,
+        answer: f64,
+        _evaluator: &ExpressionEvaluator,
+    ) -> Vec<String> {
+        let mut choices = Vec::new();
+        for expr in &template.distractor_expressions {
+            if let Ok(val) = ExpressionEvaluator::evaluate(expr, variables) {
+                let formatted = format_numeric_answer(val);
+                if formatted != format_numeric_answer(answer) {
+                    choices.push(formatted);
+                }
+            }
         }
-        let mut formatted = format!("{:.4}", value);
-        formatted = formatted.trim_end_matches('0').to_string();
-        if formatted.ends_with('.') {
-            formatted.pop();
-        }
-        formatted
+        choices.push(format_numeric_answer(answer));
+        let mut rng = UniformRandomGenerator::new();
+        QuestionGenerator::shuffle(&mut choices, &mut rng);
+        choices
+    }
+
+    fn validate_answer(&self, user_answer: &str, correct_answer: f64, tolerance: f64) -> bool {
+        ExpressionEvaluator::compare_answers(
+            user_answer,
+            &format_numeric_answer(correct_answer),
+            tolerance,
+        )
+    }
+
+    fn format_answer(&self, answer: f64) -> String {
+        format_numeric_answer(answer)
+    }
+}
+
+/// Handler for short-answer questions.
+///
+/// Short-answer questions have no choices; the user types a numeric answer
+/// that is validated against the correct value within a tolerance.
+pub struct ShortAnswerHandler;
+
+impl QuestionTypeHandler for ShortAnswerHandler {
+    fn type_id(&self) -> &str {
+        "SA"
+    }
+
+    fn generate_choices(
+        &self,
+        _template: &QuestionTemplate,
+        _variables: &HashMap<String, f64>,
+        _answer: f64,
+        _evaluator: &ExpressionEvaluator,
+    ) -> Vec<String> {
+        Vec::new()
+    }
+
+    fn validate_answer(&self, user_answer: &str, correct_answer: f64, tolerance: f64) -> bool {
+        ExpressionEvaluator::compare_answers(
+            user_answer,
+            &format_numeric_answer(correct_answer),
+            tolerance,
+        )
+    }
+
+    fn format_answer(&self, answer: f64) -> String {
+        format_numeric_answer(answer)
     }
 }
 
