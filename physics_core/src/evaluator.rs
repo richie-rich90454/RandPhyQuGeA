@@ -36,7 +36,7 @@ impl ExpressionEvaluator {
                 continue;
             }
 
-            if c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')' || c == ',' {
+            if c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '(' || c == ')' || c == ',' {
                 tokens.push(c.to_string());
                 i += 1;
                 continue;
@@ -99,17 +99,17 @@ impl ExpressionEvaluator {
         pos: usize,
         variables: &HashMap<String, f64>,
     ) -> Result<(f64, usize), String> {
-        let (mut left, mut pos) = Self::parse_factor(tokens, pos, variables)?;
+        let (mut left, mut pos) = Self::parse_power(tokens, pos, variables)?;
 
         while pos < tokens.len() {
             match tokens[pos].as_str() {
                 "*" => {
-                    let (right, new_pos) = Self::parse_factor(tokens, pos + 1, variables)?;
+                    let (right, new_pos) = Self::parse_power(tokens, pos + 1, variables)?;
                     left *= right;
                     pos = new_pos;
                 }
                 "/" => {
-                    let (right, new_pos) = Self::parse_factor(tokens, pos + 1, variables)?;
+                    let (right, new_pos) = Self::parse_power(tokens, pos + 1, variables)?;
                     if right == 0.0 {
                         return Err("Division by zero".to_string());
                     }
@@ -121,6 +121,29 @@ impl ExpressionEvaluator {
         }
 
         Ok((left, pos))
+    }
+
+    /// Parse an exponent expression (`base ^ exponent`).
+    ///
+    /// The `^` operator has higher precedence than `*` and `/` and is
+    /// right-associative, so `2^3^2` parses as `2^(3^2)` = 512. It is
+    /// syntactic sugar for `pow(base, exponent)`.
+    fn parse_power(
+        tokens: &[String],
+        pos: usize,
+        variables: &HashMap<String, f64>,
+    ) -> Result<(f64, usize), String> {
+        let (base, mut pos) = Self::parse_factor(tokens, pos, variables)?;
+
+        while pos < tokens.len() && tokens[pos] == "^" {
+            // Right-associative: recurse via parse_power so the exponent
+            // itself can contain another `^` (e.g. 2^3^2 = 2^(3^2)).
+            let (exp, new_pos) = Self::parse_power(tokens, pos + 1, variables)?;
+            let result = base.powf(exp);
+            return Ok((result, new_pos));
+        }
+
+        Ok((base, pos))
     }
 
     fn parse_factor(
@@ -216,8 +239,19 @@ impl ExpressionEvaluator {
         relative_error < tolerance
     }
 
+    /// Evaluate a named function with one or two numeric arguments.
+    ///
+    /// The trigonometric functions `sin`, `cos`, and `tan` operate in
+    /// DEGREES: the input is converted from degrees to radians internally
+    /// (`radians = degrees * pi / 180`) before the underlying Rust stdlib
+    /// function is called. The inverse trig functions (`asin`, `acos`,
+    /// `atan`) return values in degrees for symmetry. Use `rad(x)` to
+    /// convert degrees to radians and `deg(x)` to convert radians to
+    /// degrees when interoperating with radian-based formulas.
     fn eval_function(name: &str, arg1: f64, arg2: Option<f64>) -> Result<f64, String> {
         match name.to_lowercase().as_str() {
+            // sin/cos/tan operate in DEGREES: input is converted from
+            // degrees to radians internally before calling the stdlib.
             "sin" => Ok((arg1 * std::f64::consts::PI / 180.0).sin()),
             "cos" => Ok((arg1 * std::f64::consts::PI / 180.0).cos()),
             "tan" => Ok((arg1 * std::f64::consts::PI / 180.0).tan()),
