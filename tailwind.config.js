@@ -33,6 +33,11 @@ export default {
         accelerate: "cubic-bezier(0.32, 0, 0.67, 0)",
       },
       colors: {
+        layer: {
+          "01": "rgb(var(--layer-01) / <alpha-value>)",
+          "02": "rgb(var(--layer-02) / <alpha-value>)",
+          "03": "rgb(var(--layer-03) / <alpha-value>)",
+        },
         primary: {
           50: "#E3F2FD",
           100: "#BBDEFB",

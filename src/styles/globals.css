@@ -5,6 +5,11 @@
 @tailwind utilities;
 
 :root {
+  /* Carbon layer system */
+  --layer-01: 255 255 255; /* white */
+  --layer-02: 249 250 251; /* neutral-50 */
+  --layer-03: 255 255 255;
+
   /* Primary (blue) */
   --color-primary-50: #e3f2fd;
   --color-primary-500: #2196f3;
@@ -86,10 +91,27 @@
   .difficulty-7 {
     @apply text-error-700;
   }
+
+  /* Apple-style translucent materials */
+  .material-light {
+    background-color: rgb(255 255 255 / 0.8);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+  .material-dark {
+    background-color: rgb(23 23 23 / 0.8);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
 }
 
 .dark {
   color-scheme: dark;
+
+  /* Carbon layer system (dark) */
+  --layer-01: 38 38 38; /* neutral-800 */
+  --layer-02: 45 45 45;
+  --layer-03: 55 55 55;
 }
 
 .dark body {
