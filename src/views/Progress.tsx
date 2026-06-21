@@ -10,6 +10,7 @@ import {
   Badge,
   Modal,
 } from '../components/ui';
+import { Check, Close, Trash2, List, Target, Clock, Layers, BarChart3 } from 'lucide-react';
 import { DifficultyBadge } from '../components/DifficultyBadge';
 import { useProgressStore } from '../stores/progressStore';
 import { cn } from '../lib/utils';
@@ -60,112 +61,6 @@ function difficultyBarColor(level: number): string {
   if (level <= 3) return '#4CAF50'; // success-500
   if (level <= 5) return '#FF9800'; // warning-500
   return '#F44336'; // error-500
-}
-
-/* ---------- icons (24x24, fill="currentColor") ---------- */
-
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-    </svg>
-  );
-}
-
-function CrossIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-    </svg>
-  );
-}
-
-function TrashIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-5 w-5', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-    </svg>
-  );
-}
-
-function ListIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
-    </svg>
-  );
-}
-
-function TargetIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" />
-    </svg>
-  );
-}
-
-function ClockIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-    </svg>
-  );
-}
-
-function LayersIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z" />
-    </svg>
-  );
-}
-
-function ChartIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z" />
-    </svg>
-  );
 }
 
 /* ---------- main component ---------- */
@@ -245,7 +140,7 @@ export default function Progress() {
       <div className="mx-auto max-w-5xl animate-fade-in p-6 md:p-8">
         <Card>
           <EmptyState
-            icon={<ChartIcon className="h-12 w-12" />}
+            icon={<BarChart3 className="h-12 w-12" />}
             title="No progress yet"
             description="Start practicing to see your progress."
             action={
@@ -275,7 +170,7 @@ export default function Progress() {
         </div>
         <Button
           variant="danger"
-          leftIcon={<TrashIcon />}
+          leftIcon={<Trash2 className="h-5 w-5" />}
           onClick={() => setShowClearConfirm(true)}
         >
           Clear Data
@@ -287,7 +182,7 @@ export default function Progress() {
         <Card>
           <CardContent className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300">
-              <ListIcon className="h-6 w-6" />
+              <List className="h-6 w-6" />
             </div>
             <div className="min-w-0">
               <p className="text-small text-neutral-500 dark:text-neutral-400">
@@ -303,7 +198,7 @@ export default function Progress() {
         <Card>
           <CardContent className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-success-50 text-success-600 dark:bg-success-900/30 dark:text-success-300">
-              <TargetIcon className="h-6 w-6" />
+              <Target className="h-6 w-6" />
             </div>
             <div className="min-w-0">
               <p className="text-small text-neutral-500 dark:text-neutral-400">
@@ -324,7 +219,7 @@ export default function Progress() {
         <Card>
           <CardContent className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-warning-50 text-warning-600 dark:bg-warning-900/30 dark:text-warning-300">
-              <ClockIcon className="h-6 w-6" />
+              <Clock className="h-6 w-6" />
             </div>
             <div className="min-w-0">
               <p className="text-small text-neutral-500 dark:text-neutral-400">
@@ -340,7 +235,7 @@ export default function Progress() {
         <Card>
           <CardContent className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300">
-              <LayersIcon className="h-6 w-6" />
+              <Layers className="h-6 w-6" />
             </div>
             <div className="min-w-0">
               <p className="text-small text-neutral-500 dark:text-neutral-400">
@@ -486,9 +381,9 @@ export default function Progress() {
                     )}
                   >
                     {r.is_correct ? (
-                      <CheckIcon className="h-4 w-4" />
+                      <Check className="h-4 w-4" />
                     ) : (
-                      <CrossIcon className="h-4 w-4" />
+                      <Close className="h-4 w-4" />
                     )}
                   </div>
                   <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Flame, Trophy, Check, Close, ChevronRight, Target, Lightbulb, Library } from 'lucide-react';
 import { Button, Card, CardContent, EmptyState } from '../components/ui';
 import { useProgressStore } from '../stores/progressStore';
 import { cn } from '../lib/utils';
@@ -86,112 +87,6 @@ function computeBestStreak(results: PracticeResult[]): number {
   return best;
 }
 
-/* ---------- icons (24x24, fill="currentColor") ---------- */
-
-function FireIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z" />
-    </svg>
-  );
-}
-
-function TrophyIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
-    </svg>
-  );
-}
-
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-    </svg>
-  );
-}
-
-function CrossIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-    </svg>
-  );
-}
-
-function TargetIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" />
-    </svg>
-  );
-}
-
-function LightbulbIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z" />
-    </svg>
-  );
-}
-
-function LibraryIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z" />
-    </svg>
-  );
-}
-
 /* ---------- accuracy ring ---------- */
 
 function AccuracyRing({ value }: { value: number }) {
@@ -243,7 +138,7 @@ const QUICK_ACTIONS = [
     title: 'Focused Practice',
     subtitle: 'Deep-focus problem solving',
     path: '/practice',
-    Icon: TargetIcon,
+    Icon: Target,
     iconBg:
       'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300',
   },
@@ -252,7 +147,7 @@ const QUICK_ACTIONS = [
     title: 'Mental Practice',
     subtitle: 'Quick mental math drills',
     path: '/mental-practice',
-    Icon: LightbulbIcon,
+    Icon: Lightbulb,
     iconBg:
       'bg-warning-50 text-warning-600 dark:bg-warning-900/30 dark:text-warning-300',
   },
@@ -261,7 +156,7 @@ const QUICK_ACTIONS = [
     title: 'Question Bank',
     subtitle: 'Browse all questions',
     path: '/question-bank',
-    Icon: LibraryIcon,
+    Icon: Library,
     iconBg:
       'bg-success-50 text-success-600 dark:bg-success-900/30 dark:text-success-300',
   },
@@ -327,7 +222,7 @@ export default function Home() {
       {!hasResults && (
         <Card className="animate-fade-in">
           <EmptyState
-            icon={<LightbulbIcon className="h-12 w-12" />}
+            icon={<Lightbulb className="h-12 w-12" />}
             title="No practice yet"
             description="Start your first session to build your physics skills and track your progress."
             action={
@@ -345,7 +240,7 @@ export default function Home() {
           <Card>
             <CardContent className="flex items-center gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-warning-50 text-warning-500 dark:bg-warning-900/30">
-                <FireIcon />
+                <Flame className="h-6 w-6" />
               </div>
               <div className="min-w-0">
                 <p className="text-small text-neutral-500 dark:text-neutral-400">
@@ -376,7 +271,7 @@ export default function Home() {
           <Card>
             <CardContent className="flex items-center gap-4">
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-warning-50 text-warning-700 dark:bg-warning-900/30">
-                <TrophyIcon />
+                <Trophy className="h-6 w-6" />
               </div>
               <div className="min-w-0">
                 <p className="text-small text-neutral-500 dark:text-neutral-400">
@@ -452,7 +347,7 @@ export default function Home() {
                         {action.subtitle}
                       </p>
                     </div>
-                    <ChevronRightIcon className="h-5 w-5 shrink-0 text-neutral-400" />
+                    <ChevronRight className="h-5 w-5 shrink-0 text-neutral-400" />
                   </CardContent>
                 </Card>
               </div>
@@ -483,9 +378,9 @@ export default function Home() {
                     )}
                   >
                     {r.is_correct ? (
-                      <CheckIcon className="h-4 w-4" />
+                      <Check className="h-4 w-4" />
                     ) : (
-                      <CrossIcon className="h-4 w-4" />
+                      <Close className="h-4 w-4" />
                     )}
                   </div>
                   <div className="min-w-0 flex-1">

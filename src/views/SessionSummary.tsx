@@ -16,102 +16,10 @@ import {
   CardTitle,
   EmptyState,
 } from '../components/ui';
+import { Check, Close, Target, Lightbulb, Trophy, RefreshCw, Home } from 'lucide-react';
 import { DifficultyBadge } from '../components/DifficultyBadge';
 import { cn } from '../lib/utils';
 import { usePracticeStore } from '../stores/practiceStore';
-
-/* ---------- icons (24x24, fill="currentColor") ---------- */
-
-function CheckIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-    </svg>
-  );
-}
-
-function CrossIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-    </svg>
-  );
-}
-
-function TargetIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" />
-    </svg>
-  );
-}
-
-function LightbulbIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z" />
-    </svg>
-  );
-}
-
-function TrophyIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z" />
-    </svg>
-  );
-}
-
-function RefreshIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
-    </svg>
-  );
-}
-
-function HomeIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('h-6 w-6', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-    </svg>
-  );
-}
 
 /* ---------- format helpers ---------- */
 
@@ -155,7 +63,7 @@ export default function SessionSummary() {
       <div className="mx-auto max-w-3xl p-6 md:p-8">
         <Card className="animate-fade-in">
           <EmptyState
-            icon={<LightbulbIcon className="h-12 w-12" />}
+            icon={<Lightbulb className="h-12 w-12" />}
             title="No session data"
             description="Complete a practice session to see your summary here."
             action={<Button onClick={() => navigate('/')}>Back to Home</Button>}
@@ -166,7 +74,7 @@ export default function SessionSummary() {
   }
 
   const isHighAccuracy = accuracy >= 80;
-  const ModeIcon = mode === 'Mental' ? LightbulbIcon : TargetIcon;
+  const ModeIcon = mode === 'Mental' ? Lightbulb : Target;
 
   function handlePracticeAgain() {
     const nextPath = mode === 'Mental' ? '/mental-practice' : '/practice';
@@ -186,7 +94,7 @@ export default function SessionSummary() {
         <CardContent className="py-10 text-center">
           {isHighAccuracy && (
             <div className="mb-3 flex justify-center text-warning-500">
-              <TrophyIcon className="h-12 w-12" />
+              <Trophy className="h-12 w-12" />
             </div>
           )}
           <p
@@ -264,9 +172,9 @@ export default function SessionSummary() {
                   )}
                 >
                   {r.is_correct ? (
-                    <CheckIcon className="h-4 w-4" />
+                    <Check className="h-4 w-4" />
                   ) : (
-                    <CrossIcon className="h-4 w-4" />
+                    <Close className="h-4 w-4" />
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
@@ -302,7 +210,7 @@ export default function SessionSummary() {
         <Button
           size="lg"
           onClick={handlePracticeAgain}
-          leftIcon={<RefreshIcon className="h-5 w-5" />}
+          leftIcon={<RefreshCw className="h-5 w-5" />}
         >
           Practice Again
         </Button>
@@ -310,7 +218,7 @@ export default function SessionSummary() {
           size="lg"
           variant="secondary"
           onClick={handleBackHome}
-          leftIcon={<HomeIcon className="h-5 w-5" />}
+          leftIcon={<Home className="h-5 w-5" />}
         >
           Back to Home
         </Button>

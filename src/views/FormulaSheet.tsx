@@ -20,65 +20,7 @@ import { MathRenderer } from '../components/MathRenderer';
 import { cn } from '../lib/utils';
 import { getFormulaLibrary } from '../services/physicsCore';
 import type { FormulaEntry } from '../types/models';
-
-/* ---------- icons ---------- */
-
-type IconProps = { className?: string };
-
-function BookIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-12 w-12', className)}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-    </svg>
-  );
-}
-
-function SearchIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-4 w-4', className)}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
-function AlertIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-12 w-12', className)}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-      <line x1="12" y1="9" x2="12" y2="13" />
-      <line x1="12" y1="17" x2="12.01" y2="17" />
-    </svg>
-  );
-}
+import { BookOpen, Search, AlertCircle } from 'lucide-react';
 
 /* ---------- helpers ---------- */
 
@@ -177,7 +119,7 @@ export default function FormulaSheet() {
     return (
       <div className="mx-auto max-w-3xl p-6 md:p-8">
         <EmptyState
-          icon={<AlertIcon />}
+          icon={<AlertCircle className="h-12 w-12" />}
           title="Could not load formulas"
           description={error}
         />
@@ -199,7 +141,11 @@ export default function FormulaSheet() {
       </header>
 
       <div className="relative mb-6">
-        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+        <Search
+          className={cn(
+            'pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400',
+          )}
+        />
         <Input
           type="search"
           placeholder="Search by name, description, or variable…"
@@ -212,7 +158,7 @@ export default function FormulaSheet() {
 
       {filtered.length === 0 ? (
         <EmptyState
-          icon={<BookIcon />}
+          icon={<BookOpen className="h-12 w-12" />}
           title={query ? 'No matching formulas' : 'No formulas available'}
           description={
             query

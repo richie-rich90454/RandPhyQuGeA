@@ -14,109 +14,25 @@ import { useSettingsStore } from '../stores/settingsStore';
 import type { ThemeMode } from '../stores/settingsStore';
 import { useProgressStore } from '../stores/progressStore';
 import { parseSpecification } from '../services/physicsCore';
-
-/* ---------- icons ---------- */
-
-type IconProps = { className?: string };
-type IconComponent = ComponentType<IconProps>;
-
-function SunIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-5 w-5', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" />
-    </svg>
-  );
-}
-
-function MoonIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-5 w-5', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" />
-    </svg>
-  );
-}
-
-function MonitorIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-5 w-5', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M21 3H3c-1.11 0-2 .89-2 2v12c0 1.1.89 2 2 2h7v2H8v2h8v-2h-2v-2h7c1.1 0 2-.9 2-2V5c0-1.11-.9-2-2-2zm0 14H3V5h18v12z" />
-    </svg>
-  );
-}
-
-function PaletteIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-5 w-5', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10c1.38 0 2.5-1.12 2.5-2.5 0-.61-.23-1.2-.64-1.67-.08-.1-.13-.21-.13-.33 0-.28.22-.5.5-.5H16c3.31 0 6-2.69 6-6 0-4.96-4.49-9-10-9zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 8 6.5 8 8 8.67 8 9.5 7.33 11 6.5 11zm3-4C8.67 7 8 6.33 8 5.5S8.67 4 9.5 4s1.5.67 1.5 1.5S10.33 7 9.5 7zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 4 14.5 4s1.5.67 1.5 1.5S15.33 7 14.5 7zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 8 17.5 8s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
-    </svg>
-  );
-}
-
-function SlidersIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-5 w-5', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" />
-    </svg>
-  );
-}
-
-function DatabaseIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-5 w-5', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4zm0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z" />
-    </svg>
-  );
-}
-
-function InfoIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-5 w-5', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
-    </svg>
-  );
-}
+import {
+  Sun,
+  Moon,
+  Monitor,
+  Palette,
+  SlidersHorizontal,
+  Database,
+  Info,
+  type LucideIcon,
+} from 'lucide-react';
 
 /* ---------- config ---------- */
 
-const THEME_OPTIONS: { mode: ThemeMode; label: string; Icon: IconComponent }[] = [
-  { mode: 'light', label: 'Light', Icon: SunIcon },
-  { mode: 'dark', label: 'Dark', Icon: MoonIcon },
-  { mode: 'system', label: 'System', Icon: MonitorIcon },
+type IconComponent = ComponentType<{ className?: string }>;
+
+const THEME_OPTIONS: { mode: ThemeMode; label: string; Icon: LucideIcon }[] = [
+  { mode: 'light', label: 'Light', Icon: Sun },
+  { mode: 'dark', label: 'Dark', Icon: Moon },
+  { mode: 'system', label: 'System', Icon: Monitor },
 ];
 
 const DIFFICULTY_LEVELS = [1, 2, 3, 4, 5, 6, 7];
@@ -278,7 +194,7 @@ export default function Settings() {
         {/* Appearance */}
         <Card>
           <SectionHeader
-            Icon={PaletteIcon}
+            Icon={Palette}
             iconClass="bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300"
             title="Appearance"
             subtitle="Choose how the app looks."
@@ -310,7 +226,7 @@ export default function Settings() {
         {/* Practice Defaults */}
         <Card>
           <SectionHeader
-            Icon={SlidersIcon}
+            Icon={SlidersHorizontal}
             iconClass="bg-success-50 text-success-600 dark:bg-success-900/30 dark:text-success-300"
             title="Practice Defaults"
             subtitle="Defaults used when starting a session."
@@ -361,7 +277,7 @@ export default function Settings() {
         {/* Data & Storage */}
         <Card>
           <SectionHeader
-            Icon={DatabaseIcon}
+            Icon={Database}
             iconClass="bg-warning-50 text-warning-600 dark:bg-warning-900/30 dark:text-warning-300"
             title="Data & Storage"
             subtitle="Manage your specification and practice data."
@@ -433,7 +349,7 @@ export default function Settings() {
         {/* About */}
         <Card>
           <SectionHeader
-            Icon={InfoIcon}
+            Icon={Info}
             iconClass="bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300"
             title="About"
           />

@@ -36,80 +36,7 @@ import type {
   GeneratedQuestion,
   ExportFormat,
 } from '../types/models';
-
-/* ---------- icons ---------- */
-
-type IconProps = { className?: string };
-
-function ChevronIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn(
-        'h-4 w-4 shrink-0 transition-transform duration-fast ease-standard',
-        className,
-      )}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <polyline points="9 6 15 12 9 18" />
-    </svg>
-  );
-}
-
-function DownloadIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-5 w-5', className)}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-      <polyline points="7 10 12 15 17 10" />
-      <line x1="12" y1="15" x2="12" y2="3" />
-    </svg>
-  );
-}
-
-function BookIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-12 w-12', className)}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-    </svg>
-  );
-}
-
-function SparkleIcon({ className }: IconProps) {
-  return (
-    <svg
-      className={cn('h-4 w-4', className)}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5L12 2z" />
-    </svg>
-  );
-}
+import { ChevronRight, Download, BookOpen, Sparkles } from 'lucide-react';
 
 /* ---------- config ---------- */
 
@@ -317,7 +244,7 @@ export default function QuestionBank() {
     return (
       <div className="mx-auto max-w-3xl p-6 md:p-8">
         <EmptyState
-          icon={<BookIcon />}
+          icon={<BookOpen className="h-12 w-12" />}
           title={error ? 'Could not load specification' : 'No specification loaded'}
           description={
             error ??
@@ -344,7 +271,7 @@ export default function QuestionBank() {
         <Button
           variant="outline"
           onClick={() => setExportOpen(true)}
-          leftIcon={<DownloadIcon />}
+          leftIcon={<Download className="h-5 w-5" />}
         >
           Export Questions
         </Button>
@@ -368,7 +295,12 @@ export default function QuestionBank() {
                     className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm font-semibold text-neutral-800 transition-colors duration-fast ease-standard hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-700"
                     aria-expanded={unitExpanded}
                   >
-                    <ChevronIcon className={cn(unitExpanded && 'rotate-90')} />
+                    <ChevronRight
+                      className={cn(
+                        'h-4 w-4 shrink-0 transition-transform duration-fast ease-standard',
+                        unitExpanded && 'rotate-90',
+                      )}
+                    />
                     <span className="flex-1 truncate">{unit.name}</span>
                     <Badge variant="default">{unitTopics.length}</Badge>
                   </button>
@@ -387,8 +319,11 @@ export default function QuestionBank() {
                               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm font-medium text-neutral-700 transition-colors duration-fast ease-standard hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-700"
                               aria-expanded={topicExpanded}
                             >
-                              <ChevronIcon
-                                className={cn(topicExpanded && 'rotate-90')}
+                              <ChevronRight
+                                className={cn(
+                                  'h-4 w-4 shrink-0 transition-transform duration-fast ease-standard',
+                                  topicExpanded && 'rotate-90',
+                                )}
                               />
                               <span className="flex-1 truncate">{topic.name}</span>
                               <Badge variant="default">{topicSkills.length}</Badge>
@@ -487,7 +422,7 @@ export default function QuestionBank() {
                           size="sm"
                           variant="outline"
                           onClick={() => handlePreview(template)}
-                          leftIcon={<SparkleIcon />}
+                          leftIcon={<Sparkles className="h-4 w-4" />}
                           className="shrink-0"
                         >
                           Preview
@@ -501,7 +436,7 @@ export default function QuestionBank() {
           ) : (
             <Card>
               <EmptyState
-                icon={<BookIcon />}
+                icon={<BookOpen className="h-12 w-12" />}
                 title="Select a skill"
                 description="Browse the specification tree and choose a skill to view its question templates."
               />
