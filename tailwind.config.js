@@ -5,7 +5,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
+        sans: ['"IBM Plex Sans"', "Inter", "system-ui", "-apple-system", "sans-serif"],
+        mono: ['"IBM Plex Mono"', "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+      },
+      letterSpacing: {
+        tight: "-0.02em",
+        tighter: "-0.04em",
       },
       fontSize: {
         display: ["36px", { lineHeight: "1.2", fontWeight: "700", letterSpacing: "-0.02em" }],
