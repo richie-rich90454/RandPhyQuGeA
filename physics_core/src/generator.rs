@@ -106,11 +106,15 @@ pub trait QuestionTypeHandler: Send + Sync {
 
 pub struct QuestionGenerator {
     templates: Vec<QuestionTemplate>,
+    registry: QuestionTypeRegistry,
 }
 
 impl QuestionGenerator {
     pub fn new(templates: Vec<QuestionTemplate>) -> Self {
-        QuestionGenerator { templates }
+        QuestionGenerator {
+            templates,
+            registry: QuestionTypeRegistry::default(),
+        }
     }
 
     pub fn generate(
@@ -152,7 +156,7 @@ impl QuestionGenerator {
         let idx = rng.next_int(0, candidates.len() as i32 - 1) as usize;
         let template = &candidates[idx];
 
-        Some(Self::generate_from_template(template, rng))
+        Some(self.generate_from_template(template, rng))
     }
 
     pub fn generate_with_filter(&self, filter: &QuestionFilter) -> Option<GeneratedQuestion> {
@@ -174,7 +178,7 @@ impl QuestionGenerator {
         let idx = rng.next_int(0, candidates.len() as i32 - 1) as usize;
         let template = &candidates[idx];
 
-        Some(Self::generate_from_template(template, rng))
+        Some(self.generate_from_template(template, rng))
     }
 
     pub fn generate_batch(
@@ -254,7 +258,7 @@ impl QuestionGenerator {
             let template = available[idx];
             used_template_ids.push(template.id.clone());
 
-            let q = Self::generate_from_template(template, &mut rng);
+            let q = self.generate_from_template(template, &mut rng);
             results.push(q);
             attempts += 1;
         }
@@ -362,6 +366,7 @@ impl QuestionGenerator {
     }
 
     fn generate_from_template(
+        &self,
         template: &QuestionTemplate,
         rng: &mut UniformRandomGenerator,
     ) -> GeneratedQuestion {
@@ -378,13 +383,9 @@ impl QuestionGenerator {
         )
         .unwrap_or(0.0);
 
-        // Dispatch to the appropriate handler based on question type.
-        // The full registry-based dispatch arrives in SubTask 8.2; for now we
-        // match directly on the question type string.
-        let handler: Box<dyn QuestionTypeHandler> = match template.question_type.as_str() {
-            "MC" => Box::new(MultipleChoiceHandler),
-            _ => Box::new(ShortAnswerHandler),
-        };
+        // Dispatch to the appropriate handler via the registry. Unknown types
+        // fall back to the ShortAnswerHandler.
+        let handler = self.registry.get_or_default(&template.question_type);
         let evaluator = ExpressionEvaluator;
 
         let answer = handler.format_answer(answer_value);
@@ -510,6 +511,154 @@ impl QuestionTypeHandler for ShortAnswerHandler {
 
     fn format_answer(&self, answer: f64) -> String {
         format_numeric_answer(answer)
+    }
+}
+
+/// Handler for true/false questions.
+///
+/// Choices are always `["True", "False"]`. The correct answer is encoded as a
+/// non-zero (True) or zero (False) numeric value. Full validation logic is
+/// implemented in SubTask 8.3.
+pub struct TrueFalseHandler;
+
+impl QuestionTypeHandler for TrueFalseHandler {
+    fn type_id(&self) -> &str {
+        "TF"
+    }
+
+    fn generate_choices(
+        &self,
+        _template: &QuestionTemplate,
+        _variables: &HashMap<String, f64>,
+        _answer: f64,
+        _evaluator: &ExpressionEvaluator,
+    ) -> Vec<String> {
+        vec!["True".to_string(), "False".to_string()]
+    }
+
+    fn validate_answer(&self, _user_answer: &str, _correct_answer: f64, _tolerance: f64) -> bool {
+        false
+    }
+
+    fn format_answer(&self, answer: f64) -> String {
+        if answer != 0.0 {
+            "True".to_string()
+        } else {
+            "False".to_string()
+        }
+    }
+}
+
+/// Handler for fill-in-the-blank questions.
+///
+/// Behaves like short-answer but the UI renders `___` where the blank is. Full
+/// validation logic is implemented in SubTask 8.3.
+pub struct FillInBlankHandler;
+
+impl QuestionTypeHandler for FillInBlankHandler {
+    fn type_id(&self) -> &str {
+        "FB"
+    }
+
+    fn generate_choices(
+        &self,
+        _template: &QuestionTemplate,
+        _variables: &HashMap<String, f64>,
+        _answer: f64,
+        _evaluator: &ExpressionEvaluator,
+    ) -> Vec<String> {
+        Vec::new()
+    }
+
+    fn validate_answer(&self, _user_answer: &str, _correct_answer: f64, _tolerance: f64) -> bool {
+        false
+    }
+
+    fn format_answer(&self, answer: f64) -> String {
+        format_numeric_answer(answer)
+    }
+}
+
+/// Handler for numeric-entry questions.
+///
+/// Like short-answer but only numeric input is accepted. Full validation logic
+/// is implemented in SubTask 8.3.
+pub struct NumericEntryHandler;
+
+impl QuestionTypeHandler for NumericEntryHandler {
+    fn type_id(&self) -> &str {
+        "NE"
+    }
+
+    fn generate_choices(
+        &self,
+        _template: &QuestionTemplate,
+        _variables: &HashMap<String, f64>,
+        _answer: f64,
+        _evaluator: &ExpressionEvaluator,
+    ) -> Vec<String> {
+        Vec::new()
+    }
+
+    fn validate_answer(&self, _user_answer: &str, _correct_answer: f64, _tolerance: f64) -> bool {
+        false
+    }
+
+    fn format_answer(&self, answer: f64) -> String {
+        format_numeric_answer(answer)
+    }
+}
+
+/// Registry of question type handlers, keyed by their `type_id`.
+///
+/// The registry allows new question types to be added without modifying the
+/// core generator — simply implement `QuestionTypeHandler` and register an
+/// instance. `get_or_default` falls back to `ShortAnswerHandler` for unknown
+/// types.
+pub struct QuestionTypeRegistry {
+    handlers: HashMap<String, Box<dyn QuestionTypeHandler>>,
+}
+
+impl QuestionTypeRegistry {
+    pub fn new() -> Self {
+        QuestionTypeRegistry {
+            handlers: HashMap::new(),
+        }
+    }
+
+    pub fn register(&mut self, handler: Box<dyn QuestionTypeHandler>) {
+        let id = handler.type_id().to_string();
+        self.handlers.insert(id, handler);
+    }
+
+    pub fn get(&self, type_id: &str) -> Option<&dyn QuestionTypeHandler> {
+        self.handlers.get(type_id).map(|h| h.as_ref())
+    }
+
+    /// Returns the handler for `type_id`, falling back to `ShortAnswerHandler`
+    /// if the type is not registered.
+    pub fn get_or_default(&self, type_id: &str) -> &dyn QuestionTypeHandler {
+        self.handlers
+            .get(type_id)
+            .map(|h| h.as_ref())
+            .unwrap_or_else(|| {
+                self.handlers
+                    .get("SA")
+                    .map(|h| h.as_ref())
+                    .expect("ShortAnswerHandler must always be registered as the default")
+            })
+    }
+}
+
+impl Default for QuestionTypeRegistry {
+    fn default() -> Self {
+        let mut registry = Self::new();
+        registry.register(Box::new(ShortAnswerHandler));
+        registry.register(Box::new(MultipleChoiceHandler));
+        registry.register(Box::new(TrueFalseHandler));
+        registry.register(Box::new(FillInBlankHandler));
+        registry.register(Box::new(NumericEntryHandler));
+        registry
     }
 }
 
