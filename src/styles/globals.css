@@ -10,33 +10,8 @@
   --layer-02: 249 250 251; /* neutral-50 */
   --layer-03: 255 255 255;
 
-  /* Primary (blue) */
-  --color-primary-50: #e3f2fd;
-  --color-primary-500: #2196f3;
-  --color-primary-700: #1976d2;
-  --color-primary-900: #0d47a1;
-
-  /* Success (green) */
-  --color-success-500: #4caf50;
-  --color-success-700: #388e3c;
-
-  /* Warning (orange) */
-  --color-warning-500: #ff9800;
-  --color-warning-700: #f57c00;
-
-  /* Error (red) */
-  --color-error-500: #f44336;
-  --color-error-700: #d32f2f;
-
-  /* Neutral (gray) */
-  --color-neutral-50: #fafafa;
-  --color-neutral-100: #f5f5f5;
-  --color-neutral-200: #eeeeee;
-  --color-neutral-400: #bdbdbd;
-  --color-neutral-500: #9e9e9e;
-  --color-neutral-700: #616161;
-  --color-neutral-800: #424242;
-  --color-neutral-900: #212121;
+  /* Border color (layer separation, not shadow stacking) */
+  --border-color: 229 231 235; /* gray-200 */
 }
 
 @layer base {
@@ -61,7 +36,9 @@
 
 @layer components {
   .card {
-    @apply rounded-lg bg-white p-4 shadow dark:bg-neutral-800;
+    background-color: rgb(var(--layer-01));
+    border: 1px solid rgb(var(--border-color, 229 231 235) / 0.8);
+    @apply rounded-lg p-4 shadow-sm;
   }
 
   .btn {
@@ -103,6 +80,11 @@
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
+
+  /* Tabular numerals for data-dense layouts */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 .dark {
@@ -112,6 +94,9 @@
   --layer-01: 38 38 38; /* neutral-800 */
   --layer-02: 45 45 45;
   --layer-03: 55 55 55;
+
+  /* Border color (dark) */
+  --border-color: 64 64 64;
 }
 
 .dark body {
@@ -119,5 +104,5 @@
 }
 
 .dark .card {
-  @apply bg-neutral-800 text-neutral-100;
+  @apply text-neutral-100;
 }
