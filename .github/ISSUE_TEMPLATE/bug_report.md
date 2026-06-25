@@ -1,29 +1,23 @@
 ---
 name: Bug Report
-about: Report a bug or unexpected behavior
-title: "[BUG] "
+about: Report a bug to help us improve
+title: '[BUG] '
 labels: bug
 assignees: ''
 ---
 
-## Description
-A clear description of what the bug is.
+**Describe the bug**
+A clear and concise description of the bug.
 
-## Steps to Reproduce
-1. ...
-2. ...
-3. ...
+**To Reproduce**
+Steps to reproduce:
+1. Go to '...'
+2. Click on '...'
+3. See error
 
-## Expected Behavior
+**Expected behavior**
 What you expected to happen.
 
-## Actual Behavior
-What actually happened.
-
-## Environment
-- OS: [e.g., Windows 11, macOS 14, Ubuntu 22.04]
-- .NET Version: [e.g., 8.0.100]
-- Application: [Desktop / Web / Console]
-
-## Additional Context
-Screenshots, logs, or other relevant information.
+**Environment:**
+- OS: [e.g. Windows, macOS, Linux]
+- App Version: [e.g. 1.0.0]

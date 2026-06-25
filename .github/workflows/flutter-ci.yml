@@ -1,0 +1,74 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [main, flutter]
+    paths: ['physics_app/**', '.github/workflows/flutter-ci.yml']
+  pull_request:
+    branches: [main, flutter]
+    paths: ['physics_app/**']
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24'
+          channel: 'stable'
+      - name: Install dependencies
+        run: cd physics_app && flutter pub get
+      - name: Analyze
+        run: cd physics_app && flutter analyze
+      - name: Format check
+        run: cd physics_app && dart format --set-exit-if-changed lib/
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24'
+          channel: 'stable'
+      - name: Install dependencies
+        run: cd physics_app && flutter pub get
+      - name: Run tests
+        run: cd physics_app && flutter test
+
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24'
+          channel: 'stable'
+      - name: Install dependencies
+        run: cd physics_app && flutter pub get
+      - name: Build web
+        run: cd physics_app && flutter build web --release
+      - name: Upload web build
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: physics_app/build/web/
+
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24'
+          channel: 'stable'
+      - name: Install dependencies
+        run: cd physics_app && flutter pub get
+      - name: Build APK
+        run: cd physics_app && flutter build apk --release
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: physics_app/build/app/outputs/flutter-apk/app-release.apk

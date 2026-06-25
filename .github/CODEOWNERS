@@ -1,0 +1,5 @@
+# Code owners for automatic review requests
+* @randphyqugea/maintainers
+physics_core/ @randphyqugea/rust-devs
+physics_app/ @randphyqugea/flutter-devs
+.github/ @randphyqugea/maintainers

@@ -1,0 +1,253 @@
+[UNIT]
+Id: U1
+Name: Mechanics
+Description: Classical mechanics unit
+
+[TOPIC]
+Id: T1
+Name: Kinematics
+UnitId: U1
+Description: Motion in one dimension
+
+[SKILL]
+Id: S1
+Name: Uniform Acceleration
+TopicId: T1
+Description: Solve problems with constant acceleration
+
+[SKILL]
+Id: S2
+Name: Free Fall
+TopicId: T1
+Description: Solve problems involving objects falling under gravity
+
+[SKILL]
+Id: S3
+Name: Projectile Motion
+TopicId: T1
+Description: Solve problems involving two-dimensional projectile motion
+
+[TOPIC]
+Id: T2
+Name: Forces
+UnitId: U1
+Description: Newton's laws and force analysis
+
+[SKILL]
+Id: S4
+Name: Newton's Second Law
+TopicId: T2
+Description: Apply F = ma to solve force problems
+
+[SKILL]
+Id: S5
+Name: Friction
+TopicId: T2
+Description: Solve problems involving frictional forces
+
+[SKILL]
+Id: S6
+Name: Inclined Planes
+TopicId: T2
+Description: Analyze forces on inclined surfaces
+
+[TOPIC]
+Id: T3
+Name: Energy and Work
+UnitId: U1
+Description: Work, kinetic energy, potential energy, and conservation
+
+[SKILL]
+Id: S7
+Name: Kinetic Energy
+TopicId: T3
+Description: Calculate and apply kinetic energy
+
+[SKILL]
+Id: S8
+Name: Conservation of Energy
+TopicId: T3
+Description: Apply energy conservation to solve problems
+
+[TOPIC]
+Id: T4
+Name: Momentum
+UnitId: U1
+Description: Linear momentum and collisions
+
+[SKILL]
+Id: S9
+Name: Impulse and Momentum
+TopicId: T4
+Description: Apply impulse-momentum theorem
+
+[SKILL]
+Id: S10
+Name: Collisions
+TopicId: T4
+Description: Analyze elastic and inelastic collisions
+
+[TEMPLATE]
+Id: Q1
+TopicId: T1
+SkillId: S1
+QuestionType: MultipleChoice
+Difficulty: 2
+TextTemplate: A car accelerates from {v0} m/s to {v} m/s in {t} s. What is the acceleration?
+AnswerExpression: (v - v0) / t
+SolutionTemplate: Use a = (v - v0) / t.
+Var.v0: Type=double;Min=0;Max=20;Step=1
+Var.v: Type=double;Min=20;Max=40;Step=1
+Var.t: Type=double;Min=1;Max=10;Step=0.5
+Distractor: (v + v0) / t
+Distractor: v / t
+
+[TEMPLATE]
+Id: Q2
+TopicId: T1
+SkillId: S2
+QuestionType: ShortAnswer
+Difficulty: 1
+TextTemplate: A ball is dropped from rest. How far does it fall in {t} seconds? (Use g = 9.81 m/s^2)
+AnswerExpression: 0.5 * 9.81 * t * t
+SolutionTemplate: Use s = (1/2)gt^2 = 0.5 * 9.81 * {t}^2 = {answer} m.
+Var.t: Type=double;Min=1;Max=5;Step=0.5
+
+[TEMPLATE]
+Id: Q3
+TopicId: T1
+SkillId: S3
+QuestionType: MultipleChoice
+Difficulty: 3
+TextTemplate: A ball is thrown horizontally from a height of {h} m with a speed of {v} m/s. How long does it take to hit the ground? (Use g = 9.81 m/s^2)
+AnswerExpression: sqrt(2 * h / 9.81)
+SolutionTemplate: Use t = sqrt(2h/g) = sqrt(2 * {h} / 9.81) = {answer} s.
+Var.h: Type=double;Min=5;Max=50;Step=5
+Var.v: Type=double;Min=5;Max=25;Step=5
+Distractor: h / v
+Distractor: sqrt(h / 9.81)
+Distractor: sqrt(2 * h) / v
+
+[TEMPLATE]
+Id: Q4
+TopicId: T2
+SkillId: S4
+QuestionType: MultipleChoice
+Difficulty: 3
+TextTemplate: A {m} kg object experiences a net force of {F} N. What is its acceleration?
+AnswerExpression: F / m
+SolutionTemplate: Use a = F/m = {F}/{m} = {answer} m/s^2.
+Var.m: Type=double;Min=1;Max=20;Step=1
+Var.F: Type=double;Min=5;Max=100;Step=5
+Distractor: F * m
+Distractor: m / F
+Distractor: F + m
+
+[TEMPLATE]
+Id: Q5
+TopicId: T2
+SkillId: S5
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A {m} kg block is pushed across a surface with coefficient of kinetic friction {mu}. What is the force of kinetic friction? (Use g = 9.81 m/s^2)
+AnswerExpression: mu * m * 9.81
+SolutionTemplate: Use f_k = mu * m * g = {mu} * {m} * 9.81 = {answer} N.
+Var.m: Type=double;Min=2;Max=30;Step=1
+Var.mu: Type=double;Min=0.1;Max=0.6;Step=0.1
+
+[TEMPLATE]
+Id: Q6
+TopicId: T2
+SkillId: S6
+QuestionType: MultipleChoice
+Difficulty: 7
+TextTemplate: A {m} kg block slides down an incline at angle {theta} degrees. If the coefficient of kinetic friction is {mu}, what is the acceleration down the incline? (Use g = 9.81 m/s^2)
+AnswerExpression: 9.81 * (sin(theta * 3.14159 / 180) - mu * cos(theta * 3.14159 / 180))
+SolutionTemplate: Use a = g(sin theta - mu cos theta) = 9.81(sin({theta}) - {mu}cos({theta})) = {answer} m/s^2.
+Var.m: Type=double;Min=1;Max=10;Step=1
+Var.theta: Type=double;Min=20;Max=60;Step=5
+Var.mu: Type=double;Min=0.1;Max=0.4;Step=0.1
+Distractor: 9.81 * cos(theta * 3.14159 / 180)
+Distractor: 9.81 * sin(theta * 3.14159 / 180)
+Distractor: 9.81 * mu
+
+[TEMPLATE]
+Id: Q7
+TopicId: T3
+SkillId: S7
+QuestionType: ShortAnswer
+Difficulty: 3
+TextTemplate: A {m} kg object moves at {v} m/s. What is its kinetic energy?
+AnswerExpression: 0.5 * m * v * v
+SolutionTemplate: Use KE = (1/2)mv^2 = 0.5 * {m} * {v}^2 = {answer} J.
+Var.m: Type=double;Min=1;Max=20;Step=1
+Var.v: Type=double;Min=2;Max=15;Step=1
+
+[TEMPLATE]
+Id: Q8
+TopicId: T3
+SkillId: S8
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: A {m} kg ball is dropped from a height of {h} m. What is its speed just before hitting the ground? (Use g = 9.81 m/s^2, ignore air resistance)
+AnswerExpression: sqrt(2 * 9.81 * h)
+SolutionTemplate: Use v = sqrt(2gh) = sqrt(2 * 9.81 * {h}) = {answer} m/s.
+Var.m: Type=double;Min=1;Max=10;Step=1
+Var.h: Type=double;Min=2;Max=30;Step=2
+Distractor: sqrt(9.81 * h)
+Distractor: sqrt(2 * 9.81 * h / m)
+Distractor: 2 * 9.81 * h
+
+[TEMPLATE]
+Id: Q9
+TopicId: T4
+SkillId: S9
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A {m} kg object moving at {v} m/s is brought to rest by a force in {t} s. What is the magnitude of the impulse?
+AnswerExpression: m * v
+SolutionTemplate: Use J = delta p = mv = {m} * {v} = {answer} N*s.
+Var.m: Type=double;Min=1;Max=10;Step=1
+Var.v: Type=double;Min=2;Max=20;Step=1
+Var.t: Type=double;Min=0.5;Max=3;Step=0.5
+
+[TEMPLATE]
+Id: Q10
+TopicId: T4
+SkillId: S10
+QuestionType: MultipleChoice
+Difficulty: 9
+TextTemplate: A {m1} kg object moving at {v1} m/s collides elastically with a stationary {m2} kg object. What is the speed of the first object after the collision?
+AnswerExpression: (m1 - m2) * v1 / (m1 + m2)
+SolutionTemplate: Use v1' = (m1 - m2)v1/(m1 + m2) = ({m1} - {m2})*{v1}/({m1} + {m2}) = {answer} m/s.
+Var.m1: Type=double;Min=3;Max=10;Step=1
+Var.m2: Type=double;Min=1;Max=8;Step=1
+Var.v1: Type=double;Min=2;Max=10;Step=1
+Distractor: m1 * v1 / m2
+Distractor: (m1 + m2) * v1 / (m1 - m2)
+Distractor: v1 / 2
+
+[TEMPLATE]
+Id: Q11
+TopicId: T1
+SkillId: S1
+QuestionType: ShortAnswer
+Difficulty: 7
+TextTemplate: A train traveling at {v0} m/s decelerates uniformly at {a} m/s^2. How far does it travel before stopping?
+AnswerExpression: v0 * v0 / (2 * a)
+SolutionTemplate: Use v^2 = v0^2 - 2as, with v = 0: s = v0^2/(2a) = {v0}^2/(2*{a}) = {answer} m.
+Var.v0: Type=double;Min=10;Max=30;Step=2
+Var.a: Type=double;Min=0.5;Max=3;Step=0.5
+
+[TEMPLATE]
+Id: Q12
+TopicId: T3
+SkillId: S8
+QuestionType: ShortAnswer
+Difficulty: 9
+TextTemplate: A {m} kg pendulum bob is released from a height of {h} m above the lowest point. What is the tension in the string at the lowest point if the string length is {L} m? (Use g = 9.81 m/s^2)
+AnswerExpression: m * 9.81 + 2 * m * 9.81 * h / L
+SolutionTemplate: Use T = mg + mv^2/L, where v^2 = 2gh, so T = mg + 2mgh/L = {m}*9.81 + 2*{m}*9.81*{h}/{L} = {answer} N.
+Var.m: Type=double;Min=0.5;Max=5;Step=0.5
+Var.h: Type=double;Min=0.2;Max=2;Step=0.2
+Var.L: Type=double;Min=1;Max=5;Step=0.5
