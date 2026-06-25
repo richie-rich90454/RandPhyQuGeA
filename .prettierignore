@@ -1,0 +1,8 @@
+node_modules
+dist
+src/wasm
+physics_core
+reference
+src-tauri
+*.lock
+package-lock.json

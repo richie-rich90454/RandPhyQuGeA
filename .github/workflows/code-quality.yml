@@ -3,51 +3,26 @@ name: Code Quality
 on:
   push:
     branches: [main]
-    paths:
-      - 'physics_app/lib/**'
-      - 'physics_core/src/**'
-      - 'physics_core/tests/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
 
 jobs:
-  lint-flutter:
+  ts-quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/setup-node@v4
         with:
-          flutter-version: '3.24'
-          channel: 'stable'
-      - name: Analyze project
-        run: cd physics_app && flutter analyze --no-fatal-infos --no-fatal-warnings
-
-  lint-rust:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Check formatting
-        run: cd physics_core && cargo fmt --check
-      - name: Clippy
-        run: cd physics_core && cargo clippy -- -D warnings
-
-  check-dead-code:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - name: Check unused dependencies
-        run: |
-          cargo install cargo-udeps --locked || true
-          cd physics_core && cargo udeps 2>/dev/null || echo "udeps check skipped"
-
-  spell-check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: streetsidesoftware/cspell-action@v6
-        with:
-          files: '**/*.{rs,dart,md,yaml}'
-          incremental_files_only: false
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Format check
+        run: npm run format:check
+      - name: Test
+        run: npm test

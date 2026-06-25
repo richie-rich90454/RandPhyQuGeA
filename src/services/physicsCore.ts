@@ -8,56 +8,43 @@
  * strings into typed domain models on the way out.
  */
 
-import { invoke } from '@tauri-apps/api/core';
+import {invoke} from '@tauri-apps/api/core';
 import partOneSpec from '../assets/part_one.txt?raw';
-import type {
-  Specification,
-  GeneratedQuestion,
-  FormulaEntry,
-  ExportFormat,
-} from '../types/models';
+import type {Specification, GeneratedQuestion, FormulaEntry, ExportFormat} from '../types/models';
 
 /** Optional filters applied to question generation. */
 export interface GenerateOptions {
-  topicId?: string;
-  skillId?: string;
-  minDifficulty?: number;
-  maxDifficulty?: number;
-  questionType?: string;
+	topicId?: string;
+	skillId?: string;
+	minDifficulty?: number;
+	maxDifficulty?: number;
+	questionType?: string;
 }
 
 /** Shape of the wasm-pack (`--target web`) module exported by physics_core. */
 interface WasmCoreModule {
-  parse_specification: (input: string) => string;
-  generate_question: (
-    spec_json: string,
-    topic_id: string | null,
-    skill_id: string | null,
-    min_difficulty: number | null,
-    max_difficulty: number | null,
-    question_type: string | null,
-  ) => string;
-  generate_batch: (
-    spec_json: string,
-    count: number,
-    topic_id: string | null,
-    skill_id: string | null,
-    min_difficulty: number | null,
-    max_difficulty: number | null,
-    question_type: string | null,
-  ) => string;
-  export_questions: (questions_json: string, format: string) => string;
+	parse_specification: (input: string) => string;
+	generate_question: (spec_json: string, topic_id: string | null, skill_id: string | null, min_difficulty: number | null, max_difficulty: number | null, question_type: string | null) => string;
+	generate_batch: (
+		spec_json: string,
+		count: number,
+		topic_id: string | null,
+		skill_id: string | null,
+		min_difficulty: number | null,
+		max_difficulty: number | null,
+		question_type: string | null
+	) => string;
+	export_questions: (questions_json: string, format: string) => string;
 }
 
-const WASM_UNAVAILABLE_MESSAGE =
-  'WASM core not available. Run wasm-pack build or use the Tauri desktop app.';
+const WASM_UNAVAILABLE_MESSAGE = 'WASM core not available. Run wasm-pack build or use the Tauri desktop app.';
 
 /**
  * Returns `true` when running inside a Tauri 2.x desktop window.
  * Tauri 2.x injects `__TAURI_INTERNALS__` onto the global `window` object.
  */
 function isTauri(): boolean {
-  return typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+	return typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 }
 
 /** Cached promise so the WASM module is only loaded once. */
@@ -69,131 +56,102 @@ let wasmModulePromise: Promise<WasmCoreModule> | null = null;
  * Throws a clear error if the WASM output has not been generated.
  */
 function loadWasm(): Promise<WasmCoreModule> {
-  if (wasmModulePromise) return wasmModulePromise;
-  wasmModulePromise = (async () => {
-    try {
-      // Use a variable + @vite-ignore so Rollup does not try to resolve the
-      // generated WASM module at build time. The file is produced by
-      // `npm run wasm:build` and may legitimately be absent in a desktop
-      // build that only uses the Tauri commands.
-      const wasmUrl = '../wasm/physics_core.js';
-      const mod = await import(
-        /* @vite-ignore */ wasmUrl
-      );
-      return mod as WasmCoreModule;
-    } catch {
-      // Allow a subsequent retry instead of caching the failure.
-      wasmModulePromise = null;
-      throw new Error(WASM_UNAVAILABLE_MESSAGE);
-    }
-  })();
-  return wasmModulePromise;
+	if (wasmModulePromise) return wasmModulePromise;
+	wasmModulePromise = (async () => {
+		try {
+			// Use a variable + @vite-ignore so Rollup does not try to resolve the
+			// generated WASM module at build time. The file is produced by
+			// `npm run wasm:build` and may legitimately be absent in a desktop
+			// build that only uses the Tauri commands.
+			const wasmUrl = '../wasm/physics_core.js';
+			const mod = await import(/* @vite-ignore */ wasmUrl);
+			return mod as WasmCoreModule;
+		} catch {
+			// Allow a subsequent retry instead of caching the failure.
+			wasmModulePromise = null;
+			throw new Error(WASM_UNAVAILABLE_MESSAGE);
+		}
+	})();
+	return wasmModulePromise;
 }
 
 /** Parse a spec text file into a {@link Specification}. */
-export async function parseSpecification(
-  input: string,
-): Promise<Specification> {
-  if (isTauri()) {
-    const json = await invoke<string>('parse_specification', { input });
-    return JSON.parse(json) as Specification;
-  }
-  const wasm = await loadWasm();
-  const json = wasm.parse_specification(input);
-  return JSON.parse(json) as Specification;
+export async function parseSpecification(input: string): Promise<Specification> {
+	if (isTauri()) {
+		const json = await invoke<string>('parse_specification', {input});
+		return JSON.parse(json) as Specification;
+	}
+	const wasm = await loadWasm();
+	const json = wasm.parse_specification(input);
+	return JSON.parse(json) as Specification;
 }
 
 /** Generate a single question from a specification. */
-export async function generateQuestion(
-  spec: Specification,
-  options?: GenerateOptions,
-): Promise<GeneratedQuestion> {
-  const specJson = JSON.stringify(spec);
-  const topicId = options?.topicId ?? null;
-  const skillId = options?.skillId ?? null;
-  const minDifficulty = options?.minDifficulty ?? null;
-  const maxDifficulty = options?.maxDifficulty ?? null;
-  const questionType = options?.questionType ?? null;
+export async function generateQuestion(spec: Specification, options?: GenerateOptions): Promise<GeneratedQuestion> {
+	const specJson = JSON.stringify(spec);
+	const topicId = options?.topicId ?? null;
+	const skillId = options?.skillId ?? null;
+	const minDifficulty = options?.minDifficulty ?? null;
+	const maxDifficulty = options?.maxDifficulty ?? null;
+	const questionType = options?.questionType ?? null;
 
-  if (isTauri()) {
-    const json = await invoke<string>('generate_question', {
-      spec_json: specJson,
-      topic_id: topicId,
-      skill_id: skillId,
-      min_difficulty: minDifficulty,
-      max_difficulty: maxDifficulty,
-      question_type: questionType,
-    });
-    return JSON.parse(json) as GeneratedQuestion;
-  }
+	if (isTauri()) {
+		const json = await invoke<string>('generate_question', {
+			spec_json: specJson,
+			topic_id: topicId,
+			skill_id: skillId,
+			min_difficulty: minDifficulty,
+			max_difficulty: maxDifficulty,
+			question_type: questionType
+		});
+		return JSON.parse(json) as GeneratedQuestion;
+	}
 
-  const wasm = await loadWasm();
-  const json = wasm.generate_question(
-    specJson,
-    topicId,
-    skillId,
-    minDifficulty,
-    maxDifficulty,
-    questionType,
-  );
-  return JSON.parse(json) as GeneratedQuestion;
+	const wasm = await loadWasm();
+	const json = wasm.generate_question(specJson, topicId, skillId, minDifficulty, maxDifficulty, questionType);
+	return JSON.parse(json) as GeneratedQuestion;
 }
 
 /** Generate a batch of questions from a specification. */
-export async function generateBatch(
-  spec: Specification,
-  count: number,
-  options?: GenerateOptions,
-): Promise<GeneratedQuestion[]> {
-  const specJson = JSON.stringify(spec);
-  const topicId = options?.topicId ?? null;
-  const skillId = options?.skillId ?? null;
-  const minDifficulty = options?.minDifficulty ?? null;
-  const maxDifficulty = options?.maxDifficulty ?? null;
-  const questionType = options?.questionType ?? null;
+export async function generateBatch(spec: Specification, count: number, options?: GenerateOptions): Promise<GeneratedQuestion[]> {
+	const specJson = JSON.stringify(spec);
+	const topicId = options?.topicId ?? null;
+	const skillId = options?.skillId ?? null;
+	const minDifficulty = options?.minDifficulty ?? null;
+	const maxDifficulty = options?.maxDifficulty ?? null;
+	const questionType = options?.questionType ?? null;
 
-  if (isTauri()) {
-    const json = await invoke<string>('generate_batch', {
-      spec_json: specJson,
-      count,
-      topic_id: topicId,
-      skill_id: skillId,
-      min_difficulty: minDifficulty,
-      max_difficulty: maxDifficulty,
-      question_type: questionType,
-    });
-    return JSON.parse(json) as GeneratedQuestion[];
-  }
+	if (isTauri()) {
+		const json = await invoke<string>('generate_batch', {
+			spec_json: specJson,
+			count,
+			topic_id: topicId,
+			skill_id: skillId,
+			min_difficulty: minDifficulty,
+			max_difficulty: maxDifficulty,
+			question_type: questionType
+		});
+		return JSON.parse(json) as GeneratedQuestion[];
+	}
 
-  const wasm = await loadWasm();
-  const json = wasm.generate_batch(
-    specJson,
-    count,
-    topicId,
-    skillId,
-    minDifficulty,
-    maxDifficulty,
-    questionType,
-  );
-  return JSON.parse(json) as GeneratedQuestion[];
+	const wasm = await loadWasm();
+	const json = wasm.generate_batch(specJson, count, topicId, skillId, minDifficulty, maxDifficulty, questionType);
+	return JSON.parse(json) as GeneratedQuestion[];
 }
 
 /** Export questions to the given format and return the rendered string. */
-export async function exportQuestions(
-  questions: GeneratedQuestion[],
-  format: ExportFormat,
-): Promise<string> {
-  const questionsJson = JSON.stringify(questions);
+export async function exportQuestions(questions: GeneratedQuestion[], format: ExportFormat): Promise<string> {
+	const questionsJson = JSON.stringify(questions);
 
-  if (isTauri()) {
-    return invoke<string>('export_questions', {
-      questions_json: questionsJson,
-      format,
-    });
-  }
+	if (isTauri()) {
+		return invoke<string>('export_questions', {
+			questions_json: questionsJson,
+			format
+		});
+	}
 
-  const wasm = await loadWasm();
-  return wasm.export_questions(questionsJson, format);
+	const wasm = await loadWasm();
+	return wasm.export_questions(questionsJson, format);
 }
 
 /**
@@ -203,16 +161,14 @@ export async function exportQuestions(
  * expose the formula library.
  */
 export async function getFormulaLibrary(): Promise<FormulaEntry[]> {
-  if (isTauri()) {
-    const json = await invoke<string>('get_formula_library');
-    return JSON.parse(json) as FormulaEntry[];
-  }
-  throw new Error(
-    'getFormulaLibrary is not available in WASM mode. Use the Tauri desktop app.',
-  );
+	if (isTauri()) {
+		const json = await invoke<string>('get_formula_library');
+		return JSON.parse(json) as FormulaEntry[];
+	}
+	throw new Error('getFormulaLibrary is not available in WASM mode. Use the Tauri desktop app.');
 }
 
 /** Load the bundled default specification text (part one). */
 export async function loadDefaultSpec(): Promise<string> {
-  return partOneSpec;
+	return partOneSpec;
 }

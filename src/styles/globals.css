@@ -1,108 +1,115 @@
-@import "katex/dist/katex.min.css";
+@import 'katex/dist/katex.min.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Carbon layer system */
-  --layer-01: 255 255 255; /* white */
-  --layer-02: 249 250 251; /* neutral-50 */
-  --layer-03: 255 255 255;
+	/* Carbon layer system */
+	--layer-01: 255 255 255; /* white */
+	--layer-02: 249 250 251; /* neutral-50 */
+	--layer-03: 255 255 255;
 
-  /* Border color (layer separation, not shadow stacking) */
-  --border-color: 229 231 235; /* gray-200 */
+	/* Border color (layer separation, not shadow stacking) */
+	--border-color: 229 231 235; /* gray-200 */
 }
 
 @layer base {
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
+	html {
+		-webkit-text-size-adjust: 100%;
+	}
 
-  body {
-    @apply bg-neutral-50 text-neutral-900 antialiased dark:bg-neutral-900 dark:text-neutral-100;
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
-      Arial, sans-serif;
-    margin: 0;
-    min-height: 100vh;
-  }
+	body {
+		@apply bg-neutral-50 text-neutral-900 antialiased dark:bg-neutral-900 dark:text-neutral-100;
+		font-family:
+			'Inter',
+			system-ui,
+			-apple-system,
+			'Segoe UI',
+			Roboto,
+			Helvetica,
+			Arial,
+			sans-serif;
+		margin: 0;
+		min-height: 100vh;
+	}
 
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-  }
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
 }
 
 @layer components {
-  .card {
-    background-color: rgb(var(--layer-01));
-    border: 1px solid rgb(var(--border-color, 229 231 235) / 0.8);
-    @apply rounded-lg p-4 shadow-sm;
-  }
+	.card {
+		background-color: rgb(var(--layer-01));
+		border: 1px solid rgb(var(--border-color, 229 231 235) / 0.8);
+		@apply rounded-lg p-4 shadow-sm;
+	}
 
-  .btn {
-    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors duration-fast ease-standard focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
-  }
+	.btn {
+		@apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors duration-fast ease-standard focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+	}
 }
 
 @layer utilities {
-  .difficulty-1 {
-    @apply text-success-700;
-  }
-  .difficulty-2 {
-    @apply text-success-500;
-  }
-  .difficulty-3 {
-    @apply text-success-400;
-  }
-  .difficulty-4 {
-    @apply text-warning-500;
-  }
-  .difficulty-5 {
-    @apply text-warning-700;
-  }
-  .difficulty-6 {
-    @apply text-error-500;
-  }
-  .difficulty-7 {
-    @apply text-error-700;
-  }
+	.difficulty-1 {
+		@apply text-success-700;
+	}
+	.difficulty-2 {
+		@apply text-success-500;
+	}
+	.difficulty-3 {
+		@apply text-success-400;
+	}
+	.difficulty-4 {
+		@apply text-warning-500;
+	}
+	.difficulty-5 {
+		@apply text-warning-700;
+	}
+	.difficulty-6 {
+		@apply text-error-500;
+	}
+	.difficulty-7 {
+		@apply text-error-700;
+	}
 
-  /* Apple-style translucent materials */
-  .material-light {
-    background-color: rgb(255 255 255 / 0.8);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-  }
-  .material-dark {
-    background-color: rgb(23 23 23 / 0.8);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-  }
+	/* Apple-style translucent materials */
+	.material-light {
+		background-color: rgb(255 255 255 / 0.8);
+		backdrop-filter: blur(24px);
+		-webkit-backdrop-filter: blur(24px);
+	}
+	.material-dark {
+		background-color: rgb(23 23 23 / 0.8);
+		backdrop-filter: blur(24px);
+		-webkit-backdrop-filter: blur(24px);
+	}
 
-  /* Tabular numerals for data-dense layouts */
-  .tabular-nums {
-    font-variant-numeric: tabular-nums;
-  }
+	/* Tabular numerals for data-dense layouts */
+	.tabular-nums {
+		font-variant-numeric: tabular-nums;
+	}
 }
 
 .dark {
-  color-scheme: dark;
+	color-scheme: dark;
 
-  /* Carbon layer system (dark) */
-  --layer-01: 38 38 38; /* neutral-800 */
-  --layer-02: 45 45 45;
-  --layer-03: 55 55 55;
+	/* Carbon layer system (dark) */
+	--layer-01: 38 38 38; /* neutral-800 */
+	--layer-02: 45 45 45;
+	--layer-03: 55 55 55;
 
-  /* Border color (dark) */
-  --border-color: 64 64 64;
+	/* Border color (dark) */
+	--border-color: 64 64 64;
 }
 
 .dark body {
-  @apply bg-neutral-900 text-neutral-100;
+	@apply bg-neutral-900 text-neutral-100;
 }
 
 .dark .card {
-  @apply text-neutral-100;
+	@apply text-neutral-100;
 }
