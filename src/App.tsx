@@ -7,6 +7,7 @@ import {MainContent} from './components/practice/MainContent';
 import {OnboardingModal} from './components/modals/OnboardingModal';
 import {ShortcutsModal} from './components/modals/ShortcutsModal';
 import {SettingsModal} from './components/modals/SettingsModal';
+import {PrintModal} from './components/modals/PrintModal';
 import {useTheme} from './hooks/useTheme';
 import {useSpecStore} from './stores/specStore';
 import {useSettingsStore} from './stores/settingsStore';
@@ -44,6 +45,7 @@ function App() {
 			<OnboardingModal />
 			<ShortcutsModal />
 			<SettingsModal />
+			<PrintModal />
 		</AppShell>
 	);
 }

@@ -1509,6 +1509,41 @@ input[type='checkbox']:hover {
 	padding: var(--spacing-xs) var(--spacing-md);
 	font-size: 0.8rem;
 }
+.print-options {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+}
+.print-preview {
+	margin-top: var(--spacing-lg);
+	padding-top: var(--spacing-md);
+	border-top: 1px solid var(--divider);
+}
+.print-preview h3 {
+	font-size: 0.9rem;
+	margin-bottom: var(--spacing-sm);
+	color: var(--text-secondary);
+}
+.worksheet-preview-list {
+	list-style: decimal;
+	margin-left: var(--spacing-lg);
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-xs);
+	font-size: 0.85rem;
+}
+.worksheet-preview-list li {
+	padding: var(--spacing-xs);
+	border-radius: var(--radius-sm);
+}
+.preview-answer {
+	color: var(--success);
+	font-weight: 600;
+}
+.error-text {
+	color: var(--error);
+	font-size: 0.85rem;
+}
 .settings-section {
 	margin-bottom: var(--spacing-xl);
 }
