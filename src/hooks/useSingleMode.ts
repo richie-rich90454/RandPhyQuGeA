@@ -3,6 +3,7 @@ import {usePracticeStore} from '../stores/practiceStore';
 import {useSpecStore} from '../stores/specStore';
 import {useProgressStore} from '../stores/progressStore';
 import {generateQuestion} from '../services/physicsCore';
+import {useToast} from '../components/ui';
 import type {Specification} from '../types/models';
 import {QUESTION_TYPES} from '../types/models';
 /**
@@ -71,6 +72,7 @@ export function useSingleMode(): UseSingleModeReturn {
 	const userAnswer = usePracticeStore(state => state.userAnswer);
 	const selectedChoiceIndex = usePracticeStore(state => state.selectedChoiceIndex);
 	const specification = useSpecStore(state => state.specification);
+	const {toast} = useToast();
 	const canCheck = isActive && !showFeedback && (userAnswer.trim() !== '' || selectedChoiceIndex >= 0);
 	const generate = useCallback(async () => {
 		if (!specification) return;
@@ -81,9 +83,9 @@ export function useSingleMode(): UseSingleModeReturn {
 			usePracticeStore.getState().loadQuestion(question);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
-			console.error('Failed to generate question:', message);
+			toast({variant: 'error', message: 'Failed to generate question: ' + message});
 		}
-	}, [specification, selectedTopicId, scope, shuffle, mcqEnabled]);
+	}, [specification, selectedTopicId, scope, shuffle, mcqEnabled, toast]);
 	const check = useCallback(() => {
 		const store = usePracticeStore.getState();
 		if (!store.isActive || store.showFeedback) return;

@@ -49,15 +49,28 @@ export interface ToastProviderProps {
 export function ToastProvider({children}: ToastProviderProps) {
 	const [toasts, setToasts] = useState<ToastItem[]>([]);
 	const idCounter = useRef(0);
-	const timers = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map());
+	const timers = useRef<Map<number, {timer: ReturnType<typeof setTimeout>; remaining: number; deadline: number | null}>>(new Map());
 	const dismiss = useCallback((id: number) => {
 		setToasts(prev => prev.filter(item => item.id !== id));
-		const timer = timers.current.get(id);
-		if (timer) {
-			clearTimeout(timer);
+		const entry = timers.current.get(id);
+		if (entry) {
+			clearTimeout(entry.timer);
 			timers.current.delete(id);
 		}
 	}, []);
+	const pause = useCallback((id: number) => {
+		const entry = timers.current.get(id);
+		if (!entry || entry.deadline === null) return;
+		clearTimeout(entry.timer);
+		entry.remaining = Math.max(entry.deadline - Date.now(), 0);
+		entry.deadline = null;
+	}, []);
+	const resume = useCallback((id: number) => {
+		const entry = timers.current.get(id);
+		if (!entry || entry.deadline !== null || entry.remaining <= 0) return;
+		entry.deadline = Date.now() + entry.remaining;
+		entry.timer = setTimeout(() => dismiss(id), entry.remaining);
+	}, [dismiss]);
 	const toast = useCallback(
 		(options: ToastOptions) => {
 			const variant = options.variant ?? 'info';
@@ -68,8 +81,7 @@ export function ToastProvider({children}: ToastProviderProps) {
 				setToasts(prev => prev.map(item => (item.id === id ? {...item, visible: true} : item)));
 			});
 			if (duration > 0) {
-				const timer = setTimeout(() => dismiss(id), duration);
-				timers.current.set(id, timer);
+				timers.current.set(id, {timer: setTimeout(() => dismiss(id), duration), remaining: duration, deadline: Date.now() + duration});
 			}
 		},
 		[dismiss]
@@ -77,7 +89,7 @@ export function ToastProvider({children}: ToastProviderProps) {
 	useEffect(() => {
 		const map = timers.current;
 		return () => {
-			map.forEach(timer => clearTimeout(timer));
+			map.forEach(entry => clearTimeout(entry.timer));
 			map.clear();
 		};
 	}, []);
@@ -95,7 +107,7 @@ export function ToastProvider({children}: ToastProviderProps) {
 						opacity: item.visible ? 1 : 0
 					};
 					return (
-						<div key={item.id} className={cn('toast')} style={toastStyle} role="status">
+						<div key={item.id} className={cn('toast')} style={toastStyle} role="status" onMouseEnter={() => pause(item.id)} onMouseLeave={() => resume(item.id)} onFocus={() => pause(item.id)} onBlur={() => resume(item.id)}>
 							<svg width="20" height="20" viewBox="0 0 24 24" fill={accent} aria-hidden="true">
 								<path d={iconPath} />
 							</svg>

@@ -5,6 +5,7 @@ import {useSpecStore} from '../stores/specStore';
 import {useProgressStore} from '../stores/progressStore';
 import {useCountdownTimer} from './useCountdownTimer';
 import {generateBatch, generateQuestion} from '../services/physicsCore';
+import {useToast} from '../components/ui';
 import type {Specification} from '../types/models';
 /**
  * Return value of {@link useMentalMode}.
@@ -101,6 +102,7 @@ export function useMentalMode(): UseMentalModeReturn {
 	const specification = useSpecStore(state => state.specification);
 	const mentalDurationSec = useSettingsStore(state => state.mentalDurationSec);
 	const defaultQuestionCount = useSettingsStore(state => state.defaultQuestionCount);
+	const {toast} = useToast();
 	const timer = useCountdownTimer();
 	const isSessionActive = isActive && mode === 'Mental';
 	const isPaused = isSessionActive && !timer.isRunning && timer.timeRemaining > 0;
@@ -128,9 +130,9 @@ export function useMentalMode(): UseMentalModeReturn {
 			timer.start(mentalDurationSec);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
-			console.error('Failed to start mental session:', message);
+			toast({variant: 'error', message: 'Failed to start mental session: ' + message});
 		}
-	}, [specification, difficulty, scope, shuffle, unlimited, defaultQuestionCount, mentalDurationSec, timer]);
+	}, [specification, difficulty, scope, shuffle, unlimited, defaultQuestionCount, mentalDurationSec, timer, toast]);
 	const pauseSession = useCallback(() => {
 		timer.pause();
 	}, [timer]);
@@ -161,13 +163,13 @@ export function useMentalMode(): UseMentalModeReturn {
 					usePracticeStore.setState({mode: 'Mental', isActive: true});
 				} catch (err) {
 					const message = err instanceof Error ? err.message : String(err);
-					console.error('Failed to generate next question:', message);
+					toast({variant: 'error', message: 'Failed to generate next question: ' + message});
 				}
 			})();
 		} else {
 			store.advanceQuestion();
 		}
-	}, [unlimited, specification, difficulty, scope, shuffle]);
+	}, [unlimited, specification, difficulty, scope, shuffle, toast]);
 	useEffect(() => {
 		if (!isSessionActive || isFinished) return;
 		if (timer.timeRemaining === 0 && !timer.isRunning && mentalDurationSec > 0) {
@@ -189,7 +191,7 @@ export function useMentalMode(): UseMentalModeReturn {
 					usePracticeStore.setState({mode: 'Mental', isActive: true});
 				} catch (err) {
 					const message = err instanceof Error ? err.message : String(err);
-					console.error('Failed to auto-advance:', message);
+					toast({variant: 'error', message: 'Failed to auto-advance: ' + message});
 				}
 			} else {
 				store.advanceQuestion();
@@ -199,7 +201,7 @@ export function useMentalMode(): UseMentalModeReturn {
 			void handleAdvance();
 		}, AUTO_ADVANCE_DELAY_MS);
 		return () => window.clearTimeout(timerId);
-	}, [showFeedback, isSessionActive, unlimited, specification, difficulty, scope, shuffle]);
+	}, [showFeedback, isSessionActive, unlimited, specification, difficulty, scope, shuffle, toast]);
 	useEffect(() => {
 		if (!isSessionActive) return;
 		const handleKeyDown = (event: KeyboardEvent) => {

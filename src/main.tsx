@@ -7,12 +7,15 @@ import '@fontsource/noto-sans/700.css';
 import '@fontsource/noto-sans-mono/400.css';
 import '@fontsource/noto-sans-mono/500.css';
 import {ErrorBoundary} from './components/ErrorBoundary';
+import {ToastProvider} from './components/ui';
 import App from './App';
 import './styles/globals.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<ErrorBoundary>
-			<App />
+			<ToastProvider>
+				<App />
+			</ToastProvider>
 		</ErrorBoundary>
 	</React.StrictMode>
 );

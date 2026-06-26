@@ -1,5 +1,5 @@
 import {useState, useCallback} from 'react';
-import {Modal} from '../ui';
+import {Modal, useToast} from '../ui';
 import {MathText} from '../MathText';
 import {useUiStore} from '../../stores/uiStore';
 import {useSpecStore} from '../../stores/specStore';
@@ -105,6 +105,7 @@ export function PrintModal() {
 	const isOpen = useUiStore(state => state.activeModal === 'print');
 	const closeModal = useUiStore(state => state.closeModal);
 	const specification = useSpecStore(state => state.specification);
+	const {toast} = useToast();
 	const [questionCount, setQuestionCount] = useState<number>(10);
 	const [topicId, setTopicId] = useState<string>('all');
 	const [scope, setScope] = useState<string>('all');
@@ -126,12 +127,12 @@ export function PrintModal() {
 			setQuestions(batch);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
-			setError(`Failed to generate worksheet: ${message}`);
+			toast({variant: 'error', message: 'Failed to generate worksheet: ' + message});
 			setQuestions([]);
 		} finally {
 			setIsGenerating(false);
 		}
-	}, [specification, questionCount, topicId, difficulty]);
+	}, [specification, questionCount, topicId, difficulty, toast]);
 	const handlePrint = useCallback(() => {
 		if (questions.length === 0) return;
 		const html = buildWorksheetHtml(questions, includeAnswerKey);
