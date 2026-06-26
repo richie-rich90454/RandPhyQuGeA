@@ -12,6 +12,8 @@ export {Slider} from './Slider';
 export type {SliderProps} from './Slider';
 export {Modal} from './Modal';
 export type {ModalProps} from './Modal';
+export {ConfirmDialog} from './ConfirmDialog';
+export type {ConfirmDialogProps} from './ConfirmDialog';
 export {Spinner} from './Spinner';
 export type {SpinnerProps} from './Spinner';
 export {EmptyState} from './EmptyState';

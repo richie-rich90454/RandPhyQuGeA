@@ -624,6 +624,18 @@ body {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
+.confirm-message {
+	margin: 0;
+}
+.confirm-button.destructive {
+	background: var(--error);
+	color: #fff;
+	border: 1px solid var(--error);
+}
+.confirm-button.destructive:hover:not(:disabled) {
+	background: #c0392b;
+	border-color: #c0392b;
+}
 .icon-button {
 	width: 28px;
 	height: 28px;
