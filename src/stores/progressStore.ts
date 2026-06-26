@@ -23,6 +23,7 @@ export interface ProgressState {
 	results: PracticeResult[];
 	// Actions
 	addResults: (newResults: PracticeResult[]) => void;
+	deleteResult: (id: string) => void;
 	clearResults: () => void;
 	getStats: () => PracticeStats;
 	getResultsByMode: (mode: PracticeMode) => PracticeResult[];
@@ -32,6 +33,7 @@ export const useProgressStore = create<ProgressState>()(
 		(set, get) => ({
 			results: [],
 			addResults: newResults => set(state => ({results: [...state.results, ...newResults]})),
+			deleteResult: id => set(state => ({results: state.results.filter(r => r.id !== id)})),
 			clearResults: () => set({results: []}),
 			getResultsByMode: mode => get().results.filter(result => result.mode === mode),
 			getStats: () => {

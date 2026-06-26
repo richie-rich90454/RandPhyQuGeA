@@ -8,6 +8,8 @@ import {OnboardingModal} from './components/modals/OnboardingModal';
 import {ShortcutsModal} from './components/modals/ShortcutsModal';
 import {SettingsModal} from './components/modals/SettingsModal';
 import {PrintModal} from './components/modals/PrintModal';
+import {RecommendModal} from './components/modals/RecommendModal';
+import {ManageDataModal} from './components/modals/ManageDataModal';
 import {useTheme} from './hooks/useTheme';
 import {useSpecStore} from './stores/specStore';
 import {useSettingsStore} from './stores/settingsStore';
@@ -46,6 +48,8 @@ function App() {
 			<ShortcutsModal />
 			<SettingsModal />
 			<PrintModal />
+			<RecommendModal />
+			<ManageDataModal />
 		</AppShell>
 	);
 }

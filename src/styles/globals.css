@@ -1544,6 +1544,111 @@ input[type='checkbox']:hover {
 	color: var(--error);
 	font-size: 0.85rem;
 }
+.weak-topics-list,
+.data-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-sm);
+	max-height: 50vh;
+	overflow-y: auto;
+}
+.weak-topic-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--spacing-sm) var(--spacing-md);
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+}
+.weak-topic-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+.weak-topic-name {
+	font-weight: 600;
+	font-size: 0.9rem;
+}
+.weak-topic-stats {
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+}
+.weak-topics-note {
+	margin-top: var(--spacing-md);
+	font-size: 0.8rem;
+	color: var(--text-secondary);
+	font-style: italic;
+}
+.empty-recommend,
+.empty-data {
+	text-align: center;
+	color: var(--text-secondary);
+	padding: var(--spacing-xl);
+	font-size: 0.9rem;
+}
+.data-summary {
+	font-size: 0.8rem;
+	color: var(--text-secondary);
+	margin-bottom: var(--spacing-sm);
+}
+.data-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--spacing-xs) var(--spacing-sm);
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+}
+.data-item-info {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+	flex: 1;
+	min-width: 0;
+}
+.data-item-result {
+	font-weight: bold;
+	font-size: 1rem;
+	flex-shrink: 0;
+}
+.data-item-result.correct {
+	color: var(--success);
+}
+.data-item-result.incorrect {
+	color: var(--error);
+}
+.data-item-topic {
+	font-weight: 600;
+	font-size: 0.85rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.data-item-meta {
+	font-size: 0.7rem;
+	color: var(--text-secondary);
+	white-space: nowrap;
+}
+.data-item-delete {
+	flex-shrink: 0;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	font-size: 0.7rem;
+}
+.data-pagination {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--spacing-md);
+	margin-top: var(--spacing-md);
+}
+.pagination-info {
+	font-size: 0.8rem;
+	color: var(--text-secondary);
+}
 .settings-section {
 	margin-bottom: var(--spacing-xl);
 }
