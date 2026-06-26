@@ -1,15 +1,17 @@
-# Rust
-target/
-Cargo.lock
+# Dependencies
+node_modules/
 
-# Flutter
-.flutter-plugins
-.flutter-plugins-dependencies
-.dart_tool/
-.packages
+# Build output
+dist/
 build/
-*.iml
-.metadata
+
+# Test coverage
+coverage/
+
+# Environment
+.env
+.env.local
+.env.*.local
 
 # IDE
 .vscode/
@@ -22,23 +24,14 @@ build/
 Thumbs.db
 Desktop.ini
 
-# Spec files
+# Tauri
+src-tauri/target
+src-tauri/gen/
+
+# Spec files (local)
 specifications/
 .trae/
 
-# Dependencies
-node_modules/
-
-# Environment
-.env
-
-# WASM
-*.wasm
-*.wasm.map
-src/wasm/*
-!src/wasm/.gitkeep
-flutter
-# Web / Tauri build output
-dist/
-src-tauri/target
-src-tauri/gen/
+# Rust (legacy, kept for safety)
+target/
+Cargo.lock
