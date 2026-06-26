@@ -2,11 +2,11 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {usePracticeStore} from '../stores/practiceStore';
 import {useSettingsStore} from '../stores/settingsStore';
 import {useSpecStore} from '../stores/specStore';
-import {useProgressStore} from '../stores/progressStore';
 import {useCountdownTimer} from './useCountdownTimer';
 import {generateBatch, generateQuestion} from '../services/physicsCore';
 import {useToast} from '../components/ui';
-import type {Specification} from '../types/models';
+import {usePracticeActions} from './usePracticeActions';
+import {resolveTopicId} from '../lib/utils';
 /**
  * Return value of {@link useMentalMode}.
  */
@@ -65,21 +65,6 @@ const DIFFICULTY_RANGES: Record<'easy' | 'medium' | 'hard', {minDifficulty: numb
 /** Auto-advance delay after showing feedback in mental mode (ms). */
 const AUTO_ADVANCE_DELAY_MS = 1500;
 /**
- * Resolve the topic id for mental-mode question generation.
- *
- * When shuffle is enabled a random topic from the scope is picked; otherwise
- * the scope is used as a unit filter without a specific topic.
- */
-function resolveMentalTopicId(specification: Specification, scope: string, shuffle: boolean): string | undefined {
-	const candidateTopics = scope === 'all' ? specification.topics : specification.topics.filter(t => t.unit_id === scope);
-	if (candidateTopics.length === 0) return undefined;
-	if (shuffle) {
-		const index = Math.floor(Math.random() * candidateTopics.length);
-		return candidateTopics[index]?.id;
-	}
-	return undefined;
-}
-/**
  * Mental-mode practice hook.
  *
  * Manages the full mental session lifecycle: batch generation (or one-at-a-time
@@ -124,7 +109,7 @@ export function useMentalMode(): UseMentalModeReturn {
 		isStartingRef.current = true;
 		setIsStarting(true);
 		const range = DIFFICULTY_RANGES[difficulty];
-		const topicId = resolveMentalTopicId(specification, scope, shuffle);
+		const topicId = resolveTopicId(specification, scope, shuffle, undefined, false);
 		const options = {topicId, ...range};
 		try {
 			if (unlimited) {
@@ -149,16 +134,7 @@ export function useMentalMode(): UseMentalModeReturn {
 	const resumeSession = useCallback(() => {
 		timer.resume();
 	}, [timer]);
-	const check = useCallback(() => {
-		const store = usePracticeStore.getState();
-		if (!store.isActive || store.showFeedback || store.mode !== 'Mental') return;
-		store.submitAnswer();
-		const updated = usePracticeStore.getState();
-		const latest = updated.results[updated.results.length - 1];
-		if (latest) {
-			useProgressStore.getState().addResults([latest]);
-		}
-	}, []);
+	const {check} = usePracticeActions({mode: 'Mental', shortcutEnabled: isSessionActive});
 	const skipQuestion = useCallback(() => {
 		const store = usePracticeStore.getState();
 		if (!store.isActive || store.mode !== 'Mental') return;
@@ -166,7 +142,7 @@ export function useMentalMode(): UseMentalModeReturn {
 			void (async () => {
 				if (!specification) return;
 				const range = DIFFICULTY_RANGES[difficulty];
-				const topicId = resolveMentalTopicId(specification, scope, shuffle);
+				const topicId = resolveTopicId(specification, scope, shuffle, undefined, false);
 				try {
 					const question = await generateQuestion(specification, {topicId, ...range});
 					store.loadQuestion(question);
@@ -194,7 +170,7 @@ export function useMentalMode(): UseMentalModeReturn {
 			if (unlimited) {
 				if (!specification) return;
 				const range = DIFFICULTY_RANGES[difficulty];
-				const topicId = resolveMentalTopicId(specification, scope, shuffle);
+				const topicId = resolveTopicId(specification, scope, shuffle, undefined, false);
 				try {
 					const question = await generateQuestion(specification, {topicId, ...range});
 					store.loadQuestion(question);
@@ -212,20 +188,6 @@ export function useMentalMode(): UseMentalModeReturn {
 		}, AUTO_ADVANCE_DELAY_MS);
 		return () => window.clearTimeout(timerId);
 	}, [showFeedback, isSessionActive, unlimited, specification, difficulty, scope, shuffle, toast]);
-	useEffect(() => {
-		if (!isSessionActive) return;
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.shiftKey && event.key === 'Enter') {
-				const target = event.target as HTMLElement | null;
-				if (target && (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT')) {
-					event.preventDefault();
-					check();
-				}
-			}
-		};
-		window.addEventListener('keydown', handleKeyDown);
-		return () => window.removeEventListener('keydown', handleKeyDown);
-	}, [isSessionActive, check]);
 	return {
 		difficulty,
 		setDifficulty,

@@ -1,10 +1,10 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {usePracticeStore} from '../stores/practiceStore';
 import {useSpecStore} from '../stores/specStore';
-import {useProgressStore} from '../stores/progressStore';
 import {generateQuestion} from '../services/physicsCore';
 import {useToast} from '../components/ui';
-import type {Specification} from '../types/models';
+import {usePracticeActions} from './usePracticeActions';
+import {resolveTopicId} from '../lib/utils';
 import {QUESTION_TYPES} from '../types/models';
 /**
  * Return value of {@link useSingleMode}.
@@ -30,23 +30,6 @@ export interface UseSingleModeReturn {
 	generate: () => Promise<void>;
 	/** Check the current answer, evaluate, and persist the result. */
 	check: () => void;
-}
-/**
- * Resolve the topic id to scope question generation to.
- *
- * Priority: explicitly selected topic > random topic from the scope unit
- * (when shuffle or a non-`all` scope is active) > undefined (all topics).
- */
-function resolveTopicId(specification: Specification, selectedTopicId: string | null, scope: string, shuffle: boolean): string | undefined {
-	if (selectedTopicId) return selectedTopicId;
-	const candidateTopics = scope === 'all' ? specification.topics : specification.topics.filter(t => t.unit_id === scope);
-	if (candidateTopics.length === 0) return undefined;
-	if (shuffle || scope !== 'all') {
-		const index = Math.floor(Math.random() * candidateTopics.length);
-		const picked = candidateTopics[index];
-		return picked?.id;
-	}
-	return undefined;
 }
 /**
  * Single-mode practice hook.
@@ -83,7 +66,7 @@ export function useSingleMode(): UseSingleModeReturn {
 		if (!specification) return;
 		isGeneratingRef.current = true;
 		setIsGenerating(true);
-		const topicId = resolveTopicId(specification, selectedTopicId, scope, shuffle);
+		const topicId = resolveTopicId(specification, scope, shuffle, selectedTopicId);
 		const questionType = mcqEnabled ? QUESTION_TYPES.MC : undefined;
 		try {
 			const question = await generateQuestion(specification, {topicId, questionType});
@@ -96,16 +79,7 @@ export function useSingleMode(): UseSingleModeReturn {
 			setIsGenerating(false);
 		}
 	}, [specification, selectedTopicId, scope, shuffle, mcqEnabled, toast]);
-	const check = useCallback(() => {
-		const store = usePracticeStore.getState();
-		if (!store.isActive || store.showFeedback) return;
-		store.submitAnswer();
-		const updated = usePracticeStore.getState();
-		const latest = updated.results[updated.results.length - 1];
-		if (latest) {
-			useProgressStore.getState().addResults([latest]);
-		}
-	}, []);
+	const {check} = usePracticeActions();
 	useEffect(() => {
 		if (showFeedback && autoEnabled) {
 			const timer = window.setTimeout(() => {
@@ -120,16 +94,9 @@ export function useSingleMode(): UseSingleModeReturn {
 				event.preventDefault();
 				void generate();
 			}
-			if (event.shiftKey && event.key === 'Enter') {
-				const target = event.target as HTMLElement | null;
-				if (target && (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT')) {
-					event.preventDefault();
-					check();
-				}
-			}
 		};
 		window.addEventListener('keydown', handleKeyDown);
 		return () => window.removeEventListener('keydown', handleKeyDown);
-	}, [generate, check]);
+	}, [generate]);
 	return {autoEnabled, setAutoEnabled, scope, setScope, shuffle, setShuffle, canCheck, isGenerating, generate, check};
 }
