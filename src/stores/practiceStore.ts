@@ -14,7 +14,7 @@ export interface AnswerFeedback {
 }
 
 export interface PracticeState {
-	// State
+	// Session state
 	specification: Specification | null;
 	questions: GeneratedQuestion[];
 	currentIndex: number;
@@ -28,8 +28,13 @@ export interface PracticeState {
 	selectedChoiceIndex: number;
 	showFeedback: boolean;
 	lastResult: AnswerFeedback | null;
-
+	// Practice configuration (persists across session resets)
+	selectedTopicId: string | null;
+	mcqEnabled: boolean;
 	// Actions
+	setMode: (mode: PracticeMode) => void;
+	setSelectedTopicId: (topicId: string | null) => void;
+	setMcqEnabled: (enabled: boolean) => void;
 	startSession: (spec: Specification, questions: GeneratedQuestion[], mode: PracticeMode) => void;
 	setUserAnswer: (answer: string) => void;
 	selectChoice: (index: number) => void;
@@ -67,7 +72,7 @@ const initialSessionState = {
 	questions: [] as GeneratedQuestion[],
 	currentIndex: 0,
 	results: [] as PracticeResult[],
-	mode: 'Focused' as PracticeMode,
+	mode: 'Single' as PracticeMode,
 	isActive: false,
 	isFinished: false,
 	questionStartTime: null as number | null,
@@ -80,7 +85,11 @@ const initialSessionState = {
 
 export const usePracticeStore = create<PracticeState>()((set, get) => ({
 	...initialSessionState,
-
+	selectedTopicId: null,
+	mcqEnabled: false,
+	setMode: mode => set({mode}),
+	setSelectedTopicId: topicId => set({selectedTopicId: topicId}),
+	setMcqEnabled: enabled => set({mcqEnabled: enabled}),
 	startSession: (spec, questions, mode) => {
 		const now = Date.now();
 		set({

@@ -6,8 +6,8 @@
  * is required when crossing the Tauri/WASM boundary.
  */
 
-/** Practice mode for a study session. Matches the Rust `PracticeMode` enum. */
-export type PracticeMode = 'Mental' | 'Focused';
+/** Practice mode for a study session: Single (deep focus) or Mental (timed drill). */
+export type PracticeMode = 'Single' | 'Mental';
 
 /** Supported question template types. */
 export type QuestionType = 'MultipleChoice' | 'ShortAnswer';

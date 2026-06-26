@@ -1,18 +1,29 @@
+import {useEffect} from 'react';
 import {AppShell} from './components/layout/AppShell';
+import {Toolbar} from './components/ui';
+import {ControlToolbarTop} from './components/practice/ControlToolbarTop';
 import {useTheme} from './hooks/useTheme';
+import {useSpecStore} from './stores/specStore';
 /**
  * Root application component.
  *
  * The app is a single practice surface per the reference design, so
- * react-router is no longer used: the shell renders directly with a
- * control-toolbar slot and the main content area. Subsequent tasks
- * populate the toolbar and main content.
+ * react-router is no longer used: the shell renders directly with the
+ * control-toolbar (top row wired in Task 13, bottom row in Task 14) and the
+ * main content area (populated in Task 15). The default specification is
+ * loaded once on mount so the topics section can render pills.
  */
 function App() {
 	useTheme();
+	const loadSpec = useSpecStore(state => state.load);
+	useEffect(() => {
+		void loadSpec();
+	}, [loadSpec]);
 	return (
 		<AppShell>
-			<div className="control-toolbar" aria-label="Practice controls placeholder" />
+			<Toolbar>
+				<ControlToolbarTop />
+			</Toolbar>
 			<main className="main-content">
 				<div className="content-stack">
 					<div className="question-card card">
