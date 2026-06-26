@@ -25,6 +25,7 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
 		const answer = this.formatAnswer(answerValue, evaluator);
 		const choices = this.generateChoices(template, variables, answerValue, evaluator, random);
 		const solutionText = this.substituter.substitute(template.solution_template, variables).replaceAll('{answer}', answer);
+		const solutionLatex = this.substituter.substitute(template.solution_template, variables).replaceAll('{answer}', answer);
 		return {
 			id: generateId(),
 			topic_id: template.topic_id,
@@ -35,7 +36,7 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
 			answer,
 			choices: choices.length > 0 ? choices : undefined,
 			solution_text: solutionText,
-			solution_latex: template.solution_template,
+			solution_latex: solutionLatex,
 			variables
 		};
 	}
