@@ -16,7 +16,7 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
 	}
 	public handle(template: QuestionTemplate, variables: Record<string, unknown>, evaluator: ExpressionEvaluatorLike, random: RandomGenerator): GeneratedQuestion {
 		const text = this.substituter.substitute(template.text_template, variables);
-		let answerValue = 0;
+		let answerValue: number;
 		try {
 			answerValue = evaluator.evaluate(template.answer_expression, variables);
 		} catch {

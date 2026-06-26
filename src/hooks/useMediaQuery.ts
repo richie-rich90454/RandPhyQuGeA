@@ -7,13 +7,16 @@ import {useEffect, useState} from 'react';
  */
 export function useMediaQuery(query: string): boolean {
 	const [matches, setMatches] = useState<boolean>(() => (typeof window !== 'undefined' ? window.matchMedia(query).matches : false));
+	const [prevQuery, setPrevQuery] = useState(query);
+	if (prevQuery !== query) {
+		setPrevQuery(query);
+		setMatches(typeof window !== 'undefined' ? window.matchMedia(query).matches : false);
+	}
 	useEffect(() => {
 		const mediaQueryList = window.matchMedia(query);
 		const handleChange = (event: MediaQueryListEvent) => {
 			setMatches(event.matches);
 		};
-		// Sync with the current state in case it changed between init and effect.
-		setMatches(mediaQueryList.matches);
 		mediaQueryList.addEventListener('change', handleChange);
 		return () => {
 			mediaQueryList.removeEventListener('change', handleChange);

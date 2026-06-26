@@ -1,4 +1,4 @@
-import {useState, useCallback, useEffect} from 'react';
+import {useState, useCallback} from 'react';
 import {Modal} from '../ui';
 import {MathText} from '../MathText';
 import {useUiStore} from '../../stores/uiStore';
@@ -113,9 +113,6 @@ export function PrintModal() {
 	const [questions, setQuestions] = useState<GeneratedQuestion[]>([]);
 	const [isGenerating, setIsGenerating] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
-	useEffect(() => {
-		setTopicId('all');
-	}, [scope]);
 	const handleGenerate = useCallback(async () => {
 		if (!specification) {
 			setError('No specification loaded.');
@@ -206,7 +203,10 @@ export function PrintModal() {
 				</div>
 				<div className="setting-item">
 					<label htmlFor="print-scope">Topic scope</label>
-					<select id="print-scope" className="scope-select" value={scope} onChange={event => setScope(event.target.value)}>
+					<select id="print-scope" className="scope-select" value={scope} onChange={event => {
+					setScope(event.target.value);
+					setTopicId('all');
+				}}>
 						{SCOPE_OPTIONS.map(option => (
 							<option key={option.value} value={option.value}>
 								{option.label}

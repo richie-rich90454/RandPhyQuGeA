@@ -136,7 +136,7 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
 		if (!question || state.showFeedback) return;
 		const startTime = state.questionStartTime ?? Date.now();
 		const timeTakenMs = Date.now() - startTime;
-		let isCorrect = false;
+		let isCorrect: boolean;
 		let userAnswerValue = state.userAnswer;
 		if (question.question_type === QUESTION_TYPES.MC && question.choices) {
 			const correctIndex = question.choices.findIndex(choice => choice === question.answer);

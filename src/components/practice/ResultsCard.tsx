@@ -21,6 +21,22 @@ export function ResultsCard() {
 	const showFeedback = usePracticeStore(state => state.showFeedback);
 	const lastResult = usePracticeStore(state => state.lastResult);
 	const currentQuestion = usePracticeStore(state => state.questions[state.currentIndex] ?? null);
+	const solutionRender = useMemo(() => {
+		if (!currentQuestion) return null;
+		const latex = currentQuestion.solution_latex;
+		if (latex && latex.trim() !== '') {
+			try {
+				const html = katex.renderToString(latex, {displayMode: true, throwOnError: true});
+				return {kind: 'katex' as const, html};
+			} catch {
+				return {kind: 'text' as const, text: currentQuestion.solution_text};
+			}
+		}
+		if (currentQuestion.solution_text.trim() !== '') {
+			return {kind: 'text' as const, text: currentQuestion.solution_text};
+		}
+		return null;
+	}, [currentQuestion]);
 	if (!showFeedback || !lastResult || !currentQuestion) {
 		return (
 			<div className="results-card card">
@@ -47,21 +63,6 @@ export function ResultsCard() {
 	const bannerClass = isCorrect ? 'result-success' : 'result-error';
 	const bannerIcon = isCorrect ? CORRECT_ICON : INCORRECT_ICON;
 	const heading = isCorrect ? 'Correct!' : 'Incorrect';
-	const solutionRender = useMemo(() => {
-		const latex = currentQuestion.solution_latex;
-		if (latex && latex.trim() !== '') {
-			try {
-				const html = katex.renderToString(latex, {displayMode: true, throwOnError: true});
-				return {kind: 'katex' as const, html};
-			} catch {
-				return {kind: 'text' as const, text: currentQuestion.solution_text};
-			}
-		}
-		if (currentQuestion.solution_text.trim() !== '') {
-			return {kind: 'text' as const, text: currentQuestion.solution_text};
-		}
-		return null;
-	}, [currentQuestion.solution_latex, currentQuestion.solution_text]);
 	return (
 		<div className="results-card card">
 			<div className="card-header">

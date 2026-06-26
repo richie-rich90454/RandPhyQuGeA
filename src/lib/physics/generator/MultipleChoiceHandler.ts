@@ -11,7 +11,7 @@ export class MultipleChoiceHandler extends BaseQuestionHandler {
 		const answerFormatted = evaluator.formatNumeric(answerValue);
 		const choices: string[] = [];
 		for (const expr of template.distractor_expressions) {
-			let val = 0;
+			let val: number;
 			try {
 				val = evaluator.evaluate(expr, variables);
 			} catch {
