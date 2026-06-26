@@ -27,6 +27,9 @@ export interface SettingsState {
 	mentalDurationSec: number;
 	mentalDifficulty: 'easy' | 'medium' | 'hard';
 	mentalMaxQuestions: number;
+	mentalScope: string;
+	mentalShuffle: boolean;
+	mentalUnlimited: boolean;
 	hapticEnabled: boolean;
 	soundEnabled: boolean;
 	autoCheckDelay: number;
@@ -54,6 +57,9 @@ export interface SettingsState {
 	setMentalDurationSec: (sec: number) => void;
 	setMentalDifficulty: (difficulty: 'easy' | 'medium' | 'hard') => void;
 	setMentalMaxQuestions: (count: number) => void;
+	setMentalScope: (scope: string) => void;
+	setMentalShuffle: (enabled: boolean) => void;
+	setMentalUnlimited: (enabled: boolean) => void;
 	setHapticEnabled: (enabled: boolean) => void;
 	setSoundEnabled: (enabled: boolean) => void;
 	setAutoCheckDelay: (delay: number) => void;
@@ -85,6 +91,9 @@ const defaultState = {
 	mentalDurationSec: 60,
 	mentalDifficulty: 'medium' as 'easy' | 'medium' | 'hard',
 	mentalMaxQuestions: 5,
+	mentalScope: 'all',
+	mentalShuffle: false,
+	mentalUnlimited: false,
 	hapticEnabled: true,
 	soundEnabled: false,
 	autoCheckDelay: 800,
@@ -116,6 +125,9 @@ export const useSettingsStore = create<SettingsState>()(
 			setMentalDurationSec: sec => set({mentalDurationSec: sec}),
 			setMentalDifficulty: difficulty => set({mentalDifficulty: difficulty}),
 			setMentalMaxQuestions: count => set({mentalMaxQuestions: count}),
+			setMentalScope: scope => set({mentalScope: scope}),
+			setMentalShuffle: enabled => set({mentalShuffle: enabled}),
+			setMentalUnlimited: enabled => set({mentalUnlimited: enabled}),
 			setHapticEnabled: enabled => set({hapticEnabled: enabled}),
 			setSoundEnabled: enabled => set({soundEnabled: enabled}),
 			setAutoCheckDelay: delay => set({autoCheckDelay: delay}),

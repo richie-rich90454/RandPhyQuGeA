@@ -85,14 +85,14 @@ function resolveMentalTopicId(specification: Specification, scope: string, shuff
  * exhaustion. Results are persisted to the progress store as they are checked.
  */
 export function useMentalMode(): UseMentalModeReturn {
-	const difficulty = usePracticeStore(state => state.mentalDifficulty);
-	const setDifficulty = usePracticeStore(state => state.setMentalDifficulty);
-	const scope = usePracticeStore(state => state.mentalScope);
-	const setScope = usePracticeStore(state => state.setMentalScope);
-	const shuffle = usePracticeStore(state => state.mentalShuffle);
-	const setShuffle = usePracticeStore(state => state.setMentalShuffle);
-	const unlimited = usePracticeStore(state => state.mentalUnlimited);
-	const setUnlimited = usePracticeStore(state => state.setMentalUnlimited);
+	const difficulty = useSettingsStore(state => state.mentalDifficulty);
+	const setDifficulty = useSettingsStore(state => state.setMentalDifficulty);
+	const scope = useSettingsStore(state => state.mentalScope);
+	const setScope = useSettingsStore(state => state.setMentalScope);
+	const shuffle = useSettingsStore(state => state.mentalShuffle);
+	const setShuffle = useSettingsStore(state => state.setMentalShuffle);
+	const unlimited = useSettingsStore(state => state.mentalUnlimited);
+	const setUnlimited = useSettingsStore(state => state.setMentalUnlimited);
 	const isActive = usePracticeStore(state => state.isActive);
 	const isFinished = usePracticeStore(state => state.isFinished);
 	const mode = usePracticeStore(state => state.mode);

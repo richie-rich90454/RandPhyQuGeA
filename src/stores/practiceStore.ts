@@ -34,11 +34,6 @@ export interface PracticeState {
 	autoEnabled: boolean;
 	scope: string;
 	shuffle: boolean;
-	// Mental-mode configuration (persists across session resets)
-	mentalDifficulty: 'easy' | 'medium' | 'hard';
-	mentalScope: string;
-	mentalShuffle: boolean;
-	mentalUnlimited: boolean;
 	// Actions
 	setMode: (mode: PracticeMode) => void;
 	setSelectedTopicId: (topicId: string | null) => void;
@@ -46,10 +41,6 @@ export interface PracticeState {
 	setAutoEnabled: (enabled: boolean) => void;
 	setScope: (scope: string) => void;
 	setShuffle: (enabled: boolean) => void;
-	setMentalDifficulty: (difficulty: 'easy' | 'medium' | 'hard') => void;
-	setMentalScope: (scope: string) => void;
-	setMentalShuffle: (enabled: boolean) => void;
-	setMentalUnlimited: (enabled: boolean) => void;
 	startSession: (spec: Specification, questions: GeneratedQuestion[], mode: PracticeMode) => void;
 	setUserAnswer: (answer: string) => void;
 	selectChoice: (index: number) => void;
@@ -101,20 +92,12 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
 	autoEnabled: false,
 	scope: 'all',
 	shuffle: false,
-	mentalDifficulty: 'medium',
-	mentalScope: 'all',
-	mentalShuffle: false,
-	mentalUnlimited: false,
 	setMode: mode => set({mode}),
 	setSelectedTopicId: topicId => set({selectedTopicId: topicId}),
 	setMcqEnabled: enabled => set({mcqEnabled: enabled}),
 	setAutoEnabled: enabled => set({autoEnabled: enabled}),
 	setScope: scope => set({scope}),
 	setShuffle: enabled => set({shuffle: enabled}),
-	setMentalDifficulty: difficulty => set({mentalDifficulty: difficulty}),
-	setMentalScope: scope => set({mentalScope: scope}),
-	setMentalShuffle: enabled => set({mentalShuffle: enabled}),
-	setMentalUnlimited: enabled => set({mentalUnlimited: enabled}),
 	startSession: (spec, questions, mode) => {
 		const now = Date.now();
 		set({
