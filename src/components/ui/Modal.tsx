@@ -10,6 +10,8 @@ export interface ModalProps {
 	title?: string;
 	/** Labelled-by id override for the title heading. */
 	titleId?: string;
+	/** Id applied to the outer `.modal` element (matches reference selectors). */
+	modalId?: string;
 	/** Modal body content. */
 	children?: ReactNode;
 	/** Optional footer actions. */
@@ -25,9 +27,11 @@ export interface ModalProps {
  * Renders into a portal as `.modal` with the `.show` class toggled by `open`.
  * The structure `.modal-content > (.modal-header, .modal-body, .modal-footer)`
  * matches the reference so all glass styling applies. Escape and backdrop
- * clicks call `onClose`.
+ * clicks call `onClose`. The optional `modalId` is set on the outer `.modal`
+ * element so reference id-scoped CSS selectors (e.g. `#shortcuts-modal table`)
+ * apply without extra wrapper elements.
  */
-export function Modal({open, onClose, title, titleId, children, footer, className, ariaLabel}: ModalProps) {
+export function Modal({open, onClose, title, titleId, modalId, children, footer, className, ariaLabel}: ModalProps) {
 	useEffect(() => {
 		if (!open) {
 			return;
@@ -47,7 +51,7 @@ export function Modal({open, onClose, title, titleId, children, footer, classNam
 	}
 	const labelledBy = title ? (titleId ?? 'modal-title') : undefined;
 	return createPortal(
-		<div className={cn('modal', 'show')} role="dialog" aria-modal="true" aria-labelledby={labelledBy} aria-label={ariaLabel} onClick={onClose}>
+		<div id={modalId} className={cn('modal', 'show')} role="dialog" aria-modal="true" aria-labelledby={labelledBy} aria-label={ariaLabel} onClick={onClose}>
 			<div className={cn('modal-content', className)} onClick={event => event.stopPropagation()}>
 				<div className="modal-header">
 					{title && (

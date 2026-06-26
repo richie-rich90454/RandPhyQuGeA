@@ -21,7 +21,7 @@ interface UtilityButtonConfig {
 /** Ordered utility buttons rendered in the toolbar's top row. */
 const BUTTONS: readonly UtilityButtonConfig[] = [
 	{id: 'theme', label: 'Toggle theme', title: 'Toggle light/dark theme', icon: 'theme'},
-	{id: 'help', label: 'Help', title: 'Show help', icon: 'help'},
+	{id: 'onboarding', label: 'Help', title: 'Show onboarding help', icon: 'help'},
 	{id: 'shortcuts', label: 'Keyboard shortcuts', title: 'Show keyboard shortcuts', icon: 'shortcuts'},
 	{id: 'settings', label: 'Settings', title: 'Open settings', icon: 'settings'},
 	{id: 'print', label: 'Print worksheet', title: 'Generate printable worksheet', icon: 'print'},
