@@ -3,7 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Physics Question Generator</title>
+    <title>RandPhyQuGeA</title>
+    <meta name="application-name" content="RandPhyQuGeA" />
+    <meta name="theme-color" content="#28465C" />
+    <link rel="icon" href="/favicon.png" type="image/png" />
+    <link rel="preload" href="/NotoSans-VariableFont_wdth_wght.ttf" as="font" type="font/ttf" crossorigin />
+    <link rel="preload" href="/LibertinusMath-Regular.ttf" as="font" type="font/ttf" crossorigin />
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [["$", "$"], ["\\(", "\\)"]],
+          displayMath: [["$$", "$$"], ["\\[", "\\]"]]
+        },
+        svg: { fontCache: "global" },
+        options: {
+          ignoreHtmlClass: "tex2jax_ignore",
+          processHtmlClass: "tex2jax_process"
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   </head>
   <body>
     <div id="root"></div>
