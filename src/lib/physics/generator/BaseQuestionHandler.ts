@@ -19,7 +19,6 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
 		let answerValue = 0;
 		try {
 			answerValue = evaluator.evaluate(template.answer_expression, variables);
-			// eslint-disable-next-line brace-style
 		} catch {
 			answerValue = 0;
 		}

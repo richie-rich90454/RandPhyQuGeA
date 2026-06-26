@@ -14,7 +14,6 @@ export class MultipleChoiceHandler extends BaseQuestionHandler {
 			let val = 0;
 			try {
 				val = evaluator.evaluate(expr, variables);
-				// eslint-disable-next-line brace-style
 			} catch {
 				continue;
 			}
