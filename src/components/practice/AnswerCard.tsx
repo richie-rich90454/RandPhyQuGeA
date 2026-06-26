@@ -4,6 +4,7 @@ import {MathToolbar} from './MathToolbar';
 import {MathText} from '../MathText';
 import {MathRenderer} from '../MathRenderer';
 import type {GeneratedQuestion} from '../../types/models';
+import {QUESTION_TYPES} from '../../types/models';
 /** Clear (✕) icon path for the clear-answer button. */
 const CLEAR_ICON = 'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z';
 /**
@@ -23,7 +24,7 @@ export function AnswerCard() {
 	const selectChoice = usePracticeStore(state => state.selectChoice);
 	const showFeedback = usePracticeStore(state => state.showFeedback);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	const isMcq = currentQuestion?.question_type === 'MultipleChoice' && currentQuestion.choices && currentQuestion.choices.length > 0;
+	const isMcq = currentQuestion?.question_type === QUESTION_TYPES.MC && currentQuestion.choices && currentQuestion.choices.length > 0;
 	const hasQuestion = currentQuestion !== null;
 	const inputDisabled = !hasQuestion || showFeedback;
 	const handleInsertSymbol = (latex: string) => {

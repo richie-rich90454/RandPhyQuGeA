@@ -8,7 +8,14 @@
 /** Practice mode for a study session: Single (deep focus) or Mental (timed drill). */
 export type PracticeMode = 'Single' | 'Mental';
 /** Supported question template types. */
-export type QuestionType = 'MultipleChoice' | 'ShortAnswer';
+export type QuestionType = 'MC' | 'SA' | 'TF' | 'FB' | 'NE';
+export const QUESTION_TYPES = {
+	MC: 'MC' as const,
+	SA: 'SA' as const,
+	TF: 'TF' as const,
+	FB: 'FB' as const,
+	NE: 'NE' as const
+} satisfies Record<string, QuestionType>;
 /** Supported export formats for the question exporters. */
 export type ExportFormat = 'html' | 'pdf' | 'markdown' | 'text' | 'json' | 'csv' | 'latex';
 /** A top-level organizational unit (e.g. "Mechanics"). */

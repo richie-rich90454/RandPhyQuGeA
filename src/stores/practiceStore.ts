@@ -7,6 +7,7 @@
  */
 import {create} from 'zustand';
 import type {Specification, GeneratedQuestion, PracticeResult, PracticeMode} from '../types/models';
+import {QUESTION_TYPES} from '../types/models';
 export interface AnswerFeedback {
 	isCorrect: boolean;
 	correctAnswer: string;
@@ -137,7 +138,7 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
 		const timeTakenMs = Date.now() - startTime;
 		let isCorrect = false;
 		let userAnswerValue = state.userAnswer;
-		if (question.question_type === 'MultipleChoice' && question.choices) {
+		if (question.question_type === QUESTION_TYPES.MC && question.choices) {
 			const correctIndex = question.choices.findIndex(choice => choice === question.answer);
 			isCorrect = state.selectedChoiceIndex === correctIndex;
 			userAnswerValue = state.selectedChoiceIndex >= 0 ? (question.choices[state.selectedChoiceIndex] ?? '') : '';

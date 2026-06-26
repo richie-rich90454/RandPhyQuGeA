@@ -4,6 +4,7 @@ import {useSpecStore} from '../stores/specStore';
 import {useProgressStore} from '../stores/progressStore';
 import {generateQuestion} from '../services/physicsCore';
 import type {Specification} from '../types/models';
+import {QUESTION_TYPES} from '../types/models';
 /**
  * Return value of {@link useSingleMode}.
  */
@@ -74,7 +75,7 @@ export function useSingleMode(): UseSingleModeReturn {
 	const generate = useCallback(async () => {
 		if (!specification) return;
 		const topicId = resolveTopicId(specification, selectedTopicId, scope, shuffle);
-		const questionType = mcqEnabled ? 'MultipleChoice' : undefined;
+		const questionType = mcqEnabled ? QUESTION_TYPES.MC : undefined;
 		try {
 			const question = await generateQuestion(specification, {topicId, questionType});
 			usePracticeStore.getState().loadQuestion(question);
