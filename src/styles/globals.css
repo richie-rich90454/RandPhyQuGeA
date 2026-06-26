@@ -1804,7 +1804,7 @@ input[type='checkbox']:hover {
 .answer-card .math-toolbar {
 	display: none;
 }
-.answer-card.focused .math-toolbar {
+.answer-card:focus-within .math-toolbar {
 	display: flex;
 }
 #pause-session,

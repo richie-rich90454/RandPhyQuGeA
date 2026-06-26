@@ -235,41 +235,60 @@ export function MathToolbar({onInsert, disabled = false}: MathToolbarProps) {
 				{PRIMARY_GROUPS.map(group => (
 					<div key={group.title} className="math-toolbar-section" title={group.title}>
 						{group.symbols.map(symbol => (
-							<button key={symbol.latex} type="button" className="math-toolbar-btn" title={symbol.title ?? symbol.label} disabled={disabled} onClick={() => handleClick(symbol.latex)}>
+							<button
+								key={symbol.latex}
+								type="button"
+								className="math-toolbar-btn"
+								data-symbol={symbol.latex}
+								title={symbol.title ?? symbol.label}
+								disabled={disabled}
+								onClick={() => handleClick(symbol.latex)}
+							>
 								{symbol.label}
 							</button>
 						))}
 					</div>
 				))}
 				<div className="math-toolbar-section dropdown-trigger" ref={dropdownRef}>
-					<button type="button" className="math-toolbar-btn dropdown-btn" id="math-dropdown-btn" title="More symbols" disabled={disabled} onClick={toggleDropdown}>
+					<button
+						type="button"
+						className="math-toolbar-btn dropdown-btn"
+						id="math-dropdown-btn"
+						data-symbol="dropdown"
+						title="More symbols"
+						aria-label="More symbols"
+						aria-haspopup="true"
+						aria-expanded={dropdownOpen}
+						aria-controls="math-dropdown"
+						disabled={disabled}
+						onClick={toggleDropdown}
+					>
 						{'\u22ef'}
 					</button>
-					{dropdownOpen && (
-						<div className="math-dropdown" id="math-dropdown">
-							<div className="math-dropdown-content">
-								{DROPDOWN_GROUPS.map(group => (
-									<div key={group.title} className="math-toolbar-section" title={group.title}>
-										{group.symbols.map(symbol => (
-											<button
-												key={symbol.latex}
-												type="button"
-												className="math-toolbar-btn"
-												title={symbol.title ?? symbol.label}
-												disabled={disabled}
-												onClick={() => {
-													handleClick(symbol.latex);
-													setDropdownOpen(false);
-												}}
-											>
-												{symbol.label}
-											</button>
-										))}
-									</div>
-								))}
-							</div>
+					<div className={dropdownOpen ? 'math-dropdown show' : 'math-dropdown'} id="math-dropdown">
+						<div className="math-dropdown-content">
+							{DROPDOWN_GROUPS.map(group => (
+								<div key={group.title} className="math-toolbar-section" title={group.title}>
+									{group.symbols.map(symbol => (
+										<button
+											key={symbol.latex}
+											type="button"
+											className="math-toolbar-btn"
+											data-symbol={symbol.latex}
+											title={symbol.title ?? symbol.label}
+											disabled={disabled}
+											onClick={() => {
+												handleClick(symbol.latex);
+												setDropdownOpen(false);
+											}}
+										>
+											{symbol.label}
+										</button>
+									))}
+								</div>
+							))}
 						</div>
-					)}
+					</div>
 				</div>
 			</div>
 		</div>
