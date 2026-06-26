@@ -1,20 +1,19 @@
 import {cn} from '../../lib/utils';
-
 export interface ProgressBarProps {
+	/** Completion percentage clamped to 0–100. */
 	value: number;
 	className?: string;
-	showLabel?: boolean;
 }
-
-export function ProgressBar({value, className, showLabel = false}: ProgressBarProps) {
-	const clampedValue = Math.min(100, Math.max(0, value));
-
+/**
+ * Progress bar mapped to the reference `.mental-progress` track and
+ * `.progress-bar` fill. Exposes `role="progressbar"` with ARIA value
+ * attributes for assistive technology.
+ */
+export function ProgressBar({value, className}: ProgressBarProps) {
+	const clamped = Math.min(100, Math.max(0, value));
 	return (
-		<div className={cn('w-full', className)}>
-			<div className="h-2 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
-				<div className="h-full rounded-full bg-primary-600 transition-all duration-normal ease-standard" style={{width: `${clampedValue}%`}} />
-			</div>
-			{showLabel && <span className="mt-1 block text-right text-xs text-neutral-500">{Math.round(clampedValue)}%</span>}
+		<div className={cn('mental-progress', className)} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(clamped)}>
+			<div className="progress-bar" style={{width: `${clamped}%`}} />
 		</div>
 	);
 }

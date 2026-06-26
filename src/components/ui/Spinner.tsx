@@ -1,21 +1,27 @@
 import {cn} from '../../lib/utils';
-
 export interface SpinnerProps {
+	/** Spinner diameter. */
 	size?: 'sm' | 'md' | 'lg';
 	className?: string;
 }
-
-const sizeClasses: Record<NonNullable<SpinnerProps['size']>, string> = {
-	sm: 'h-4 w-4',
-	md: 'h-6 w-6',
-	lg: 'h-8 w-8'
+/** Pixel sizes for each spinner option. */
+const sizePx: Record<NonNullable<SpinnerProps['size']>, number> = {
+	sm: 16,
+	md: 24,
+	lg: 32
 };
-
+/**
+ * Inline SVG spinner.
+ *
+ * Uses `currentColor` and a CSS `spin` animation so it inherits the
+ * surrounding text color. Marked `aria-hidden` because it is decorative.
+ */
 export function Spinner({size = 'md', className}: SpinnerProps) {
+	const px = sizePx[size];
 	return (
-		<svg className={cn('animate-spin text-current', sizeClasses[size], className)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-			<circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-			<path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+		<svg className={cn('spinner', className)} width={px} height={px} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+			<circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeOpacity="0.25" />
+			<path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
 		</svg>
 	);
 }

@@ -1,34 +1,66 @@
-import {ReactNode, useEffect} from 'react';
+import {useEffect, type ReactNode} from 'react';
 import {createPortal} from 'react-dom';
 import {cn} from '../../lib/utils';
-
 export interface ModalProps {
+	/** When true the `.show` class is applied, revealing the dialog. */
 	open: boolean;
+	/** Called when the user requests dismissal (Escape/backdrop/close button). */
 	onClose: () => void;
+	/** Dialog title rendered in the header. */
 	title?: string;
+	/** Labelled-by id override for the title heading. */
+	titleId?: string;
+	/** Modal body content. */
 	children?: ReactNode;
+	/** Optional footer actions. */
 	footer?: ReactNode;
+	/** Extra classes appended to `.modal-content`. */
 	className?: string;
+	/** Accessible name when no title is supplied. */
+	ariaLabel?: string;
 }
-
-export function Modal({open, onClose, title, children, footer, className}: ModalProps) {
+/**
+ * Modal dialog mapped to reference classes.
+ *
+ * Renders into a portal as `.modal` with the `.show` class toggled by `open`.
+ * The structure `.modal-content > (.modal-header, .modal-body, .modal-footer)`
+ * matches the reference so all glass styling applies. Escape and backdrop
+ * clicks call `onClose`.
+ */
+export function Modal({open, onClose, title, titleId, children, footer, className, ariaLabel}: ModalProps) {
 	useEffect(() => {
-		if (!open) return;
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === 'Escape') onClose();
+		if (!open) {
+			return;
+		}
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				onClose();
+			}
 		};
 		document.addEventListener('keydown', handleKeyDown);
-		return () => document.removeEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
 	}, [open, onClose]);
-
-	if (!open) return null;
-
+	if (!open) {
+		return null;
+	}
+	const labelledBy = title ? (titleId ?? 'modal-title') : undefined;
 	return createPortal(
-		<div className="fixed inset-0 z-50 flex animate-fade-in items-center justify-center bg-black/50" onClick={onClose} role="dialog" aria-modal="true">
-			<div className={cn('w-full max-w-lg rounded-lg bg-white p-6 shadow-xl dark:bg-neutral-800', className)} onClick={e => e.stopPropagation()}>
-				{title && <h2 className="mb-4 text-h2 text-neutral-900 dark:text-neutral-100">{title}</h2>}
-				<div className="mb-4">{children}</div>
-				{footer && <div className="flex justify-end gap-2">{footer}</div>}
+		<div className={cn('modal', 'show')} role="dialog" aria-modal="true" aria-labelledby={labelledBy} aria-label={ariaLabel} onClick={onClose}>
+			<div className={cn('modal-content', className)} onClick={event => event.stopPropagation()}>
+				<div className="modal-header">
+					{title && (
+						<h2 id={labelledBy ?? undefined} className="modal-title">
+							{title}
+						</h2>
+					)}
+					<button type="button" className="icon-button modal-close" aria-label="Close dialog" onClick={onClose}>
+						✕
+					</button>
+				</div>
+				<div className="modal-body">{children}</div>
+				{footer && <div className="modal-footer">{footer}</div>}
 			</div>
 		</div>,
 		document.body
