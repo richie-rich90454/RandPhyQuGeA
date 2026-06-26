@@ -2,7 +2,6 @@ import {useRef} from 'react';
 import {usePracticeStore} from '../../stores/practiceStore';
 import {MathToolbar} from './MathToolbar';
 import {MathText} from '../MathText';
-import {MathRenderer} from '../MathRenderer';
 import type {GeneratedQuestion} from '../../types/models';
 import {QUESTION_TYPES} from '../../types/models';
 /** Clear (✕) icon path for the clear-answer button. */
@@ -86,7 +85,7 @@ export function AnswerCard() {
 				)}
 				{!isMcq && (
 					<div className={previewHasContent ? 'math-preview has-content' : 'math-preview'} id="preview">
-						{previewHasContent ? <MathRenderer tex={userAnswer} /> : null}
+						{previewHasContent ? <MathText text={userAnswer} /> : null}
 					</div>
 				)}
 				<div id="expected-format" className="expected-format">

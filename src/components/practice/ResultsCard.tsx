@@ -1,7 +1,8 @@
+import {useMemo} from 'react';
+import katex from 'katex';
 import {usePracticeStore} from '../../stores/practiceStore';
 import {EmptyState} from '../ui';
 import {MathText} from '../MathText';
-import {MathRenderer} from '../MathRenderer';
 /** Mail/results empty-state icon path. */
 const RESULTS_EMPTY_ICON = 'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z';
 /** Checkmark icon path for correct answers. */
@@ -46,7 +47,21 @@ export function ResultsCard() {
 	const bannerClass = isCorrect ? 'result-success' : 'result-error';
 	const bannerIcon = isCorrect ? CORRECT_ICON : INCORRECT_ICON;
 	const heading = isCorrect ? 'Correct!' : 'Incorrect';
-	const solutionLatex = currentQuestion.solution_latex;
+	const solutionRender = useMemo(() => {
+		const latex = currentQuestion.solution_latex;
+		if (latex && latex.trim() !== '') {
+			try {
+				const html = katex.renderToString(latex, {displayMode: true, throwOnError: true});
+				return {kind: 'katex' as const, html};
+			} catch {
+				return {kind: 'text' as const, text: currentQuestion.solution_text};
+			}
+		}
+		if (currentQuestion.solution_text.trim() !== '') {
+			return {kind: 'text' as const, text: currentQuestion.solution_text};
+		}
+		return null;
+	}, [currentQuestion.solution_latex, currentQuestion.solution_text]);
 	return (
 		<div className="results-card card">
 			<div className="card-header">
@@ -65,16 +80,10 @@ export function ResultsCard() {
 							</p>
 						</div>
 					</div>
-					{solutionLatex && solutionLatex.trim() !== '' && (
+					{solutionRender && (
 						<div className="solution-display">
 							<h4>Solution</h4>
-							<MathRenderer tex={solutionLatex} display />
-						</div>
-					)}
-					{(!solutionLatex || solutionLatex.trim() === '') && currentQuestion.solution_text.trim() !== '' && (
-						<div className="solution-display">
-							<h4>Solution</h4>
-							<MathText text={currentQuestion.solution_text} />
+							{solutionRender.kind === 'katex' ? <div dangerouslySetInnerHTML={{__html: solutionRender.html}} /> : <MathText text={solutionRender.text} />}
 						</div>
 					)}
 				</div>
