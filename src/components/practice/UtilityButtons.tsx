@@ -1,5 +1,6 @@
 import {useUiStore, type ModalId} from '../../stores/uiStore';
 import {useSettingsStore} from '../../stores/settingsStore';
+import {useToast} from '../ui';
 /** Inline SVG icon path for each utility button. */
 const ICON_PATHS = {
 	theme: 'M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z',
@@ -39,9 +40,11 @@ export function UtilityButtons() {
 	const openModal = useUiStore(state => state.openModal);
 	const themeMode = useSettingsStore(state => state.themeMode);
 	const setThemeMode = useSettingsStore(state => state.setThemeMode);
+	const {toast} = useToast();
 	const handleThemeToggle = () => {
 		const next = themeMode === 'system' ? 'light' : themeMode === 'light' ? 'dark' : 'system';
 		setThemeMode(next);
+		toast({variant: 'info', message: 'Theme: ' + next});
 	};
 	const handleClick = (id: UtilityButtonConfig['id']) => {
 		if (id === 'theme') {
