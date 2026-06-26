@@ -29,8 +29,7 @@ export const useSpecStore = create<SpecState>()(set => ({
 			const text = await loadDefaultSpec();
 			const specification = await parseSpecification(text);
 			set({specification, loading: false});
-		}
-		catch (err) {
+		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
 			set({loading: false, error: message});
 		}

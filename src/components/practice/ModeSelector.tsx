@@ -17,13 +17,7 @@ export function ModeSelector() {
 	return (
 		<div className="mode-selector" role="group" aria-label="Mode selection">
 			{MODES.map(option => (
-				<button
-					key={option.id}
-					type="button"
-					className={mode === option.id ? 'mode-button active' : 'mode-button'}
-					aria-pressed={mode === option.id}
-					onClick={() => setMode(option.id)}
-				>
+				<button key={option.id} type="button" className={mode === option.id ? 'mode-button active' : 'mode-button'} aria-pressed={mode === option.id} onClick={() => setMode(option.id)}>
 					{option.label}
 				</button>
 			))}

@@ -5,23 +5,18 @@
  * produced by serde on the Rust side, so no runtime key transformation
  * is required when crossing the Tauri/WASM boundary.
  */
-
 /** Practice mode for a study session: Single (deep focus) or Mental (timed drill). */
 export type PracticeMode = 'Single' | 'Mental';
-
 /** Supported question template types. */
 export type QuestionType = 'MultipleChoice' | 'ShortAnswer';
-
 /** Supported export formats for the question exporters. */
 export type ExportFormat = 'html' | 'pdf' | 'markdown' | 'text' | 'json' | 'csv' | 'latex';
-
 /** A top-level organizational unit (e.g. "Mechanics"). */
 export interface Unit {
 	id: string;
 	name: string;
 	description: string;
 }
-
 /** A topic belonging to a unit. */
 export interface Topic {
 	id: string;
@@ -29,7 +24,6 @@ export interface Topic {
 	unit_id: string;
 	description: string;
 }
-
 /** A skill belonging to a topic. */
 export interface Skill {
 	id: string;
@@ -37,7 +31,6 @@ export interface Skill {
 	topic_id: string;
 	description: string;
 }
-
 /** Definition of a variable used inside a question template. */
 export interface VariableDefinition {
 	name: string;
@@ -47,7 +40,6 @@ export interface VariableDefinition {
 	step?: number;
 	enum_values?: string[];
 }
-
 /** A reusable question template with templated text and expressions. */
 export interface QuestionTemplate {
 	id: string;
@@ -61,7 +53,6 @@ export interface QuestionTemplate {
 	variable_definitions: VariableDefinition[];
 	distractor_expressions: string[];
 }
-
 /** A concrete generated question ready to be presented to the user. */
 export interface GeneratedQuestion {
 	id: string;
@@ -76,7 +67,6 @@ export interface GeneratedQuestion {
 	solution_latex: string;
 	variables: Record<string, unknown>;
 }
-
 /** A full specification parsed from a spec text file. */
 export interface Specification {
 	units: Unit[];
@@ -84,7 +74,6 @@ export interface Specification {
 	skills: Skill[];
 	templates: QuestionTemplate[];
 }
-
 /** The result of a single practice attempt. */
 export interface PracticeResult {
 	id: string;
@@ -98,7 +87,6 @@ export interface PracticeResult {
 	mode: PracticeMode;
 	difficulty: number;
 }
-
 /** A formula reference entry for the formula library. */
 export interface FormulaEntry {
 	name: string;

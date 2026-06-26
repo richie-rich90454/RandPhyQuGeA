@@ -1,7 +1,11 @@
-import {useCallback, useMemo} from 'react';
+import {useCallback, useEffect, useMemo} from 'react';
 import {usePracticeStore} from '../stores/practiceStore';
 import {useSettingsStore} from '../stores/settingsStore';
+import {useSpecStore} from '../stores/specStore';
+import {useProgressStore} from '../stores/progressStore';
 import {useCountdownTimer} from './useCountdownTimer';
+import {generateBatch, generateQuestion} from '../services/physicsCore';
+import type {Specification} from '../types/models';
 /**
  * Return value of {@link useMentalMode}.
  */
@@ -36,22 +40,49 @@ export interface UseMentalModeReturn {
 	accuracy: number;
 	/** Average time per question in milliseconds. */
 	avgTimeMs: number;
+	/** True when the session has finished (timer expired or questions exhausted). */
+	isFinished: boolean;
 	/** Start a new timed mental session. */
-	startSession: () => void;
+	startSession: () => Promise<void>;
 	/** Pause the running session. */
 	pauseSession: () => void;
 	/** Resume a paused session. */
 	resumeSession: () => void;
-	/** Skip the current question (stubbed in Task 14; wired in Task 18). */
+	/** Skip the current question without recording a result. */
 	skipQuestion: () => void;
+	/** Check the current answer and persist the result. */
+	check: () => void;
+}
+/** Map difficulty labels to min/max difficulty ranges. */
+const DIFFICULTY_RANGES: Record<'easy' | 'medium' | 'hard', {minDifficulty: number; maxDifficulty: number}> = {
+	easy: {minDifficulty: 1, maxDifficulty: 2},
+	medium: {minDifficulty: 3, maxDifficulty: 5},
+	hard: {minDifficulty: 6, maxDifficulty: 7}
+};
+/** Auto-advance delay after showing feedback in mental mode (ms). */
+const AUTO_ADVANCE_DELAY_MS = 1500;
+/**
+ * Resolve the topic id for mental-mode question generation.
+ *
+ * When shuffle is enabled a random topic from the scope is picked; otherwise
+ * the scope is used as a unit filter without a specific topic.
+ */
+function resolveMentalTopicId(specification: Specification, scope: string, shuffle: boolean): string | undefined {
+	const candidateTopics = scope === 'all' ? specification.topics : specification.topics.filter(t => t.unit_id === scope);
+	if (candidateTopics.length === 0) return undefined;
+	if (shuffle) {
+		const index = Math.floor(Math.random() * candidateTopics.length);
+		return candidateTopics[index]?.id;
+	}
+	return undefined;
 }
 /**
  * Mental-mode practice hook.
  *
- * Manages the mental session lifecycle via {@link useCountdownTimer} and
- * derives score/accuracy from the practice store's results array. In Task 14
- * the session timer is functional (Start Session begins a countdown); actual
- * question generation and skip logic are wired in Task 18.
+ * Manages the full mental session lifecycle: batch generation (or one-at-a-time
+ * for unlimited mode), countdown timer, score tracking, auto-advance after
+ * feedback, skip, pause/resume, and session finish on timer expiry or question
+ * exhaustion. Results are persisted to the progress store as they are checked.
  */
 export function useMentalMode(): UseMentalModeReturn {
 	const difficulty = usePracticeStore(state => state.mentalDifficulty);
@@ -63,10 +94,13 @@ export function useMentalMode(): UseMentalModeReturn {
 	const unlimited = usePracticeStore(state => state.mentalUnlimited);
 	const setUnlimited = usePracticeStore(state => state.setMentalUnlimited);
 	const isActive = usePracticeStore(state => state.isActive);
+	const isFinished = usePracticeStore(state => state.isFinished);
 	const mode = usePracticeStore(state => state.mode);
 	const results = usePracticeStore(state => state.results);
-	const resetSession = usePracticeStore(state => state.resetSession);
+	const showFeedback = usePracticeStore(state => state.showFeedback);
+	const specification = useSpecStore(state => state.specification);
 	const mentalDurationSec = useSettingsStore(state => state.mentalDurationSec);
+	const defaultQuestionCount = useSettingsStore(state => state.defaultQuestionCount);
 	const timer = useCountdownTimer();
 	const isSessionActive = isActive && mode === 'Mental';
 	const isPaused = isSessionActive && !timer.isRunning && timer.timeRemaining > 0;
@@ -78,20 +112,108 @@ export function useMentalMode(): UseMentalModeReturn {
 		const avgTimeMs = total === 0 ? 0 : totalTimeMs / total;
 		return {score: correct, total, accuracy, avgTimeMs};
 	}, [results]);
-	const startSession = useCallback(() => {
-		resetSession();
-		usePracticeStore.setState({mode: 'Mental', isActive: true, isFinished: false, sessionStartTime: Date.now()});
-		timer.start(mentalDurationSec);
-	}, [resetSession, timer, mentalDurationSec]);
+	const startSession = useCallback(async () => {
+		if (!specification) return;
+		const range = DIFFICULTY_RANGES[difficulty];
+		const topicId = resolveMentalTopicId(specification, scope, shuffle);
+		const options = {topicId, ...range};
+		try {
+			if (unlimited) {
+				const question = await generateQuestion(specification, options);
+				usePracticeStore.getState().startSession(specification, [question], 'Mental');
+			} else {
+				const batch = await generateBatch(specification, defaultQuestionCount, options);
+				usePracticeStore.getState().startSession(specification, batch, 'Mental');
+			}
+			timer.start(mentalDurationSec);
+		} catch (err) {
+			const message = err instanceof Error ? err.message : String(err);
+			console.error('Failed to start mental session:', message);
+		}
+	}, [specification, difficulty, scope, shuffle, unlimited, defaultQuestionCount, mentalDurationSec, timer]);
 	const pauseSession = useCallback(() => {
 		timer.pause();
 	}, [timer]);
 	const resumeSession = useCallback(() => {
 		timer.resume();
 	}, [timer]);
-	const skipQuestion = useCallback(() => {
-		// Wired in Task 18: advances to the next generated question without recording a result.
+	const check = useCallback(() => {
+		const store = usePracticeStore.getState();
+		if (!store.isActive || store.showFeedback || store.mode !== 'Mental') return;
+		store.submitAnswer();
+		const updated = usePracticeStore.getState();
+		const latest = updated.results[updated.results.length - 1];
+		if (latest) {
+			useProgressStore.getState().addResults([latest]);
+		}
 	}, []);
+	const skipQuestion = useCallback(() => {
+		const store = usePracticeStore.getState();
+		if (!store.isActive || store.mode !== 'Mental') return;
+		if (unlimited) {
+			void (async () => {
+				if (!specification) return;
+				const range = DIFFICULTY_RANGES[difficulty];
+				const topicId = resolveMentalTopicId(specification, scope, shuffle);
+				try {
+					const question = await generateQuestion(specification, {topicId, ...range});
+					store.loadQuestion(question);
+					usePracticeStore.setState({mode: 'Mental', isActive: true});
+				} catch (err) {
+					const message = err instanceof Error ? err.message : String(err);
+					console.error('Failed to generate next question:', message);
+				}
+			})();
+		} else {
+			store.advanceQuestion();
+		}
+	}, [unlimited, specification, difficulty, scope, shuffle]);
+	useEffect(() => {
+		if (!isSessionActive || isFinished) return;
+		if (timer.timeRemaining === 0 && !timer.isRunning && mentalDurationSec > 0) {
+			usePracticeStore.getState().finishSession();
+			timer.reset();
+		}
+	}, [timer.timeRemaining, timer.isRunning, isSessionActive, isFinished, mentalDurationSec, timer]);
+	useEffect(() => {
+		if (!showFeedback || !isSessionActive) return;
+		const handleAdvance = async () => {
+			const store = usePracticeStore.getState();
+			if (unlimited) {
+				if (!specification) return;
+				const range = DIFFICULTY_RANGES[difficulty];
+				const topicId = resolveMentalTopicId(specification, scope, shuffle);
+				try {
+					const question = await generateQuestion(specification, {topicId, ...range});
+					store.loadQuestion(question);
+					usePracticeStore.setState({mode: 'Mental', isActive: true});
+				} catch (err) {
+					const message = err instanceof Error ? err.message : String(err);
+					console.error('Failed to auto-advance:', message);
+				}
+			} else {
+				store.advanceQuestion();
+			}
+		};
+		const timerId = window.setTimeout(() => {
+			void handleAdvance();
+		}, AUTO_ADVANCE_DELAY_MS);
+		return () => window.clearTimeout(timerId);
+	}, [showFeedback, isSessionActive, unlimited, specification, difficulty, scope, shuffle]);
+	useEffect(() => {
+		if (!isSessionActive) return;
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.shiftKey && event.key === 'Enter') {
+				const target = event.target as HTMLElement | null;
+				if (target && (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT')) {
+					event.preventDefault();
+					check();
+				}
+			}
+		};
+		window.addEventListener('keydown', handleKeyDown);
+		return () => window.removeEventListener('keydown', handleKeyDown);
+	}, [isSessionActive, check]);
 	return {
 		difficulty,
 		setDifficulty,
@@ -108,9 +230,11 @@ export function useMentalMode(): UseMentalModeReturn {
 		total,
 		accuracy,
 		avgTimeMs,
+		isFinished,
 		startSession,
 		pauseSession,
 		resumeSession,
-		skipQuestion
+		skipQuestion,
+		check
 	};
 }

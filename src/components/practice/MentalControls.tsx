@@ -47,8 +47,9 @@ function formatTime(seconds: number): string {
  * Renders the difficulty select, timer display, score display, pause/skip
  * buttons (visible only during an active session), mental scope select,
  * shuffle and unlimited toggles, a live statistics panel, the Start Session
- * button, and a progress bar showing elapsed session time. The timer is
- * functional in Task 14; question generation and skip are wired in Task 18.
+ * button, and a progress bar showing elapsed session time. When the session
+ * finishes (timer expiry or question exhaustion) a summary banner replaces
+ * the live statistics with the final score, accuracy, and average time.
  */
 export function MentalControls() {
 	const {
@@ -63,6 +64,7 @@ export function MentalControls() {
 		timeRemaining,
 		isPaused,
 		isSessionActive,
+		isFinished,
 		score,
 		total,
 		accuracy,
@@ -140,6 +142,22 @@ export function MentalControls() {
 				<label className="shuffle-toggle" id="unlimited-label" title="Unlimited practice (no question limit)">
 					<input type="checkbox" id="unlimited-toggle" checked={unlimited} onChange={event => setUnlimited(event.target.checked)} /> Unlimited
 				</label>
+				{isFinished && (
+					<div id="session-summary" className="statistics-panel session-summary" role="status" aria-live="polite">
+						<span className="stat-with-icon" id="summary-score" title="Final score">
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+								<path d={SCORE_ICON} />
+							</svg>
+							{score} / {total}
+						</span>
+						<span className="stat-with-icon" id="summary-accuracy" title="Final accuracy">
+							Accuracy: {Math.round(accuracy)}%
+						</span>
+						<span className="stat-with-icon" id="summary-avg-time" title="Average time per question">
+							Avg: {(avgTimeMs / 1000).toFixed(1)}s
+						</span>
+					</div>
+				)}
 				{isSessionActive && (
 					<div id="statistics-panel" className="statistics-panel">
 						<span className="stat-with-icon" id="accuracy-stat" title="Accuracy">
