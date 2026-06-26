@@ -11,6 +11,7 @@ import {PrintModal} from './components/modals/PrintModal';
 import {RecommendModal} from './components/modals/RecommendModal';
 import {ManageDataModal} from './components/modals/ManageDataModal';
 import {useTheme} from './hooks/useTheme';
+import {useGlobalShortcuts} from './hooks/useGlobalShortcuts';
 import {useSpecStore} from './stores/specStore';
 import {useSettingsStore} from './stores/settingsStore';
 import {useUiStore} from './stores/uiStore';
@@ -26,6 +27,7 @@ import {useUiStore} from './stores/uiStore';
  */
 function App() {
 	useTheme();
+	useGlobalShortcuts();
 	const loadSpec = useSpecStore(state => state.load);
 	const onboardingCompleted = useSettingsStore(state => state.onboardingCompleted);
 	const openModal = useUiStore(state => state.openModal);
