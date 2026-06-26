@@ -7,12 +7,10 @@
  */
 import {create} from 'zustand';
 import type {Specification, GeneratedQuestion, PracticeResult, PracticeMode} from '../types/models';
-
 export interface AnswerFeedback {
 	isCorrect: boolean;
 	correctAnswer: string;
 }
-
 export interface PracticeState {
 	// Session state
 	specification: Specification | null;
@@ -31,10 +29,26 @@ export interface PracticeState {
 	// Practice configuration (persists across session resets)
 	selectedTopicId: string | null;
 	mcqEnabled: boolean;
+	// Single-mode configuration (persists across session resets)
+	autoEnabled: boolean;
+	scope: string;
+	shuffle: boolean;
+	// Mental-mode configuration (persists across session resets)
+	mentalDifficulty: 'easy' | 'medium' | 'hard';
+	mentalScope: string;
+	mentalShuffle: boolean;
+	mentalUnlimited: boolean;
 	// Actions
 	setMode: (mode: PracticeMode) => void;
 	setSelectedTopicId: (topicId: string | null) => void;
 	setMcqEnabled: (enabled: boolean) => void;
+	setAutoEnabled: (enabled: boolean) => void;
+	setScope: (scope: string) => void;
+	setShuffle: (enabled: boolean) => void;
+	setMentalDifficulty: (difficulty: 'easy' | 'medium' | 'hard') => void;
+	setMentalScope: (scope: string) => void;
+	setMentalShuffle: (enabled: boolean) => void;
+	setMentalUnlimited: (enabled: boolean) => void;
 	startSession: (spec: Specification, questions: GeneratedQuestion[], mode: PracticeMode) => void;
 	setUserAnswer: (answer: string) => void;
 	selectChoice: (index: number) => void;
@@ -44,7 +58,6 @@ export interface PracticeState {
 	resetSession: () => void;
 	getCurrentQuestion: () => GeneratedQuestion | null;
 }
-
 /**
  * Compare a user answer against the correct answer.
  *
@@ -55,7 +68,6 @@ export interface PracticeState {
 function isAnswerCorrect(userAnswer: string, correctAnswer: string): boolean {
 	const trimmedUser = userAnswer.trim();
 	const trimmedCorrect = correctAnswer.trim();
-
 	if (trimmedUser !== '' && trimmedCorrect !== '') {
 		const userNum = Number(trimmedUser);
 		const correctNum = Number(trimmedCorrect);
@@ -63,10 +75,8 @@ function isAnswerCorrect(userAnswer: string, correctAnswer: string): boolean {
 			return Math.abs(userNum - correctNum) < 0.01;
 		}
 	}
-
 	return trimmedUser.toLowerCase() === trimmedCorrect.toLowerCase();
 }
-
 const initialSessionState = {
 	specification: null as Specification | null,
 	questions: [] as GeneratedQuestion[],
@@ -82,14 +92,27 @@ const initialSessionState = {
 	showFeedback: false,
 	lastResult: null as AnswerFeedback | null
 };
-
 export const usePracticeStore = create<PracticeState>()((set, get) => ({
 	...initialSessionState,
 	selectedTopicId: null,
 	mcqEnabled: false,
+	autoEnabled: false,
+	scope: 'all',
+	shuffle: false,
+	mentalDifficulty: 'medium',
+	mentalScope: 'all',
+	mentalShuffle: false,
+	mentalUnlimited: false,
 	setMode: mode => set({mode}),
 	setSelectedTopicId: topicId => set({selectedTopicId: topicId}),
 	setMcqEnabled: enabled => set({mcqEnabled: enabled}),
+	setAutoEnabled: enabled => set({autoEnabled: enabled}),
+	setScope: scope => set({scope}),
+	setShuffle: enabled => set({shuffle: enabled}),
+	setMentalDifficulty: difficulty => set({mentalDifficulty: difficulty}),
+	setMentalScope: scope => set({mentalScope: scope}),
+	setMentalShuffle: enabled => set({mentalShuffle: enabled}),
+	setMentalUnlimited: enabled => set({mentalUnlimited: enabled}),
 	startSession: (spec, questions, mode) => {
 		const now = Date.now();
 		set({
@@ -103,22 +126,16 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
 			sessionStartTime: now
 		});
 	},
-
 	setUserAnswer: answer => set({userAnswer: answer}),
-
 	selectChoice: index => set({selectedChoiceIndex: index}),
-
 	submitAnswer: () => {
 		const state = get();
 		const question = state.questions[state.currentIndex];
 		if (!question || state.showFeedback) return;
-
 		const startTime = state.questionStartTime ?? Date.now();
 		const timeTakenMs = Date.now() - startTime;
-
 		let isCorrect = false;
 		let userAnswerValue = state.userAnswer;
-
 		if (question.question_type === 'MultipleChoice' && question.choices) {
 			const correctIndex = question.choices.findIndex(choice => choice === question.answer);
 			isCorrect = state.selectedChoiceIndex === correctIndex;
@@ -126,7 +143,6 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
 		} else {
 			isCorrect = isAnswerCorrect(state.userAnswer, question.answer);
 		}
-
 		const result: PracticeResult = {
 			id: crypto.randomUUID(),
 			question_id: question.id,
@@ -139,14 +155,12 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
 			mode: state.mode,
 			difficulty: question.difficulty
 		};
-
 		set({
 			results: [...state.results, result],
 			showFeedback: true,
 			lastResult: {isCorrect, correctAnswer: question.answer}
 		});
 	},
-
 	advanceQuestion: () => {
 		const state = get();
 		const nextIndex = state.currentIndex + 1;
@@ -163,11 +177,8 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
 			questionStartTime: Date.now()
 		});
 	},
-
 	finishSession: () => set({isActive: false, isFinished: true}),
-
 	resetSession: () => set({...initialSessionState}),
-
 	getCurrentQuestion: () => {
 		const state = get();
 		return state.questions[state.currentIndex] ?? null;

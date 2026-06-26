@@ -2,6 +2,7 @@ import {useEffect} from 'react';
 import {AppShell} from './components/layout/AppShell';
 import {Toolbar} from './components/ui';
 import {ControlToolbarTop} from './components/practice/ControlToolbarTop';
+import {ControlToolbarBottom} from './components/practice/ControlToolbarBottom';
 import {useTheme} from './hooks/useTheme';
 import {useSpecStore} from './stores/specStore';
 /**
@@ -23,6 +24,7 @@ function App() {
 		<AppShell>
 			<Toolbar>
 				<ControlToolbarTop />
+				<ControlToolbarBottom />
 			</Toolbar>
 			<main className="main-content">
 				<div className="content-stack">
