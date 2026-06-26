@@ -626,6 +626,17 @@ body {
 	outline: 2px solid var(--primary);
 	outline-offset: 2px;
 }
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.topic-pill:focus-visible,
+.choice-button:focus-visible,
+.mode-button:focus-visible,
+.setting-item select:focus-visible,
+.setting-item input[type='number']:focus-visible,
+input[type='range']:focus-visible {
+	outline: 2px solid var(--primary);
+	outline-offset: 2px;
+}
 .icon-button svg {
 	width: 14px;
 	height: 14px;
@@ -1048,11 +1059,11 @@ input[type='checkbox']:hover {
 		background-color 0.3s ease;
 	box-shadow: var(--shadow-sm);
 }
-.answer-input:focus {
+.answer-input:focus-visible {
 	outline: none;
 	border-color: var(--primary);
 	box-shadow:
-		0 0 0 2px rgba(43, 87, 154, 0.1),
+		0 0 0 2px var(--primary-light),
 		var(--shadow-glass);
 }
 .answer-input:disabled {
@@ -1073,7 +1084,7 @@ input[type='checkbox']:hover {
 	box-shadow: var(--shadow-sm);
 	margin-bottom: 0.5rem;
 }
-#topic-search:focus {
+#topic-search:focus-visible {
 	outline: none;
 	border-color: var(--primary);
 	box-shadow: 0 0 0 2px var(--primary-light);
