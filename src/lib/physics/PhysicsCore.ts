@@ -2,9 +2,7 @@
 import type {Specification, GeneratedQuestion, FormulaEntry, ExportFormat, QuestionFilter} from './types';
 import type {SpecificationParser} from './SpecificationParser';
 import type {ExpressionEvaluator} from './ExpressionEvaluator';
-// @ts-expect-error: collaborator module not yet created (lands in Task 5)
 import type {QuestionGenerator} from './generator/QuestionGenerator';
-// @ts-expect-error: collaborator module not yet created (lands in Task 6)
 import type {ExporterRegistry} from './exporters/ExporterRegistry';
 import type {FormulaLibrary} from './FormulaLibrary';
 /**
