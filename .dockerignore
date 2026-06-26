@@ -1,8 +1,0 @@
-**/target/
-**/.dart_tool/
-**/build/
-**/.packages
-**/.pub/
-.git/
-*.log
-.env
