@@ -10,11 +10,8 @@ import {SettingsModal} from './components/modals/SettingsModal';
 import {PrintModal} from './components/modals/PrintModal';
 import {RecommendModal} from './components/modals/RecommendModal';
 import {ManageDataModal} from './components/modals/ManageDataModal';
-import {useTheme} from './hooks/useTheme';
-import {useGlobalShortcuts} from './hooks/useGlobalShortcuts';
-import {useSpecStore} from './stores/specStore';
-import {useSettingsStore} from './stores/settingsStore';
-import {useUiStore} from './stores/uiStore';
+import {useTheme, useGlobalShortcuts} from './hooks';
+import {useSpecStore, useSettingsStore, useUiStore} from './stores';
 /**
  * Root application component.
  *
