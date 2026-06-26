@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- facade throw-stubs; parameters are wired when collaborators land in Task 8 */
 import type {Specification, GeneratedQuestion, FormulaEntry, ExportFormat, QuestionFilter} from './types';
-// @ts-expect-error: collaborator module not yet created (lands in Task 2)
 import type {SpecificationParser} from './SpecificationParser';
-// @ts-expect-error: collaborator module not yet created (lands in Task 3)
 import type {ExpressionEvaluator} from './ExpressionEvaluator';
 // @ts-expect-error: collaborator module not yet created (lands in Task 5)
 import type {QuestionGenerator} from './generator/QuestionGenerator';
 // @ts-expect-error: collaborator module not yet created (lands in Task 6)
 import type {ExporterRegistry} from './exporters/ExporterRegistry';
-// @ts-expect-error: collaborator module not yet created (lands in Task 7)
 import type {FormulaLibrary} from './FormulaLibrary';
 /**
  * Facade wiring the physics-core collaborators and exposing the public API.
