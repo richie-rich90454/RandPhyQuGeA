@@ -29,6 +29,8 @@ function App() {
 	useTheme();
 	useGlobalShortcuts();
 	const loadSpec = useSpecStore(state => state.load);
+	const specLoading = useSpecStore(state => state.loading);
+	const specError = useSpecStore(state => state.error);
 	const onboardingCompleted = useSettingsStore(state => state.onboardingCompleted);
 	const openModal = useUiStore(state => state.openModal);
 	useEffect(() => {
@@ -39,6 +41,28 @@ function App() {
 			openModal('onboarding');
 		}
 	}, [onboardingCompleted, openModal]);
+	if (specError) {
+		return (
+			<AppShell>
+				<div className="spec-error" role="alert">
+					<h2>Failed to load specification</h2>
+					<p>{specError}</p>
+					<button type="button" className="primary-button" onClick={() => void loadSpec()}>
+						Retry
+					</button>
+				</div>
+			</AppShell>
+		);
+	}
+	if (specLoading) {
+		return (
+			<AppShell>
+				<div className="spec-loading" role="status" aria-live="polite">
+					Loading specification…
+				</div>
+			</AppShell>
+		);
+	}
 	return (
 		<AppShell>
 			<Toolbar>
