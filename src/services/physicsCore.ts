@@ -5,11 +5,13 @@
  * single shared `PhysicsCore.default()` instance handles parsing, question
  * generation, export, and the formula library. The public API stays async
  * so existing call sites (originally written against the Tauri/WASM bridge)
- * continue to compile and behave identically.
+ * continue to compile and behave identically. Advanced consumers can swap the
+ * singleton's collaborators (custom question/variable types, exporters,
+ * evaluator functions, or a seeded random source) via {@link configureCore}.
  */
 import partOneSpec from '../assets/part_one.txt?raw';
-import {PhysicsCore} from '../lib/physics';
-import type {QuestionFilter} from '../lib/physics';
+import {PhysicsCore, ExpressionEvaluator, VariableGenerator} from '../lib/physics';
+import type {QuestionFilter, RandomGenerator, ExporterRegistry, FunctionRegistry, QuestionTypeRegistry, VariableTypeRegistry} from '../lib/physics';
 import type {Specification, GeneratedQuestion, FormulaEntry, ExportFormat} from '../types/models';
 /** Optional filters applied to question generation. */
 export interface GenerateOptions {
@@ -19,8 +21,8 @@ export interface GenerateOptions {
 	maxDifficulty?: number;
 	questionType?: string;
 }
-/** Shared singleton physics core used by every service function. */
-const core = PhysicsCore.default();
+/** Shared singleton physics core used by every service function; replaced by {@link configureCore}. */
+let core = PhysicsCore.default();
 /** Map the public {@link GenerateOptions} to the core's {@link QuestionFilter}. */
 function toFilter(options?: GenerateOptions): QuestionFilter | undefined {
 	if (!options) {
@@ -33,6 +35,41 @@ function toFilter(options?: GenerateOptions): QuestionFilter | undefined {
 		maxDifficulty: options.maxDifficulty,
 		questionType: options.questionType
 	};
+}
+/** Collaborators that can be injected when (re)building the shared core via {@link configureCore}. Any omitted field keeps its default implementation. */
+export interface ConfigureCoreOptions {
+	/** Custom exporter registry (e.g. with additional output formats). */
+	exporters?: ExporterRegistry;
+	/** Custom function registry for the expression evaluator (e.g. domain-specific math functions). */
+	functions?: FunctionRegistry;
+	/** Custom question-type registry (e.g. with a handler for a new question type). */
+	questionTypes?: QuestionTypeRegistry;
+	/** Custom variable-type registry (e.g. with a handler for a new variable type). */
+	variableTypes?: VariableTypeRegistry;
+	/** Custom random generator (e.g. a seeded generator for reproducible output). */
+	random?: RandomGenerator;
+}
+/**
+ * Replace the shared physics-core singleton with one built from the given
+ * collaborators. Any omitted option keeps its default implementation, so
+ * `configureCore({})` resets the singleton to the standard configuration.
+ *
+ * This is the public extension point for advanced consumers that need to
+ * inject custom question-type handlers, variable-type handlers, exporters,
+ * evaluator functions, or a deterministic random source without reaching
+ * into the pure-TypeScript core directly.
+ *
+ * @example
+ * // Register a custom question type and route generation through it:
+ * const registry = QuestionTypeRegistry.createDefault();
+ * registry.register(new MyCustomHandler());
+ * configureCore({questionTypes: registry});
+ * const q = await generateQuestion(spec);
+ */
+export function configureCore(options: ConfigureCoreOptions): void {
+	const evaluator = options.functions !== undefined ? new ExpressionEvaluator(options.functions) : undefined;
+	const variableGenerator = options.variableTypes !== undefined ? new VariableGenerator(options.variableTypes) : undefined;
+	core = new PhysicsCore(undefined, evaluator, options.exporters, undefined, options.random, options.questionTypes, variableGenerator);
 }
 /** Parse a spec text file into a {@link Specification}. */
 export async function parseSpecification(input: string): Promise<Specification> {
