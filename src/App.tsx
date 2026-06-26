@@ -6,6 +6,7 @@ import {ControlToolbarBottom} from './components/practice/ControlToolbarBottom';
 import {MainContent} from './components/practice/MainContent';
 import {OnboardingModal} from './components/modals/OnboardingModal';
 import {ShortcutsModal} from './components/modals/ShortcutsModal';
+import {SettingsModal} from './components/modals/SettingsModal';
 import {useTheme} from './hooks/useTheme';
 import {useSpecStore} from './stores/specStore';
 import {useSettingsStore} from './stores/settingsStore';
@@ -42,6 +43,7 @@ function App() {
 			<MainContent />
 			<OnboardingModal />
 			<ShortcutsModal />
+			<SettingsModal />
 		</AppShell>
 	);
 }

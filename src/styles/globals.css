@@ -1497,6 +1497,18 @@ input[type='checkbox']:hover {
 .settings-panel {
 	display: block;
 }
+.settings-panel.hidden {
+	display: none;
+}
+.settings-tabs {
+	display: flex;
+	gap: var(--spacing-xs);
+	margin-bottom: var(--spacing-lg);
+}
+.settings-tab {
+	padding: var(--spacing-xs) var(--spacing-md);
+	font-size: 0.8rem;
+}
 .settings-section {
 	margin-bottom: var(--spacing-xl);
 }
