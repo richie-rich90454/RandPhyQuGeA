@@ -1400,6 +1400,55 @@ input[type='checkbox']:hover {
 		transition: none;
 	}
 }
+.skeleton {
+	background: linear-gradient(90deg, var(--surface-alt) 0%, var(--surface-elevated) 50%, var(--surface-alt) 100%);
+	background-size: 200% 100%;
+	animation: skeleton-shimmer 1.4s ease-in-out infinite;
+	border-radius: var(--radius-sm);
+}
+@keyframes skeleton-shimmer {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
+}
+.skeleton-bar {
+	height: 14px;
+	width: 100%;
+}
+.skeleton-bar--lg {
+	height: 24px;
+	width: 60%;
+}
+.skeleton-bar--sm {
+	width: 40%;
+}
+.skeleton-pill {
+	display: inline-block;
+	height: 32px;
+	width: 96px;
+	border-radius: 999px;
+}
+.spec-skeleton {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+	padding: var(--spacing-2xl);
+	max-width: 520px;
+	margin: 0 auto;
+}
+.topic-skeleton {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--spacing-xs);
+}
+@media (prefers-reduced-motion: reduce) {
+	.skeleton {
+		animation: none;
+	}
+}
 @media (max-width: 1024px) {
 	.answer-section {
 		grid-template-columns: 1fr;

@@ -230,7 +230,7 @@ export function PrintModal() {
 					<input type="checkbox" id="print-answer-key" className="settings-checkbox" checked={includeAnswerKey} onChange={event => setIncludeAnswerKey(event.target.checked)} />
 				</div>
 				<div className="setting-item">
-					<button type="button" className="primary-button" onClick={handleGenerate} disabled={isGenerating || !specification}>
+					<button type="button" className="primary-button" onClick={handleGenerate} disabled={isGenerating || !specification} aria-busy={isGenerating}>
 						{isGenerating ? 'Generating...' : 'Generate Worksheet'}
 					</button>
 				</div>

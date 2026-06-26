@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 import {useSingleMode} from '../../hooks/useSingleMode';
 import {useSpecStore} from '../../stores/specStore';
-import {Select} from '../ui';
+import {Select, Spinner} from '../ui';
 import type {Specification} from '../../types/models';
 /**
  * Build scope-select options from the parsed specification's units, always
@@ -30,17 +30,21 @@ const CHECK_ICON = 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z';
  * generate/check actions are stubbed in Task 14 and wired in Task 17.
  */
 export function SingleControls() {
-	const {autoEnabled, setAutoEnabled, scope, setScope, shuffle, setShuffle, canCheck, generate, check} = useSingleMode();
+	const {autoEnabled, setAutoEnabled, scope, setScope, shuffle, setShuffle, canCheck, isGenerating, generate, check} = useSingleMode();
 	const specification = useSpecStore(state => state.specification);
 	const scopeOptions = useMemo(() => buildScopeOptions(specification), [specification]);
 	return (
 		<div className="toolbar-actions" id="single-controls">
 			<div className="single-actions">
-				<button type="button" className="primary-button toolbar-button" id="genQ" title="Generate a new question (Ctrl+G)" onClick={generate}>
-					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="button-icon" aria-hidden="true">
-						<path d={PLUS_ICON} />
-					</svg>
-					Generate
+				<button type="button" className="primary-button toolbar-button" id="genQ" title="Generate a new question (Ctrl+G)" onClick={generate} disabled={isGenerating} aria-busy={isGenerating}>
+					{isGenerating ? (
+						<Spinner size="sm" className="button-icon" />
+					) : (
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="button-icon" aria-hidden="true">
+							<path d={PLUS_ICON} />
+						</svg>
+					)}
+					{isGenerating ? 'Generating…' : 'Generate'}
 					<kbd className="shortcut-hint">Ctrl+G</kbd>
 				</button>
 				<button type="button" className="secondary-button toolbar-button" id="check-answer" disabled={!canCheck} aria-disabled={!canCheck} title="Check your answer (Shift+Enter)" onClick={check}>

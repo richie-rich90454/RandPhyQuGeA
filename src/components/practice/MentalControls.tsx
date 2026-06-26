@@ -65,6 +65,7 @@ export function MentalControls() {
 		isPaused,
 		isSessionActive,
 		isFinished,
+		isStarting,
 		score,
 		total,
 		accuracy,
@@ -185,8 +186,8 @@ export function MentalControls() {
 						</span>
 					</div>
 				)}
-				<button type="button" id="start-session" className="primary-button" title="Start a mental math session" onClick={startSession} disabled={isSessionActive}>
-					Start Session
+				<button type="button" id="start-session" className="primary-button" title="Start a mental math session" onClick={startSession} disabled={isSessionActive || isStarting} aria-busy={isStarting}>
+					{isStarting ? 'Starting…' : 'Start Session'}
 				</button>
 			</div>
 			<ProgressBar value={progressPercent} />

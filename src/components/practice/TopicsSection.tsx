@@ -87,8 +87,19 @@ export function TopicsSection() {
 					onChange={event => setSearchQuery(event.target.value)}
 				/>
 			</div>
-			<div className="topic-pills-container" id="topic-grid" role="group" aria-labelledby="topics-heading">
-				{loading && <span className="topic-pill-name">Loading topics...</span>}
+			<div className="topic-pills-container" id="topic-grid" role="group" aria-labelledby="topics-heading" aria-busy={loading}>
+				{loading && (
+					<>
+						<span className="visually-hidden">Loading topics…</span>
+						<div className="topic-skeleton" aria-hidden="true">
+							<span className="skeleton skeleton-pill" />
+							<span className="skeleton skeleton-pill" />
+							<span className="skeleton skeleton-pill" />
+							<span className="skeleton skeleton-pill" />
+							<span className="skeleton skeleton-pill" />
+						</div>
+					</>
+				)}
 				{error && <span className="topic-pill-name">Error: {error}</span>}
 				{!loading && !error && filteredEntries.length === 0 && <span className="topic-pill-name">No topics found.</span>}
 				{!loading &&

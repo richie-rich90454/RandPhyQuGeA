@@ -54,8 +54,12 @@ function App() {
 	if (specLoading) {
 		return (
 			<AppShell>
-				<div className="spec-loading" role="status" aria-live="polite">
-					Loading specification…
+				<div className="spec-skeleton" role="status" aria-live="polite" aria-busy="true">
+					<span className="visually-hidden">Loading specification…</span>
+					<div className="skeleton skeleton-bar skeleton-bar--lg" aria-hidden="true" />
+					<div className="skeleton skeleton-bar" aria-hidden="true" />
+					<div className="skeleton skeleton-bar" aria-hidden="true" />
+					<div className="skeleton skeleton-bar skeleton-bar--sm" aria-hidden="true" />
 				</div>
 			</AppShell>
 		);

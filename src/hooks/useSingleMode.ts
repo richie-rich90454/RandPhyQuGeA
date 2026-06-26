@@ -1,4 +1,4 @@
-import {useCallback, useEffect} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {usePracticeStore} from '../stores/practiceStore';
 import {useSpecStore} from '../stores/specStore';
 import {useProgressStore} from '../stores/progressStore';
@@ -24,6 +24,8 @@ export interface UseSingleModeReturn {
 	setShuffle: (enabled: boolean) => void;
 	/** True when a question is loaded and an answer can be checked. */
 	canCheck: boolean;
+	/** True while a question is being generated. */
+	isGenerating: boolean;
 	/** Generate a new question via the physics core and load it into the store. */
 	generate: () => Promise<void>;
 	/** Check the current answer, evaluate, and persist the result. */
@@ -74,8 +76,13 @@ export function useSingleMode(): UseSingleModeReturn {
 	const specification = useSpecStore(state => state.specification);
 	const {toast} = useToast();
 	const canCheck = isActive && !showFeedback && (userAnswer.trim() !== '' || selectedChoiceIndex >= 0);
+	const [isGenerating, setIsGenerating] = useState(false);
+	const isGeneratingRef = useRef(false);
 	const generate = useCallback(async () => {
+		if (isGeneratingRef.current) return;
 		if (!specification) return;
+		isGeneratingRef.current = true;
+		setIsGenerating(true);
 		const topicId = resolveTopicId(specification, selectedTopicId, scope, shuffle);
 		const questionType = mcqEnabled ? QUESTION_TYPES.MC : undefined;
 		try {
@@ -84,6 +91,9 @@ export function useSingleMode(): UseSingleModeReturn {
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
 			toast({variant: 'error', message: 'Failed to generate question: ' + message});
+		} finally {
+			isGeneratingRef.current = false;
+			setIsGenerating(false);
 		}
 	}, [specification, selectedTopicId, scope, shuffle, mcqEnabled, toast]);
 	const check = useCallback(() => {
@@ -121,5 +131,5 @@ export function useSingleMode(): UseSingleModeReturn {
 		window.addEventListener('keydown', handleKeyDown);
 		return () => window.removeEventListener('keydown', handleKeyDown);
 	}, [generate, check]);
-	return {autoEnabled, setAutoEnabled, scope, setScope, shuffle, setShuffle, canCheck, generate, check};
+	return {autoEnabled, setAutoEnabled, scope, setScope, shuffle, setShuffle, canCheck, isGenerating, generate, check};
 }

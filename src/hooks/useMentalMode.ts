@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {usePracticeStore} from '../stores/practiceStore';
 import {useSettingsStore} from '../stores/settingsStore';
 import {useSpecStore} from '../stores/specStore';
@@ -43,6 +43,8 @@ export interface UseMentalModeReturn {
 	avgTimeMs: number;
 	/** True when the session has finished (timer expired or questions exhausted). */
 	isFinished: boolean;
+	/** True while a mental session is being started (batch generation). */
+	isStarting: boolean;
 	/** Start a new timed mental session. */
 	startSession: () => Promise<void>;
 	/** Pause the running session. */
@@ -104,6 +106,8 @@ export function useMentalMode(): UseMentalModeReturn {
 	const defaultQuestionCount = useSettingsStore(state => state.defaultQuestionCount);
 	const {toast} = useToast();
 	const timer = useCountdownTimer();
+	const [isStarting, setIsStarting] = useState(false);
+	const isStartingRef = useRef(false);
 	const isSessionActive = isActive && mode === 'Mental';
 	const isPaused = isSessionActive && !timer.isRunning && timer.timeRemaining > 0;
 	const {score, total, accuracy, avgTimeMs} = useMemo(() => {
@@ -115,7 +119,10 @@ export function useMentalMode(): UseMentalModeReturn {
 		return {score: correct, total, accuracy, avgTimeMs};
 	}, [results]);
 	const startSession = useCallback(async () => {
+		if (isStartingRef.current) return;
 		if (!specification) return;
+		isStartingRef.current = true;
+		setIsStarting(true);
 		const range = DIFFICULTY_RANGES[difficulty];
 		const topicId = resolveMentalTopicId(specification, scope, shuffle);
 		const options = {topicId, ...range};
@@ -131,6 +138,9 @@ export function useMentalMode(): UseMentalModeReturn {
 		} catch (err) {
 			const message = err instanceof Error ? err.message : String(err);
 			toast({variant: 'error', message: 'Failed to start mental session: ' + message});
+		} finally {
+			isStartingRef.current = false;
+			setIsStarting(false);
 		}
 	}, [specification, difficulty, scope, shuffle, unlimited, defaultQuestionCount, mentalDurationSec, timer, toast]);
 	const pauseSession = useCallback(() => {
@@ -233,6 +243,7 @@ export function useMentalMode(): UseMentalModeReturn {
 		accuracy,
 		avgTimeMs,
 		isFinished,
+		isStarting,
 		startSession,
 		pauseSession,
 		resumeSession,
