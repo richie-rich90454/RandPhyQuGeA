@@ -56,6 +56,7 @@ export interface PracticeState {
 	advanceQuestion: () => void;
 	finishSession: () => void;
 	resetSession: () => void;
+	loadQuestion: (question: GeneratedQuestion) => void;
 	getCurrentQuestion: () => GeneratedQuestion | null;
 }
 /**
@@ -179,6 +180,20 @@ export const usePracticeStore = create<PracticeState>()((set, get) => ({
 	},
 	finishSession: () => set({isActive: false, isFinished: true}),
 	resetSession: () => set({...initialSessionState}),
+	loadQuestion: question => {
+		set({
+			questions: [question],
+			currentIndex: 0,
+			userAnswer: '',
+			selectedChoiceIndex: -1,
+			showFeedback: false,
+			lastResult: null,
+			questionStartTime: Date.now(),
+			isActive: true,
+			isFinished: false,
+			mode: 'Single'
+		});
+	},
 	getCurrentQuestion: () => {
 		const state = get();
 		return state.questions[state.currentIndex] ?? null;
