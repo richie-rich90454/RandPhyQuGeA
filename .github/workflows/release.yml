@@ -5,9 +5,6 @@ on:
     tags:
       - 'v*.*.*'
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
   create-release:
     runs-on: ubuntu-latest
@@ -26,65 +23,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-rust-linux:
+  build-web:
     needs: create-release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-      - name: Build release
-        run: cd physics_core && cargo build --release
-      - name: Upload artifact
-        uses: softprops/action-gh-release@v2
+      - uses: actions/setup-node@v4
         with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          files: physics_core/target/release/physics_core*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-wasm:
-    needs: create-release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: wasm32-unknown-unknown
-      - name: Install wasm-pack
-        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
-      - name: Build WASM
-        run: cd physics_core && wasm-pack build --target web --release
-      - name: Package WASM
-        run: cd physics_core && tar -czf ../physics_core_wasm.tar.gz pkg/
-      - name: Upload WASM
-        uses: softprops/action-gh-release@v2
-        with:
-          upload_url: ${{ needs.create-release.outputs.upload_url }}
-          files: physics_core_wasm.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-flutter-web:
-    needs: create-release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24'
-          channel: 'stable'
+          node-version: '20'
+          cache: 'npm'
       - name: Install dependencies
-        run: cd physics_app && flutter pub get
-      - name: Build web
-        run: cd physics_app && flutter build web --release
-      - name: Package web
-        run: cd physics_app && tar -czf ../physics_app_web.tar.gz build/web/
-      - name: Upload web build
+        run: npm ci
+      - name: Build web bundle
+        run: npm run build
+      - name: Package web bundle
+        run: tar -czf randphyqugea-web.tar.gz dist/
+      - name: Upload web bundle
         uses: softprops/action-gh-release@v2
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          files: physics_app_web.tar.gz
+          files: randphyqugea-web.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

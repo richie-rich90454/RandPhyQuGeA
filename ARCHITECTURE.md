@@ -2,63 +2,87 @@
 
 ## Overview
 
-The Physics Question Generator (RandPhyQuGeA) is a cross-platform application that generates random physics questions from a specification file. It uses a **Rust core** for question generation logic and a **Flutter UI** for cross-platform rendering.
+RandPhyQuGeA is a single-page physics practice question generator. All domain logic — specification parsing, expression evaluation, random variable generation, question generation, and export — lives in a **pure-TypeScript OOP core** under `src/lib/physics/`. The UI is a React 18 + TypeScript app that reproduces the reference liquid/glassmorphism design. An optional Tauri shell (`src-tauri/`) wraps the same Vite bundle for desktop builds but contains no domain logic.
+
+No WASM, no Rust domain logic, no FFI. The web build and the Tauri build share the exact same TypeScript core.
 
 ## Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────┐
-│                  Flutter App                     │
-│  ┌───────────┐ ┌──────────┐ ┌────────────────┐  │
-│  │  Views     │ │ Widgets  │ │   Services     │  │
-│  │  - Home    │ │ - Cards  │ │ - PhysicsCore  │  │
-│  │  - Practice│ │ - Badges │ │ - Settings     │  │
-│  │  - Progress│ │ - Charts │ │ - Bookmarks    │  │
-│  │  - Bank    │ │ - Sliders│ │ - Streaks      │  │
-│  │  - Settings│ │ - Timer  │ │ - Analytics    │  │
-│  └───────────┘ └──────────┘ └────────────────┘  │
-│                      │                          │
-│              ┌───────┴───────┐                  │
-│              │  DartPhysics   │                  │
-│              │     Core       │  (Pure Dart     │
-│              │  (Fallback)    │   fallback)     │
-│              └───────┬───────┘                  │
-└──────────────────────┼──────────────────────────┘
-                       │
-         ┌─────────────┼─────────────┐
-         │             │             │
-    ┌────┴────┐  ┌─────┴─────┐  ┌───┴────┐
-    │  WASM   │  │ Native FFI│  │  Pure  │
-    │ (Web)   │  │(Desktop)  │  │  Dart  │
-    └────┬────┘  └─────┬─────┘  └───┬────┘
-         │             │             │
-         └─────────────┼─────────────┘
-                       │
-              ┌────────┴────────┐
-              │   Rust Core     │
-              │  (physics_core) │
-              └─────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                         React UI (src/)                          │
+│  ┌────────────┐ ┌──────────────┐ ┌────────────────────────────┐  │
+│  │ Components │ │   Hooks      │ │         Stores (Zustand)    │  │
+│  │  - layout  │ │  - useSingle │ │  - practiceStore           │  │
+│  │  - ui      │ │  - useMental │ │  - progressStore           │  │
+│  │  - practice│ │  - useTheme  │ │  - settingsStore (persist) │  │
+│  │  - modals  │ │  - useGlobal │ │  - specStore               │  │
+│  │            │ │    Shortcuts │ │  - uiStore                 │  │
+│  └────────────┘ └──────────────┘ └────────────────────────────┘  │
+│                          │                                       │
+│                  ┌───────┴────────┐                              │
+│                  │ services/       │                             │
+│                  │ physicsCore.ts  │  (singleton facade)         │
+│                  └───────┬────────┘                              │
+└──────────────────────────┼───────────────────────────────────────┘
+                           │
+         ┌─────────────────┼─────────────────┐
+         │                 │                 │
+    ┌────┴─────┐  ┌────────┴────────┐  ┌─────┴──────┐
+    │ Vite web │  │ Tauri desktop   │  │ Vitest     │
+    │ (browser)│  │ (same bundle,   │  │ (unit      │
+    │          │  │  no domain cmd) │  │  tests)    │
+    └──────────┘  └─────────────────┘  └────────────┘
+                           │
+                  ┌────────┴────────┐
+                  │  PhysicsCore     │  (facade)
+                  │  (TS, OOP)       │
+                  └────────┬────────┘
+                           │
+   ┌───────────┬───────────┼───────────┬───────────────┐
+   │           │           │           │               │
+┌──┴──────┐ ┌──┴──────┐ ┌──┴──────┐ ┌──┴───────┐ ┌─────┴─────┐
+│ Parser  │ │Evaluator│ │  RNG +  │ │Generator │ │ Exporters │
+│         │ │         │ │ handlers│ │ + handlrs│ │ + registry│
+└─────────┘ └─────────┘ └─────────┘ └──────────┘ └───────────┘
 ```
 
-## Rust Core (`physics_core/`)
+## Pure-TypeScript Physics Core (`src/lib/physics/`)
 
-### Domain Models (`domain.rs`)
-Core data structures:
-- `Unit` - Top-level organizational unit (e.g., Mechanics)
-- `Topic` - Topic within a unit (e.g., Kinematics)
-- `Skill` - Specific skill within a topic (e.g., Uniform Acceleration)
-- `QuestionTemplate` - Template for generating questions with variables
-- `VariableDefinition` - Variable with type, range, and step
-- `GeneratedQuestion` - Complete generated question with answer and solution
-- `Specification` - Container for all units, topics, skills, and templates
+The core is **idiomatically object-oriented**: classes with single responsibilities, `interface`-defined contracts for extension points, the Registry and Strategy patterns for question types/exporters/variable handlers, dependency injection of the RNG into the generator for testability, and a facade class that wires the collaborators. The design follows the open-closed principle — adding a new question type, exporter, function, or variable type requires only registering a new class, not editing existing core logic.
 
-### Parser (`parser.rs`)
-Parses `.txt` specification files with `[SECTION]` headers and key-value pairs.
-Supports comments (`//`), variable definitions (`Var.xxx`), and distractor expressions.
+### Facade — `PhysicsCore.ts`
 
-### Expression Evaluator (`evaluator.rs`)
-Evaluates mathematical expressions with:
-- Basic arithmetic: `+`, `-`, `*`, `/`
+Wires the collaborators (parser, evaluator, RNG, generator, exporters, formula library) and exposes the public API: `loadSpecification`, `generate`, `generateBatch`, `export`, `getFormulaLibrary`, etc. The singleton instance lives in `src/services/physicsCore.ts`.
+
+### Domain Types — `types.ts`
+
+Core data structures (unchanged from the Rust crate's domain):
+- `Unit` — top-level organizational unit (e.g. Mechanics)
+- `Topic` — topic within a unit (e.g. Kinematics)
+- `Skill` — specific skill within a topic
+- `QuestionTemplate` — template for generating questions with variables
+- `VariableDefinition` — variable with type, range, and step
+- `GeneratedQuestion` — complete generated question with answer, choices, solution
+- `Specification` — container for all units, topics, skills, and templates
+- `FormulaEntry` — curated physics formula entry
+
+### Contracts — `contracts.ts`
+
+`interface` definitions for every extension point:
+- `RandomGenerator` — RNG contract (seeded, uniform)
+- `VariableHandler` — variable-type handler contract (int, double, enum, …)
+- `QuestionHandler` — question-type handler contract (MC, SA, TF, FB, NE)
+- `Exporter` — exporter contract (HTML, PDF, Markdown, Text, JSON, CSV, LaTeX)
+
+### Parser — `SpecificationParser.ts`
+
+Parses `.txt` specification files with `[SECTION]` headers and key-value pairs. Supports comments (`//`), variable definitions (`Var.xxx`), and distractor expressions. The format is identical to what the Rust crate accepted, so existing `part_one.txt` files continue to parse unchanged.
+
+### Expression Evaluator — `ExpressionEvaluator.ts`
+
+Shunting-yard parser + RPN evaluator with:
+- Basic arithmetic: `+`, `-`, `*`, `/`, `%`, unary minus
 - Trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
 - Hyperbolic: `sinh`, `cosh`, `tanh`, `asinh`, `acosh`, `atanh`
 - Logarithmic: `log`, `log10`, `ln`, `log2`
@@ -68,116 +92,123 @@ Evaluates mathematical expressions with:
 - Constants: `pi`, `e`
 - Unit conversion: `deg`, `rad`
 
-### Question Generator (`generator.rs`)
-Generates questions from templates with:
-- Random variable value generation within defined ranges
-- Answer expression evaluation
-- Distractor generation for MC questions
-- Choice shuffling
-- Batch generation with filtering
-- Unique question generation (no duplicate templates)
-- `QuestionFilter` builder API
+### Random — `random/`
 
-### Exporters (`exporters.rs`)
-Export formats:
-- **HTML** - Full HTML document with MathJax for math rendering
-- **PDF** - Print-oriented HTML with A4 page setup
-- **Markdown** - Markdown with LaTeX math delimiters
-- **Text** - Plain text with letter-labeled choices
-- **JSON** - Structured JSON array
-- **CSV** - Comma-separated with header row
-- **LaTeX** - LaTeX document with exam class
+- `UniformRandomGenerator` / `SeededRandomGenerator` — RNG implementations
+- `VariableGenerator` — dispatches to registered `VariableHandler`s
+- `IntVariableHandler`, `DoubleVariableHandler`, `EnumVariableHandler` — built-in handlers
+- `VariableTypeRegistry` — Strategy + Registry for variable types
+- `TemplateSubstituter` — applies generated values to template strings
 
-### Additional Modules
-- `difficulty.rs` - Difficulty calibration, weighted scoring, adaptive suggestions
-- `cache.rs` - LRU cache with TTL eviction for generated questions
-- `metadata.rs` - Specification metadata and statistics
-- `formula_library.rs` - Curated physics formula collection
-- `spec_merger.rs` - Merge multiple specifications with deduplication
-- `template_analysis.rs` - Template validation and dependency analysis
-- `unit_conversion.rs` - Physics unit conversions (length, mass, time, temperature)
-- `weighted_selection.rs` - Difficulty-weighted template selection
-- `config.rs` - Application configuration
-- `validation.rs` - Specification validation
-- `spec_builder.rs` / `template_builder.rs` - Builder pattern APIs
+### Generator — `generator/`
 
-## Flutter App (`physics_app/`)
+- `QuestionGenerator` — orchestrates variable generation, answer evaluation, distractor generation, and choice shuffling; supports batch generation, filtering, and uniqueness
+- `BaseQuestionHandler` — shared logic for question-type handlers
+- `MultipleChoiceHandler`, `ShortAnswerHandler`, `TrueFalseHandler`, `FillInBlankHandler`, `NumericEntryHandler` — built-in handlers
+- `QuestionTypeRegistry` — Strategy + Registry for question types
 
-### Models (`models/`)
-Dart model classes mirroring Rust domain models with JSON serialization.
+### Exporters — `exporters/`
 
-### Services (`services/`)
-- `physics_core.dart` - Pure Dart implementation of all core logic (fallback)
-- `settings_provider.dart` - App settings with Provider state management
-- `bookmark_service.dart` - Question bookmarking
-- `streak_service.dart` - Daily streak tracking
-- `analytics_service.dart` - User interaction analytics
-- `achievements_service.dart` - Gamification achievements
-- `daily_challenge_service.dart` - Daily question challenges
-- `leaderboard_service.dart` - Competitive leaderboard
-- `data_sync_service.dart` - Import/export app data
-- `share_service.dart` - Share questions/sessions
-- `notification_service.dart` - Push notifications
-- `haptic_service.dart` - Haptic feedback
-- `recent_questions_service.dart` - Track recently viewed questions
-- `results_export_service.dart` - Export practice results
+- `ExporterRegistry` — Strategy + Registry for export formats
+- `HtmlExporter` — full HTML document with MathJax
+- `PdfExporter` — print-oriented HTML with A4 page setup
+- `MarkdownExporter` — Markdown with LaTeX math delimiters
+- `TextExporter` — plain text with letter-labeled choices
+- `JsonExporter` — structured JSON array
+- `CsvExporter` — comma-separated with header row
+- `LatexExporter` — LaTeX document with exam class
 
-### Views (`views/`)
-- `home_view.dart` - Main navigation grid
-- `focused_practice_view.dart` - Structured practice with immediate feedback
-- `mental_practice_view.dart` - Timed practice with countdown
-- `progress_view.dart` - Statistics and history
-- `question_bank_view.dart` - Browse all templates
-- `settings_view.dart` - App configuration
-- `export_dialog.dart` - Export questions to file
-- `session_summary_view.dart` - End-of-session results
-- `onboarding_view.dart` - First-time user guide
-- `achievements_view.dart` - Achievement display
-- `daily_challenge_view.dart` - Daily challenges
-- `leaderboard_view.dart` - Leaderboard
-- `formula_sheet_view.dart` - Physics formula reference
-- `study_plan_view.dart` - Study planning
-- `theme_customizer_view.dart` - Theme customization
+### Formula Library — `FormulaLibrary.ts`
 
-### Widgets (`widgets/`)
-Reusable UI components: `question_card.dart`, `answer_feedback.dart`, `difficulty_badge.dart`, `stat_card.dart`, `streak_display.dart`, `practice_timer.dart`, `practice_history_chart.dart`, `accuracy_chart.dart`, `difficulty_range_slider.dart`, `search_delegate.dart`, `app_drawer.dart`, `promo_banner.dart`, `tips_display.dart`, `empty_state.dart`, `error_view.dart`, `confirmation_dialog.dart`, `loading_overlay.dart`, `loading_skeleton.dart`, `error_boundary.dart`, `accessibility.dart`, `animations.dart`, `adaptive_layout.dart`, `network_status.dart`, `splash_screen.dart`, `question_actions_sheet.dart`, `share_action_sheet.dart`
+Curated physics formula entries (name, LaTeX form, description, category) rendered with KaTeX in the UI.
 
-### Themes (`themes/`)
-- `app_theme.dart` - Light and dark Material 3 themes
+## React UI (`src/`)
+
+### Components (`src/components/`)
+
+Small presentational components with typed props, composable into store-backed containers.
+
+- `layout/AppShell.tsx` — app chrome: liquid animated background, header, footer
+- `ui/` — presentational primitives: `Button`, `Card`, `Modal`, `Badge`, `Pill`, `ProgressBar`, `Select`, `Slider`, `Spinner`, `Toast`, `Toolbar`, `Input`, `EmptyState`
+- `practice/` — practice view: `ControlToolbarTop`, `ControlToolbarBottom`, `MainContent`, `QuestionCard`, `AnswerSection`, `AnswerCard`, `MathToolbar`, `McqToggle`, `MentalControls`, `SingleControls`, `ModeSelector`, `ResultsCard`, `TopicsSection`, `UtilityButtons`
+- `modals/` — `OnboardingModal`, `SettingsModal`, `PrintModal`, `RecommendModal`, `ManageDataModal`, `ShortcutsModal`
+- `ErrorBoundary.tsx` — class-component error boundary with fallback UI
+- `MathRenderer.tsx`, `MathText.tsx` — KaTeX rendering helpers
+
+### Hooks (`src/hooks/`)
+
+One custom hook per concern:
+- `useSingleMode` — Single-mode session lifecycle (generate, check, next, results)
+- `useMentalMode` — Mental-mode session lifecycle (batch, countdown, auto-advance, skip, pause/resume, finish)
+- `useCountdownTimer` — reusable countdown timer
+- `useGlobalShortcuts` — Ctrl+G, Shift+Enter, Ctrl+1/2/,, Ctrl+Shift+T
+- `useTheme` — applies theme, updates `meta[name="theme-color"]`
+- `useMediaQuery` — reactive media query
+
+### Stores (`src/stores/`)
+
+Zustand stores, one per concern:
+- `practiceStore` — active practice session state (mode, current question, score, mental batch)
+- `progressStore` (persisted) — practice results history, per-topic accuracy
+- `settingsStore` (persisted) — theme, font, default mode, scope, difficulty, timer, max questions, auto-continue, shuffle, MCQ choices, decimal tolerance, sound, vibration, performance toggles
+- `specStore` — loaded specification state (loading, error, specification)
+- `uiStore` — modal open/close state, toasts
+
+### Styling (`src/styles/globals.css`)
+
+The reference `style.css` is ported unlayered into `globals.css` and is the source of truth for the look (liquid background, glassmorphism surfaces, control toolbar, modals, light/dark themes via CSS variables `--surface`, `--shadow-glass`, etc.). Tailwind remains available for incidental utilities but the reference CSS drives the visual design.
+
+### Math Rendering
+
+KaTeX is used for fast LaTeX math rendering. `MathRenderer` renders block math; `MathText` parses inline `$...$` and block `$$...$$` delimiters in question/answer text.
 
 ## Data Flow
 
-1. **Parse**: Specification file → `Specification` struct
-2. **Generate**: `Specification` → `QuestionGenerator` → `GeneratedQuestion`
-3. **Export**: `GeneratedQuestion[]` → HTML/Markdown/Text/JSON/CSV/LaTeX
+1. **Parse** — `SpecificationParser` reads `part_one.txt` → `Specification` (stored in `specStore`)
+2. **Generate** — `QuestionGenerator.generate(specification, filter, rng)` → `GeneratedQuestion` (stored in `practiceStore`)
+3. **Practice** — `useSingleMode` / `useMentalMode` drive the session; results saved to `progressStore`
+4. **Export** — `PhysicsCore.export(questions, format)` → string (HTML, PDF, Markdown, Text, JSON, CSV, LaTeX)
 
-## Cross-Platform Architecture
+## Tauri Desktop Shell (`src-tauri/`)
 
-| Platform | Rust Integration | UI Framework |
-|----------|-----------------|--------------|
-| Web      | WASM (wasm-bindgen) | Flutter Web |
-| Android  | Native FFI (staticlib) | Flutter |
-| iOS      | Native FFI (staticlib) | Flutter |
-| macOS    | Native FFI (dylib) | Flutter |
-| Windows  | Native FFI (dll) | Flutter |
-| Linux    | Native FFI (so) | Flutter |
+The Tauri shell wraps the same Vite bundle for desktop builds. It exposes **no domain logic**:
+- `lib.rs` — Tauri bootstrap, no commands registered
+- `main.rs` — Tauri main entry
+- `commands.rs` — no-op module (question-gen commands removed)
+- `Cargo.toml` — Tauri-only deps (no `physics_core` dependency)
+
+The web build (plain Vite) and the Tauri build share the exact same TypeScript core.
 
 ## Build Pipeline
 
 ```
-Rust Source → cargo build → .wasm (Web) / .so/.dll/.dylib (Native)
-Flutter Source → flutter build → Web / Android / iOS / macOS / Windows / Linux
+TypeScript core + React UI
+        │
+        ├─→ vite build → dist/  (web bundle, served by any static host)
+        │
+        └─→ tauri build → native desktop app (wraps the same dist/ bundle)
 ```
 
 ## CI/CD
 
-GitHub Actions workflows:
-- `rust-ci.yml` - Build, test, fmt, clippy, wasm, bench, audit
-- `flutter-ci.yml` - Analyze, test, web build, Android build
-- `code-quality.yml` - Code quality checks
-- `security-audit.yml` - Weekly security audit
-- `deploy-web.yml` - Deploy to GitHub Pages
-- `android-build.yml` - Build Android APK/AAB
-- `apple-build.yml` - Build iOS and macOS
-- `desktop-build.yml` - Build Windows and Linux
-- `release.yml` - Release workflow for tagged versions
+GitHub Actions workflows (`.github/workflows/`):
+- `code-quality.yml` — typecheck, lint, format check, test on every push/PR to main
+- `security-audit.yml` — weekly npm audit + CodeQL analysis
+- `release.yml` — on tagged versions: build web bundle and attach to GitHub Release
+- `version-bump.yml` — manual dispatch: bump `package.json` version and open PR
+
+Obsolete workflows (Rust CI, Flutter CI, Apple/Android builds, Flutter web deploy) have been removed since the Rust crate and Flutter app are no longer part of the architecture.
+
+## Testing
+
+Vitest unit tests cover every core collaborator:
+- `evaluator.test.ts` — expression evaluator
+- `parser.test.ts` — specification parser
+- `random.test.ts` — RNG + variable handlers
+- `generator.test.ts` — question generator + handlers
+- `exporters.test.ts` — all exporters
+- `formulaLibrary.test.ts` — formula library
+- `facade.test.ts` — PhysicsCore facade
+- `ocp.test.ts` — open-closed principle (registering new handlers/exporters without editing core)
+
+Run with `npm test` (or `npm run test:coverage` for coverage).

@@ -31,10 +31,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Get current version
         id: current_version
         run: |
-          VERSION=$(grep '^version:' physics_app/pubspec.yaml | head -1 | awk '{print $2}' | sed 's/+.*//')
+          VERSION=$(node -p "require('./package.json').version")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Current version: $VERSION"
 
@@ -63,13 +67,8 @@ jobs:
           echo "version=$NEW" >> $GITHUB_OUTPUT
           echo "New version: $NEW"
 
-      - name: Update pubspec.yaml version
-        run: |
-          sed -i "s/^version: .*/version: ${{ steps.new_version.outputs.version }}+1/" physics_app/pubspec.yaml
-
-      - name: Update Cargo.toml version
-        run: |
-          sed -i "s/^version = .*/version = \"${{ steps.new_version.outputs.version }}\"/" physics_core/Cargo.toml
+      - name: Bump package.json version
+        run: npm version ${{ steps.new_version.outputs.version }} --no-git-tag-version --allow-same-version
 
       - name: Update CHANGELOG.md
         run: |
@@ -86,8 +85,8 @@ jobs:
             Bump type: ${{ inputs.bump_type }}
 
             Updates:
-            - `physics_app/pubspec.yaml`
-            - `physics_core/Cargo.toml`
+            - `package.json`
+            - `package-lock.json`
             - `CHANGELOG.md`
           branch: "chore/bump-version-${{ steps.new_version.outputs.version }}"
           labels: "chore,automated"
