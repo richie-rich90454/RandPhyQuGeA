@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useRef, useState, type KeyboardEvent} from 'react';
 import {Modal} from '../ui';
 import {useUiStore} from '../../stores/uiStore';
 import {useSettingsStore, type ThemeMode, type FontMode} from '../../stores/settingsStore';
@@ -59,6 +59,20 @@ export function SettingsModal() {
 	const closeModal = useUiStore(state => state.closeModal);
 	const [activeTab, setActiveTab] = useState<SettingsTab>('basic');
 	const settings = useSettingsStore();
+	const tablistRef = useRef<HTMLDivElement>(null);
+	const handleTabKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+		if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+		event.preventDefault();
+		const next = activeTab === 'basic' ? 'advanced' : 'basic';
+		setActiveTab(next);
+		const tablist = tablistRef.current;
+		if (tablist) {
+			requestAnimationFrame(() => {
+				const target = tablist.querySelector<HTMLButtonElement>(`[data-tab="${next}"]`);
+				target?.focus();
+			});
+		}
+	};
 	return (
 		<Modal
 			open={isOpen}
@@ -73,16 +87,16 @@ export function SettingsModal() {
 				</button>
 			}
 		>
-			<div className="settings-tabs">
-				<button type="button" className={`mode-button settings-tab ${activeTab === 'basic' ? 'active' : ''}`} onClick={() => setActiveTab('basic')}>
+			<div ref={tablistRef} className="settings-tabs" role="tablist" aria-label="Settings sections" onKeyDown={handleTabKeyDown}>
+				<button type="button" role="tab" id="settings-tab-basic" data-tab="basic" aria-selected={activeTab === 'basic'} aria-controls="settings-basic" tabIndex={activeTab === 'basic' ? 0 : -1} className={`mode-button settings-tab ${activeTab === 'basic' ? 'active' : ''}`} onClick={() => setActiveTab('basic')}>
 					Basic
 				</button>
-				<button type="button" className={`mode-button settings-tab ${activeTab === 'advanced' ? 'active' : ''}`} onClick={() => setActiveTab('advanced')}>
+				<button type="button" role="tab" id="settings-tab-advanced" data-tab="advanced" aria-selected={activeTab === 'advanced'} aria-controls="settings-advanced" tabIndex={activeTab === 'advanced' ? 0 : -1} className={`mode-button settings-tab ${activeTab === 'advanced' ? 'active' : ''}`} onClick={() => setActiveTab('advanced')}>
 					Advanced
 				</button>
 			</div>
 			{activeTab === 'basic' && (
-				<div id="settings-basic" className="settings-panel">
+				<div id="settings-basic" role="tabpanel" aria-labelledby="settings-tab-basic" tabIndex={0} className="settings-panel">
 					<div className="settings-section">
 						<h3>Updates</h3>
 						<div className="setting-item">
@@ -211,7 +225,7 @@ export function SettingsModal() {
 				</div>
 			)}
 			{activeTab === 'advanced' && (
-				<div id="settings-advanced" className="settings-panel">
+				<div id="settings-advanced" role="tabpanel" aria-labelledby="settings-tab-advanced" tabIndex={0} className="settings-panel">
 					<div className="settings-section">
 						<h3>Answer Options</h3>
 						<div className="setting-item">

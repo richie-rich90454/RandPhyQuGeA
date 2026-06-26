@@ -89,9 +89,9 @@ export function RecommendModal() {
 			) : (
 				<>
 					<p>Based on your past performance, you should focus on these topics:</p>
-					<div className="weak-topics-list">
+					<ul className="weak-topics-list">
 						{weakTopics.map(topic => (
-							<div key={topic.topicId} className="weak-topic-item">
+							<li key={topic.topicId} className="weak-topic-item">
 								<div className="weak-topic-info">
 									<span className="weak-topic-name">{topic.topicName}</span>
 									<span className="weak-topic-stats">
@@ -101,9 +101,9 @@ export function RecommendModal() {
 								<button type="button" className="secondary-button" onClick={() => handlePractice(topic.topicId)}>
 									Practice
 								</button>
-							</div>
+							</li>
 						))}
-					</div>
+					</ul>
 					<p className="weak-topics-note">Click "Practice" to start a session on that topic.</p>
 				</>
 			)}

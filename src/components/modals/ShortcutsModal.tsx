@@ -35,6 +35,12 @@ export function ShortcutsModal() {
 			}
 		>
 			<table className="shortcuts-table">
+				<thead>
+					<tr>
+						<th scope="col">Keys</th>
+						<th scope="col">Action</th>
+					</tr>
+				</thead>
 				<tbody>
 					{SHORTCUTS.map(shortcut => (
 						<tr key={shortcut.keys}>

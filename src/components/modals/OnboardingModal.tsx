@@ -31,24 +31,24 @@ export function OnboardingModal() {
 				</button>
 			}
 		>
-			<div className="onboarding-steps">
-				<div className="onboarding-step">
+			<ol className="onboarding-steps">
+				<li className="onboarding-step">
 					<span className="step-number">1</span>
 					<span>Pick a topic from the list above</span>
-				</div>
-				<div className="onboarding-step">
+				</li>
+				<li className="onboarding-step">
 					<span className="step-number">2</span>
 					<span>
 						Click <strong>Generate</strong> to get a question
 					</span>
-				</div>
-				<div className="onboarding-step">
+				</li>
+				<li className="onboarding-step">
 					<span className="step-number">3</span>
 					<span>
 						Type your answer and press <kbd>Shift+Enter</kbd> or click <strong>Check</strong>
 					</span>
-				</div>
-			</div>
+				</li>
+			</ol>
 		</Modal>
 	);
 }

@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import {useRef, type KeyboardEvent} from 'react';
 import {usePracticeStore} from '../../stores/practiceStore';
 import {MathToolbar} from './MathToolbar';
 import {MathText} from '../MathText';
@@ -23,6 +23,7 @@ export function AnswerCard() {
 	const selectChoice = usePracticeStore(state => state.selectChoice);
 	const showFeedback = usePracticeStore(state => state.showFeedback);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const choicesContainerRef = useRef<HTMLDivElement>(null);
 	const isMcq = currentQuestion?.question_type === QUESTION_TYPES.MC && currentQuestion.choices && currentQuestion.choices.length > 0;
 	const hasQuestion = currentQuestion !== null;
 	const inputDisabled = !hasQuestion || showFeedback;
@@ -46,6 +47,30 @@ export function AnswerCard() {
 			textarea.focus();
 		}
 	};
+	const handleChoiceKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+		const choices = currentQuestion?.choices;
+		if (!choices || choices.length === 0) return;
+		const count = choices.length;
+		const currentIndex = selectedChoiceIndex >= 0 ? selectedChoiceIndex : -1;
+		let nextIndex: number | null = null;
+		if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+			nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % count;
+		}
+		else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+			nextIndex = currentIndex < 0 ? count - 1 : (currentIndex - 1 + count) % count;
+		}
+		if (nextIndex !== null) {
+			event.preventDefault();
+			selectChoice(nextIndex);
+			const container = choicesContainerRef.current;
+			if (container) {
+				requestAnimationFrame(() => {
+					const target = container.querySelector<HTMLButtonElement>(`[data-choice-index="${nextIndex}"]`);
+					target?.focus();
+				});
+			}
+		}
+	};
 	const previewHasContent = userAnswer.trim() !== '';
 	return (
 		<div className="answer-card card">
@@ -55,9 +80,9 @@ export function AnswerCard() {
 			<div className="card-content answer-content">
 				<MathToolbar onInsert={handleInsertSymbol} disabled={inputDisabled || isMcq === true} />
 				{isMcq && currentQuestion?.choices ? (
-					<div className="choices-container" id="mcq-choices-container">
+					<div ref={choicesContainerRef} className="choices-container" id="mcq-choices-container" role="radiogroup" aria-label="Answer choices" onKeyDown={handleChoiceKeyDown}>
 						{currentQuestion.choices.map((choice, index) => (
-							<button key={index} type="button" className={selectedChoiceIndex === index ? 'choice-button selected' : 'choice-button'} disabled={inputDisabled} onClick={() => selectChoice(index)}>
+							<button key={`${choice}-${index}`} type="button" role="radio" aria-checked={selectedChoiceIndex === index} tabIndex={selectedChoiceIndex === index ? 0 : -1} data-choice-index={index} className={selectedChoiceIndex === index ? 'choice-button selected' : 'choice-button'} disabled={inputDisabled} onClick={() => selectChoice(index)}>
 								<MathText text={choice} />
 							</button>
 						))}
@@ -72,6 +97,7 @@ export function AnswerCard() {
 							value={userAnswer}
 							onChange={event => setUserAnswer(event.target.value)}
 							disabled={inputDisabled}
+							aria-label="Answer"
 							aria-describedby="expected-format"
 						/>
 						{previewHasContent && (
