@@ -40,7 +40,7 @@ export function UtilityButtons() {
 	const themeMode = useSettingsStore(state => state.themeMode);
 	const setThemeMode = useSettingsStore(state => state.setThemeMode);
 	const handleThemeToggle = () => {
-		const next = themeMode === 'dark' ? 'light' : 'dark';
+		const next = themeMode === 'system' ? 'light' : themeMode === 'light' ? 'dark' : 'system';
 		setThemeMode(next);
 	};
 	const handleClick = (id: UtilityButtonConfig['id']) => {
@@ -50,15 +50,19 @@ export function UtilityButtons() {
 		}
 		openModal(id);
 	};
+	const themeAriaPressed: boolean | 'mixed' = themeMode === 'dark' ? true : themeMode === 'system' ? 'mixed' : false;
 	return (
 		<div className="utility-buttons">
-			{BUTTONS.map(button => (
-				<button key={button.id} type="button" className="icon-button" aria-label={button.label} title={button.title} onClick={() => handleClick(button.id)}>
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-						<path d={ICON_PATHS[button.icon]} />
-					</svg>
-				</button>
-			))}
+			{BUTTONS.map(button => {
+				const isTheme = button.id === 'theme';
+				return (
+					<button key={button.id} type="button" className="icon-button" aria-label={button.label} aria-pressed={isTheme ? themeAriaPressed : undefined} title={button.title} onClick={() => handleClick(button.id)}>
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d={ICON_PATHS[button.icon]} />
+						</svg>
+					</button>
+				);
+			})}
 		</div>
 	);
 }

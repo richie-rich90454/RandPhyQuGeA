@@ -16,7 +16,7 @@ export function EmptyState({icon, title, description, action, className}: EmptyS
 	return (
 		<div className={cn('empty-state', className)}>
 			{icon}
-			<p>{title}</p>
+			<h3 className="empty-state-title">{title}</h3>
 			{description && <p>{description}</p>}
 			{action}
 		</div>

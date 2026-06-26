@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import {useEffect, useMemo, useRef} from 'react';
 import {useMentalMode} from '../../hooks/useMentalMode';
 import {useSpecStore} from '../../stores/specStore';
 import {useSettingsStore} from '../../stores/settingsStore';
@@ -78,8 +78,25 @@ export function MentalControls() {
 	const mentalDurationSec = useSettingsStore(state => state.mentalDurationSec);
 	const scopeOptions = useMemo(() => buildScopeOptions(specification), [specification]);
 	const progressPercent = mentalDurationSec > 0 ? ((mentalDurationSec - timeRemaining) / mentalDurationSec) * 100 : 0;
-	const showPause = isSessionActive && !isPaused;
-	const showResume = isSessionActive && isPaused;
+	const pauseBtnRef = useRef<HTMLButtonElement>(null);
+	const resumeBtnRef = useRef<HTMLButtonElement>(null);
+	const prevPausedRef = useRef<boolean | null>(null);
+	useEffect(() => {
+		if (!isSessionActive) {
+			prevPausedRef.current = null;
+			return;
+		}
+		const prev = prevPausedRef.current;
+		if (prev === null) {
+			prevPausedRef.current = isPaused;
+			return;
+		}
+		if (prev !== isPaused) {
+			const target = isPaused ? resumeBtnRef.current : pauseBtnRef.current;
+			target?.focus();
+			prevPausedRef.current = isPaused;
+		}
+	}, [isPaused, isSessionActive]);
 	return (
 		<div id="mental-controls" className="mental-controls-wrapper">
 			<div className="mental-stats">
@@ -92,31 +109,31 @@ export function MentalControls() {
 					value={difficulty}
 					onChange={event => setDifficulty(event.target.value as 'easy' | 'medium' | 'hard')}
 				/>
-				<span id="timer-display" className="stat-with-icon" title="Time remaining">
+				<span id="timer-display" className="stat-with-icon" role="timer" title="Time remaining">
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 						<path d={TIMER_ICON} />
 					</svg>
 					{formatTime(timeRemaining || mentalDurationSec)}
 				</span>
-				<span id="score-display" className="stat-with-icon" title="Correct / Total">
+				<span id="score-display" className="stat-with-icon" aria-live="polite" title="Correct / Total">
 					<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 						<path d={SCORE_ICON} />
 					</svg>
 					{score} / {total}
 				</span>
-				{showPause && (
-					<button type="button" className="icon-button mental-action-btn" id="pause-session" aria-label="Pause" title="Pause session" onClick={pauseSession}>
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-							<path d={PAUSE_ICON} />
-						</svg>
-					</button>
-				)}
-				{showResume && (
-					<button type="button" className="icon-button mental-action-btn" id="resume-session" aria-label="Resume" title="Resume session" onClick={resumeSession}>
-						<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-							<path d="M8 5v14l11-7z" />
-						</svg>
-					</button>
+				{isSessionActive && (
+					<>
+						<button ref={pauseBtnRef} type="button" className="icon-button mental-action-btn" id="pause-session" aria-label="Pause" title="Pause session" hidden={isPaused} onClick={pauseSession}>
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+								<path d={PAUSE_ICON} />
+							</svg>
+						</button>
+						<button ref={resumeBtnRef} type="button" className="icon-button mental-action-btn" id="resume-session" aria-label="Resume" title="Resume session" hidden={!isPaused} onClick={resumeSession}>
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+								<path d="M8 5v14l11-7z" />
+							</svg>
+						</button>
+					</>
 				)}
 				{isSessionActive && (
 					<button type="button" className="icon-button mental-action-btn" id="skip-question" aria-label="Skip" title="Skip this question" onClick={skipQuestion}>
@@ -159,7 +176,7 @@ export function MentalControls() {
 					</div>
 				)}
 				{isSessionActive && (
-					<div id="statistics-panel" className="statistics-panel">
+					<div id="statistics-panel" className="statistics-panel" aria-live="polite">
 						<span className="stat-with-icon" id="accuracy-stat" title="Accuracy">
 							Accuracy: {Math.round(accuracy)}%
 						</span>
