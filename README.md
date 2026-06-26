@@ -12,8 +12,9 @@ A pure-TypeScript physics practice question generator with a liquid/glassmorphis
 - Curated physics formula library with KaTeX rendering
 - Reference-matched UI: liquid animated background, glassmorphism surfaces, control toolbar, math toolbar, modals
 - Two practice modes: Single (focused, immediate feedback) and Mental (timed, batched, auto-advancing)
+- MCQ toggle, working math toolbar with symbol dropdown
 - Theme toggle (system/light/dark), font selection, performance toggles
-- Onboarding, keyboard shortcuts, settings, print worksheet, weak topics, manage data modals
+- Onboarding, keyboard shortcuts, settings, print worksheet, weak-topic recommendations, manage data modals
 - Progress tracking with per-topic accuracy, streaks, and session history
 - Accessibility: ARIA labels, focus management, reduced-motion support, keyboard navigation
 - Responsive down to mobile
@@ -24,7 +25,7 @@ A pure-TypeScript physics practice question generator with a liquid/glassmorphis
 |-------|-----------|-------------|
 | **Physics Core** | TypeScript (OOP) | Specification parser, expression evaluator, random variable generation, question generator, exporters, formula library |
 | **State** | Zustand | `practiceStore`, `progressStore`, `settingsStore` (persisted), `specStore`, `uiStore` |
-| **UI** | React 18 + TypeScript | Composable presentational components, store-backed containers, custom hooks per concern |
+| **UI** | React 19 + TypeScript | Composable presentational components, store-backed containers, custom hooks per concern |
 | **Styling** | Reference CSS + Tailwind | Reference `style.css` ported into `globals.css` is the source of truth; Tailwind for incidental utilities |
 | **Math** | KaTeX | Fast LaTeX math rendering |
 | **Build** | Vite | Web build; Tauri shell wraps the same bundle for desktop |
@@ -56,19 +57,18 @@ npm run preview  # Preview the production build locally
 
 ### Desktop (Optional, via Tauri)
 
-The Tauri shell in `src-tauri/` wraps the same Vite bundle for desktop builds. It exposes no domain logic — all question generation happens in the TypeScript core.
+The Tauri shell in `src-tauri/` wraps the same Vite bundle for desktop builds. It exposes no domain logic — all question generation happens in the TypeScript core. The shell is a minimal bootstrap (`lib.rs`/`main.rs` only); no Tauri commands are registered.
 
 ```bash
 # Requires Rust toolchain and Tauri CLI installed separately
-cd src-tauri
-cargo build
+npx tauri build
 ```
 
 ## Quality Checks
 
 ```bash
 npm run typecheck      # tsc --noEmit
-npm run lint           # eslint src --ext .ts,.tsx
+npm run lint           # eslint src (flat config)
 npm run format:check   # prettier --check
 npm run format:write   # prettier --write
 npm test               # vitest run
@@ -142,11 +142,9 @@ src-tauri/                    # Optional Tauri desktop shell (no domain logic)
   src/
     lib.rs                    # Tauri bootstrap (no commands registered)
     main.rs                   # Tauri main entry
-    commands.rs               # No-op module (question-gen commands removed)
   Cargo.toml                  # Tauri-only deps (no physics_core)
   tauri.conf.json             # Tauri window config
 
-reference/                    # Reference design (index.html + style.css) — not shipped
 .github/workflows/            # CI: code-quality, security-audit, release, version-bump
 ```
 
@@ -163,4 +161,4 @@ reference/                    # Reference design (index.html + style.css) — no
 
 ## License
 
-Apache 2.0
+Licensed under Apache 2.0 — see [LICENSE](LICENSE).
