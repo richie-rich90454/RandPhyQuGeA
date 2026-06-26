@@ -1,55 +1,64 @@
-/* eslint-disable @typescript-eslint/no-unused-vars -- facade throw-stubs; parameters are wired when collaborators land in Task 8 */
+import {SpecificationParser} from './SpecificationParser';
+import {ExpressionEvaluator} from './ExpressionEvaluator';
+import {QuestionGenerator} from './generator/QuestionGenerator';
+import {ExporterRegistry} from './exporters/ExporterRegistry';
+import {FormulaLibrary} from './FormulaLibrary';
+import {UniformRandomGenerator, SeededRandomGenerator} from './random';
+import type {RandomGenerator} from './contracts';
 import type {Specification, GeneratedQuestion, FormulaEntry, ExportFormat, QuestionFilter} from './types';
-import type {SpecificationParser} from './SpecificationParser';
-import type {ExpressionEvaluator} from './ExpressionEvaluator';
-import type {QuestionGenerator} from './generator/QuestionGenerator';
-import type {ExporterRegistry} from './exporters/ExporterRegistry';
-import type {FormulaLibrary} from './FormulaLibrary';
 /**
  * Facade wiring the physics-core collaborators and exposing the public API.
  *
- * Internal collaborators are never reached into from outside the core.
- * Wiring of the default collaborator implementations is deferred to Task 8;
- * method bodies throw until then.
+ * Stores the evaluator, exporters, formula library, parser, and a default
+ * RandomGenerator. A fresh QuestionGenerator is created per generate call so
+ * each Specification's templates are handled independently.
  */
 export class PhysicsCore {
-	public constructor(
-		private readonly parser: SpecificationParser,
-		private readonly evaluator: ExpressionEvaluator,
-		private readonly generator: QuestionGenerator,
-		private readonly exporters: ExporterRegistry,
-		private readonly formulaLibrary: FormulaLibrary
-	) {}
+	private readonly parser: SpecificationParser;
+	private readonly evaluator: ExpressionEvaluator;
+	private readonly exporters: ExporterRegistry;
+	private readonly formulaLibrary: FormulaLibrary;
+	private readonly random: RandomGenerator;
+	public constructor(parser?: SpecificationParser, evaluator?: ExpressionEvaluator, exporters?: ExporterRegistry, formulaLibrary?: FormulaLibrary, random?: RandomGenerator) {
+		this.parser = parser ?? new SpecificationParser();
+		this.evaluator = evaluator ?? new ExpressionEvaluator();
+		this.exporters = exporters ?? ExporterRegistry.createDefault();
+		this.formulaLibrary = formulaLibrary ?? new FormulaLibrary();
+		this.random = random ?? new UniformRandomGenerator();
+	}
 	/** Parse a spec text file into a Specification. */
 	public parseSpecification(input: string): Specification {
-		throw new Error('PhysicsCore.parseSpecification not wired until Task 8');
+		return this.parser.parse(input);
 	}
-	/** Generate a single question. */
+	/** Generate a single question; returns null when no template matches the filter. */
 	public generateQuestion(spec: Specification, filter?: QuestionFilter): GeneratedQuestion | null {
-		throw new Error('PhysicsCore.generateQuestion not wired until Task 8');
+		const generator = new QuestionGenerator(spec.templates, this.evaluator, this.random);
+		return generator.generate(filter);
 	}
-	/** Generate a batch of questions. */
+	/** Generate a batch of questions (may contain duplicates). */
 	public generateBatch(spec: Specification, count: number, filter?: QuestionFilter): GeneratedQuestion[] {
-		throw new Error('PhysicsCore.generateBatch not wired until Task 8');
+		const generator = new QuestionGenerator(spec.templates, this.evaluator, this.random);
+		return generator.generateBatch(count, filter);
 	}
-	/** Generate unique questions (no duplicate templates). */
+	/** Generate unique questions (no duplicate template ids). */
 	public generateUnique(spec: Specification, count: number, filter?: QuestionFilter): GeneratedQuestion[] {
-		throw new Error('PhysicsCore.generateUnique not wired until Task 8');
+		const generator = new QuestionGenerator(spec.templates, this.evaluator, this.random);
+		return generator.generateUnique(count, filter);
 	}
 	/** Export questions to a format string. */
 	public exportQuestions(questions: GeneratedQuestion[], format: ExportFormat): string {
-		throw new Error('PhysicsCore.exportQuestions not wired until Task 8');
+		return this.exporters.export(questions, format);
 	}
 	/** Return the formula library entries. */
 	public getFormulaLibrary(): FormulaEntry[] {
-		throw new Error('PhysicsCore.getFormulaLibrary not wired until Task 8');
+		return this.formulaLibrary.getAll();
 	}
-	/** Create a new core with a seeded RNG for reproducibility. */
+	/** Create a new core with a seeded RNG for reproducibility, sharing the other collaborators. */
 	public createSeeded(seed: number): PhysicsCore {
-		throw new Error('PhysicsCore.createSeeded not wired until Task 8');
+		return new PhysicsCore(this.parser, this.evaluator, this.exporters, this.formulaLibrary, new SeededRandomGenerator(seed));
 	}
 	/** Default core with entropy RNG and standard collaborators. */
 	public static default(): PhysicsCore {
-		throw new Error('PhysicsCore.default() not wired until Task 8');
+		return new PhysicsCore();
 	}
 }
