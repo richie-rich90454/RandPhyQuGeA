@@ -11,12 +11,12 @@ export class QuestionGenerator {
 	private readonly evaluator: ExpressionEvaluatorLike;
 	private readonly variableGenerator: VariableGenerator;
 	private readonly random: RandomGenerator;
-	public constructor(templates: QuestionTemplate[], evaluator: ExpressionEvaluatorLike, random?: RandomGenerator) {
+	public constructor(templates: QuestionTemplate[], evaluator: ExpressionEvaluatorLike, random?: RandomGenerator, questionTypeRegistry?: QuestionTypeRegistry, variableGenerator?: VariableGenerator) {
 		this.templates = templates;
 		this.evaluator = evaluator;
 		this.random = random ?? new UniformRandomGenerator();
-		this.registry = QuestionTypeRegistry.createDefault();
-		this.variableGenerator = new VariableGenerator();
+		this.registry = questionTypeRegistry ?? QuestionTypeRegistry.createDefault();
+		this.variableGenerator = variableGenerator ?? new VariableGenerator();
 	}
 	public generate(filter?: QuestionFilter): GeneratedQuestion | null {
 		const candidates = this.filterTemplates(filter);
@@ -72,7 +72,7 @@ export class QuestionGenerator {
 		return this.filterTemplates(filter).map(t => t.id);
 	}
 	public createSeeded(seed: number): QuestionGenerator {
-		return new QuestionGenerator(this.templates, this.evaluator, new SeededRandomGenerator(seed));
+		return new QuestionGenerator(this.templates, this.evaluator, new SeededRandomGenerator(seed), this.registry, this.variableGenerator);
 	}
 	private filterTemplates(filter?: QuestionFilter): QuestionTemplate[] {
 		return this.templates.filter(t => this.matchesFilter(t, filter));

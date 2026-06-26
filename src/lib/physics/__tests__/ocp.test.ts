@@ -71,6 +71,17 @@ describe('Open-Closed Principle', () => {
 		expect(q.text).toBe('custom: 7');
 		expect(q.answer).toBe('42');
 	});
+	it('facade dispatches generateQuestion through an injected custom question type registry', () => {
+		const registry = QuestionTypeRegistry.createDefault();
+		registry.register(new CustomHandler());
+		const core = new PhysicsCore(undefined, undefined, undefined, undefined, new SeededRandomGenerator(1), registry);
+		const spec = core.parseSpecification(CUSTOM_SPEC);
+		const q = core.generateQuestion(spec, {templateIds: ['Q1']});
+		expect(q).not.toBeNull();
+		expect(q?.question_type).toBe('CustomType');
+		expect(q?.text).toContain('custom:');
+		expect(q?.answer).toBe('42');
+	});
 	it('falls back to the default handler for an unregistered type', () => {
 		const registry = QuestionTypeRegistry.createDefault();
 		expect(registry.get('MissingType')).toBeUndefined();
