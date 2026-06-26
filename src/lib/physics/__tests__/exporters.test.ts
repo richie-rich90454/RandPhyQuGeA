@@ -17,11 +17,11 @@ const sample: GeneratedQuestion = {
 	variables: {}
 };
 describe('ExporterRegistry and exporters', () => {
-	it('exports HTML containing DOCTYPE, MathJax, and Question 1', () => {
+	it('exports HTML containing DOCTYPE, KaTeX, and Question 1', () => {
 		const registry = ExporterRegistry.createDefault();
 		const out = registry.export([sample], 'html');
 		expect(out).toContain('<!DOCTYPE html>');
-		expect(out).toContain('mathjax');
+		expect(out).toContain('katex');
 		expect(out).toContain('Question 1');
 		expect(out.length).toBeGreaterThan(0);
 	});

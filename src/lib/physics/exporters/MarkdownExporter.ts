@@ -1,6 +1,6 @@
 import type {Exporter} from '../contracts';
 import type {ExportFormat, GeneratedQuestion} from '../types';
-/** Exports questions to Markdown with MathJax-style math delimiters. */
+/** Exports questions to Markdown with KaTeX-style math delimiters. */
 export class MarkdownExporter implements Exporter {
 	public readonly format: ExportFormat = 'markdown';
 	public export(questions: GeneratedQuestion[]): string {
@@ -16,7 +16,7 @@ export class MarkdownExporter implements Exporter {
 				parts.push('\n');
 			}
 			parts.push(`**Answer:** ${q.answer}\n\n`);
-			parts.push(`**Solution:** \\( ${q.solution_text}\\)\n\n`);
+			parts.push(`**Solution:** ${q.solution_text}\n\n`);
 		}
 		return parts.join('');
 	}

@@ -1,5 +1,6 @@
 import {useState, useCallback, useEffect} from 'react';
 import {Modal} from '../ui';
+import {MathText} from '../MathText';
 import {useUiStore} from '../../stores/uiStore';
 import {useSpecStore} from '../../stores/specStore';
 import {generateBatch} from '../../services/physicsCore';
@@ -37,7 +38,12 @@ function buildWorksheetHtml(questions: GeneratedQuestion[], includeAnswerKey: bo
 	const parts: string[] = [];
 	parts.push('<!DOCTYPE html>\n<html><head><meta charset="utf-8">');
 	parts.push('<title>Physics Worksheet</title>');
-	parts.push('<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>');
+	parts.push('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css">');
+	parts.push('<script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js"></script>');
+	parts.push('<script src="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/contrib/auto-render.min.js"></script>');
+	parts.push(
+		'<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"\\\\[",right:"\\\\]",display:true},{left:"\\\\(",right:"\\\\)",display:false},{left:"$",right:"$",display:false}]});});</script>'
+	);
 	parts.push('<style>');
 	parts.push('body{font-family:"Noto Sans",sans-serif;max-width:800px;margin:0 auto;padding:24px;color:#1e293b}');
 	parts.push('h1{text-align:center;margin-bottom:8px}');
@@ -64,7 +70,7 @@ function buildWorksheetHtml(questions: GeneratedQuestion[], includeAnswerKey: bo
 		if (includeAnswerKey) {
 			parts.push(`<div class="answer">Answer: ${escapeHtml(q.answer)}</div>`);
 			if (q.solution_text) {
-				parts.push(`<div class="solution">Solution: \\( ${escapeHtml(q.solution_text)} \\)</div>`);
+				parts.push(`<div class="solution">Solution: ${escapeHtml(q.solution_text)}</div>`);
 			}
 		} else {
 			parts.push('<div class="answer">&nbsp;</div>');
@@ -239,8 +245,13 @@ export function PrintModal() {
 					<ol className="worksheet-preview-list">
 						{questions.map((question, index) => (
 							<li key={question.id} value={index + 1}>
-								{question.text}
-								{includeAnswerKey && <span className="preview-answer"> — {question.answer}</span>}
+								<MathText text={question.text} />
+								{includeAnswerKey && (
+									<span className="preview-answer">
+										{' '}
+										— <MathText text={question.answer} />
+									</span>
+								)}
 							</li>
 						))}
 					</ol>
