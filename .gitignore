@@ -8,10 +8,26 @@ build/
 # Test coverage
 coverage/
 
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Caches
+.eslintcache
+.vite/
+.cache/
+
+# Build info
+*.tsbuildinfo
+
 # Environment
 .env
 .env.local
 .env.*.local
+*.local
 
 # IDE
 .vscode/
@@ -31,7 +47,3 @@ src-tauri/gen/
 # Spec files (local)
 specifications/
 .trae/
-
-# Rust (legacy, kept for safety)
-target/
-Cargo.lock
