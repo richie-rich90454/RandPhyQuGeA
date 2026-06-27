@@ -1,6 +1,7 @@
 import {describe, it, expect} from 'vitest';
 import {UniformRandomGenerator, SeededRandomGenerator, TemplateSubstituter, IntVariableHandler, DoubleVariableHandler, EnumVariableHandler, VariableGenerator, VariableTypeRegistry} from '../random';
 import type {VariableDefinition} from '../types';
+import type {RandomGenerator} from '../contracts';
 describe('UniformRandomGenerator', () => {
 	it('generates ints within [1,10] over 100 iterations', () => {
 		const rng = new UniformRandomGenerator();
@@ -161,5 +162,42 @@ describe('TemplateSubstituter', () => {
 	});
 	it('substitutes string variable values verbatim', () => {
 		expect(substituter.substitute('dir={d}', {d: 'North'})).toBe('dir=North');
+	});
+});
+describe('Random handler edge cases', () => {
+	it('shuffle leaves an single-element array and an empty array unchanged', () => {
+		const rng = new UniformRandomGenerator();
+		expect(rng.shuffle([])).toEqual([]);
+		expect(rng.shuffle([42])).toEqual([42]);
+	});
+	it('DoubleVariableHandler clamps to max when float drift pushes the stepped value past max', () => {
+		const handler = new DoubleVariableHandler();
+		const maxStepRandom: RandomGenerator = {
+			next: () => 0,
+			nextInt: (_min: number, max: number) => max,
+			nextDouble: (min: number, max: number) => (min < max ? min : max),
+			pick: <T>(items: T[]) => items[0] as T,
+			shuffle: <T>(items: T[]) => items
+		};
+		const def: VariableDefinition = {name: 'x', var_type: 'double', min: 0, max: 3, step: 0.6};
+		expect(handler.generate(def, maxStepRandom)).toBe(3);
+	});
+	it('DoubleVariableHandler falls back to 0/100/1 defaults when min/max/step are absent', () => {
+		const handler = new DoubleVariableHandler();
+		const rng = new SeededRandomGenerator(1);
+		const def: VariableDefinition = {name: 'x', var_type: 'double'};
+		const v = handler.generate(def, rng) as number;
+		expect(v).toBeGreaterThanOrEqual(0);
+		expect(v).toBeLessThanOrEqual(100);
+	});
+	it('IntVariableHandler truncates non-integer min/max bounds', () => {
+		const handler = new IntVariableHandler();
+		const rng = new SeededRandomGenerator(1);
+		const def: VariableDefinition = {name: 'x', var_type: 'int', min: 1.9, max: 5.7};
+		for (let i = 0; i < 20; i++) {
+			const v = handler.generate(def, rng) as number;
+			expect(v).toBeGreaterThanOrEqual(1);
+			expect(v).toBeLessThanOrEqual(5);
+		}
 	});
 });

@@ -125,3 +125,74 @@ describe('SpecificationParser', () => {
 		expect(parser.parse(base + tpl('SA')).templates[0]?.question_type).toBe('SA');
 	});
 });
+describe('SpecificationParser edge cases', () => {
+	const parser = new SpecificationParser();
+	const BASE = '[UNIT]\nId: U1\nName: U\n[TOPIC]\nId: T1\nName: T\nUnitId: U1\n[SKILL]\nId: S1\nName: S\nTopicId: T1\n';
+	const tpl = (extra: string) => `[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\n${extra}`;
+	it('records an error for an empty section header []', () => {
+		const spec = '[UNIT]\nId: U1\nName: M\n[]\nId: U2\nName: E';
+		expect(() => parser.parse(spec)).toThrow(ParseException);
+		expect(() => parser.parse(spec)).toThrow('Empty section header');
+	});
+	it('skips processing an empty block when a section is immediately followed by another', () => {
+		const spec = '[UNIT]\n[UNIT]\nId: U1\nName: M';
+		const result = parser.parse(spec);
+		expect(result.units.length).toBe(1);
+		expect(result.units[0]?.id).toBe('U1');
+	});
+	it('records an error for an unknown section', () => {
+		const spec = '[UNIT]\nId: U1\nName: M\n[BOGUS]\nKey: value';
+		expect(() => parser.parse(spec)).toThrow('Unknown section [BOGUS]');
+	});
+	it('records an error for a content line without a colon inside a section', () => {
+		const spec = '[UNIT]\nId: U1\nName: M\norphan no colon';
+		expect(() => parser.parse(spec)).toThrow('Expected key:value pair');
+	});
+	it('records an error for a variable definition missing the Type key', () => {
+		expect(() => parser.parse(BASE + tpl('Var.x: Min=0;Max=10\n'))).toThrow("missing required 'Type' key");
+	});
+	it('skips variable segments that lack an = sign and empty ;; segments', () => {
+		const spec = parser.parse(BASE + tpl('Var.x: Type=int;;Min=0;;badsegment;Max=10\n'));
+		const vd = spec.templates[0]?.variable_definitions[0];
+		expect(vd?.var_type).toBe('int');
+		expect(vd?.min).toBe(0);
+		expect(vd?.max).toBe(10);
+	});
+	it('treats a non-finite Min value as undefined', () => {
+		const spec = parser.parse(BASE + tpl('Var.x: Type=int;Min=abc;Max=10\n'));
+		const vd = spec.templates[0]?.variable_definitions[0];
+		expect(vd?.min).toBeUndefined();
+		expect(vd?.max).toBe(10);
+	});
+	it('throws when a template references an unknown topic', () => {
+		const spec = BASE + '[TEMPLATE]\nId: Q1\nTopicId: NOPE\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\n';
+		expect(() => parser.parse(spec)).toThrow("references unknown Topic 'NOPE'");
+	});
+	it('throws when a template references an unknown skill', () => {
+		const spec = BASE + '[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: NOPE\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\n';
+		expect(() => parser.parse(spec)).toThrow("references unknown Skill 'NOPE'");
+	});
+	it('skips a template whose difficulty is non-finite', () => {
+		const spec = BASE + '[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: abc\nTextTemplate: x\nAnswerExpression: 1\n';
+		const result = parser.parse(spec);
+		expect(result.templates.length).toBe(0);
+	});
+	it('parses a spec ending with an empty section header without error', () => {
+		const spec = '[UNIT]\nId: U1\nName: M\n[TEMPLATE]';
+		const result = parser.parse(spec);
+		expect(result.units.length).toBe(1);
+		expect(result.templates.length).toBe(0);
+	});
+	it('skips a unit missing the Id field', () => {
+		const result = parser.parse('[UNIT]\nName: M');
+		expect(result.units.length).toBe(0);
+	});
+	it('skips a topic missing the UnitId field', () => {
+		const result = parser.parse('[UNIT]\nId: U1\nName: M\n[TOPIC]\nId: T1\nName: T');
+		expect(result.topics.length).toBe(0);
+	});
+	it('skips a skill missing the TopicId field', () => {
+		const result = parser.parse('[UNIT]\nId: U1\nName: M\n[TOPIC]\nId: T1\nName: T\nUnitId: U1\n[SKILL]\nId: S1\nName: S');
+		expect(result.skills.length).toBe(0);
+	});
+});

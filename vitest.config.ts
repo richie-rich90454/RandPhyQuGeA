@@ -9,7 +9,7 @@ export default defineConfig({
 			provider: 'v8',
 			reporter: ['text', 'json', 'html'],
 			include: ['src/lib/physics/**'],
-			thresholds: {lines: 90, functions: 90, branches: 85, statements: 90}
+			thresholds: {lines: 90, branches: 90, functions: 85, statements: 90}
 		}
 	}
 });

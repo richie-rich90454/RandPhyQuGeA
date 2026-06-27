@@ -134,4 +134,13 @@ describe('ExpressionEvaluator', () => {
 	it('throws on missing closing parenthesis', () => {
 		expect(() => evaluator.evaluate('(2+3', {})).toThrow('Missing closing parenthesis');
 	});
+	it('throws on a function call missing its closing parenthesis', () => {
+		expect(() => evaluator.evaluate('sqrt(16', {})).toThrow('Missing closing parenthesis after function');
+	});
+	it('throws on unexpected end when a trailing operator has no right operand', () => {
+		expect(() => evaluator.evaluate('2+', {})).toThrow('Unexpected end of expression');
+	});
+	it('ignores unknown characters while tokenizing and surfaces them as parse errors', () => {
+		expect(() => evaluator.evaluate('2+@', {})).toThrow('Unexpected end of expression');
+	});
 });
