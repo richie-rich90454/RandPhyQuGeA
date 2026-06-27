@@ -30,16 +30,22 @@ export interface ConfirmDialogProps {
  */
 export function ConfirmDialog({open, title, message, confirmLabel = 'Confirm', cancelLabel = 'Cancel', destructive = false, onConfirm, onCancel}: ConfirmDialogProps) {
 	return (
-		<Modal open={open} onClose={onCancel} title={title} ariaLabel={title} footer={
-			<>
-				<button type="button" className="secondary-button confirm-cancel" onClick={onCancel}>
-					{cancelLabel}
-				</button>
-				<button type="button" className={`primary-button confirm-button ${destructive ? 'destructive' : ''}`} onClick={onConfirm}>
-					{confirmLabel}
-				</button>
-			</>
-		}>
+		<Modal
+			open={open}
+			onClose={onCancel}
+			title={title}
+			ariaLabel={title}
+			footer={
+				<>
+					<button type="button" className="secondary-button confirm-cancel" onClick={onCancel}>
+						{cancelLabel}
+					</button>
+					<button type="button" className={`primary-button confirm-button ${destructive ? 'destructive' : ''}`} onClick={onConfirm}>
+						{confirmLabel}
+					</button>
+				</>
+			}
+		>
 			<p className="confirm-message">{message}</p>
 		</Modal>
 	);

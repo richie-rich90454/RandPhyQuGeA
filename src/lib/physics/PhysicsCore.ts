@@ -31,7 +31,15 @@ export class PhysicsCore {
 	 * When `questionTypeRegistry`/`variableGenerator` are omitted, the
 	 * QuestionGenerator creates its own defaults per call.
 	 */
-	public constructor(parser?: SpecificationParser, evaluator?: ExpressionEvaluator, exporters?: ExporterRegistry, formulaLibrary?: FormulaLibrary, random?: RandomGenerator, questionTypeRegistry?: QuestionTypeRegistry, variableGenerator?: VariableGenerator) {
+	public constructor(
+		parser?: SpecificationParser,
+		evaluator?: ExpressionEvaluator,
+		exporters?: ExporterRegistry,
+		formulaLibrary?: FormulaLibrary,
+		random?: RandomGenerator,
+		questionTypeRegistry?: QuestionTypeRegistry,
+		variableGenerator?: VariableGenerator
+	) {
 		this.parser = parser ?? new SpecificationParser();
 		this.evaluator = evaluator ?? new ExpressionEvaluator();
 		this.exporters = exporters ?? ExporterRegistry.createDefault();

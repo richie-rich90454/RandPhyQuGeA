@@ -55,8 +55,7 @@ export function AnswerCard() {
 		let nextIndex: number | null = null;
 		if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
 			nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % count;
-		}
-		else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+		} else if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
 			nextIndex = currentIndex < 0 ? count - 1 : (currentIndex - 1 + count) % count;
 		}
 		if (nextIndex !== null) {
@@ -82,7 +81,17 @@ export function AnswerCard() {
 				{isMcq && currentQuestion?.choices ? (
 					<div ref={choicesContainerRef} className="choices-container" id="mcq-choices-container" role="radiogroup" aria-label="Answer choices" onKeyDown={handleChoiceKeyDown}>
 						{currentQuestion.choices.map((choice, index) => (
-							<button key={`${choice}-${index}`} type="button" role="radio" aria-checked={selectedChoiceIndex === index} tabIndex={selectedChoiceIndex === index ? 0 : -1} data-choice-index={index} className={selectedChoiceIndex === index ? 'choice-button selected' : 'choice-button'} disabled={inputDisabled} onClick={() => selectChoice(index)}>
+							<button
+								key={`${choice}-${index}`}
+								type="button"
+								role="radio"
+								aria-checked={selectedChoiceIndex === index}
+								tabIndex={selectedChoiceIndex === index ? 0 : -1}
+								data-choice-index={index}
+								className={selectedChoiceIndex === index ? 'choice-button selected' : 'choice-button'}
+								disabled={inputDisabled}
+								onClick={() => selectChoice(index)}
+							>
 								<MathText text={choice} />
 							</button>
 						))}

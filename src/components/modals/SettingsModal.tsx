@@ -96,10 +96,30 @@ export function SettingsModal() {
 				}
 			>
 				<div ref={tablistRef} className="settings-tabs" role="tablist" aria-label="Settings sections" onKeyDown={handleTabKeyDown}>
-					<button type="button" role="tab" id="settings-tab-basic" data-tab="basic" aria-selected={activeTab === 'basic'} aria-controls="settings-basic" tabIndex={activeTab === 'basic' ? 0 : -1} className={`mode-button settings-tab ${activeTab === 'basic' ? 'active' : ''}`} onClick={() => setActiveTab('basic')}>
+					<button
+						type="button"
+						role="tab"
+						id="settings-tab-basic"
+						data-tab="basic"
+						aria-selected={activeTab === 'basic'}
+						aria-controls="settings-basic"
+						tabIndex={activeTab === 'basic' ? 0 : -1}
+						className={`mode-button settings-tab ${activeTab === 'basic' ? 'active' : ''}`}
+						onClick={() => setActiveTab('basic')}
+					>
 						Basic
 					</button>
-					<button type="button" role="tab" id="settings-tab-advanced" data-tab="advanced" aria-selected={activeTab === 'advanced'} aria-controls="settings-advanced" tabIndex={activeTab === 'advanced' ? 0 : -1} className={`mode-button settings-tab ${activeTab === 'advanced' ? 'active' : ''}`} onClick={() => setActiveTab('advanced')}>
+					<button
+						type="button"
+						role="tab"
+						id="settings-tab-advanced"
+						data-tab="advanced"
+						aria-selected={activeTab === 'advanced'}
+						aria-controls="settings-advanced"
+						tabIndex={activeTab === 'advanced' ? 0 : -1}
+						className={`mode-button settings-tab ${activeTab === 'advanced' ? 'active' : ''}`}
+						onClick={() => setActiveTab('advanced')}
+					>
 						Advanced
 					</button>
 				</div>
@@ -329,7 +349,15 @@ export function SettingsModal() {
 					</div>
 				)}
 			</Modal>
-			<ConfirmDialog destructive title="Reset settings?" message="This will restore all settings to their defaults. This cannot be undone." confirmLabel="Reset" open={confirmReset} onConfirm={handleConfirmReset} onCancel={() => setConfirmReset(false)} />
+			<ConfirmDialog
+				destructive
+				title="Reset settings?"
+				message="This will restore all settings to their defaults. This cannot be undone."
+				confirmLabel="Reset"
+				open={confirmReset}
+				onConfirm={handleConfirmReset}
+				onCancel={() => setConfirmReset(false)}
+			/>
 		</>
 	);
 }

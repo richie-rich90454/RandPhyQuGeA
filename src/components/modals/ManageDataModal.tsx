@@ -105,8 +105,24 @@ export function ManageDataModal() {
 					</>
 				)}
 			</Modal>
-			<ConfirmDialog destructive title="Delete all data?" message="Delete ALL practice data? This cannot be undone." confirmLabel="Delete All" open={confirmDeleteAll} onConfirm={handleConfirmDeleteAll} onCancel={() => setConfirmDeleteAll(false)} />
-			<ConfirmDialog destructive title="Delete record?" message="Delete this practice record? This cannot be undone." confirmLabel="Delete" open={confirmDeleteId !== null} onConfirm={handleConfirmDeleteOne} onCancel={() => setConfirmDeleteId(null)} />
+			<ConfirmDialog
+				destructive
+				title="Delete all data?"
+				message="Delete ALL practice data? This cannot be undone."
+				confirmLabel="Delete All"
+				open={confirmDeleteAll}
+				onConfirm={handleConfirmDeleteAll}
+				onCancel={() => setConfirmDeleteAll(false)}
+			/>
+			<ConfirmDialog
+				destructive
+				title="Delete record?"
+				message="Delete this practice record? This cannot be undone."
+				confirmLabel="Delete"
+				open={confirmDeleteId !== null}
+				onConfirm={handleConfirmDeleteOne}
+				onCancel={() => setConfirmDeleteId(null)}
+			/>
 		</>
 	);
 }

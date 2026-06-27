@@ -80,8 +80,7 @@ export function Modal({open, onClose, title, titleId, modalId, children, footer,
 					event.preventDefault();
 					last.focus();
 				}
-			}
-			else {
+			} else {
 				if (active === last || !node.contains(active)) {
 					event.preventDefault();
 					first.focus();

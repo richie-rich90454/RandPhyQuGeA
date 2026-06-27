@@ -20,7 +20,7 @@ export function resolveTopicId(specification: Specification, scope: string, shuf
 	if (selectedTopicId) return selectedTopicId;
 	const candidateTopics = scope === 'all' ? specification.topics : specification.topics.filter(t => t.unit_id === scope);
 	if (candidateTopics.length === 0) return undefined;
-	const pickRandom = pickRandomWhenScoped ? (shuffle || scope !== 'all') : shuffle;
+	const pickRandom = pickRandomWhenScoped ? shuffle || scope !== 'all' : shuffle;
 	if (pickRandom) {
 		const index = Math.floor(Math.random() * candidateTopics.length);
 		return candidateTopics[index]?.id;

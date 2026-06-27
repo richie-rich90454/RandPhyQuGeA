@@ -1367,7 +1367,9 @@ input[type='checkbox']:hover {
 	box-shadow: var(--shadow-lg);
 	color: var(--text-primary);
 	font-size: 0.85rem;
-	transition: transform 0.2s ease, opacity 0.2s ease;
+	transition:
+		transform 0.2s ease,
+		opacity 0.2s ease;
 }
 .toast-message {
 	flex: 1;

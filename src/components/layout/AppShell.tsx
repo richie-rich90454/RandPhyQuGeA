@@ -33,7 +33,9 @@ export function AppShell({children}: AppShellProps) {
 	const rest = childArray.slice(1);
 	return (
 		<>
-			<a href="#main-content" className="skip-link">Skip to main content</a>
+			<a href="#main-content" className="skip-link">
+				Skip to main content
+			</a>
 			<div id="wave-container" aria-hidden="true">
 				<div className="liquid-bg" />
 			</div>

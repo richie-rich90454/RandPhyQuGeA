@@ -129,7 +129,16 @@ export function MentalControls() {
 								<path d={PAUSE_ICON} />
 							</svg>
 						</button>
-						<button ref={resumeBtnRef} type="button" className="icon-button mental-action-btn" id="resume-session" aria-label="Resume" title="Resume session" hidden={!isPaused} onClick={resumeSession}>
+						<button
+							ref={resumeBtnRef}
+							type="button"
+							className="icon-button mental-action-btn"
+							id="resume-session"
+							aria-label="Resume"
+							title="Resume session"
+							hidden={!isPaused}
+							onClick={resumeSession}
+						>
 							<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 								<path d="M8 5v14l11-7z" />
 							</svg>

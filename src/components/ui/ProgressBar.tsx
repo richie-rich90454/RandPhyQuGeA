@@ -14,7 +14,15 @@ export interface ProgressBarProps {
 export function ProgressBar({value, className, ariaLabel = 'Progress'}: ProgressBarProps) {
 	const clamped = Math.min(100, Math.max(0, value));
 	return (
-		<div className={cn('mental-progress', className)} role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(clamped)} aria-valuetext={`${Math.round(clamped)}%`} aria-label={ariaLabel}>
+		<div
+			className={cn('mental-progress', className)}
+			role="progressbar"
+			aria-valuemin={0}
+			aria-valuemax={100}
+			aria-valuenow={Math.round(clamped)}
+			aria-valuetext={`${Math.round(clamped)}%`}
+			aria-label={ariaLabel}
+		>
 			<div className="progress-bar" style={{width: `${clamped}%`}} />
 		</div>
 	);

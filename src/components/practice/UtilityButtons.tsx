@@ -59,7 +59,15 @@ export function UtilityButtons() {
 			{BUTTONS.map(button => {
 				const isTheme = button.id === 'theme';
 				return (
-					<button key={button.id} type="button" className="icon-button" aria-label={button.label} aria-pressed={isTheme ? themeAriaPressed : undefined} title={button.title} onClick={() => handleClick(button.id)}>
+					<button
+						key={button.id}
+						type="button"
+						className="icon-button"
+						aria-label={button.label}
+						aria-pressed={isTheme ? themeAriaPressed : undefined}
+						title={button.title}
+						onClick={() => handleClick(button.id)}
+					>
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 							<path d={ICON_PATHS[button.icon]} />
 						</svg>

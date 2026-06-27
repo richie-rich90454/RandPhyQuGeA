@@ -65,12 +65,15 @@ export function ToastProvider({children}: ToastProviderProps) {
 		entry.remaining = Math.max(entry.deadline - Date.now(), 0);
 		entry.deadline = null;
 	}, []);
-	const resume = useCallback((id: number) => {
-		const entry = timers.current.get(id);
-		if (!entry || entry.deadline !== null || entry.remaining <= 0) return;
-		entry.deadline = Date.now() + entry.remaining;
-		entry.timer = setTimeout(() => dismiss(id), entry.remaining);
-	}, [dismiss]);
+	const resume = useCallback(
+		(id: number) => {
+			const entry = timers.current.get(id);
+			if (!entry || entry.deadline !== null || entry.remaining <= 0) return;
+			entry.deadline = Date.now() + entry.remaining;
+			entry.timer = setTimeout(() => dismiss(id), entry.remaining);
+		},
+		[dismiss]
+	);
 	const toast = useCallback(
 		(options: ToastOptions) => {
 			const variant = options.variant ?? 'info';
@@ -107,7 +110,16 @@ export function ToastProvider({children}: ToastProviderProps) {
 						opacity: item.visible ? 1 : 0
 					};
 					return (
-						<div key={item.id} className={cn('toast')} style={toastStyle} role="status" onMouseEnter={() => pause(item.id)} onMouseLeave={() => resume(item.id)} onFocus={() => pause(item.id)} onBlur={() => resume(item.id)}>
+						<div
+							key={item.id}
+							className={cn('toast')}
+							style={toastStyle}
+							role="status"
+							onMouseEnter={() => pause(item.id)}
+							onMouseLeave={() => resume(item.id)}
+							onFocus={() => pause(item.id)}
+							onBlur={() => resume(item.id)}
+						>
 							<svg width="20" height="20" viewBox="0 0 24 24" fill={accent} aria-hidden="true">
 								<path d={iconPath} />
 							</svg>
