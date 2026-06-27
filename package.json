@@ -13,7 +13,9 @@
     "format:write": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "clean": "node --input-type=commonjs -e \"const fs=require('fs');['dist','coverage','node_modules/.vite'].forEach(function(p){try{fs.rmSync(p,{recursive:true,force:true})}catch(e){}});console.log('Cleaned dist/, coverage/, node_modules/.vite')\"",
+    "typecheck:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
     "@fontsource/noto-sans": "^5.2.10",
