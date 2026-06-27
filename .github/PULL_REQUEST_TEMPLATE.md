@@ -15,11 +15,13 @@
 
 ## Checklist
 
-- [ ] I have run `cargo test` (Rust) or `flutter test` (Flutter) and all tests pass
-- [ ] I have run `cargo clippy` (Rust) or `flutter analyze` (Flutter) with no warnings
+- [ ] `npm test` passes (118 tests, 9 files)
+- [ ] `npm run lint` is clean (ESLint flat config)
+- [ ] `npm run typecheck` passes
+- [ ] `npm run build` succeeds
 - [ ] I have added tests for new functionality
 - [ ] I have updated documentation if needed
-- [ ] My changes follow the existing code style
+- [ ] My changes follow the existing code style (AGENTS.md formatting rules)
 - [ ] I have checked for breaking changes
 
 ## Related Issues

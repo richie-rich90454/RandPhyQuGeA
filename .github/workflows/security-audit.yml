@@ -21,7 +21,7 @@ jobs:
         run: npm ci
       - name: Run npm audit
         run: npm audit --omit=dev
-        continue-on-error: true
+        continue-on-error: true  # Advisory only — does not block PRs; production deps audited via --omit=dev
 
   codeql:
     runs-on: ubuntu-latest
