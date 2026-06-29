@@ -270,8 +270,7 @@ export class ExpressionEvaluator implements ExpressionEvaluatorLike {
 								num += ch;
 								i++;
 							}
-						}
-						else if (signChar !== undefined && ExpressionEvaluator.isDigit(signChar)) {
+						} else if (signChar !== undefined && ExpressionEvaluator.isDigit(signChar)) {
 							num += expChar;
 							i = signIdx;
 							while (i < chars.length) {
