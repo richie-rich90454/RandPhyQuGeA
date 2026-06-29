@@ -67,12 +67,33 @@ describe('Default specification structure', () => {
 		expect(spec.skills.length).toBeGreaterThanOrEqual(28);
 		for (const topicId of EXPECTED_TOPIC_IDS) {
 			const skills = spec.skills.filter(s => s.topic_id === topicId);
-			expect(skills.length).toBeGreaterThanOrEqual(1);
+			expect(skills.length).toBeGreaterThanOrEqual(2);
 		}
 	});
 	it('contains at least 80 templates', () => {
 		const spec = parseSpec();
 		expect(spec.templates.length).toBeGreaterThanOrEqual(80);
+	});
+	it('every unit has at least 2 topics', () => {
+		const spec = parseSpec();
+		for (const unit of spec.units) {
+			const topics = spec.topics.filter(t => t.unit_id === unit.id);
+			expect(topics.length).toBeGreaterThanOrEqual(2);
+		}
+	});
+	it('every topic has at least 3 templates', () => {
+		const spec = parseSpec();
+		for (const topicId of EXPECTED_TOPIC_IDS) {
+			const templates = spec.templates.filter(t => t.topic_id === topicId);
+			expect(templates.length).toBeGreaterThanOrEqual(3);
+		}
+	});
+	it('every MC template has at least 1 Distractor', () => {
+		const spec = parseSpec();
+		const mcTemplates = spec.templates.filter(t => t.question_type === 'MC');
+		for (const tpl of mcTemplates) {
+			expect(tpl.distractor_expressions.length).toBeGreaterThanOrEqual(1);
+		}
 	});
 	it('every template references a known topic and skill', () => {
 		const spec = parseSpec();
