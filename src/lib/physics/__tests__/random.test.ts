@@ -1,5 +1,15 @@
 import {describe, it, expect} from 'vitest';
-import {UniformRandomGenerator, SeededRandomGenerator, TemplateSubstituter, IntVariableHandler, DoubleVariableHandler, EnumVariableHandler, VariableGenerator, VariableTypeRegistry} from '../random';
+import {
+	UniformRandomGenerator,
+	SeededRandomGenerator,
+	TemplateSubstituter,
+	IntVariableHandler,
+	DoubleVariableHandler,
+	EnumVariableHandler,
+	BoolVariableHandler,
+	VariableGenerator,
+	VariableTypeRegistry
+} from '../random';
 import type {VariableDefinition} from '../types';
 import type {RandomGenerator} from '../contracts';
 describe('UniformRandomGenerator', () => {
@@ -120,6 +130,44 @@ describe('Variable type handlers', () => {
 		const rng = new SeededRandomGenerator(1);
 		const def: VariableDefinition = {name: 'd', var_type: 'enum', enum_values: ['North', 'South']};
 		expect(handler.generate(def, rng)).toBe(0);
+	});
+});
+describe('BoolVariableHandler', () => {
+	it('generates only 0 or 1 over 100 iterations (range)', () => {
+		const handler = new BoolVariableHandler();
+		const rng = new SeededRandomGenerator(1);
+		const def: VariableDefinition = {name: 'b', var_type: 'bool'};
+		for (let i = 0; i < 100; i++) {
+			const v = handler.generate(def, rng) as number;
+			expect(v === 0 || v === 1).toBe(true);
+		}
+	});
+	it('produces both 0 and 1 over many iterations (entropy)', () => {
+		const handler = new BoolVariableHandler();
+		const rng = new SeededRandomGenerator(42);
+		const def: VariableDefinition = {name: 'b', var_type: 'bool'};
+		const seen = new Set<number>();
+		for (let i = 0; i < 200; i++) {
+			seen.add(handler.generate(def, rng) as number);
+		}
+		expect(seen.has(0)).toBe(true);
+		expect(seen.has(1)).toBe(true);
+		expect(seen.size).toBe(2);
+	});
+	it('is reachable through the default VariableTypeRegistry', () => {
+		const registry = VariableTypeRegistry.createDefault();
+		const handler = registry.get('bool');
+		expect(handler).toBeDefined();
+		expect(handler).toBeInstanceOf(BoolVariableHandler);
+	});
+	it('integrates with VariableGenerator to produce 0 or 1 for bool vars', () => {
+		const gen = new VariableGenerator();
+		const rng = new SeededRandomGenerator(7);
+		const def: VariableDefinition = {name: 'flag', var_type: 'bool'};
+		for (let i = 0; i < 50; i++) {
+			const vars = gen.generate([def], rng);
+			expect(vars.flag === 0 || vars.flag === 1).toBe(true);
+		}
 	});
 });
 describe('VariableGenerator', () => {
