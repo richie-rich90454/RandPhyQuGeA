@@ -210,6 +210,7 @@ export class SpecificationParser {
 			return undefined;
 		}
 		const solutionTemplate: string = this.getSingle(block, 'SolutionTemplate') ?? '';
+		const solutionLatexTemplate: string = this.getSingle(block, 'SolutionLatexTemplate') ?? '';
 		const variableDefinitions: VariableDefinition[] = this.parseVariableDefinitions(block, errors);
 		const distractorExpressions: string[] = this.getMultiple(block, 'Distractor');
 		return {
@@ -221,6 +222,7 @@ export class SpecificationParser {
 			text_template: textTemplate,
 			answer_expression: answerExpression,
 			solution_template: solutionTemplate,
+			solution_latex_template: solutionLatexTemplate,
 			variable_definitions: variableDefinitions,
 			distractor_expressions: distractorExpressions
 		};

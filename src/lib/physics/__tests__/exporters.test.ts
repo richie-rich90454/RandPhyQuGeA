@@ -127,7 +127,7 @@ const specialChars: GeneratedQuestion = {
 describe('Exporter edge cases', () => {
 	it('CsvExporter renders only the header for an empty list', () => {
 		const exporter = new CsvExporter();
-		expect(exporter.export([])).toBe('id,topic_id,skill_id,type,difficulty,text,answer,solution,choices\n');
+		expect(exporter.export([])).toBe('id,topic_id,skill_id,type,difficulty,text,answer,solution,solution_latex,choices\n');
 	});
 	it('CsvExporter renders an empty choices column when choices are undefined', () => {
 		const exporter = new CsvExporter();

@@ -27,11 +27,18 @@ export class PdfExporter implements Exporter {
 				}
 				parts.push('</div>\n');
 			}
-			parts.push(`<div class="solution">Solution: ${this.escapeHtml(q.solution_text)}</div>\n`);
+			parts.push(`<div class="solution">Solution: ${this.renderSolution(q)}</div>\n`);
 			parts.push('</div>\n');
 		}
 		parts.push('</body></html>');
 		return parts.join('');
+	}
+	private renderSolution(q: GeneratedQuestion): string {
+		const latex = q.solution_latex.trim();
+		if (latex.length > 0) {
+			return `$$${latex}$$`;
+		}
+		return this.escapeHtml(q.solution_text);
 	}
 	private escapeHtml(text: string): string {
 		return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');

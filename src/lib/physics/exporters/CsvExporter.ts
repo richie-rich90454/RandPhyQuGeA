@@ -5,7 +5,7 @@ export class CsvExporter implements Exporter {
 	public readonly format: ExportFormat = 'csv';
 	public export(questions: GeneratedQuestion[]): string {
 		const parts: string[] = [];
-		parts.push('id,topic_id,skill_id,type,difficulty,text,answer,solution,choices\n');
+		parts.push('id,topic_id,skill_id,type,difficulty,text,answer,solution,solution_latex,choices\n');
 		for (const q of questions) {
 			const choices = q.choices !== undefined ? q.choices.join(' | ') : '';
 			const row: string[] = [
@@ -17,6 +17,7 @@ export class CsvExporter implements Exporter {
 				`"${this.escapeCsvField(q.text)}"`,
 				`"${this.escapeCsvField(q.answer)}"`,
 				`"${this.escapeCsvField(q.solution_text)}"`,
+				`"${this.escapeCsvField(q.solution_latex)}"`,
 				`"${this.escapeCsvField(choices)}"`
 			];
 			parts.push(row.join(',') + '\n');

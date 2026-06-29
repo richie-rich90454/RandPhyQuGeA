@@ -1,3 +1,4 @@
+export {BoolVariableHandler} from './BoolVariableHandler';
 export {DoubleVariableHandler} from './DoubleVariableHandler';
 export {EnumVariableHandler} from './EnumVariableHandler';
 export {IntVariableHandler} from './IntVariableHandler';

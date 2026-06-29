@@ -57,6 +57,8 @@ export interface QuestionTemplate {
 	text_template: string;
 	answer_expression: string;
 	solution_template: string;
+	/** KaTeX-renderable LaTeX solution template (substituted with variables and {answer}); empty when not provided. */
+	solution_latex_template: string;
 	variable_definitions: VariableDefinition[];
 	distractor_expressions: string[];
 }

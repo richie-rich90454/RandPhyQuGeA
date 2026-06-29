@@ -21,7 +21,8 @@ export class LatexExporter implements Exporter {
 				}
 				parts.push('\\end{choices}\n');
 			}
-			parts.push(`\\begin{solution}\n${this.escapeLatex(q.solution_text)}\n\\end{solution}\n\n`);
+			const solutionBody = q.solution_latex.trim().length > 0 ? q.solution_latex : this.escapeLatex(q.solution_text);
+			parts.push(`\\begin{solution}\n${solutionBody}\n\\end{solution}\n\n`);
 		}
 		parts.push('\\end{questions}\n');
 		parts.push('\\end{document}\n');

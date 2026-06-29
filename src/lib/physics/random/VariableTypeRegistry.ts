@@ -1,4 +1,5 @@
 import type {VariableTypeHandler} from '../contracts';
+import {BoolVariableHandler} from './BoolVariableHandler';
 import {DoubleVariableHandler} from './DoubleVariableHandler';
 import {EnumVariableHandler} from './EnumVariableHandler';
 import {IntVariableHandler} from './IntVariableHandler';
@@ -16,12 +17,13 @@ export class VariableTypeRegistry {
 	public get(type: string): VariableTypeHandler | undefined {
 		return this.handlers.get(type);
 	}
-	/** Build a registry pre-populated with the standard Int, Double, Enum handlers. */
+	/** Build a registry pre-populated with the standard Int, Double, Enum, Bool handlers. */
 	public static createDefault(): VariableTypeRegistry {
 		const registry = new VariableTypeRegistry();
 		registry.register(new IntVariableHandler());
 		registry.register(new DoubleVariableHandler());
 		registry.register(new EnumVariableHandler());
+		registry.register(new BoolVariableHandler());
 		return registry;
 	}
 }
