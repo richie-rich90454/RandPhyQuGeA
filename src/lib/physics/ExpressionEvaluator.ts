@@ -186,10 +186,15 @@ export class ExpressionEvaluator implements ExpressionEvaluatorLike {
 		const tokens = this.tokenize(expr);
 		return this.parseExpression(tokens, 0, variables).value;
 	}
-	/** Format a numeric answer: integers as-is, otherwise 4 decimals with trailing zeros stripped. */
+	/** Format a numeric answer: integers as-is, otherwise 4 decimals with trailing zeros stripped. Uses scientific notation for very small or very large magnitudes. */
 	public formatNumeric(value: number): string {
-		if (value === Math.trunc(value)) {
+		if (value === Math.trunc(value) && Math.abs(value) < 1e15) {
 			return String(Math.trunc(value));
+		}
+		const absValue = Math.abs(value);
+		if (absValue > 0 && (absValue < 1e-4 || absValue >= 1e6)) {
+			const exp = value.toExponential(4);
+			return exp.replace(/(\d)0+e/, '$1e').replace(/e\+/, 'e');
 		}
 		return value.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
 	}
@@ -247,6 +252,38 @@ export class ExpressionEvaluator implements ExpressionEvaluatorLike {
 					}
 					num += ch;
 					i++;
+				}
+				if (i < chars.length) {
+					const expChar = chars[i];
+					if (expChar !== undefined && (expChar === 'e' || expChar === 'E')) {
+						const signIdx = i + 1;
+						const signChar = chars[signIdx];
+						const digitAfterSign = chars[signIdx + 1];
+						if (signChar !== undefined && (signChar === '+' || signChar === '-') && digitAfterSign !== undefined && ExpressionEvaluator.isDigit(digitAfterSign)) {
+							num += expChar + signChar;
+							i = signIdx + 1;
+							while (i < chars.length) {
+								const ch = chars[i];
+								if (ch === undefined || !ExpressionEvaluator.isDigit(ch)) {
+									break;
+								}
+								num += ch;
+								i++;
+							}
+						}
+						else if (signChar !== undefined && ExpressionEvaluator.isDigit(signChar)) {
+							num += expChar;
+							i = signIdx;
+							while (i < chars.length) {
+								const ch = chars[i];
+								if (ch === undefined || !ExpressionEvaluator.isDigit(ch)) {
+									break;
+								}
+								num += ch;
+								i++;
+							}
+						}
+					}
 				}
 				tokens.push(num);
 				continue;
