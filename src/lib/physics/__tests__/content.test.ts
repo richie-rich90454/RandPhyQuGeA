@@ -37,8 +37,7 @@ function renderLatex(tex: string): {ok: boolean; error?: string} {
 	try {
 		katex.renderToString(tex, {displayMode: true, throwOnError: true});
 		return {ok: true};
-	}
-	catch (e) {
+	} catch (e) {
 		const msg = e instanceof Error ? e.message : String(e);
 		return {ok: false, error: msg};
 	}
@@ -217,7 +216,8 @@ describe('FormulaLibrary coverage', () => {
 		const topicIds = new Set(spec.topics.map(t => t.id));
 		const lib = new FormulaLibrary();
 		for (const f of lib.getAll()) {
-			expect(topicIds.has(f.topic_id)).toBe(true);
+			expect(f.topic_id).toBeDefined();
+			expect(topicIds.has(f.topic_id ?? '')).toBe(true);
 		}
 	});
 	it('getByTopic returns at least 2 entries for every expected topic', () => {

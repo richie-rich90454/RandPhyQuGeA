@@ -21,8 +21,7 @@ function renderLatex(tex: string): boolean {
 	try {
 		katex.renderToString(tex, {displayMode: true, throwOnError: true});
 		return true;
-	}
-	catch {
+	} catch {
 		return false;
 	}
 }
@@ -70,7 +69,8 @@ describe('FormulaLibrary', () => {
 		const all = lib.getAll();
 		const topicSet = new Set(EXPECTED_TOPIC_IDS);
 		for (const f of all) {
-			expect(topicSet.has(f.topic_id)).toBe(true);
+			expect(f.topic_id).toBeDefined();
+			expect(topicSet.has(f.topic_id ?? '')).toBe(true);
 		}
 	});
 	it('every formula latex renders via KaTeX', () => {
