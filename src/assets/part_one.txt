@@ -1,127 +1,482 @@
 [UNIT]
-Id: U1
+Id: mechanics
 Name: Mechanics
-Description: Classical mechanics unit
+Description: Classical mechanics covering motion, forces, energy, and momentum
 
 [TOPIC]
-Id: T1
+Id: kinematics
 Name: Kinematics
-UnitId: U1
-Description: Motion in one dimension
+UnitId: mechanics
+Description: Motion in one and two dimensions
 
 [SKILL]
-Id: S1
-Name: Uniform Acceleration
-TopicId: T1
-Description: Solve problems with constant acceleration
+Id: kin-1d
+Name: One-Dimensional Motion
+TopicId: kinematics
+Description: Solve problems with constant velocity and constant acceleration in one dimension
 
 [SKILL]
-Id: S2
+Id: kin-freefall
 Name: Free Fall
-TopicId: T1
+TopicId: kinematics
 Description: Solve problems involving objects falling under gravity
 
 [SKILL]
-Id: S3
+Id: kin-projectile
 Name: Projectile Motion
-TopicId: T1
-Description: Solve problems involving two-dimensional projectile motion
+TopicId: kinematics
+Description: Analyze two-dimensional projectile motion
 
 [TOPIC]
-Id: T2
-Name: Forces
-UnitId: U1
+Id: dynamics
+Name: Dynamics
+UnitId: mechanics
 Description: Newton's laws and force analysis
 
 [SKILL]
-Id: S4
-Name: Newton's Second Law
-TopicId: T2
-Description: Apply F = ma to solve force problems
+Id: dyn-newton
+Name: Newton's Laws
+TopicId: dynamics
+Description: Apply Newton's second law to solve force problems
 
 [SKILL]
-Id: S5
+Id: dyn-friction
 Name: Friction
-TopicId: T2
+TopicId: dynamics
 Description: Solve problems involving frictional forces
 
 [SKILL]
-Id: S6
+Id: dyn-incline
 Name: Inclined Planes
-TopicId: T2
+TopicId: dynamics
 Description: Analyze forces on inclined surfaces
 
 [TOPIC]
-Id: T3
-Name: Energy and Work
-UnitId: U1
-Description: Work, kinetic energy, potential energy, and conservation
+Id: circular-motion
+Name: Circular Motion
+UnitId: mechanics
+Description: Uniform circular motion and banked curves
 
 [SKILL]
-Id: S7
+Id: cm-ucm
+Name: Uniform Circular Motion
+TopicId: circular-motion
+Description: Calculate centripetal acceleration and centripetal force
+
+[SKILL]
+Id: cm-banked
+Name: Banked Curves
+TopicId: circular-motion
+Description: Analyze forces on banked curves and conical pendulums
+
+[TOPIC]
+Id: gravitation
+Name: Gravitation
+UnitId: mechanics
+Description: Newton's law of universal gravitation and orbital motion
+
+[SKILL]
+Id: grav-law
+Name: Newton's Law of Gravitation
+TopicId: gravitation
+Description: Apply the law of universal gravitation
+
+[SKILL]
+Id: grav-orbit
+Name: Orbital Motion
+TopicId: gravitation
+Description: Analyze circular orbits and Kepler's third law
+
+[TOPIC]
+Id: energy
+Name: Energy
+UnitId: mechanics
+Description: Work, kinetic and potential energy, power, and conservation
+
+[SKILL]
+Id: en-work
+Name: Work
+TopicId: energy
+Description: Calculate work done by a force
+
+[SKILL]
+Id: en-ke
 Name: Kinetic Energy
-TopicId: T3
+TopicId: energy
 Description: Calculate and apply kinetic energy
 
 [SKILL]
-Id: S8
+Id: en-pe
+Name: Potential Energy
+TopicId: energy
+Description: Calculate gravitational and spring potential energy
+
+[SKILL]
+Id: en-conservation
 Name: Conservation of Energy
-TopicId: T3
-Description: Apply energy conservation to solve problems
+TopicId: energy
+Description: Apply conservation of mechanical energy
+
+[SKILL]
+Id: en-power
+Name: Power
+TopicId: energy
+Description: Calculate mechanical power
 
 [TOPIC]
-Id: T4
+Id: momentum
 Name: Momentum
-UnitId: U1
-Description: Linear momentum and collisions
+UnitId: mechanics
+Description: Linear momentum, impulse, and collisions
 
 [SKILL]
-Id: S9
+Id: mom-impulse
 Name: Impulse and Momentum
-TopicId: T4
-Description: Apply impulse-momentum theorem
+TopicId: momentum
+Description: Apply the impulse-momentum theorem
 
 [SKILL]
-Id: S10
+Id: mom-conservation
+Name: Conservation of Momentum
+TopicId: momentum
+Description: Apply conservation of linear momentum
+
+[SKILL]
+Id: mom-collisions
 Name: Collisions
-TopicId: T4
+TopicId: momentum
 Description: Analyze elastic and inelastic collisions
 
+[UNIT]
+Id: rotation-oscillations
+Name: Rotation and Oscillations
+Description: Rotational dynamics, torque, and simple harmonic motion
+
+[TOPIC]
+Id: torque
+Name: Torque
+UnitId: rotation-oscillations
+Description: Torque and rotational equilibrium
+
+[SKILL]
+Id: tq-torque
+Name: Torque
+TopicId: torque
+Description: Calculate torque due to a force
+
+[SKILL]
+Id: tq-equilibrium
+Name: Rotational Equilibrium
+TopicId: torque
+Description: Apply the second condition of equilibrium
+
+[TOPIC]
+Id: rotational-motion
+Name: Rotational Motion
+UnitId: rotation-oscillations
+Description: Angular kinematics and rotational dynamics
+
+[SKILL]
+Id: rot-kinematics
+Name: Angular Kinematics
+TopicId: rotational-motion
+Description: Solve problems with constant angular acceleration
+
+[SKILL]
+Id: rot-inertia
+Name: Moment of Inertia
+TopicId: rotational-motion
+Description: Calculate moment of inertia for common shapes
+
+[SKILL]
+Id: rot-dynamics
+Name: Rotational Dynamics
+TopicId: rotational-motion
+Description: Apply Newton's second law for rotation and angular momentum
+
+[TOPIC]
+Id: shm
+Name: Simple Harmonic Motion
+UnitId: rotation-oscillations
+Description: Spring-mass systems and pendulums
+
+[SKILL]
+Id: shm-spring
+Name: Spring-Mass Systems
+TopicId: shm
+Description: Analyze horizontal and vertical spring oscillators
+
+[SKILL]
+Id: shm-pendulum
+Name: Pendulums
+TopicId: shm
+Description: Analyze simple pendulums
+
+[SKILL]
+Id: shm-energy
+Name: Energy in SHM
+TopicId: shm
+Description: Apply energy conservation to oscillating systems
+
+[UNIT]
+Id: fluids-waves
+Name: Fluids and Waves
+Description: Fluid statics, fluid dynamics, mechanical waves, and sound
+
+[TOPIC]
+Id: fluids
+Name: Fluids
+UnitId: fluids-waves
+Description: Pressure, buoyancy, and fluid flow
+
+[SKILL]
+Id: fl-pressure
+Name: Pressure
+TopicId: fluids
+Description: Calculate pressure in static fluids
+
+[SKILL]
+Id: fl-buoyancy
+Name: Buoyancy
+TopicId: fluids
+Description: Apply Archimedes' principle
+
+[SKILL]
+Id: fl-flow
+Name: Fluid Flow
+TopicId: fluids
+Description: Apply the continuity equation and Bernoulli's principle
+
+[TOPIC]
+Id: waves
+Name: Waves
+UnitId: fluids-waves
+Description: Wave properties and superposition
+
+[SKILL]
+Id: wv-properties
+Name: Wave Properties
+TopicId: waves
+Description: Relate wave speed, frequency, wavelength, and period
+
+[SKILL]
+Id: wv-superposition
+Name: Superposition
+TopicId: waves
+Description: Analyze interference of waves
+
+[TOPIC]
+Id: sound
+Name: Sound
+UnitId: fluids-waves
+Description: Sound waves, intensity, and the Doppler effect
+
+[SKILL]
+Id: snd-intensity
+Name: Sound Intensity
+TopicId: sound
+Description: Calculate sound intensity and intensity level
+
+[SKILL]
+Id: snd-doppler
+Name: Doppler Effect
+TopicId: sound
+Description: Apply the Doppler effect for moving sources and observers
+
+[UNIT]
+Id: electricity
+Name: Electricity
+Description: Electrostatics and DC circuits
+
+[TOPIC]
+Id: electrostatics
+Name: Electrostatics
+UnitId: electricity
+Description: Coulomb's law, electric fields, and electric potential
+
+[SKILL]
+Id: es-coulomb
+Name: Coulomb's Law
+TopicId: electrostatics
+Description: Calculate the electric force between charges
+
+[SKILL]
+Id: es-field
+Name: Electric Fields
+TopicId: electrostatics
+Description: Calculate electric field due to point charges
+
+[SKILL]
+Id: es-potential
+Name: Electric Potential
+TopicId: electrostatics
+Description: Calculate electric potential and potential energy
+
+[TOPIC]
+Id: dc-circuits
+Name: DC Circuits
+UnitId: electricity
+Description: Ohm's law, series and parallel resistors, and Kirchhoff's rules
+
+[SKILL]
+Id: dc-ohm
+Name: Ohm's Law
+TopicId: dc-circuits
+Description: Relate voltage, current, and resistance
+
+[SKILL]
+Id: dc-combinations
+Name: Series and Parallel Resistors
+TopicId: dc-circuits
+Description: Calculate equivalent resistance for resistor networks
+
+[SKILL]
+Id: dc-power
+Name: Electric Power
+TopicId: dc-circuits
+Description: Calculate electric power dissipated in a resistor
+
+[SKILL]
+Id: dc-kirchhoff
+Name: Kirchhoff's Rules
+TopicId: dc-circuits
+Description: Apply Kirchhoff's voltage and current laws
+
 [TEMPLATE]
-Id: Q1
-TopicId: T1
-SkillId: S1
+Id: kin-mc-1
+TopicId: kinematics
+SkillId: kin-1d
 QuestionType: MultipleChoice
 Difficulty: 2
-TextTemplate: A car accelerates from {v0} m/s to {v} m/s in {t} s. What is the acceleration?
+TextTemplate: A car accelerates from {v0} m/s to {v} m/s in {t} s. What is the magnitude of its acceleration?
 AnswerExpression: (v - v0) / t
-SolutionTemplate: Use a = (v - v0) / t.
+SolutionTemplate: Use the definition of acceleration: a = (v - v0) / t = ({v} - {v0}) / {t} = {answer} m/s^2.
+SolutionLatexTemplate: a = \frac{{v} - {v0}}{{t}} = \frac{{{v} - {v0}}}{{{t}}} = {answer}\,\text{m/s}^2
 Var.v0: Type=double;Min=0;Max=20;Step=1
 Var.v: Type=double;Min=20;Max=40;Step=1
 Var.t: Type=double;Min=1;Max=10;Step=0.5
 Distractor: (v + v0) / t
 Distractor: v / t
+Distractor: (v - v0) * t
 
 [TEMPLATE]
-Id: Q2
-TopicId: T1
-SkillId: S2
+Id: kin-sa-1
+TopicId: kinematics
+SkillId: kin-1d
+QuestionType: ShortAnswer
+Difficulty: 3
+TextTemplate: A car starts from rest and accelerates at {a} m/s^2 for {t} s. How far does it travel?
+AnswerExpression: 0.5 * a * t * t
+SolutionTemplate: Use s = (1/2) a t^2 = 0.5 * {a} * {t}^2 = {answer} m.
+SolutionLatexTemplate: s = \frac{1}{2} a t^2 = \frac{1}{2} \cdot {a} \cdot {t}^2 = {answer}\,\text{m}
+Var.a: Type=double;Min=1;Max=8;Step=0.5
+Var.t: Type=double;Min=2;Max=12;Step=1
+
+[TEMPLATE]
+Id: kin-mc-2
+TopicId: kinematics
+SkillId: kin-1d
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A train traveling at {v0} m/s decelerates uniformly at {a} m/s^2. How far does it travel before stopping?
+AnswerExpression: v0 * v0 / (2 * a)
+SolutionTemplate: Use v^2 = v0^2 - 2 a s with v = 0: s = v0^2 / (2 a) = {v0}^2 / (2 * {a}) = {answer} m.
+SolutionLatexTemplate: v^2 = v_0^2 - 2 a s \Rightarrow s = \frac{v_0^2}{2 a} = \frac{{{v0}}^2}{{2 \cdot {a}}} = {answer}\,\text{m}
+Var.v0: Type=double;Min=10;Max=30;Step=2
+Var.a: Type=double;Min=0.5;Max=3;Step=0.5
+Distractor: v0 * v0 / a
+Distractor: v0 / (2 * a)
+Distractor: v0 * a / 2
+
+[TEMPLATE]
+Id: kin-ne-1
+TopicId: kinematics
+SkillId: kin-1d
+QuestionType: NumericEntry
+Difficulty: 5
+TextTemplate: An object moves with constant velocity of {v} m/s for {t} s. What is its displacement in meters?
+AnswerExpression: v * t
+SolutionTemplate: Use s = v t = {v} * {t} = {answer} m.
+SolutionLatexTemplate: s = v t = {v} \cdot {t} = {answer}\,\text{m}
+Var.v: Type=double;Min=2;Max=20;Step=1
+Var.t: Type=double;Min=3;Max=15;Step=1
+
+[TEMPLATE]
+Id: kin-tf-1
+TopicId: kinematics
+SkillId: kin-1d
+QuestionType: TrueFalse
+Difficulty: 2
+TextTemplate: An object has constant velocity of {v} m/s for {t} s. Its acceleration is zero. (True = 1, False = 0)
+AnswerExpression: 1
+SolutionTemplate: Constant velocity means zero acceleration, so the answer is True.
+SolutionLatexTemplate: \text{Constant velocity} \Rightarrow a = 0 \Rightarrow \text{True}
+Var.v: Type=double;Min=1;Max=20;Step=1
+Var.t: Type=double;Min=1;Max=10;Step=1
+
+[TEMPLATE]
+Id: kin-fb-1
+TopicId: kinematics
+SkillId: kin-1d
+QuestionType: FillInBlank
+Difficulty: 4
+TextTemplate: A runner reaches a speed of {v} m/s in {t} s starting from rest. The runner's average acceleration is ___ m/s^2.
+AnswerExpression: v / t
+SolutionTemplate: Use a = (v - 0) / t = {v} / {t} = {answer} m/s^2.
+SolutionLatexTemplate: a = \frac{\Delta v}{\Delta t} = \frac{{v} - 0}{{t}} = \frac{{{v}}}{{{t}}} = {answer}\,\text{m/s}^2
+Var.v: Type=double;Min=4;Max=12;Step=0.5
+Var.t: Type=double;Min=2;Max=8;Step=0.5
+
+[TEMPLATE]
+Id: kin-sa-2
+TopicId: kinematics
+SkillId: kin-freefall
 QuestionType: ShortAnswer
 Difficulty: 1
 TextTemplate: A ball is dropped from rest. How far does it fall in {t} seconds? (Use g = 9.81 m/s^2)
 AnswerExpression: 0.5 * 9.81 * t * t
-SolutionTemplate: Use s = (1/2)gt^2 = 0.5 * 9.81 * {t}^2 = {answer} m.
+SolutionTemplate: Use s = (1/2) g t^2 = 0.5 * 9.81 * {t}^2 = {answer} m.
+SolutionLatexTemplate: s = \frac{1}{2} g t^2 = \frac{1}{2} \cdot 9.81 \cdot {t}^2 = {answer}\,\text{m}
 Var.t: Type=double;Min=1;Max=5;Step=0.5
 
 [TEMPLATE]
-Id: Q3
-TopicId: T1
-SkillId: S3
+Id: kin-mc-3
+TopicId: kinematics
+SkillId: kin-freefall
 QuestionType: MultipleChoice
 Difficulty: 3
+TextTemplate: A ball is thrown straight up with an initial speed of {v} m/s. How high does it rise? (Use g = 9.81 m/s^2, ignore air resistance)
+AnswerExpression: v * v / (2 * 9.81)
+SolutionTemplate: Use v^2 = v0^2 - 2 g h with v = 0: h = v0^2 / (2 g) = {v}^2 / (2 * 9.81) = {answer} m.
+SolutionLatexTemplate: v^2 = v_0^2 - 2 g h \Rightarrow h = \frac{v_0^2}{2 g} = \frac{{{v}}^2}{{2 \cdot 9.81}} = {answer}\,\text{m}
+Var.v: Type=double;Min=5;Max=25;Step=1
+Distractor: v * v / 9.81
+Distractor: v / 9.81
+Distractor: 2 * v / 9.81
+
+[TEMPLATE]
+Id: kin-sa-3
+TopicId: kinematics
+SkillId: kin-freefall
+QuestionType: ShortAnswer
+Difficulty: 4
+TextTemplate: A stone is thrown straight down from a cliff with an initial speed of {v0} m/s. It hits the ground after {t} s. How high is the cliff? (Use g = 9.81 m/s^2)
+AnswerExpression: v0 * t + 0.5 * 9.81 * t * t
+SolutionTemplate: Use s = v0 t + (1/2) g t^2 = {v0} * {t} + 0.5 * 9.81 * {t}^2 = {answer} m.
+SolutionLatexTemplate: s = v_0 t + \frac{1}{2} g t^2 = {v0} \cdot {t} + \frac{1}{2} \cdot 9.81 \cdot {t}^2 = {answer}\,\text{m}
+Var.v0: Type=double;Min=2;Max=15;Step=1
+Var.t: Type=double;Min=1;Max=4;Step=0.5
+
+[TEMPLATE]
+Id: kin-mc-4
+TopicId: kinematics
+SkillId: kin-projectile
+QuestionType: MultipleChoice
+Difficulty: 4
 TextTemplate: A ball is thrown horizontally from a height of {h} m with a speed of {v} m/s. How long does it take to hit the ground? (Use g = 9.81 m/s^2)
 AnswerExpression: sqrt(2 * h / 9.81)
-SolutionTemplate: Use t = sqrt(2h/g) = sqrt(2 * {h} / 9.81) = {answer} s.
+SolutionTemplate: Use t = sqrt(2 h / g) = sqrt(2 * {h} / 9.81) = {answer} s.
+SolutionLatexTemplate: t = \sqrt{\frac{2 h}{g}} = \sqrt{\frac{{2 \cdot {h}}}{{9.81}}} = {answer}\,\text{s}
 Var.h: Type=double;Min=5;Max=50;Step=5
 Var.v: Type=double;Min=5;Max=25;Step=5
 Distractor: h / v
@@ -129,14 +484,57 @@ Distractor: sqrt(h / 9.81)
 Distractor: sqrt(2 * h) / v
 
 [TEMPLATE]
-Id: Q4
-TopicId: T2
-SkillId: S4
+Id: kin-sa-4
+TopicId: kinematics
+SkillId: kin-projectile
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A projectile is launched at {theta} degrees above the horizontal with an initial speed of {v} m/s. What is the maximum height reached? (Use g = 9.81 m/s^2)
+AnswerExpression: v * v * pow(sin(theta), 2) / (2 * 9.81)
+SolutionTemplate: Use H = v0^2 sin^2(theta) / (2 g) = {v}^2 * sin^2({theta}) / (2 * 9.81) = {answer} m.
+SolutionLatexTemplate: H = \frac{v_0^2 \sin^2\theta}{2 g} = \frac{{{v}}^2 \sin^2({theta})}{{2 \cdot 9.81}} = {answer}\,\text{m}
+Var.theta: Type=double;Min=20;Max=80;Step=5
+Var.v: Type=double;Min=10;Max=30;Step=2
+
+[TEMPLATE]
+Id: kin-mc-5
+TopicId: kinematics
+SkillId: kin-projectile
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A projectile is launched at {theta} degrees above the horizontal with an initial speed of {v} m/s. What is its horizontal range? (Use g = 9.81 m/s^2)
+AnswerExpression: v * v * sin(2 * theta) / 9.81
+SolutionTemplate: Use R = v0^2 sin(2 theta) / g = {v}^2 * sin(2 * {theta}) / 9.81 = {answer} m.
+SolutionLatexTemplate: R = \frac{v_0^2 \sin(2\theta)}{g} = \frac{{{v}}^2 \sin(2 \cdot {theta})}{{9.81}} = {answer}\,\text{m}
+Var.theta: Type=double;Min=15;Max=75;Step=5
+Var.v: Type=double;Min=10;Max=30;Step=2
+Distractor: v * v * sin(theta) / 9.81
+Distractor: v * v / 9.81
+Distractor: v * v * cos(2 * theta) / 9.81
+
+[TEMPLATE]
+Id: kin-fb-2
+TopicId: kinematics
+SkillId: kin-projectile
+QuestionType: FillInBlank
+Difficulty: 5
+TextTemplate: A projectile is launched at {theta} degrees with speed {v} m/s. The time of flight is ___ seconds. (Use g = 9.81 m/s^2)
+AnswerExpression: 2 * v * sin(theta) / 9.81
+SolutionTemplate: Use T = 2 v0 sin(theta) / g = 2 * {v} * sin({theta}) / 9.81 = {answer} s.
+SolutionLatexTemplate: T = \frac{2 v_0 \sin\theta}{g} = \frac{{2 \cdot {v} \cdot \sin({theta})}}{{9.81}} = {answer}\,\text{s}
+Var.theta: Type=double;Min=20;Max=70;Step=5
+Var.v: Type=double;Min=10;Max=30;Step=2
+
+[TEMPLATE]
+Id: dyn-mc-1
+TopicId: dynamics
+SkillId: dyn-newton
 QuestionType: MultipleChoice
 Difficulty: 3
-TextTemplate: A {m} kg object experiences a net force of {F} N. What is its acceleration?
+TextTemplate: A {m} kg object experiences a net horizontal force of {F} N. What is its acceleration?
 AnswerExpression: F / m
-SolutionTemplate: Use a = F/m = {F}/{m} = {answer} m/s^2.
+SolutionTemplate: Use Newton's second law: a = F / m = {F} / {m} = {answer} m/s^2.
+SolutionLatexTemplate: a = \frac{F}{m} = \frac{{{F}}}{{{m}}} = {answer}\,\text{m/s}^2
 Var.m: Type=double;Min=1;Max=20;Step=1
 Var.F: Type=double;Min=5;Max=100;Step=5
 Distractor: F * m
@@ -144,54 +542,368 @@ Distractor: m / F
 Distractor: F + m
 
 [TEMPLATE]
-Id: Q5
-TopicId: T2
-SkillId: S5
+Id: dyn-sa-1
+TopicId: dynamics
+SkillId: dyn-newton
+QuestionType: ShortAnswer
+Difficulty: 4
+TextTemplate: A {m} kg object is pushed with a force of {F} N against a friction force of {f} N. What is the net acceleration?
+AnswerExpression: (F - f) / m
+SolutionTemplate: Use a = (F - f) / m = ({F} - {f}) / {m} = {answer} m/s^2.
+SolutionLatexTemplate: a = \frac{{F - f}}{{m}} = \frac{{{F} - {f}}}{{{m}}} = {answer}\,\text{m/s}^2
+Var.m: Type=double;Min=2;Max=15;Step=1
+Var.F: Type=double;Min=20;Max=80;Step=5
+Var.f: Type=double;Min=2;Max=20;Step=1
+
+[TEMPLATE]
+Id: dyn-mc-2
+TopicId: dynamics
+SkillId: dyn-newton
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: An elevator of mass {m} kg accelerates upward at {a} m/s^2. What is the tension in the cable? (Use g = 9.81 m/s^2)
+AnswerExpression: m * (a + 9.81)
+SolutionTemplate: Use T - mg = ma, so T = m (a + g) = {m} * ({a} + 9.81) = {answer} N.
+SolutionLatexTemplate: T - mg = ma \Rightarrow T = m(a + g) = {m}({a} + 9.81) = {answer}\,\text{N}
+Var.m: Type=double;Min=500;Max=2000;Step=100
+Var.a: Type=double;Min=0.5;Max=3;Step=0.5
+Distractor: m * a
+Distractor: m * 9.81
+Distractor: m * (9.81 - a)
+
+[TEMPLATE]
+Id: dyn-ne-1
+TopicId: dynamics
+SkillId: dyn-newton
+QuestionType: NumericEntry
+Difficulty: 3
+TextTemplate: A {m} kg object has weight ___ newtons. (Use g = 9.81 m/s^2)
+AnswerExpression: m * 9.81
+SolutionTemplate: Use W = m g = {m} * 9.81 = {answer} N.
+SolutionLatexTemplate: W = mg = {m} \cdot 9.81 = {answer}\,\text{N}
+Var.m: Type=double;Min=1;Max=50;Step=1
+
+[TEMPLATE]
+Id: dyn-tf-1
+TopicId: dynamics
+SkillId: dyn-newton
+QuestionType: TrueFalse
+Difficulty: 2
+TextTemplate: According to Newton's third law, if object A exerts a force on object B, then object B exerts an equal and opposite force on object A.
+AnswerExpression: 1
+SolutionTemplate: Newton's third law states that forces come in equal and opposite pairs.
+SolutionLatexTemplate: \vec{F}_{AB} = -\vec{F}_{BA} \Rightarrow \text{True}
+
+[TEMPLATE]
+Id: dyn-sa-2
+TopicId: dynamics
+SkillId: dyn-friction
 QuestionType: ShortAnswer
 Difficulty: 5
 TextTemplate: A {m} kg block is pushed across a surface with coefficient of kinetic friction {mu}. What is the force of kinetic friction? (Use g = 9.81 m/s^2)
 AnswerExpression: mu * m * 9.81
-SolutionTemplate: Use f_k = mu * m * g = {mu} * {m} * 9.81 = {answer} N.
+SolutionTemplate: Use f_k = mu_k N = mu_k m g = {mu} * {m} * 9.81 = {answer} N.
+SolutionLatexTemplate: f_k = \mu_k N = \mu_k m g = {mu} \cdot {m} \cdot 9.81 = {answer}\,\text{N}
 Var.m: Type=double;Min=2;Max=30;Step=1
 Var.mu: Type=double;Min=0.1;Max=0.6;Step=0.1
 
 [TEMPLATE]
-Id: Q6
-TopicId: T2
-SkillId: S6
+Id: dyn-mc-3
+TopicId: dynamics
+SkillId: dyn-friction
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A {m} kg block rests on a surface with coefficient of static friction {mu}. What is the maximum horizontal force that can be applied before the block starts to move? (Use g = 9.81 m/s^2)
+AnswerExpression: mu * m * 9.81
+SolutionTemplate: Use f_s,max = mu_s N = mu_s m g = {mu} * {m} * 9.81 = {answer} N.
+SolutionLatexTemplate: f_{s,\text{max}} = \mu_s N = \mu_s m g = {mu} \cdot {m} \cdot 9.81 = {answer}\,\text{N}
+Var.m: Type=double;Min=2;Max=20;Step=1
+Var.mu: Type=double;Min=0.2;Max=0.7;Step=0.1
+Distractor: m * 9.81
+Distractor: mu * m
+Distractor: mu * 9.81
+
+[TEMPLATE]
+Id: dyn-sa-3
+TopicId: dynamics
+SkillId: dyn-friction
+QuestionType: ShortAnswer
+Difficulty: 7
+TextTemplate: A {m} kg block is given an initial speed of {v0} m/s on a surface with coefficient of kinetic friction {mu}. How far does it slide before stopping? (Use g = 9.81 m/s^2)
+AnswerExpression: v0 * v0 / (2 * mu * 9.81)
+SolutionTemplate: Use v^2 = v0^2 - 2 mu g s with v = 0: s = v0^2 / (2 mu g) = {v0}^2 / (2 * {mu} * 9.81) = {answer} m.
+SolutionLatexTemplate: v^2 = v_0^2 - 2 \mu g s \Rightarrow s = \frac{v_0^2}{2 \mu g} = \frac{{{v0}}^2}{{2 \cdot {mu} \cdot 9.81}} = {answer}\,\text{m}
+Var.m: Type=double;Min=1;Max=10;Step=1
+Var.v0: Type=double;Min=2;Max=10;Step=1
+Var.mu: Type=double;Min=0.1;Max=0.4;Step=0.1
+
+[TEMPLATE]
+Id: dyn-mc-4
+TopicId: dynamics
+SkillId: dyn-incline
 QuestionType: MultipleChoice
 Difficulty: 7
-TextTemplate: A {m} kg block slides down an incline at angle {theta} degrees. If the coefficient of kinetic friction is {mu}, what is the acceleration down the incline? (Use g = 9.81 m/s^2)
-AnswerExpression: 9.81 * (sin(theta * 3.14159 / 180) - mu * cos(theta * 3.14159 / 180))
-SolutionTemplate: Use a = g(sin theta - mu cos theta) = 9.81(sin({theta}) - {mu}cos({theta})) = {answer} m/s^2.
+TextTemplate: A block slides down a frictionless incline at angle {theta} degrees. What is its acceleration down the incline? (Use g = 9.81 m/s^2)
+AnswerExpression: 9.81 * sin(theta)
+SolutionTemplate: Use a = g sin(theta) = 9.81 * sin({theta}) = {answer} m/s^2.
+SolutionLatexTemplate: a = g \sin\theta = 9.81 \cdot \sin({theta}) = {answer}\,\text{m/s}^2
+Var.theta: Type=double;Min=15;Max=60;Step=5
+Distractor: 9.81 * cos(theta)
+Distractor: 9.81 * tan(theta)
+Distractor: 9.81
+
+[TEMPLATE]
+Id: dyn-mc-5
+TopicId: dynamics
+SkillId: dyn-incline
+QuestionType: MultipleChoice
+Difficulty: 8
+TextTemplate: A {m} kg block slides down an incline at angle {theta} degrees with coefficient of kinetic friction {mu}. What is its acceleration? (Use g = 9.81 m/s^2)
+AnswerExpression: 9.81 * (sin(theta) - mu * cos(theta))
+SolutionTemplate: Use a = g (sin theta - mu cos theta) = 9.81 * (sin({theta}) - {mu} * cos({theta})) = {answer} m/s^2.
+SolutionLatexTemplate: a = g(\sin\theta - \mu \cos\theta) = 9.81 \cdot (\sin({theta}) - {mu} \cdot \cos({theta})) = {answer}\,\text{m/s}^2
 Var.m: Type=double;Min=1;Max=10;Step=1
 Var.theta: Type=double;Min=20;Max=60;Step=5
 Var.mu: Type=double;Min=0.1;Max=0.4;Step=0.1
-Distractor: 9.81 * cos(theta * 3.14159 / 180)
-Distractor: 9.81 * sin(theta * 3.14159 / 180)
+Distractor: 9.81 * cos(theta)
+Distractor: 9.81 * sin(theta)
 Distractor: 9.81 * mu
 
 [TEMPLATE]
-Id: Q7
-TopicId: T3
-SkillId: S7
+Id: dyn-sa-4
+TopicId: dynamics
+SkillId: dyn-incline
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A {m} kg block rests on a frictionless incline at angle {theta} degrees. What is the magnitude of the normal force? (Use g = 9.81 m/s^2)
+AnswerExpression: m * 9.81 * cos(theta)
+SolutionTemplate: Use N = m g cos(theta) = {m} * 9.81 * cos({theta}) = {answer} N.
+SolutionLatexTemplate: N = mg \cos\theta = {m} \cdot 9.81 \cdot \cos({theta}) = {answer}\,\text{N}
+Var.m: Type=double;Min=2;Max=15;Step=1
+Var.theta: Type=double;Min=15;Max=60;Step=5
+
+[TEMPLATE]
+Id: cm-mc-1
+TopicId: circular-motion
+SkillId: cm-ucm
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A {m} kg object moves in a circle of radius {r} m at a constant speed of {v} m/s. What is the centripetal acceleration?
+AnswerExpression: v * v / r
+SolutionTemplate: Use a_c = v^2 / r = {v}^2 / {r} = {answer} m/s^2.
+SolutionLatexTemplate: a_c = \frac{v^2}{r} = \frac{{{v}}^2}{{{r}}} = {answer}\,\text{m/s}^2
+Var.m: Type=double;Min=1;Max=10;Step=1
+Var.r: Type=double;Min=2;Max=20;Step=1
+Var.v: Type=double;Min=3;Max=15;Step=1
+Distractor: v * r
+Distractor: v / r
+Distractor: v * v * r
+
+[TEMPLATE]
+Id: cm-sa-1
+TopicId: circular-motion
+SkillId: cm-ucm
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A {m} kg object moves in a circle of radius {r} m at a constant speed of {v} m/s. What is the magnitude of the centripetal force?
+AnswerExpression: m * v * v / r
+SolutionTemplate: Use F_c = m v^2 / r = {m} * {v}^2 / {r} = {answer} N.
+SolutionLatexTemplate: F_c = \frac{m v^2}{r} = \frac{{{m} \cdot {v}^2}}{{{r}}} = {answer}\,\text{N}
+Var.m: Type=double;Min=1;Max=10;Step=1
+Var.r: Type=double;Min=2;Max=20;Step=1
+Var.v: Type=double;Min=3;Max=15;Step=1
+
+[TEMPLATE]
+Id: cm-mc-2
+TopicId: circular-motion
+SkillId: cm-ucm
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: An object moves in a circle of radius {r} m at a constant speed of {v} m/s. What is the period of the motion?
+AnswerExpression: 2 * 3.14159265 * r / v
+SolutionTemplate: Use T = 2 pi r / v = 2 pi * {r} / {v} = {answer} s.
+SolutionLatexTemplate: T = \frac{2 \pi r}{v} = \frac{{2 \pi \cdot {r}}}{{{v}}} = {answer}\,\text{s}
+Var.r: Type=double;Min=2;Max=20;Step=1
+Var.v: Type=double;Min=3;Max=15;Step=1
+Distractor: 2 * 3.14159265 * v / r
+Distractor: r / v
+Distractor: 2 * 3.14159265 * r * v
+
+[TEMPLATE]
+Id: cm-sa-2
+TopicId: circular-motion
+SkillId: cm-banked
+QuestionType: ShortAnswer
+Difficulty: 6
+TextTemplate: A car rounds a banked curve of radius {r} m at speed {v} m/s with no friction. What is the required banking angle in degrees?
+AnswerExpression: atan(v * v / (r * 9.81))
+SolutionTemplate: Use tan(theta) = v^2 / (r g), so theta = atan(v^2 / (r g)) = atan({v}^2 / ({r} * 9.81)) = {answer} degrees.
+SolutionLatexTemplate: \tan\theta = \frac{v^2}{r g} \Rightarrow \theta = \arctan\left(\frac{{{v}}^2}{{{r} \cdot 9.81}}\right) = {answer}^{\circ}
+Var.r: Type=double;Min=30;Max=120;Step=10
+Var.v: Type=double;Min=10;Max=30;Step=2
+
+[TEMPLATE]
+Id: cm-mc-3
+TopicId: circular-motion
+SkillId: cm-banked
+QuestionType: MultipleChoice
+Difficulty: 7
+TextTemplate: A {m} kg car rounds a frictionless banked curve of radius {r} m at speed {v} m/s. What is the magnitude of the normal force? (Use g = 9.81 m/s^2)
+AnswerExpression: m * 9.81 / cos(atan(v * v / (r * 9.81)))
+SolutionTemplate: Use N = mg / cos(theta) where tan(theta) = v^2/(rg): N = {m} * 9.81 / cos(theta) = {answer} N.
+SolutionLatexTemplate: N = \frac{mg}{\cos\theta} = \frac{{{m} \cdot 9.81}}{{\cos\theta}} = {answer}\,\text{N}
+Var.m: Type=double;Min=800;Max=2000;Step=100
+Var.r: Type=double;Min=30;Max=120;Step=10
+Var.v: Type=double;Min=10;Max=25;Step=2
+Distractor: m * 9.81
+Distractor: m * v * v / r
+Distractor: m * 9.81 * cos(atan(v * v / (r * 9.81)))
+
+[TEMPLATE]
+Id: grav-mc-1
+TopicId: gravitation
+SkillId: grav-law
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: Two point masses, {m1} kg and {m2} kg, are separated by {r} m. What is the magnitude of the gravitational force between them? (Use G = 6.674e-11 N*m^2/kg^2)
+AnswerExpression: 6.674e-11 * m1 * m2 / (r * r)
+SolutionTemplate: Use F = G m1 m2 / r^2 = 6.674e-11 * {m1} * {m2} / {r}^2 = {answer} N.
+SolutionLatexTemplate: F = \frac{G m_1 m_2}{r^2} = \frac{{6.674 \times 10^{-11} \cdot {m1} \cdot {m2}}}{{{r}^2}} = {answer}\,\text{N}
+Var.m1: Type=double;Min=100;Max=1000;Step=50
+Var.m2: Type=double;Min=100;Max=1000;Step=50
+Var.r: Type=double;Min=1;Max=10;Step=1
+Distractor: 6.674e-11 * m1 * m2 / r
+Distractor: 6.674e-11 * (m1 + m2) / (r * r)
+Distractor: 6.674e-11 * m1 * m2 * r
+
+[TEMPLATE]
+Id: grav-sa-1
+TopicId: gravitation
+SkillId: grav-law
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A planet has mass {M} kg and radius {R} m. What is the gravitational acceleration at its surface? (Use G = 6.674e-11 N*m^2/kg^2)
+AnswerExpression: 6.674e-11 * M / (R * R)
+SolutionTemplate: Use g = G M / R^2 = 6.674e-11 * {M} / {R}^2 = {answer} m/s^2.
+SolutionLatexTemplate: g = \frac{G M}{R^2} = \frac{{6.674 \times 10^{-11} \cdot {M}}}{{{R}^2}} = {answer}\,\text{m/s}^2
+Var.M: Type=double;Min=1e23;Max=1e25;Step=1e23
+Var.R: Type=double;Min=2e6;Max=1e7;Step=1e6
+
+[TEMPLATE]
+Id: grav-mc-2
+TopicId: gravitation
+SkillId: grav-orbit
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A satellite orbits a planet of mass {M} kg in a circular orbit of radius {r} m. What is the orbital speed? (Use G = 6.674e-11 N*m^2/kg^2)
+AnswerExpression: sqrt(6.674e-11 * M / r)
+SolutionTemplate: Use v = sqrt(G M / r) = sqrt(6.674e-11 * {M} / {r}) = {answer} m/s.
+SolutionLatexTemplate: v = \sqrt{\frac{G M}{r}} = \sqrt{\frac{{6.674 \times 10^{-11} \cdot {M}}}{{{r}}}} = {answer}\,\text{m/s}
+Var.M: Type=double;Min=1e23;Max=1e25;Step=1e23
+Var.r: Type=double;Min=5e6;Max=5e7;Step=5e6
+Distractor: sqrt(6.674e-11 * M * r)
+Distractor: 6.674e-11 * M / r
+Distractor: sqrt(6.674e-11 * M) / r
+
+[TEMPLATE]
+Id: grav-sa-2
+TopicId: gravitation
+SkillId: grav-orbit
+QuestionType: ShortAnswer
+Difficulty: 7
+TextTemplate: A satellite orbits a planet of mass {M} kg in a circular orbit of radius {r} m. What is the orbital period in seconds? (Use G = 6.674e-11 N*m^2/kg^2)
+AnswerExpression: 2 * 3.14159265 * sqrt(r * r * r / (6.674e-11 * M))
+SolutionTemplate: Use T = 2 pi sqrt(r^3 / (G M)) = 2 pi * sqrt({r}^3 / (6.674e-11 * {M})) = {answer} s.
+SolutionLatexTemplate: T = 2 \pi \sqrt{\frac{r^3}{G M}} = 2 \pi \sqrt{\frac{{{r}^3}}{{6.674 \times 10^{-11} \cdot {M}}}} = {answer}\,\text{s}
+Var.M: Type=double;Min=1e23;Max=1e25;Step=1e23
+Var.r: Type=double;Min=5e6;Max=5e7;Step=5e6
+
+[TEMPLATE]
+Id: grav-mc-3
+TopicId: gravitation
+SkillId: grav-orbit
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A {m} kg satellite orbits a planet at radius {r} m where the gravitational acceleration is {g} m/s^2. What is the satellite's orbital speed?
+AnswerExpression: sqrt(g * r)
+SolutionTemplate: Use v = sqrt(g r) = sqrt({g} * {r}) = {answer} m/s.
+SolutionLatexTemplate: v = \sqrt{g r} = \sqrt{{{g} \cdot {r}}} = {answer}\,\text{m/s}
+Var.m: Type=double;Min=100;Max=2000;Step=100
+Var.r: Type=double;Min=1e6;Max=1e7;Step=1e6
+Var.g: Type=double;Min=1;Max=10;Step=0.5
+Distractor: g * r
+Distractor: sqrt(g / r)
+Distractor: sqrt(r / g)
+
+[TEMPLATE]
+Id: en-mc-1
+TopicId: energy
+SkillId: en-work
+QuestionType: MultipleChoice
+Difficulty: 3
+TextTemplate: A force of {F} N is applied at an angle of {theta} degrees to the horizontal, displacing an object {d} m horizontally. How much work is done by the force?
+AnswerExpression: F * d * cos(theta)
+SolutionTemplate: Use W = F d cos(theta) = {F} * {d} * cos({theta}) = {answer} J.
+SolutionLatexTemplate: W = F d \cos\theta = {F} \cdot {d} \cdot \cos({theta}) = {answer}\,\text{J}
+Var.F: Type=double;Min=10;Max=100;Step=5
+Var.d: Type=double;Min=2;Max=15;Step=1
+Var.theta: Type=double;Min=0;Max=60;Step=5
+Distractor: F * d * sin(theta)
+Distractor: F * d
+Distractor: F * d / cos(theta)
+
+[TEMPLATE]
+Id: en-sa-1
+TopicId: energy
+SkillId: en-ke
 QuestionType: ShortAnswer
 Difficulty: 3
 TextTemplate: A {m} kg object moves at {v} m/s. What is its kinetic energy?
 AnswerExpression: 0.5 * m * v * v
-SolutionTemplate: Use KE = (1/2)mv^2 = 0.5 * {m} * {v}^2 = {answer} J.
+SolutionTemplate: Use KE = (1/2) m v^2 = 0.5 * {m} * {v}^2 = {answer} J.
+SolutionLatexTemplate: KE = \frac{1}{2} m v^2 = \frac{1}{2} \cdot {m} \cdot {v}^2 = {answer}\,\text{J}
 Var.m: Type=double;Min=1;Max=20;Step=1
 Var.v: Type=double;Min=2;Max=15;Step=1
 
 [TEMPLATE]
-Id: Q8
-TopicId: T3
-SkillId: S8
+Id: en-mc-2
+TopicId: energy
+SkillId: en-pe
+QuestionType: MultipleChoice
+Difficulty: 2
+TextTemplate: A {m} kg object is lifted to a height of {h} m. What is its gravitational potential energy? (Use g = 9.81 m/s^2)
+AnswerExpression: m * 9.81 * h
+SolutionTemplate: Use PE = m g h = {m} * 9.81 * {h} = {answer} J.
+SolutionLatexTemplate: PE = m g h = {m} \cdot 9.81 \cdot {h} = {answer}\,\text{J}
+Var.m: Type=double;Min=1;Max=20;Step=1
+Var.h: Type=double;Min=2;Max=30;Step=1
+Distractor: m * h
+Distractor: m * 9.81
+Distractor: 9.81 * h
+
+[TEMPLATE]
+Id: en-sa-2
+TopicId: energy
+SkillId: en-pe
+QuestionType: ShortAnswer
+Difficulty: 4
+TextTemplate: A spring with spring constant {k} N/m is compressed by {x} m from equilibrium. What is the elastic potential energy stored in the spring?
+AnswerExpression: 0.5 * k * x * x
+SolutionTemplate: Use PE = (1/2) k x^2 = 0.5 * {k} * {x}^2 = {answer} J.
+SolutionLatexTemplate: PE = \frac{1}{2} k x^2 = \frac{1}{2} \cdot {k} \cdot {x}^2 = {answer}\,\text{J}
+Var.k: Type=double;Min=50;Max=500;Step=50
+Var.x: Type=double;Min=0.1;Max=0.5;Step=0.1
+
+[TEMPLATE]
+Id: en-mc-3
+TopicId: energy
+SkillId: en-conservation
 QuestionType: MultipleChoice
 Difficulty: 5
 TextTemplate: A {m} kg ball is dropped from a height of {h} m. What is its speed just before hitting the ground? (Use g = 9.81 m/s^2, ignore air resistance)
 AnswerExpression: sqrt(2 * 9.81 * h)
-SolutionTemplate: Use v = sqrt(2gh) = sqrt(2 * 9.81 * {h}) = {answer} m/s.
+SolutionTemplate: Use conservation of energy: (1/2) m v^2 = m g h, so v = sqrt(2 g h) = sqrt(2 * 9.81 * {h}) = {answer} m/s.
+SolutionLatexTemplate: \frac{1}{2} m v^2 = m g h \Rightarrow v = \sqrt{2 g h} = \sqrt{{2 \cdot 9.81 \cdot {h}}} = {answer}\,\text{m/s}
 Var.m: Type=double;Min=1;Max=10;Step=1
 Var.h: Type=double;Min=2;Max=30;Step=2
 Distractor: sqrt(9.81 * h)
@@ -199,27 +911,135 @@ Distractor: sqrt(2 * 9.81 * h / m)
 Distractor: 2 * 9.81 * h
 
 [TEMPLATE]
-Id: Q9
-TopicId: T4
-SkillId: S9
+Id: en-sa-3
+TopicId: energy
+SkillId: en-conservation
+QuestionType: ShortAnswer
+Difficulty: 7
+TextTemplate: A {m} kg pendulum bob is released from a height of {h} m above the lowest point. What is the tension in the string at the lowest point if the string length is {L} m? (Use g = 9.81 m/s^2)
+AnswerExpression: m * 9.81 + 2 * m * 9.81 * h / L
+SolutionTemplate: Use T = mg + mv^2/L where v^2 = 2gh: T = mg + 2mgh/L = {m}*9.81 + 2*{m}*9.81*{h}/{L} = {answer} N.
+SolutionLatexTemplate: T = mg + \frac{m v^2}{L} = mg + \frac{2 m g h}{L} = {m} \cdot 9.81 + \frac{{2 \cdot {m} \cdot 9.81 \cdot {h}}}{{{L}}} = {answer}\,\text{N}
+Var.m: Type=double;Min=0.5;Max=5;Step=0.5
+Var.h: Type=double;Min=0.2;Max=2;Step=0.2
+Var.L: Type=double;Min=1;Max=5;Step=0.5
+
+[TEMPLATE]
+Id: en-mc-4
+TopicId: energy
+SkillId: en-power
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A motor lifts a {m} kg load vertically at a constant speed of {v} m/s. What is the mechanical power output of the motor? (Use g = 9.81 m/s^2)
+AnswerExpression: m * 9.81 * v
+SolutionTemplate: Use P = F v = m g v = {m} * 9.81 * {v} = {answer} W.
+SolutionLatexTemplate: P = F v = m g v = {m} \cdot 9.81 \cdot {v} = {answer}\,\text{W}
+Var.m: Type=double;Min=10;Max=100;Step=5
+Var.v: Type=double;Min=0.5;Max=3;Step=0.5
+Distractor: m * v
+Distractor: m * 9.81
+Distractor: m * 9.81 / v
+
+[TEMPLATE]
+Id: en-sa-4
+TopicId: energy
+SkillId: en-power
 QuestionType: ShortAnswer
 Difficulty: 5
-TextTemplate: A {m} kg object moving at {v} m/s is brought to rest by a force in {t} s. What is the magnitude of the impulse?
+TextTemplate: A force of {F} N does {W} J of work on an object in {t} s. What is the average power delivered?
+AnswerExpression: W / t
+SolutionTemplate: Use P = W / t = {W} / {t} = {answer} W.
+SolutionLatexTemplate: P = \frac{W}{t} = \frac{{{W}}}{{{t}}} = {answer}\,\text{W}
+Var.F: Type=double;Min=10;Max=100;Step=5
+Var.W: Type=double;Min=50;Max=500;Step=10
+Var.t: Type=double;Min=2;Max=20;Step=1
+
+[TEMPLATE]
+Id: en-ne-1
+TopicId: energy
+SkillId: en-work
+QuestionType: NumericEntry
+Difficulty: 5
+TextTemplate: A {m} kg object initially at rest is accelerated to {v} m/s by a net force. The net work done on the object is ___ joules.
+AnswerExpression: 0.5 * m * v * v
+SolutionTemplate: Use the work-energy theorem: W = Delta KE = (1/2) m v^2 = 0.5 * {m} * {v}^2 = {answer} J.
+SolutionLatexTemplate: W = \Delta KE = \frac{1}{2} m v^2 = \frac{1}{2} \cdot {m} \cdot {v}^2 = {answer}\,\text{J}
+Var.m: Type=double;Min=1;Max=20;Step=1
+Var.v: Type=double;Min=2;Max=15;Step=1
+
+[TEMPLATE]
+Id: mom-mc-1
+TopicId: momentum
+SkillId: mom-impulse
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A {m} kg object moving at {v} m/s is brought to rest by a constant force in {t} s. What is the magnitude of the impulse applied?
 AnswerExpression: m * v
-SolutionTemplate: Use J = delta p = mv = {m} * {v} = {answer} N*s.
+SolutionTemplate: Use J = Delta p = m v = {m} * {v} = {answer} N*s.
+SolutionLatexTemplate: J = \Delta p = m v = {m} \cdot {v} = {answer}\,\text{N}\cdot\text{s}
 Var.m: Type=double;Min=1;Max=10;Step=1
 Var.v: Type=double;Min=2;Max=20;Step=1
 Var.t: Type=double;Min=0.5;Max=3;Step=0.5
+Distractor: m * v / t
+Distractor: m * v * t
+Distractor: m / v
 
 [TEMPLATE]
-Id: Q10
-TopicId: T4
-SkillId: S10
+Id: mom-sa-1
+TopicId: momentum
+SkillId: mom-impulse
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A {F} N force acts on a {m} kg object for {t} s. What is the change in the object's velocity?
+AnswerExpression: F * t / m
+SolutionTemplate: Use J = F t = Delta p = m Delta v, so Delta v = F t / m = {F} * {t} / {m} = {answer} m/s.
+SolutionLatexTemplate: J = F t = \Delta p = m \Delta v \Rightarrow \Delta v = \frac{F t}{m} = \frac{{{F} \cdot {t}}}{{{m}}} = {answer}\,\text{m/s}
+Var.F: Type=double;Min=5;Max=50;Step=5
+Var.m: Type=double;Min=1;Max=10;Step=1
+Var.t: Type=double;Min=1;Max=5;Step=0.5
+
+[TEMPLATE]
+Id: mom-mc-2
+TopicId: momentum
+SkillId: mom-conservation
 QuestionType: MultipleChoice
-Difficulty: 9
+Difficulty: 5
+TextTemplate: A {m1} kg object moving at {v1} m/s collides with and sticks to a stationary {m2} kg object. What is the final speed of the combined object?
+AnswerExpression: m1 * v1 / (m1 + m2)
+SolutionTemplate: Use m1 v1 = (m1 + m2) v_f, so v_f = m1 v1 / (m1 + m2) = {m1} * {v1} / ({m1} + {m2}) = {answer} m/s.
+SolutionLatexTemplate: m_1 v_1 = (m_1 + m_2) v_f \Rightarrow v_f = \frac{m_1 v_1}{m_1 + m_2} = \frac{{{m1} \cdot {v1}}}{{{m1} + {m2}}} = {answer}\,\text{m/s}
+Var.m1: Type=double;Min=2;Max=10;Step=1
+Var.m2: Type=double;Min=1;Max=8;Step=1
+Var.v1: Type=double;Min=2;Max=10;Step=1
+Distractor: m1 * v1 / m2
+Distractor: (m1 + m2) * v1 / m1
+Distractor: v1 / 2
+
+[TEMPLATE]
+Id: mom-sa-2
+TopicId: momentum
+SkillId: mom-conservation
+QuestionType: ShortAnswer
+Difficulty: 6
+TextTemplate: A {m1} kg object moving at {v1} m/s collides head-on with a {m2} kg object moving at {v2} m/s in the opposite direction. They stick together. What is the final velocity (take the first object's direction as positive)?
+AnswerExpression: (m1 * v1 - m2 * v2) / (m1 + m2)
+SolutionTemplate: Use m1 v1 - m2 v2 = (m1 + m2) v_f, so v_f = (m1 v1 - m2 v2) / (m1 + m2) = ({m1} * {v1} - {m2} * {v2}) / ({m1} + {m2}) = {answer} m/s.
+SolutionLatexTemplate: m_1 v_1 - m_2 v_2 = (m_1 + m_2) v_f \Rightarrow v_f = \frac{m_1 v_1 - m_2 v_2}{m_1 + m_2} = \frac{{{m1} \cdot {v1} - {m2} \cdot {v2}}}{{{m1} + {m2}}} = {answer}\,\text{m/s}
+Var.m1: Type=double;Min=2;Max=10;Step=1
+Var.m2: Type=double;Min=1;Max=8;Step=1
+Var.v1: Type=double;Min=3;Max=10;Step=1
+Var.v2: Type=double;Min=2;Max=8;Step=1
+
+[TEMPLATE]
+Id: mom-mc-3
+TopicId: momentum
+SkillId: mom-collisions
+QuestionType: MultipleChoice
+Difficulty: 7
 TextTemplate: A {m1} kg object moving at {v1} m/s collides elastically with a stationary {m2} kg object. What is the speed of the first object after the collision?
 AnswerExpression: (m1 - m2) * v1 / (m1 + m2)
-SolutionTemplate: Use v1' = (m1 - m2)v1/(m1 + m2) = ({m1} - {m2})*{v1}/({m1} + {m2}) = {answer} m/s.
+SolutionTemplate: Use v1' = (m1 - m2) v1 / (m1 + m2) = ({m1} - {m2}) * {v1} / ({m1} + {m2}) = {answer} m/s.
+SolutionLatexTemplate: v_1' = \frac{(m_1 - m_2) v_1}{m_1 + m_2} = \frac{{({m1} - {m2}) \cdot {v1}}}{{{m1} + {m2}}} = {answer}\,\text{m/s}
 Var.m1: Type=double;Min=3;Max=10;Step=1
 Var.m2: Type=double;Min=1;Max=8;Step=1
 Var.v1: Type=double;Min=2;Max=10;Step=1
@@ -228,26 +1048,807 @@ Distractor: (m1 + m2) * v1 / (m1 - m2)
 Distractor: v1 / 2
 
 [TEMPLATE]
-Id: Q11
-TopicId: T1
-SkillId: S1
+Id: mom-sa-3
+TopicId: momentum
+SkillId: mom-collisions
 QuestionType: ShortAnswer
-Difficulty: 7
-TextTemplate: A train traveling at {v0} m/s decelerates uniformly at {a} m/s^2. How far does it travel before stopping?
-AnswerExpression: v0 * v0 / (2 * a)
-SolutionTemplate: Use v^2 = v0^2 - 2as, with v = 0: s = v0^2/(2a) = {v0}^2/(2*{a}) = {answer} m.
-Var.v0: Type=double;Min=10;Max=30;Step=2
-Var.a: Type=double;Min=0.5;Max=3;Step=0.5
+Difficulty: 6
+TextTemplate: A {m1} kg object moving at {v1} m/s collides elastically with a stationary {m2} kg object. What is the speed of the second object after the collision?
+AnswerExpression: 2 * m1 * v1 / (m1 + m2)
+SolutionTemplate: Use v2' = 2 m1 v1 / (m1 + m2) = 2 * {m1} * {v1} / ({m1} + {m2}) = {answer} m/s.
+SolutionLatexTemplate: v_2' = \frac{2 m_1 v_1}{m_1 + m_2} = \frac{{2 \cdot {m1} \cdot {v1}}}{{{m1} + {m2}}} = {answer}\,\text{m/s}
+Var.m1: Type=double;Min=3;Max=10;Step=1
+Var.m2: Type=double;Min=1;Max=8;Step=1
+Var.v1: Type=double;Min=2;Max=10;Step=1
 
 [TEMPLATE]
-Id: Q12
-TopicId: T3
-SkillId: S8
+Id: mom-ne-1
+TopicId: momentum
+SkillId: mom-impulse
+QuestionType: NumericEntry
+Difficulty: 3
+TextTemplate: A {m} kg object moves at {v} m/s. Its momentum is ___ kg*m/s.
+AnswerExpression: m * v
+SolutionTemplate: Use p = m v = {m} * {v} = {answer} kg*m/s.
+SolutionLatexTemplate: p = m v = {m} \cdot {v} = {answer}\,\text{kg}\cdot\text{m/s}
+Var.m: Type=double;Min=1;Max=15;Step=1
+Var.v: Type=double;Min=2;Max=20;Step=1
+
+[TEMPLATE]
+Id: tq-mc-1
+TopicId: torque
+SkillId: tq-torque
+QuestionType: MultipleChoice
+Difficulty: 3
+TextTemplate: A force of {F} N is applied perpendicular to a wrench at a distance of {r} m from the bolt. What is the magnitude of the torque?
+AnswerExpression: r * F
+SolutionTemplate: Use tau = r F sin(90) = r F = {r} * {F} = {answer} N*m.
+SolutionLatexTemplate: \tau = r F \sin\theta = {r} \cdot {F} \cdot \sin(90^{\circ}) = {answer}\,\text{N}\cdot\text{m}
+Var.F: Type=double;Min=5;Max=50;Step=5
+Var.r: Type=double;Min=0.1;Max=0.5;Step=0.05
+Distractor: r / F
+Distractor: F / r
+Distractor: r * r * F
+
+[TEMPLATE]
+Id: tq-sa-1
+TopicId: torque
+SkillId: tq-torque
 QuestionType: ShortAnswer
-Difficulty: 9
-TextTemplate: A {m} kg pendulum bob is released from a height of {h} m above the lowest point. What is the tension in the string at the lowest point if the string length is {L} m? (Use g = 9.81 m/s^2)
-AnswerExpression: m * 9.81 + 2 * m * 9.81 * h / L
-SolutionTemplate: Use T = mg + mv^2/L, where v^2 = 2gh, so T = mg + 2mgh/L = {m}*9.81 + 2*{m}*9.81*{h}/{L} = {answer} N.
+Difficulty: 5
+TextTemplate: A force of {F} N is applied at an angle of {theta} degrees to a lever arm of length {r} m. What is the magnitude of the torque?
+AnswerExpression: r * F * sin(theta)
+SolutionTemplate: Use tau = r F sin(theta) = {r} * {F} * sin({theta}) = {answer} N*m.
+SolutionLatexTemplate: \tau = r F \sin\theta = {r} \cdot {F} \cdot \sin({theta}) = {answer}\,\text{N}\cdot\text{m}
+Var.F: Type=double;Min=5;Max=50;Step=5
+Var.r: Type=double;Min=0.2;Max=1.5;Step=0.1
+Var.theta: Type=double;Min=30;Max=90;Step=5
+
+[TEMPLATE]
+Id: tq-mc-2
+TopicId: torque
+SkillId: tq-equilibrium
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A uniform beam of length {L} m and mass {m} kg is pivoted at one end and held horizontal by a vertical cable at the other end. What is the tension in the cable? (Use g = 9.81 m/s^2)
+AnswerExpression: m * 9.81 / 2
+SolutionTemplate: The weight acts at L/2. Torque balance about the pivot: T * L = mg * (L/2), so T = mg/2 = {m} * 9.81 / 2 = {answer} N.
+SolutionLatexTemplate: T \cdot L = mg \cdot \frac{L}{2} \Rightarrow T = \frac{mg}{2} = \frac{{{m} \cdot 9.81}}{2} = {answer}\,\text{N}
+Var.L: Type=double;Min=2;Max=6;Step=0.5
+Var.m: Type=double;Min=10;Max=50;Step=5
+Distractor: m * 9.81
+Distractor: m * 9.81 * 2
+Distractor: m * 9.81 * L / 2
+
+[TEMPLATE]
+Id: tq-sa-2
+TopicId: torque
+SkillId: tq-equilibrium
+QuestionType: ShortAnswer
+Difficulty: 7
+TextTemplate: A seesaw has a {m1} kg child sitting {d1} m from the pivot. Where should a {m2} kg child sit on the other side for the seesaw to balance? (Distance in meters from the pivot)
+AnswerExpression: m1 * d1 / m2
+SolutionTemplate: Use m1 g d1 = m2 g d2, so d2 = m1 d1 / m2 = {m1} * {d1} / {m2} = {answer} m.
+SolutionLatexTemplate: m_1 g d_1 = m_2 g d_2 \Rightarrow d_2 = \frac{m_1 d_1}{m_2} = \frac{{{m1} \cdot {d1}}}{{{m2}}} = {answer}\,\text{m}
+Var.m1: Type=double;Min=15;Max=40;Step=5
+Var.d1: Type=double;Min=1;Max=3;Step=0.5
+Var.m2: Type=double;Min=15;Max=40;Step=5
+
+[TEMPLATE]
+Id: rot-mc-1
+TopicId: rotational-motion
+SkillId: rot-kinematics
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A wheel starts from rest and accelerates uniformly at {alpha} rad/s^2 for {t} s. What is its final angular velocity?
+AnswerExpression: alpha * t
+SolutionTemplate: Use omega = omega0 + alpha t = 0 + {alpha} * {t} = {answer} rad/s.
+SolutionLatexTemplate: \omega = \omega_0 + \alpha t = 0 + {alpha} \cdot {t} = {answer}\,\text{rad/s}
+Var.alpha: Type=double;Min=0.5;Max=5;Step=0.5
+Var.t: Type=double;Min=2;Max=10;Step=1
+Distractor: alpha / t
+Distractor: alpha * t * t
+Distractor: t / alpha
+
+[TEMPLATE]
+Id: rot-sa-1
+TopicId: rotational-motion
+SkillId: rot-kinematics
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A wheel starts from rest and accelerates uniformly at {alpha} rad/s^2 for {t} s. Through what angle does it rotate?
+AnswerExpression: 0.5 * alpha * t * t
+SolutionTemplate: Use theta = (1/2) alpha t^2 = 0.5 * {alpha} * {t}^2 = {answer} rad.
+SolutionLatexTemplate: \theta = \frac{1}{2} \alpha t^2 = \frac{1}{2} \cdot {alpha} \cdot {t}^2 = {answer}\,\text{rad}
+Var.alpha: Type=double;Min=0.5;Max=5;Step=0.5
+Var.t: Type=double;Min=2;Max=10;Step=1
+
+[TEMPLATE]
+Id: rot-mc-2
+TopicId: rotational-motion
+SkillId: rot-inertia
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A point mass of {m} kg is located {r} m from an axis of rotation. What is its moment of inertia?
+AnswerExpression: m * r * r
+SolutionTemplate: Use I = m r^2 = {m} * {r}^2 = {answer} kg*m^2.
+SolutionLatexTemplate: I = m r^2 = {m} \cdot {r}^2 = {answer}\,\text{kg}\cdot\text{m}^2
 Var.m: Type=double;Min=0.5;Max=5;Step=0.5
-Var.h: Type=double;Min=0.2;Max=2;Step=0.2
-Var.L: Type=double;Min=1;Max=5;Step=0.5
+Var.r: Type=double;Min=0.5;Max=3;Step=0.25
+Distractor: m * r
+Distractor: m / (r * r)
+Distractor: m * r * r / 2
+
+[TEMPLATE]
+Id: rot-sa-2
+TopicId: rotational-motion
+SkillId: rot-inertia
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A uniform rod of mass {m} kg and length {L} m rotates about an axis through its center, perpendicular to the rod. What is its moment of inertia?
+AnswerExpression: m * L * L / 12
+SolutionTemplate: Use I = (1/12) m L^2 = {m} * {L}^2 / 12 = {answer} kg*m^2.
+SolutionLatexTemplate: I = \frac{1}{12} m L^2 = \frac{{{m} \cdot {L}^2}}{12} = {answer}\,\text{kg}\cdot\text{m}^2
+Var.m: Type=double;Min=1;Max=5;Step=0.5
+Var.L: Type=double;Min=1;Max=3;Step=0.25
+
+[TEMPLATE]
+Id: rot-mc-3
+TopicId: rotational-motion
+SkillId: rot-dynamics
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A torque of {tau} N*m is applied to a wheel with moment of inertia {I} kg*m^2. What is the angular acceleration?
+AnswerExpression: tau / I
+SolutionTemplate: Use tau = I alpha, so alpha = tau / I = {tau} / {I} = {answer} rad/s^2.
+SolutionLatexTemplate: \tau = I \alpha \Rightarrow \alpha = \frac{\tau}{I} = \frac{{{tau}}}{{{I}}} = {answer}\,\text{rad/s}^2
+Var.tau: Type=double;Min=5;Max=50;Step=5
+Var.I: Type=double;Min=0.5;Max=5;Step=0.5
+Distractor: tau * I
+Distractor: I / tau
+Distractor: tau + I
+
+[TEMPLATE]
+Id: rot-sa-3
+TopicId: rotational-motion
+SkillId: rot-dynamics
+QuestionType: ShortAnswer
+Difficulty: 6
+TextTemplate: A wheel with moment of inertia {I} kg*m^2 rotates at {omega} rad/s. What is its rotational kinetic energy?
+AnswerExpression: 0.5 * I * omega * omega
+SolutionTemplate: Use KE = (1/2) I omega^2 = 0.5 * {I} * {omega}^2 = {answer} J.
+SolutionLatexTemplate: KE = \frac{1}{2} I \omega^2 = \frac{1}{2} \cdot {I} \cdot {omega}^2 = {answer}\,\text{J}
+Var.I: Type=double;Min=0.5;Max=5;Step=0.5
+Var.omega: Type=double;Min=2;Max=15;Step=1
+
+[TEMPLATE]
+Id: rot-mc-4
+TopicId: rotational-motion
+SkillId: rot-dynamics
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: A wheel with moment of inertia {I} kg*m^2 rotates at {omega} rad/s. What is its angular momentum?
+AnswerExpression: I * omega
+SolutionTemplate: Use L = I omega = {I} * {omega} = {answer} kg*m^2/s.
+SolutionLatexTemplate: L = I \omega = {I} \cdot {omega} = {answer}\,\text{kg}\cdot\text{m}^2\text{/s}
+Var.I: Type=double;Min=0.5;Max=5;Step=0.5
+Var.omega: Type=double;Min=2;Max=15;Step=1
+Distractor: I / omega
+Distractor: I * omega * omega
+Distractor: 0.5 * I * omega
+
+[TEMPLATE]
+Id: rot-ne-1
+TopicId: rotational-motion
+SkillId: rot-kinematics
+QuestionType: NumericEntry
+Difficulty: 4
+TextTemplate: A wheel rotates at {omega} rad/s. In {t} s, through what angle in radians does it rotate (assuming constant angular velocity)?
+AnswerExpression: omega * t
+SolutionTemplate: Use theta = omega t = {omega} * {t} = {answer} rad.
+SolutionLatexTemplate: \theta = \omega t = {omega} \cdot {t} = {answer}\,\text{rad}
+Var.omega: Type=double;Min=1;Max=10;Step=1
+Var.t: Type=double;Min=2;Max=10;Step=1
+
+[TEMPLATE]
+Id: shm-mc-1
+TopicId: shm
+SkillId: shm-spring
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A {m} kg mass on a spring with spring constant {k} N/m is set into oscillation. What is the period of oscillation?
+AnswerExpression: 2 * 3.14159265 * sqrt(m / k)
+SolutionTemplate: Use T = 2 pi sqrt(m / k) = 2 pi * sqrt({m} / {k}) = {answer} s.
+SolutionLatexTemplate: T = 2 \pi \sqrt{\frac{m}{k}} = 2 \pi \sqrt{\frac{{{m}}}{{{k}}}} = {answer}\,\text{s}
+Var.m: Type=double;Min=0.1;Max=2;Step=0.1
+Var.k: Type=double;Min=10;Max=100;Step=10
+Distractor: 2 * 3.14159265 * sqrt(k / m)
+Distractor: 3.14159265 * sqrt(m / k)
+Distractor: sqrt(m / k)
+
+[TEMPLATE]
+Id: shm-sa-1
+TopicId: shm
+SkillId: shm-spring
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A {m} kg mass on a spring with spring constant {k} N/m oscillates with amplitude {A} m. What is the maximum speed of the mass?
+AnswerExpression: A * sqrt(k / m)
+SolutionTemplate: Use v_max = A omega = A sqrt(k / m) = {A} * sqrt({k} / {m}) = {answer} m/s.
+SolutionLatexTemplate: v_{\text{max}} = A \omega = A \sqrt{\frac{k}{m}} = {A} \cdot \sqrt{\frac{{{k}}}{{{m}}}} = {answer}\,\text{m/s}
+Var.m: Type=double;Min=0.1;Max=2;Step=0.1
+Var.k: Type=double;Min=10;Max=100;Step=10
+Var.A: Type=double;Min=0.05;Max=0.3;Step=0.05
+
+[TEMPLATE]
+Id: shm-mc-2
+TopicId: shm
+SkillId: shm-spring
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A {m} kg mass on a spring with spring constant {k} N/m oscillates with amplitude {A} m. What is the maximum acceleration?
+AnswerExpression: A * k / m
+SolutionTemplate: Use a_max = A omega^2 = A k / m = {A} * {k} / {m} = {answer} m/s^2.
+SolutionLatexTemplate: a_{\text{max}} = A \omega^2 = A \frac{k}{m} = {A} \cdot \frac{{{k}}}{{{m}}} = {answer}\,\text{m/s}^2
+Var.m: Type=double;Min=0.1;Max=2;Step=0.1
+Var.k: Type=double;Min=10;Max=100;Step=10
+Var.A: Type=double;Min=0.05;Max=0.3;Step=0.05
+Distractor: A * sqrt(k / m)
+Distractor: A * k * m
+Distractor: A * m / k
+
+[TEMPLATE]
+Id: shm-mc-3
+TopicId: shm
+SkillId: shm-pendulum
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A simple pendulum has a length of {L} m. What is its period? (Use g = 9.81 m/s^2)
+AnswerExpression: 2 * 3.14159265 * sqrt(L / 9.81)
+SolutionTemplate: Use T = 2 pi sqrt(L / g) = 2 pi * sqrt({L} / 9.81) = {answer} s.
+SolutionLatexTemplate: T = 2 \pi \sqrt{\frac{L}{g}} = 2 \pi \sqrt{\frac{{{L}}}{{9.81}}} = {answer}\,\text{s}
+Var.L: Type=double;Min=0.2;Max=2;Step=0.1
+Distractor: 2 * 3.14159265 * sqrt(9.81 / L)
+Distractor: 3.14159265 * sqrt(L / 9.81)
+Distractor: sqrt(L / 9.81)
+
+[TEMPLATE]
+Id: shm-sa-2
+TopicId: shm
+SkillId: shm-pendulum
+QuestionType: ShortAnswer
+Difficulty: 6
+TextTemplate: A simple pendulum has a length of {L} m and a bob of mass {m} kg. What is the maximum speed of the bob if it is released from rest at angle {theta} degrees from the vertical? (Use g = 9.81 m/s^2)
+AnswerExpression: sqrt(2 * 9.81 * L * (1 - cos(theta)))
+SolutionTemplate: Use v_max = sqrt(2 g L (1 - cos theta)) = sqrt(2 * 9.81 * {L} * (1 - cos({theta}))) = {answer} m/s.
+SolutionLatexTemplate: v_{\text{max}} = \sqrt{2 g L (1 - \cos\theta)} = \sqrt{{2 \cdot 9.81 \cdot {L} \cdot (1 - \cos({theta}))}} = {answer}\,\text{m/s}
+Var.L: Type=double;Min=0.5;Max=2;Step=0.1
+Var.m: Type=double;Min=0.1;Max=1;Step=0.1
+Var.theta: Type=double;Min=10;Max=45;Step=5
+
+[TEMPLATE]
+Id: shm-mc-4
+TopicId: shm
+SkillId: shm-energy
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: A {m} kg mass on a spring with spring constant {k} N/m oscillates with amplitude {A} m. What is the total mechanical energy?
+AnswerExpression: 0.5 * k * A * A
+SolutionTemplate: Use E = (1/2) k A^2 = 0.5 * {k} * {A}^2 = {answer} J.
+SolutionLatexTemplate: E = \frac{1}{2} k A^2 = \frac{1}{2} \cdot {k} \cdot {A}^2 = {answer}\,\text{J}
+Var.m: Type=double;Min=0.1;Max=2;Step=0.1
+Var.k: Type=double;Min=10;Max=100;Step=10
+Var.A: Type=double;Min=0.05;Max=0.3;Step=0.05
+Distractor: 0.5 * m * A * A
+Distractor: k * A * A
+Distractor: 0.5 * k * A
+
+[TEMPLATE]
+Id: shm-sa-3
+TopicId: shm
+SkillId: shm-energy
+QuestionType: ShortAnswer
+Difficulty: 6
+TextTemplate: A spring with spring constant {k} N/m is compressed by {x} m and released, launching a {m} kg block. What is the block's speed as it leaves the spring?
+AnswerExpression: sqrt(k / m) * x
+SolutionTemplate: Use (1/2) k x^2 = (1/2) m v^2, so v = x sqrt(k / m) = {x} * sqrt({k} / {m}) = {answer} m/s.
+SolutionLatexTemplate: \frac{1}{2} k x^2 = \frac{1}{2} m v^2 \Rightarrow v = x \sqrt{\frac{k}{m}} = {x} \cdot \sqrt{\frac{{{k}}}{{{m}}}} = {answer}\,\text{m/s}
+Var.k: Type=double;Min=50;Max=300;Step=50
+Var.x: Type=double;Min=0.05;Max=0.3;Step=0.05
+Var.m: Type=double;Min=0.1;Max=2;Step=0.1
+
+[TEMPLATE]
+Id: fl-mc-1
+TopicId: fluids
+SkillId: fl-pressure
+QuestionType: MultipleChoice
+Difficulty: 3
+TextTemplate: A force of {F} N is applied uniformly over an area of {A} m^2. What is the pressure?
+AnswerExpression: F / A
+SolutionTemplate: Use P = F / A = {F} / {A} = {answer} Pa.
+SolutionLatexTemplate: P = \frac{F}{A} = \frac{{{F}}}{{{A}}} = {answer}\,\text{Pa}
+Var.F: Type=double;Min=10;Max=200;Step=10
+Var.A: Type=double;Min=0.1;Max=2;Step=0.1
+Distractor: F * A
+Distractor: A / F
+Distractor: F + A
+
+[TEMPLATE]
+Id: fl-sa-1
+TopicId: fluids
+SkillId: fl-pressure
+QuestionType: ShortAnswer
+Difficulty: 4
+TextTemplate: What is the gauge pressure at a depth of {h} m in a fluid of density {rho} kg/m^3? (Use g = 9.81 m/s^2)
+AnswerExpression: rho * 9.81 * h
+SolutionTemplate: Use P = rho g h = {rho} * 9.81 * {h} = {answer} Pa.
+SolutionLatexTemplate: P = \rho g h = {rho} \cdot 9.81 \cdot {h} = {answer}\,\text{Pa}
+Var.rho: Type=double;Min=800;Max=1300;Step=50
+Var.h: Type=double;Min=1;Max=20;Step=1
+
+[TEMPLATE]
+Id: fl-mc-2
+TopicId: fluids
+SkillId: fl-buoyancy
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: An object of volume {V} m^3 is fully submerged in a fluid of density {rho} kg/m^3. What is the buoyant force? (Use g = 9.81 m/s^2)
+AnswerExpression: rho * V * 9.81
+SolutionTemplate: Use F_b = rho V g = {rho} * {V} * 9.81 = {answer} N.
+SolutionLatexTemplate: F_b = \rho V g = {rho} \cdot {V} \cdot 9.81 = {answer}\,\text{N}
+Var.rho: Type=double;Min=800;Max=1300;Step=50
+Var.V: Type=double;Min=0.001;Max=0.1;Step=0.001
+Distractor: rho * V
+Distractor: rho * V / 9.81
+Distractor: V * 9.81
+
+[TEMPLATE]
+Id: fl-sa-2
+TopicId: fluids
+SkillId: fl-buoyancy
+QuestionType: ShortAnswer
+Difficulty: 6
+TextTemplate: A {m} kg object with density {rho_obj} kg/m^3 floats in a fluid of density {rho_fluid} kg/m^3. What fraction of the object's volume is submerged?
+AnswerExpression: rho_obj / rho_fluid
+SolutionTemplate: Use floating equilibrium: rho_obj V g = rho_fluid V_sub g, so V_sub / V = rho_obj / rho_fluid = {rho_obj} / {rho_fluid} = {answer}.
+SolutionLatexTemplate: \rho_{\text{obj}} V g = \rho_{\text{fluid}} V_{\text{sub}} g \Rightarrow \frac{V_{\text{sub}}}{V} = \frac{\rho_{\text{obj}}}{\rho_{\text{fluid}}} = \frac{{{rho_obj}}}{{{rho_fluid}}} = {answer}
+Var.m: Type=double;Min=0.5;Max=5;Step=0.5
+Var.rho_obj: Type=double;Min=400;Max=900;Step=50
+Var.rho_fluid: Type=double;Min=1000;Max=1300;Step=50
+
+[TEMPLATE]
+Id: fl-mc-3
+TopicId: fluids
+SkillId: fl-flow
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: Water flows through a pipe of cross-sectional area {A1} m^2 at {v1} m/s. The pipe narrows to area {A2} m^2. What is the flow speed in the narrow section?
+AnswerExpression: A1 * v1 / A2
+SolutionTemplate: Use A1 v1 = A2 v2, so v2 = A1 v1 / A2 = {A1} * {v1} / {A2} = {answer} m/s.
+SolutionLatexTemplate: A_1 v_1 = A_2 v_2 \Rightarrow v_2 = \frac{A_1 v_1}{A_2} = \frac{{{A1} \cdot {v1}}}{{{A2}}} = {answer}\,\text{m/s}
+Var.A1: Type=double;Min=0.05;Max=0.5;Step=0.05
+Var.v1: Type=double;Min=1;Max=5;Step=0.5
+Var.A2: Type=double;Min=0.01;Max=0.1;Step=0.01
+Distractor: A2 * v1 / A1
+Distractor: A1 * A2 / v1
+Distractor: v1 * A2 / A1
+
+[TEMPLATE]
+Id: fl-sa-3
+TopicId: fluids
+SkillId: fl-flow
+QuestionType: ShortAnswer
+Difficulty: 7
+TextTemplate: A fluid of density {rho} kg/m^3 flows through a horizontal pipe. At a wide point the speed is {v1} m/s and the pressure is {P1} Pa; at a narrow point the speed is {v2} m/s. What is the pressure at the narrow point? (Use Bernoulli's equation)
+AnswerExpression: P1 + 0.5 * rho * v1 * v1 - 0.5 * rho * v2 * v2
+SolutionTemplate: Use P1 + (1/2) rho v1^2 = P2 + (1/2) rho v2^2, so P2 = P1 + 0.5 * rho * (v1^2 - v2^2) = {P1} + 0.5 * {rho} * ({v1}^2 - {v2}^2) = {answer} Pa.
+SolutionLatexTemplate: P_1 + \frac{1}{2} \rho v_1^2 = P_2 + \frac{1}{2} \rho v_2^2 \Rightarrow P_2 = P_1 + \frac{1}{2} \rho (v_1^2 - v_2^2) = {answer}\,\text{Pa}
+Var.rho: Type=double;Min=800;Max=1300;Step=50
+Var.v1: Type=double;Min=1;Max=4;Step=0.5
+Var.v2: Type=double;Min=3;Max=8;Step=0.5
+Var.P1: Type=double;Min=100000;Max=200000;Step=10000
+
+[TEMPLATE]
+Id: wv-mc-1
+TopicId: waves
+SkillId: wv-properties
+QuestionType: MultipleChoice
+Difficulty: 2
+TextTemplate: A wave has a frequency of {f} Hz and a wavelength of {lambda} m. What is the wave speed?
+AnswerExpression: f * lambda
+SolutionTemplate: Use v = f lambda = {f} * {lambda} = {answer} m/s.
+SolutionLatexTemplate: v = f \lambda = {f} \cdot {lambda} = {answer}\,\text{m/s}
+Var.f: Type=double;Min=2;Max=20;Step=1
+Var.lambda: Type=double;Min=0.5;Max=10;Step=0.5
+Distractor: f / lambda
+Distractor: lambda / f
+Distractor: f + lambda
+
+[TEMPLATE]
+Id: wv-sa-1
+TopicId: waves
+SkillId: wv-properties
+QuestionType: ShortAnswer
+Difficulty: 3
+TextTemplate: A wave has a frequency of {f} Hz. What is its period in seconds?
+AnswerExpression: 1 / f
+SolutionTemplate: Use T = 1 / f = 1 / {f} = {answer} s.
+SolutionLatexTemplate: T = \frac{1}{f} = \frac{1}{{{f}}} = {answer}\,\text{s}
+Var.f: Type=double;Min=2;Max=50;Step=1
+
+[TEMPLATE]
+Id: wv-mc-2
+TopicId: waves
+SkillId: wv-properties
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A wave has wavelength {lambda} m and period {T} s. What is its speed?
+AnswerExpression: lambda / T
+SolutionTemplate: Use v = lambda / T = {lambda} / {T} = {answer} m/s.
+SolutionLatexTemplate: v = \frac{\lambda}{T} = \frac{{{lambda}}}{{{T}}} = {answer}\,\text{m/s}
+Var.lambda: Type=double;Min=0.5;Max=10;Step=0.5
+Var.T: Type=double;Min=0.1;Max=2;Step=0.1
+Distractor: lambda * T
+Distractor: T / lambda
+Distractor: lambda + T
+
+[TEMPLATE]
+Id: wv-sa-2
+TopicId: waves
+SkillId: wv-properties
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A wave on a string has frequency {f} Hz and angular wave number k = {k} rad/m. What is the wave speed?
+AnswerExpression: 2 * 3.14159265 * f / k
+SolutionTemplate: Use v = omega / k = 2 pi f / k = 2 pi * {f} / {k} = {answer} m/s.
+SolutionLatexTemplate: v = \frac{\omega}{k} = \frac{{2 \pi f}}{{k}} = \frac{{2 \pi \cdot {f}}}{{{k}}} = {answer}\,\text{m/s}
+Var.f: Type=double;Min=2;Max=20;Step=1
+Var.k: Type=double;Min=0.5;Max=10;Step=0.5
+
+[TEMPLATE]
+Id: wv-mc-3
+TopicId: waves
+SkillId: wv-superposition
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: Two waves of the same frequency interfere constructively. The path difference is {m} wavelengths. What is the phase difference in radians?
+AnswerExpression: 2 * 3.14159265 * m
+SolutionTemplate: For constructive interference, path difference = m lambda, so phase difference = 2 pi m = 2 pi * {m} = {answer} rad.
+SolutionLatexTemplate: \Delta\phi = 2 \pi m = 2 \pi \cdot {m} = {answer}\,\text{rad}
+Var.m: Type=double;Min=1;Max=5;Step=1
+Distractor: 3.14159265 * m
+Distractor: 2 * 3.14159265 / m
+Distractor: m
+
+[TEMPLATE]
+Id: wv-sa-3
+TopicId: waves
+SkillId: wv-superposition
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: Two waves of equal amplitude {A} m interfere constructively in phase. What is the amplitude of the resulting wave?
+AnswerExpression: 2 * A
+SolutionTemplate: For constructive interference, A_result = A1 + A2 = 2 A = 2 * {A} = {answer} m.
+SolutionLatexTemplate: A_{\text{result}} = A_1 + A_2 = 2 A = 2 \cdot {A} = {answer}\,\text{m}
+Var.A: Type=double;Min=0.1;Max=2;Step=0.1
+
+[TEMPLATE]
+Id: snd-mc-1
+TopicId: sound
+SkillId: snd-intensity
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: A sound source emits power {P} W uniformly in all directions. What is the intensity at a distance {r} m from the source?
+AnswerExpression: P / (4 * 3.14159265 * r * r)
+SolutionTemplate: Use I = P / (4 pi r^2) = {P} / (4 pi * {r}^2) = {answer} W/m^2.
+SolutionLatexTemplate: I = \frac{P}{4 \pi r^2} = \frac{{{P}}}{{4 \pi \cdot {r}^2}} = {answer}\,\text{W/m}^2
+Var.P: Type=double;Min=0.01;Max=1;Step=0.01
+Var.r: Type=double;Min=1;Max=10;Step=0.5
+Distractor: P / (2 * 3.14159265 * r)
+Distractor: P / (4 * 3.14159265 * r)
+Distractor: P * 4 * 3.14159265 * r * r
+
+[TEMPLATE]
+Id: snd-sa-1
+TopicId: sound
+SkillId: snd-intensity
+QuestionType: ShortAnswer
+Difficulty: 6
+TextTemplate: A sound has intensity {I} W/m^2. What is the intensity level in decibels? (Reference intensity I0 = 1e-12 W/m^2)
+AnswerExpression: 10 * log(I / 1e-12)
+SolutionTemplate: Use beta = 10 log(I / I0) = 10 * log({I} / 1e-12) = {answer} dB.
+SolutionLatexTemplate: \beta = 10 \log\left(\frac{I}{I_0}\right) = 10 \log\left(\frac{{{I}}}{{10^{-12}}}\right) = {answer}\,\text{dB}
+Var.I: Type=double;Min=1e-9;Max=1e-3;Step=1e-9
+
+[TEMPLATE]
+Id: snd-mc-2
+TopicId: sound
+SkillId: snd-doppler
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A stationary observer hears a sound of frequency {f} Hz from a source approaching at {vs} m/s. What frequency does the observer hear? (Speed of sound v = 343 m/s)
+AnswerExpression: f * 343 / (343 - vs)
+SolutionTemplate: Use f' = f v / (v - vs) = {f} * 343 / (343 - {vs}) = {answer} Hz.
+SolutionLatexTemplate: f' = f \frac{v}{v - v_s} = {f} \cdot \frac{343}{343 - {vs}} = {answer}\,\text{Hz}
+Var.f: Type=double;Min=200;Max=1000;Step=50
+Var.vs: Type=double;Min=10;Max=80;Step=5
+Distractor: f * 343 / (343 + vs)
+Distractor: f * (343 - vs) / 343
+Distractor: f * (343 + vs) / 343
+
+[TEMPLATE]
+Id: snd-sa-2
+TopicId: sound
+SkillId: snd-doppler
+QuestionType: ShortAnswer
+Difficulty: 6
+TextTemplate: A source emits sound of frequency {f} Hz. An observer moves away from the stationary source at {vo} m/s. What frequency does the observer hear? (Speed of sound v = 343 m/s)
+AnswerExpression: f * (343 - vo) / 343
+SolutionTemplate: Use f' = f (v - vo) / v = {f} * (343 - {vo}) / 343 = {answer} Hz.
+SolutionLatexTemplate: f' = f \frac{v - v_o}{v} = {f} \cdot \frac{343 - {vo}}{343} = {answer}\,\text{Hz}
+Var.f: Type=double;Min=200;Max=1000;Step=50
+Var.vo: Type=double;Min=10;Max=80;Step=5
+
+[TEMPLATE]
+Id: snd-mc-3
+TopicId: sound
+SkillId: snd-doppler
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: Two tuning forks of frequencies {f1} Hz and {f2} Hz are sounded simultaneously. What is the beat frequency heard?
+AnswerExpression: abs(f1 - f2)
+SolutionTemplate: Use f_beat = |f1 - f2| = |{f1} - {f2}| = {answer} Hz.
+SolutionLatexTemplate: f_{\text{beat}} = |f_1 - f_2| = |{f1} - {f2}| = {answer}\,\text{Hz}
+Var.f1: Type=double;Min=200;Max=500;Step=10
+Var.f2: Type=double;Min=200;Max=500;Step=10
+Distractor: f1 + f2
+Distractor: f1 * f2
+Distractor: (f1 + f2) / 2
+
+[TEMPLATE]
+Id: es-mc-1
+TopicId: electrostatics
+SkillId: es-coulomb
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: Two point charges, {q1} C and {q2} C, are separated by {r} m. What is the magnitude of the electric force between them? (Use k = 8.99e9 N*m^2/C^2)
+AnswerExpression: 8.99e9 * abs(q1 * q2) / (r * r)
+SolutionTemplate: Use F = k |q1 q2| / r^2 = 8.99e9 * |{q1} * {q2}| / {r}^2 = {answer} N.
+SolutionLatexTemplate: F = \frac{k |q_1 q_2|}{r^2} = \frac{{8.99 \times 10^9 \cdot |{q1} \cdot {q2}|}}{{{r}^2}} = {answer}\,\text{N}
+Var.q1: Type=double;Min=1e-7;Max=1e-5;Step=1e-7
+Var.q2: Type=double;Min=1e-7;Max=1e-5;Step=1e-7
+Var.r: Type=double;Min=0.1;Max=2;Step=0.1
+Distractor: 8.99e9 * q1 * q2 / r
+Distractor: 8.99e9 * (q1 + q2) / (r * r)
+Distractor: 8.99e9 * q1 * q2 * r
+
+[TEMPLATE]
+Id: es-sa-1
+TopicId: electrostatics
+SkillId: es-coulomb
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A point charge of {q} C creates an electric field. What is the field magnitude at a distance {r} m? (Use k = 8.99e9 N*m^2/C^2)
+AnswerExpression: 8.99e9 * abs(q) / (r * r)
+SolutionTemplate: Use E = k |q| / r^2 = 8.99e9 * |{q}| / {r}^2 = {answer} N/C.
+SolutionLatexTemplate: E = \frac{k |q|}{r^2} = \frac{{8.99 \times 10^9 \cdot |{q}|}}{{{r}^2}} = {answer}\,\text{N/C}
+Var.q: Type=double;Min=1e-7;Max=1e-5;Step=1e-7
+Var.r: Type=double;Min=0.1;Max=2;Step=0.1
+
+[TEMPLATE]
+Id: es-mc-2
+TopicId: electrostatics
+SkillId: es-field
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A {q} C charge experiences an electric force of {F} N. What is the magnitude of the electric field at that point?
+AnswerExpression: F / abs(q)
+SolutionTemplate: Use E = F / |q| = {F} / |{q}| = {answer} N/C.
+SolutionLatexTemplate: E = \frac{F}{|q|} = \frac{{{F}}}{{|{q}|}} = {answer}\,\text{N/C}
+Var.q: Type=double;Min=1e-6;Max=1e-4;Step=1e-6
+Var.F: Type=double;Min=0.001;Max=1;Step=0.001
+Distractor: F * q
+Distractor: q / F
+Distractor: F + q
+
+[TEMPLATE]
+Id: es-sa-2
+TopicId: electrostatics
+SkillId: es-potential
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A point charge of {q} C produces an electric potential. What is the potential at a distance {r} m? (Use k = 8.99e9 N*m^2/C^2)
+AnswerExpression: 8.99e9 * q / r
+SolutionTemplate: Use V = k q / r = 8.99e9 * {q} / {r} = {answer} V.
+SolutionLatexTemplate: V = \frac{k q}{r} = \frac{{8.99 \times 10^9 \cdot {q}}}{{{r}}} = {answer}\,\text{V}
+Var.q: Type=double;Min=1e-7;Max=1e-5;Step=1e-7
+Var.r: Type=double;Min=0.1;Max=2;Step=0.1
+
+[TEMPLATE]
+Id: es-mc-3
+TopicId: electrostatics
+SkillId: es-potential
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A {q} C charge is moved through a potential difference of {V} V. What is the change in electric potential energy?
+AnswerExpression: q * V
+SolutionTemplate: Use Delta U = q Delta V = {q} * {V} = {answer} J.
+SolutionLatexTemplate: \Delta U = q \Delta V = {q} \cdot {V} = {answer}\,\text{J}
+Var.q: Type=double;Min=1e-6;Max=1e-3;Step=1e-6
+Var.V: Type=double;Min=1;Max=100;Step=1
+Distractor: q / V
+Distractor: V / q
+Distractor: q + V
+
+[TEMPLATE]
+Id: es-sa-3
+TopicId: electrostatics
+SkillId: es-potential
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A parallel-plate capacitor has capacitance {C} F and is charged to a voltage of {V} V. What is the energy stored in the capacitor?
+AnswerExpression: 0.5 * C * V * V
+SolutionTemplate: Use U = (1/2) C V^2 = 0.5 * {C} * {V}^2 = {answer} J.
+SolutionLatexTemplate: U = \frac{1}{2} C V^2 = \frac{1}{2} \cdot {C} \cdot {V}^2 = {answer}\,\text{J}
+Var.C: Type=double;Min=1e-6;Max=1e-3;Step=1e-6
+Var.V: Type=double;Min=1;Max=50;Step=1
+
+[TEMPLATE]
+Id: es-mc-4
+TopicId: electrostatics
+SkillId: es-field
+QuestionType: MultipleChoice
+Difficulty: 7
+TextTemplate: Two charges of magnitude {q} C each are placed {d} m apart. What is the electric field magnitude at the midpoint between them if the charges have the same sign?
+AnswerExpression: 0
+SolutionTemplate: At the midpoint, the fields from the two equal same-sign charges point in opposite directions with equal magnitude, so the net field is 0 N/C.
+SolutionLatexTemplate: E_{\text{net}} = E_1 - E_2 = 0 \Rightarrow \text{field at midpoint} = 0\,\text{N/C}
+Var.q: Type=double;Min=1e-6;Max=1e-4;Step=1e-6
+Var.d: Type=double;Min=0.5;Max=2;Step=0.1
+Distractor: 8.99e9 * q / (d * d / 4)
+Distractor: 8.99e9 * 2 * q / (d * d / 4)
+Distractor: 8.99e9 * q / d
+
+[TEMPLATE]
+Id: dc-mc-1
+TopicId: dc-circuits
+SkillId: dc-ohm
+QuestionType: MultipleChoice
+Difficulty: 2
+TextTemplate: A resistor has a resistance of {R} ohms. When a current of {I} A flows through it, what is the voltage drop across the resistor?
+AnswerExpression: I * R
+SolutionTemplate: Use V = I R = {I} * {R} = {answer} V.
+SolutionLatexTemplate: V = I R = {I} \cdot {R} = {answer}\,\text{V}
+Var.R: Type=double;Min=2;Max=50;Step=1
+Var.I: Type=double;Min=0.1;Max=5;Step=0.1
+Distractor: I / R
+Distractor: R / I
+Distractor: I + R
+
+[TEMPLATE]
+Id: dc-sa-1
+TopicId: dc-circuits
+SkillId: dc-ohm
+QuestionType: ShortAnswer
+Difficulty: 3
+TextTemplate: A voltage of {V} V is applied across a {R} ohm resistor. What current flows through it?
+AnswerExpression: V / R
+SolutionTemplate: Use I = V / R = {V} / {R} = {answer} A.
+SolutionLatexTemplate: I = \frac{V}{R} = \frac{{{V}}}{{{R}}} = {answer}\,\text{A}
+Var.V: Type=double;Min=1;Max=24;Step=1
+Var.R: Type=double;Min=2;Max=50;Step=1
+
+[TEMPLATE]
+Id: dc-mc-2
+TopicId: dc-circuits
+SkillId: dc-combinations
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: Two resistors, {R1} ohms and {R2} ohms, are connected in series. What is the equivalent resistance?
+AnswerExpression: R1 + R2
+SolutionTemplate: Use R_s = R1 + R2 = {R1} + {R2} = {answer} ohms.
+SolutionLatexTemplate: R_s = R_1 + R_2 = {R1} + {R2} = {answer}\,\Omega
+Var.R1: Type=double;Min=2;Max=50;Step=1
+Var.R2: Type=double;Min=2;Max=50;Step=1
+Distractor: R1 * R2 / (R1 + R2)
+Distractor: R1 * R2
+Distractor: 1 / (1 / R1 + 1 / R2)
+
+[TEMPLATE]
+Id: dc-sa-2
+TopicId: dc-circuits
+SkillId: dc-combinations
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: Two resistors, {R1} ohms and {R2} ohms, are connected in parallel. What is the equivalent resistance?
+AnswerExpression: R1 * R2 / (R1 + R2)
+SolutionTemplate: Use 1 / R_p = 1 / R1 + 1 / R2, so R_p = R1 R2 / (R1 + R2) = {R1} * {R2} / ({R1} + {R2}) = {answer} ohms.
+SolutionLatexTemplate: \frac{1}{R_p} = \frac{1}{R_1} + \frac{1}{R_2} \Rightarrow R_p = \frac{R_1 R_2}{R_1 + R_2} = \frac{{{R1} \cdot {R2}}}{{{R1} + {R2}}} = {answer}\,\Omega
+Var.R1: Type=double;Min=2;Max=50;Step=1
+Var.R2: Type=double;Min=2;Max=50;Step=1
+
+[TEMPLATE]
+Id: dc-mc-3
+TopicId: dc-circuits
+SkillId: dc-power
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A current of {I} A flows through a {R} ohm resistor. What is the power dissipated by the resistor?
+AnswerExpression: I * I * R
+SolutionTemplate: Use P = I^2 R = {I}^2 * {R} = {answer} W.
+SolutionLatexTemplate: P = I^2 R = {I}^2 \cdot {R} = {answer}\,\text{W}
+Var.I: Type=double;Min=0.1;Max=5;Step=0.1
+Var.R: Type=double;Min=2;Max=50;Step=1
+Distractor: I * R
+Distractor: I * R * R
+Distractor: I / R
+
+[TEMPLATE]
+Id: dc-sa-3
+TopicId: dc-circuits
+SkillId: dc-power
+QuestionType: ShortAnswer
+Difficulty: 4
+TextTemplate: A voltage of {V} V is applied across a {R} ohm resistor. What is the power dissipated?
+AnswerExpression: V * V / R
+SolutionTemplate: Use P = V^2 / R = {V}^2 / {R} = {answer} W.
+SolutionLatexTemplate: P = \frac{V^2}{R} = \frac{{{V}}^2}{{{R}}} = {answer}\,\text{W}
+Var.V: Type=double;Min=1;Max=24;Step=1
+Var.R: Type=double;Min=2;Max=50;Step=1
+
+[TEMPLATE]
+Id: dc-mc-4
+TopicId: dc-circuits
+SkillId: dc-kirchhoff
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A {V} V battery is connected to two resistors in series: {R1} ohms and {R2} ohms. What is the current in the circuit?
+AnswerExpression: V / (R1 + R2)
+SolutionTemplate: Use I = V / R_eq = V / (R1 + R2) = {V} / ({R1} + {R2}) = {answer} A.
+SolutionLatexTemplate: I = \frac{V}{R_{\text{eq}}} = \frac{V}{R_1 + R_2} = \frac{{{V}}}{{{R1} + {R2}}} = {answer}\,\text{A}
+Var.V: Type=double;Min=3;Max=24;Step=1
+Var.R1: Type=double;Min=2;Max=30;Step=1
+Var.R2: Type=double;Min=2;Max=30;Step=1
+Distractor: V / (R1 * R2 / (R1 + R2))
+Distractor: V * (R1 + R2)
+Distractor: V / R1 + V / R2
+
+[TEMPLATE]
+Id: dc-sa-4
+TopicId: dc-circuits
+SkillId: dc-kirchhoff
+QuestionType: ShortAnswer
+Difficulty: 7
+TextTemplate: A {V} V battery is connected to two resistors in series: {R1} ohms and {R2} ohms. What is the voltage drop across the first resistor?
+AnswerExpression: V * R1 / (R1 + R2)
+SolutionTemplate: Use the voltage divider: V1 = V * R1 / (R1 + R2) = {V} * {R1} / ({R1} + {R2}) = {answer} V.
+SolutionLatexTemplate: V_1 = V \frac{R_1}{R_1 + R_2} = {V} \cdot \frac{{{R1}}}{{{R1} + {R2}}} = {answer}\,\text{V}
+Var.V: Type=double;Min=3;Max=24;Step=1
+Var.R1: Type=double;Min=2;Max=30;Step=1
+Var.R2: Type=double;Min=2;Max=30;Step=1
+
+[TEMPLATE]
+Id: dc-ne-1
+TopicId: dc-circuits
+SkillId: dc-power
+QuestionType: NumericEntry
+Difficulty: 3
+TextTemplate: A battery of {V} V delivers a current of {I} A to a circuit. The power delivered by the battery is ___ watts.
+AnswerExpression: V * I
+SolutionTemplate: Use P = V I = {V} * {I} = {answer} W.
+SolutionLatexTemplate: P = V I = {V} \cdot {I} = {answer}\,\text{W}
+Var.V: Type=double;Min=3;Max=24;Step=1
+Var.I: Type=double;Min=0.1;Max=5;Step=0.1
+
+[TEMPLATE]
+Id: dc-tf-1
+TopicId: dc-circuits
+SkillId: dc-combinations
+QuestionType: TrueFalse
+Difficulty: 3
+TextTemplate: Two resistors of {R1} ohms and {R2} ohms are connected in parallel. The equivalent resistance is always less than the smaller of the two resistors.
+AnswerExpression: 1
+SolutionTemplate: For parallel resistors, 1/Rp = 1/R1 + 1/R2, so Rp is less than both R1 and R2.
+SolutionLatexTemplate: \frac{1}{R_p} = \frac{1}{R_1} + \frac{1}{R_2} \Rightarrow R_p < \min(R_1, R_2) \Rightarrow \text{True}
+Var.R1: Type=double;Min=2;Max=50;Step=1
+Var.R2: Type=double;Min=2;Max=50;Step=1
