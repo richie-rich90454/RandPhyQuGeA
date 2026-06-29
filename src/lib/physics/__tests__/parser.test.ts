@@ -196,3 +196,29 @@ describe('SpecificationParser edge cases', () => {
 		expect(result.skills.length).toBe(0);
 	});
 });
+describe('SpecificationParser SolutionLatexTemplate handling', () => {
+	const parser = new SpecificationParser();
+	const BASE = '[UNIT]\nId: U1\nName: U\n[TOPIC]\nId: T1\nName: T\nUnitId: U1\n[SKILL]\nId: S1\nName: S\nTopicId: T1\n';
+	const header = (extra: string) => `[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\n${extra}`;
+	it('parses SolutionLatexTemplate when present', () => {
+		const spec = parser.parse(BASE + header('SolutionLatexTemplate: a = \\frac{{v} - {v0}}{{t}} = {answer}\n'));
+		expect(spec.templates[0]?.solution_latex_template).toBe('a = \\frac{{v} - {v0}}{{t}} = {answer}');
+	});
+	it('defaults SolutionLatexTemplate to empty string when absent', () => {
+		const spec = parser.parse(BASE + header(''));
+		expect(spec.templates[0]?.solution_latex_template).toBe('');
+	});
+	it('parses a long multi-segment LaTeX string on a single line', () => {
+		const latex = 'F = \\frac{{G m_1 m_2}}{{r^2}} = \\frac{{6.674 \\times 10^{{-11}} \\cdot 5 \\cdot 10}}{{4^2}} = {answer}';
+		const spec = parser.parse(BASE + header(`SolutionLatexTemplate: ${latex}\n`));
+		expect(spec.templates[0]?.solution_latex_template).toBe(latex);
+	});
+	it('uses only the first SolutionLatexTemplate line when multiple are provided', () => {
+		const spec = parser.parse(BASE + header('SolutionLatexTemplate: first\nSolutionLatexTemplate: second\n'));
+		expect(spec.templates[0]?.solution_latex_template).toBe('first');
+	});
+	it('parses SolutionLatexTemplate case-insensitively', () => {
+		const spec = parser.parse(BASE + header('solutionlatexTEMPLATE: case-insensitive\n'));
+		expect(spec.templates[0]?.solution_latex_template).toBe('case-insensitive');
+	});
+});
