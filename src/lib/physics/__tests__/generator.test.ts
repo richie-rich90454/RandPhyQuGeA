@@ -231,7 +231,32 @@ const HANDLER_SPEC = [
 	'Difficulty: 1',
 	'TextTemplate: Broken template {x}.',
 	'AnswerExpression: 1/0',
-	'Var.x: Type=int;Min=1;Max=1'
+	'Var.x: Type=int;Min=1;Max=1',
+	'[TEMPLATE]',
+	'Id: QLATEX',
+	'TopicId: T1',
+	'SkillId: S1',
+	'QuestionType: ShortAnswer',
+	'Difficulty: 2',
+	'TextTemplate: A {m} kg mass accelerates at {a} m/s^2. Find the force.',
+	'AnswerExpression: m * a',
+	'SolutionTemplate: F = m * a = {m} * {a} = {answer} N',
+	'SolutionLatexTemplate: F = m \\cdot a = {m} \\cdot {a} = {answer}\\,\\text{N}',
+	'Var.m: Type=int;Min=2;Max=2',
+	'Var.a: Type=int;Min=3;Max=3',
+	'[TEMPLATE]',
+	'Id: QDEDUP',
+	'TopicId: T1',
+	'SkillId: S1',
+	'QuestionType: MultipleChoice',
+	'Difficulty: 2',
+	'TextTemplate: What is {x}?',
+	'AnswerExpression: x',
+	'Var.x: Type=int;Min=5;Max=5',
+	'Distractor: x + 0',
+	'Distractor: x * 1',
+	'Distractor: x + 1',
+	'Distractor: x - 1'
 ].join('\n');
 function buildHandlerGenerator(seed: number): QuestionGenerator {
 	const spec = new SpecificationParser().parse(HANDLER_SPEC);
@@ -281,6 +306,36 @@ describe('Question type handlers', () => {
 		expect(q?.question_type).toBe('SA');
 		expect(q?.answer).toBe('0');
 		expect(q?.choices).toBeUndefined();
+	});
+	it('BaseQuestionHandler substitutes {var} and {answer} tokens into solution_latex', () => {
+		const gen = buildHandlerGenerator(7);
+		const q = gen.generate({templateIds: ['QLATEX']});
+		expect(q).not.toBeNull();
+		expect(q?.question_type).toBe('SA');
+		expect(q?.answer).toBe('6');
+		expect(q?.solution_latex).toContain('F = m \\cdot a = 2 \\cdot 3 = 6\\,\\text{N}');
+		expect(q?.solution_latex).not.toContain('{m}');
+		expect(q?.solution_latex).not.toContain('{a}');
+		expect(q?.solution_latex).not.toContain('{answer}');
+	});
+	it('BaseQuestionHandler falls back to solution_text when SolutionLatexTemplate is empty', () => {
+		const gen = buildHandlerGenerator(7);
+		const q = gen.generate({templateIds: ['QFB']});
+		expect(q).not.toBeNull();
+		expect(q?.solution_latex).toBe(q?.solution_text);
+	});
+	it('MultipleChoiceHandler de-duplicates distractors that evaluate to the same formatted value', () => {
+		const gen = buildHandlerGenerator(7);
+		const q = gen.generate({templateIds: ['QDEDUP']});
+		expect(q).not.toBeNull();
+		expect(q?.question_type).toBe('MC');
+		expect(q?.choices).toBeDefined();
+		expect(q?.choices?.length).toBe(3);
+		expect(q?.choices).toContain('5');
+		expect(q?.choices).toContain('6');
+		expect(q?.choices).toContain('4');
+		const unique = new Set(q?.choices);
+		expect(unique.size).toBe(q?.choices?.length);
 	});
 	it('the FB and NE handlers are reachable through the default registry', () => {
 		const gen = buildHandlerGenerator(7);
