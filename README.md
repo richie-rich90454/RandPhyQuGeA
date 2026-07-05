@@ -21,14 +21,14 @@ A pure-TypeScript physics practice question generator with a liquid/glassmorphis
 
 ## Architecture
 
-| Layer | Technology | Description |
-|-------|-----------|-------------|
-| **Physics Core** | TypeScript (OOP) | Specification parser, expression evaluator, random variable generation, question generator, exporters, formula library |
-| **State** | Zustand | `practiceStore`, `progressStore`, `settingsStore` (persisted), `specStore`, `uiStore` |
-| **UI** | React 19 + TypeScript | Composable presentational components, store-backed containers, custom hooks per concern |
-| **Styling** | Reference CSS + Tailwind | Reference `style.css` ported into `globals.css` is the source of truth; Tailwind for incidental utilities |
-| **Math** | KaTeX | Fast LaTeX math rendering |
-| **Build** | Vite | Web build; Tauri shell wraps the same bundle for desktop |
+| Layer            | Technology               | Description                                                                                                            |
+| ---------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| **Physics Core** | TypeScript (OOP)         | Specification parser, expression evaluator, random variable generation, question generator, exporters, formula library |
+| **State**        | Zustand                  | `practiceStore`, `progressStore`, `settingsStore` (persisted), `specStore`, `uiStore`                                  |
+| **UI**           | React 19 + TypeScript    | Composable presentational components, store-backed containers, custom hooks per concern                                |
+| **Styling**      | Reference CSS + Tailwind | Reference `style.css` ported into `globals.css` is the source of truth; Tailwind for incidental utilities              |
+| **Math**         | KaTeX                    | Fast LaTeX math rendering                                                                                              |
+| **Build**        | Vite                     | Web build; Tauri shell wraps the same bundle for desktop                                                               |
 
 The TypeScript core is **idiomatically object-oriented**: classes with single responsibilities, `interface`-defined contracts for extension points, the Registry and Strategy patterns for question types/exporters/variable handlers, dependency injection of the RNG into the generator for testability, and a facade class (`PhysicsCore`) that wires the collaborators and exposes the public API. The design follows the open-closed principle — adding a new question type, exporter, function, or variable type requires only registering a new class, not editing existing core logic.
 
@@ -150,14 +150,14 @@ src-tauri/                    # Optional Tauri desktop shell (no domain logic)
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+G` | Generate new question |
-| `Shift+Enter` | Check answer |
-| `Ctrl+1` | Switch to Single mode |
-| `Ctrl+2` | Switch to Mental mode |
-| `Ctrl+,` | Open Settings |
-| `Ctrl+Shift+T` | Toggle theme |
+| Shortcut       | Action                |
+| -------------- | --------------------- |
+| `Ctrl+G`       | Generate new question |
+| `Shift+Enter`  | Check answer          |
+| `Ctrl+1`       | Switch to Single mode |
+| `Ctrl+2`       | Switch to Mental mode |
+| `Ctrl+,`       | Open Settings         |
+| `Ctrl+Shift+T` | Toggle theme          |
 
 ## License
 

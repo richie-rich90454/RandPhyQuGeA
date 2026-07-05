@@ -1,5 +1,5 @@
-import {AnswerCard} from './AnswerCard';
-import {ResultsCard} from './ResultsCard';
+import {AnswerCard} from "./AnswerCard";
+import {ResultsCard} from "./ResultsCard";
 /**
  * Answer section grid mapped to `.answer-section`.
  *
@@ -8,10 +8,10 @@ import {ResultsCard} from './ResultsCard';
  * inside a single `.answer-section` container within `.content-stack`.
  */
 export function AnswerSection() {
-	return (
-		<div className="answer-section">
-			<AnswerCard />
-			<ResultsCard />
-		</div>
-	);
+    return (
+        <div className="answer-section">
+            <AnswerCard />
+            <ResultsCard />
+        </div>
+    );
 }

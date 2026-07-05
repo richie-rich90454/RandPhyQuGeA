@@ -1,7 +1,7 @@
-import {ToolbarRow} from '../ui';
-import {usePracticeStore} from '../../stores/practiceStore';
-import {SingleControls} from './SingleControls';
-import {MentalControls} from './MentalControls';
+import {ToolbarRow} from "../ui";
+import {usePracticeStore} from "../../stores/practiceStore";
+import {SingleControls} from "./SingleControls";
+import {MentalControls} from "./MentalControls";
 /**
  * Bottom row of the control toolbar.
  *
@@ -11,6 +11,6 @@ import {MentalControls} from './MentalControls';
  * `#mental-controls` based on the selected mode.
  */
 export function ControlToolbarBottom() {
-	const mode = usePracticeStore(state => state.mode);
-	return <ToolbarRow position="bottom">{mode === 'Single' ? <SingleControls /> : <MentalControls />}</ToolbarRow>;
+    const mode = usePracticeStore(state => state.mode);
+    return <ToolbarRow position="bottom">{mode === "Single" ? <SingleControls /> : <MentalControls />}</ToolbarRow>;
 }

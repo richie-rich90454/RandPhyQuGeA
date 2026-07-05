@@ -2,7 +2,7 @@ name: Security Audit
 
 on:
   schedule:
-    - cron: '0 6 * * 1'  # Weekly on Monday at 6 AM UTC
+    - cron: '0 6 * * 1' # Weekly on Monday at 6 AM UTC
   push:
     branches: [main]
     paths: ['package.json', 'package-lock.json']
@@ -21,7 +21,7 @@ jobs:
         run: npm ci
       - name: Run npm audit
         run: npm audit --omit=dev
-        continue-on-error: true  # Advisory only — does not block PRs; production deps audited via --omit=dev
+        continue-on-error: true # Advisory only — does not block PRs; production deps audited via --omit=dev
 
   codeql:
     runs-on: ubuntu-latest

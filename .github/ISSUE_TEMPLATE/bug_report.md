@@ -11,6 +11,7 @@ A clear and concise description of the bug.
 
 **To Reproduce**
 Steps to reproduce:
+
 1. Go to '...'
 2. Click on '...'
 3. See error
@@ -19,5 +20,6 @@ Steps to reproduce:
 What you expected to happen.
 
 **Environment:**
+
 - OS: [e.g. Windows, macOS, Linux]
 - App Version: [e.g. 1.0.0]

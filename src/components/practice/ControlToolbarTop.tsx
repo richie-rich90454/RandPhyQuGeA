@@ -1,8 +1,8 @@
-import {ToolbarRow} from '../ui';
-import {ModeSelector} from './ModeSelector';
-import {TopicsSection} from './TopicsSection';
-import {UtilityButtons} from './UtilityButtons';
-import {McqToggle} from './McqToggle';
+import {ToolbarRow} from "../ui";
+import {ModeSelector} from "./ModeSelector";
+import {TopicsSection} from "./TopicsSection";
+import {UtilityButtons} from "./UtilityButtons";
+import {McqToggle} from "./McqToggle";
 /**
  * Top row of the control toolbar.
  *
@@ -12,12 +12,12 @@ import {McqToggle} from './McqToggle';
  * Mirrors the reference's `.toolbar-row-top` ordering.
  */
 export function ControlToolbarTop() {
-	return (
-		<ToolbarRow position="top">
-			<ModeSelector />
-			<TopicsSection />
-			<UtilityButtons />
-			<McqToggle />
-		</ToolbarRow>
-	);
+    return (
+        <ToolbarRow position="top">
+            <ModeSelector />
+            <TopicsSection />
+            <UtilityButtons />
+            <McqToggle />
+        </ToolbarRow>
+    );
 }

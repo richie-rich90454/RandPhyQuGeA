@@ -82,7 +82,7 @@ jobs:
       - name: Create pull request
         uses: peter-evans/create-pull-request@v6
         with:
-          title: "chore: bump version to ${{ steps.new_version.outputs.version }}"
+          title: 'chore: bump version to ${{ steps.new_version.outputs.version }}'
           body: |
             Automated version bump: ${{ steps.current_version.outputs.version }} → ${{ steps.new_version.outputs.version }}
 
@@ -92,7 +92,7 @@ jobs:
             - `package.json`
             - `package-lock.json`
             - `CHANGELOG.md`
-          branch: "chore/bump-version-${{ steps.new_version.outputs.version }}"
-          labels: "chore,automated"
-          commit-message: "chore: bump version to ${{ steps.new_version.outputs.version }}"
+          branch: 'chore/bump-version-${{ steps.new_version.outputs.version }}'
+          labels: 'chore,automated'
+          commit-message: 'chore: bump version to ${{ steps.new_version.outputs.version }}'
           delete-branch: true

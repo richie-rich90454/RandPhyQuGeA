@@ -1,31 +1,31 @@
-import type {ExpressionEvaluatorLike, RandomGenerator} from '../contracts';
-import type {QuestionTemplate} from '../types';
-import {BaseQuestionHandler} from './BaseQuestionHandler';
+import type {ExpressionEvaluatorLike, RandomGenerator} from "../contracts";
+import type {QuestionTemplate} from "../types";
+import {BaseQuestionHandler} from "./BaseQuestionHandler";
 /** Multiple-choice handler: evaluates each distractor expression, drops duplicates (including the answer), appends the answer, and shuffles. */
 export class MultipleChoiceHandler extends BaseQuestionHandler {
-	public readonly type = 'MC';
-	protected formatAnswer(value: number, evaluator: ExpressionEvaluatorLike): string {
-		return evaluator.formatNumeric(value);
-	}
-	protected generateChoices(template: QuestionTemplate, variables: Record<string, unknown>, answerValue: number, evaluator: ExpressionEvaluatorLike, random: RandomGenerator): string[] {
-		const answerFormatted = evaluator.formatNumeric(answerValue);
-		const seen: Set<string> = new Set([answerFormatted]);
-		const choices: string[] = [];
-		for (const expr of template.distractor_expressions) {
-			let val: number;
-			try {
-				val = evaluator.evaluate(expr, variables);
-			} catch {
-				continue;
-			}
-			const formatted = evaluator.formatNumeric(val);
-			if (seen.has(formatted)) {
-				continue;
-			}
-			seen.add(formatted);
-			choices.push(formatted);
-		}
-		choices.push(answerFormatted);
-		return random.shuffle(choices);
-	}
+    public readonly type = "MC";
+    protected formatAnswer(value: number, evaluator: ExpressionEvaluatorLike): string {
+        return evaluator.formatNumeric(value);
+    }
+    protected generateChoices(template: QuestionTemplate, variables: Record<string, unknown>, answerValue: number, evaluator: ExpressionEvaluatorLike, random: RandomGenerator): string[] {
+        const answerFormatted = evaluator.formatNumeric(answerValue);
+        const seen: Set<string> = new Set([answerFormatted]);
+        const choices: string[] = [];
+        for (const expr of template.distractor_expressions) {
+            let val: number;
+            try {
+                val = evaluator.evaluate(expr, variables);
+            } catch {
+                continue;
+            }
+            const formatted = evaluator.formatNumeric(val);
+            if (seen.has(formatted)) {
+                continue;
+            }
+            seen.add(formatted);
+            choices.push(formatted);
+        }
+        choices.push(answerFormatted);
+        return random.shuffle(choices);
+    }
 }

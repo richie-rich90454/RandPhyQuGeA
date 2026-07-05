@@ -5,51 +5,51 @@
  * generated questions, the user's progress, and per-question answer
  * evaluation. State is reset whenever a new session starts.
  */
-import {create} from 'zustand';
-import type {Specification, GeneratedQuestion, PracticeResult, PracticeMode} from '../types/models';
-import {QUESTION_TYPES} from '../types/models';
+import {create} from "zustand";
+import type {Specification, GeneratedQuestion, PracticeResult, PracticeMode} from "../types/models";
+import {QUESTION_TYPES} from "../types/models";
 export interface AnswerFeedback {
-	isCorrect: boolean;
-	correctAnswer: string;
+    isCorrect: boolean;
+    correctAnswer: string;
 }
 export interface PracticeState {
-	// Session state
-	specification: Specification | null;
-	questions: GeneratedQuestion[];
-	currentIndex: number;
-	results: PracticeResult[];
-	mode: PracticeMode;
-	isActive: boolean;
-	isFinished: boolean;
-	questionStartTime: number | null;
-	sessionStartTime: number | null;
-	userAnswer: string;
-	selectedChoiceIndex: number;
-	showFeedback: boolean;
-	lastResult: AnswerFeedback | null;
-	// Practice configuration (persists across session resets)
-	selectedTopicId: string | null;
-	mcqEnabled: boolean;
-	// Single-mode configuration (persists across session resets)
-	autoEnabled: boolean;
-	scope: string;
-	shuffle: boolean;
-	// Actions
-	setMode: (mode: PracticeMode) => void;
-	setSelectedTopicId: (topicId: string | null) => void;
-	setMcqEnabled: (enabled: boolean) => void;
-	setAutoEnabled: (enabled: boolean) => void;
-	setScope: (scope: string) => void;
-	setShuffle: (enabled: boolean) => void;
-	startSession: (spec: Specification, questions: GeneratedQuestion[], mode: PracticeMode) => void;
-	setUserAnswer: (answer: string) => void;
-	selectChoice: (index: number) => void;
-	submitAnswer: () => void;
-	advanceQuestion: () => void;
-	finishSession: () => void;
-	resetSession: () => void;
-	loadQuestion: (question: GeneratedQuestion) => void;
-	getCurrentQuestion: () => GeneratedQuestion | null;
+    // Session state
+    specification: Specification | null;
+    questions: GeneratedQuestion[];
+    currentIndex: number;
+    results: PracticeResult[];
+    mode: PracticeMode;
+    isActive: boolean;
+    isFinished: boolean;
+    questionStartTime: number | null;
+    sessionStartTime: number | null;
+    userAnswer: string;
+    selectedChoiceIndex: number;
+    showFeedback: boolean;
+    lastResult: AnswerFeedback | null;
+    // Practice configuration (persists across session resets)
+    selectedTopicId: string | null;
+    mcqEnabled: boolean;
+    // Single-mode configuration (persists across session resets)
+    autoEnabled: boolean;
+    scope: string;
+    shuffle: boolean;
+    // Actions
+    setMode: (mode: PracticeMode) => void;
+    setSelectedTopicId: (topicId: string | null) => void;
+    setMcqEnabled: (enabled: boolean) => void;
+    setAutoEnabled: (enabled: boolean) => void;
+    setScope: (scope: string) => void;
+    setShuffle: (enabled: boolean) => void;
+    startSession: (spec: Specification, questions: GeneratedQuestion[], mode: PracticeMode) => void;
+    setUserAnswer: (answer: string) => void;
+    selectChoice: (index: number) => void;
+    submitAnswer: () => void;
+    advanceQuestion: () => void;
+    finishSession: () => void;
+    resetSession: () => void;
+    loadQuestion: (question: GeneratedQuestion) => void;
+    getCurrentQuestion: () => GeneratedQuestion | null;
 }
 /**
  * Compare a user answer against the correct answer.
@@ -59,127 +59,127 @@ export interface PracticeState {
  * case-insensitive string comparison.
  */
 function isAnswerCorrect(userAnswer: string, correctAnswer: string): boolean {
-	const trimmedUser = userAnswer.trim();
-	const trimmedCorrect = correctAnswer.trim();
-	if (trimmedUser !== '' && trimmedCorrect !== '') {
-		const userNum = Number(trimmedUser);
-		const correctNum = Number(trimmedCorrect);
-		if (!Number.isNaN(userNum) && !Number.isNaN(correctNum)) {
-			return Math.abs(userNum - correctNum) < 0.01;
-		}
-	}
-	return trimmedUser.toLowerCase() === trimmedCorrect.toLowerCase();
+    const trimmedUser = userAnswer.trim();
+    const trimmedCorrect = correctAnswer.trim();
+    if (trimmedUser !== "" && trimmedCorrect !== "") {
+        const userNum = Number(trimmedUser);
+        const correctNum = Number(trimmedCorrect);
+        if (!Number.isNaN(userNum) && !Number.isNaN(correctNum)) {
+            return Math.abs(userNum - correctNum) < 0.01;
+        }
+    }
+    return trimmedUser.toLowerCase() === trimmedCorrect.toLowerCase();
 }
 const initialSessionState = {
-	specification: null as Specification | null,
-	questions: [] as GeneratedQuestion[],
-	currentIndex: 0,
-	results: [] as PracticeResult[],
-	mode: 'Single' as PracticeMode,
-	isActive: false,
-	isFinished: false,
-	questionStartTime: null as number | null,
-	sessionStartTime: null as number | null,
-	userAnswer: '',
-	selectedChoiceIndex: -1,
-	showFeedback: false,
-	lastResult: null as AnswerFeedback | null
+    specification: null as Specification | null,
+    questions: [] as GeneratedQuestion[],
+    currentIndex: 0,
+    results: [] as PracticeResult[],
+    mode: "Single" as PracticeMode,
+    isActive: false,
+    isFinished: false,
+    questionStartTime: null as number | null,
+    sessionStartTime: null as number | null,
+    userAnswer: "",
+    selectedChoiceIndex: -1,
+    showFeedback: false,
+    lastResult: null as AnswerFeedback | null,
 };
 export const usePracticeStore = create<PracticeState>()((set, get) => ({
-	...initialSessionState,
-	selectedTopicId: null,
-	mcqEnabled: false,
-	autoEnabled: false,
-	scope: 'all',
-	shuffle: false,
-	setMode: mode => set({mode}),
-	setSelectedTopicId: topicId => set({selectedTopicId: topicId}),
-	setMcqEnabled: enabled => set({mcqEnabled: enabled}),
-	setAutoEnabled: enabled => set({autoEnabled: enabled}),
-	setScope: scope => set({scope}),
-	setShuffle: enabled => set({shuffle: enabled}),
-	startSession: (spec, questions, mode) => {
-		const now = Date.now();
-		set({
-			...initialSessionState,
-			specification: spec,
-			questions,
-			mode,
-			isActive: true,
-			isFinished: false,
-			questionStartTime: now,
-			sessionStartTime: now
-		});
-	},
-	setUserAnswer: answer => set({userAnswer: answer}),
-	selectChoice: index => set({selectedChoiceIndex: index}),
-	submitAnswer: () => {
-		const state = get();
-		const question = state.questions[state.currentIndex];
-		if (!question || state.showFeedback) return;
-		const startTime = state.questionStartTime ?? Date.now();
-		const timeTakenMs = Date.now() - startTime;
-		let isCorrect: boolean;
-		let userAnswerValue = state.userAnswer;
-		if (question.question_type === QUESTION_TYPES.MC && question.choices) {
-			const correctIndex = question.choices.findIndex(choice => choice === question.answer);
-			isCorrect = state.selectedChoiceIndex === correctIndex;
-			userAnswerValue = state.selectedChoiceIndex >= 0 ? (question.choices[state.selectedChoiceIndex] ?? '') : '';
-		} else {
-			isCorrect = isAnswerCorrect(state.userAnswer, question.answer);
-		}
-		const result: PracticeResult = {
-			id: crypto.randomUUID(),
-			question_id: question.id,
-			topic_id: question.topic_id,
-			skill_id: question.skill_id,
-			is_correct: isCorrect,
-			time_taken_ms: timeTakenMs,
-			user_answer: userAnswerValue,
-			timestamp: new Date().toISOString(),
-			mode: state.mode,
-			difficulty: question.difficulty
-		};
-		set({
-			results: [...state.results, result],
-			showFeedback: true,
-			lastResult: {isCorrect, correctAnswer: question.answer}
-		});
-	},
-	advanceQuestion: () => {
-		const state = get();
-		const nextIndex = state.currentIndex + 1;
-		if (nextIndex >= state.questions.length) {
-			get().finishSession();
-			return;
-		}
-		set({
-			currentIndex: nextIndex,
-			userAnswer: '',
-			selectedChoiceIndex: -1,
-			showFeedback: false,
-			lastResult: null,
-			questionStartTime: Date.now()
-		});
-	},
-	finishSession: () => set({isActive: false, isFinished: true}),
-	resetSession: () => set({...initialSessionState}),
-	loadQuestion: question => {
-		set({
-			questions: [question],
-			currentIndex: 0,
-			userAnswer: '',
-			selectedChoiceIndex: -1,
-			showFeedback: false,
-			lastResult: null,
-			questionStartTime: Date.now(),
-			isActive: true,
-			isFinished: false,
-			mode: 'Single'
-		});
-	},
-	getCurrentQuestion: () => {
-		const state = get();
-		return state.questions[state.currentIndex] ?? null;
-	}
+    ...initialSessionState,
+    selectedTopicId: null,
+    mcqEnabled: false,
+    autoEnabled: false,
+    scope: "all",
+    shuffle: false,
+    setMode: mode => set({mode}),
+    setSelectedTopicId: topicId => set({selectedTopicId: topicId}),
+    setMcqEnabled: enabled => set({mcqEnabled: enabled}),
+    setAutoEnabled: enabled => set({autoEnabled: enabled}),
+    setScope: scope => set({scope}),
+    setShuffle: enabled => set({shuffle: enabled}),
+    startSession: (spec, questions, mode) => {
+        const now = Date.now();
+        set({
+            ...initialSessionState,
+            specification: spec,
+            questions,
+            mode,
+            isActive: true,
+            isFinished: false,
+            questionStartTime: now,
+            sessionStartTime: now,
+        });
+    },
+    setUserAnswer: answer => set({userAnswer: answer}),
+    selectChoice: index => set({selectedChoiceIndex: index}),
+    submitAnswer: () => {
+        const state = get();
+        const question = state.questions[state.currentIndex];
+        if (!question || state.showFeedback) return;
+        const startTime = state.questionStartTime ?? Date.now();
+        const timeTakenMs = Date.now() - startTime;
+        let isCorrect: boolean;
+        let userAnswerValue = state.userAnswer;
+        if (question.question_type === QUESTION_TYPES.MC && question.choices) {
+            const correctIndex = question.choices.findIndex(choice => choice === question.answer);
+            isCorrect = state.selectedChoiceIndex === correctIndex;
+            userAnswerValue = state.selectedChoiceIndex >= 0 ? (question.choices[state.selectedChoiceIndex] ?? "") : "";
+        } else {
+            isCorrect = isAnswerCorrect(state.userAnswer, question.answer);
+        }
+        const result: PracticeResult = {
+            id: crypto.randomUUID(),
+            question_id: question.id,
+            topic_id: question.topic_id,
+            skill_id: question.skill_id,
+            is_correct: isCorrect,
+            time_taken_ms: timeTakenMs,
+            user_answer: userAnswerValue,
+            timestamp: new Date().toISOString(),
+            mode: state.mode,
+            difficulty: question.difficulty,
+        };
+        set({
+            results: [...state.results, result],
+            showFeedback: true,
+            lastResult: {isCorrect, correctAnswer: question.answer},
+        });
+    },
+    advanceQuestion: () => {
+        const state = get();
+        const nextIndex = state.currentIndex + 1;
+        if (nextIndex >= state.questions.length) {
+            get().finishSession();
+            return;
+        }
+        set({
+            currentIndex: nextIndex,
+            userAnswer: "",
+            selectedChoiceIndex: -1,
+            showFeedback: false,
+            lastResult: null,
+            questionStartTime: Date.now(),
+        });
+    },
+    finishSession: () => set({isActive: false, isFinished: true}),
+    resetSession: () => set({...initialSessionState}),
+    loadQuestion: question => {
+        set({
+            questions: [question],
+            currentIndex: 0,
+            userAnswer: "",
+            selectedChoiceIndex: -1,
+            showFeedback: false,
+            lastResult: null,
+            questionStartTime: Date.now(),
+            isActive: true,
+            isFinished: false,
+            mode: "Single",
+        });
+    },
+    getCurrentQuestion: () => {
+        const state = get();
+        return state.questions[state.currentIndex] ?? null;
+    },
 }));

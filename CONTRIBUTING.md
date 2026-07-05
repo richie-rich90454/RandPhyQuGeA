@@ -6,17 +6,17 @@ Thank you for your interest in contributing! This document describes the current
 
 RandPhyQuGeA is a **pure-TypeScript** physics practice question generator. There is no WASM and no Rust domain logic — all question generation, evaluation, and export happens in TypeScript.
 
-| Layer | Technology |
-|-------|-----------|
-| **UI** | React 19 + TypeScript 6 |
-| **Build** | Vite 8 (web); optional Tauri shell for desktop |
-| **State** | Zustand 5 |
-| **Math** | KaTeX (fast LaTeX rendering) |
-| **Physics core** | Pure TypeScript (OOP), `src/lib/physics/` |
-| **Testing** | Vitest 4 |
-| **Linting** | ESLint 10 (flat config, `eslint.config.mjs`) |
-| **Formatting** | Prettier 3 |
-| **Styles** | Reference CSS ported into `globals.css` (source of truth) + Tailwind for incidental utilities |
+| Layer            | Technology                                                                                    |
+| ---------------- | --------------------------------------------------------------------------------------------- |
+| **UI**           | React 19 + TypeScript 6                                                                       |
+| **Build**        | Vite 8 (web); optional Tauri shell for desktop                                                |
+| **State**        | Zustand 5                                                                                     |
+| **Math**         | KaTeX (fast LaTeX rendering)                                                                  |
+| **Physics core** | Pure TypeScript (OOP), `src/lib/physics/`                                                     |
+| **Testing**      | Vitest 4                                                                                      |
+| **Linting**      | ESLint 10 (flat config, `eslint.config.mjs`)                                                  |
+| **Formatting**   | Prettier 3                                                                                    |
+| **Styles**       | Reference CSS ported into `globals.css` (source of truth) + Tailwind for incidental utilities |
 
 ## Getting Started
 
@@ -35,18 +35,18 @@ npm install
 
 ### Common Commands
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start the Vite dev server |
-| `npm run build` | Type-check (`tsc`) + production build (`vite build`) into `dist/` |
-| `npm run preview` | Preview the production build locally |
-| `npm test` | Run the Vitest suite (118 tests across 9 files) |
-| `npm run test:coverage` | Run tests with coverage |
-| `npm run test:watch` | Run Vitest in watch mode |
-| `npm run typecheck` | `tsc --noEmit` type check |
-| `npm run lint` | ESLint over `src/` (flat config) |
-| `npm run format:check` | Prettier check over `src/**/*.{ts,tsx,css}` |
-| `npm run format:write` | Prettier write over `src/**/*.{ts,tsx,css}` |
+| Command                 | Description                                                       |
+| ----------------------- | ----------------------------------------------------------------- |
+| `npm run dev`           | Start the Vite dev server                                         |
+| `npm run build`         | Type-check (`tsc`) + production build (`vite build`) into `dist/` |
+| `npm run preview`       | Preview the production build locally                              |
+| `npm test`              | Run the Vitest suite (118 tests across 9 files)                   |
+| `npm run test:coverage` | Run tests with coverage                                           |
+| `npm run test:watch`    | Run Vitest in watch mode                                          |
+| `npm run typecheck`     | `tsc --noEmit` type check                                         |
+| `npm run lint`          | ESLint over `src/` (flat config)                                  |
+| `npm run format:check`  | Prettier check over `src/**/*.{ts,tsx,css}`                       |
+| `npm run format:write`  | Prettier write over `src/**/*.{ts,tsx,css}`                       |
 
 ### Desktop (Optional, via Tauri)
 

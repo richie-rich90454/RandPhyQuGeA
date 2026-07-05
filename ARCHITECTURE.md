@@ -58,6 +58,7 @@ Wires the collaborators (parser, evaluator, RNG, generator, exporters, formula l
 ### Domain Types — `types.ts`
 
 Core data structures (unchanged from the Rust crate's domain):
+
 - `Unit` — top-level organizational unit (e.g. Mechanics)
 - `Topic` — topic within a unit (e.g. Kinematics)
 - `Skill` — specific skill within a topic
@@ -70,6 +71,7 @@ Core data structures (unchanged from the Rust crate's domain):
 ### Contracts — `contracts.ts`
 
 `interface` definitions for every extension point:
+
 - `RandomGenerator` — RNG contract (seeded, uniform)
 - `VariableHandler` — variable-type handler contract (int, double, enum, …)
 - `QuestionHandler` — question-type handler contract (MC, SA, TF, FB, NE)
@@ -82,6 +84,7 @@ Parses `.txt` specification files with `[SECTION]` headers and key-value pairs. 
 ### Expression Evaluator — `ExpressionEvaluator.ts`
 
 Shunting-yard parser + RPN evaluator backed by a `FunctionRegistry` (injectable via `configureCore({ functions })` for domain-specific math) with:
+
 - Basic arithmetic: `+`, `-`, `*`, `/`, `%`, unary minus
 - Trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
 - Hyperbolic: `sinh`, `cosh`, `tanh`, `asinh`, `acosh`, `atanh`
@@ -138,6 +141,7 @@ Small presentational components with typed props, composable into store-backed c
 ### Hooks (`src/hooks/`)
 
 One custom hook per concern (barrel-re-exported from `src/hooks/index.ts`):
+
 - `useSingleMode` — Single-mode session lifecycle (generate, check, next, results)
 - `useMentalMode` — Mental-mode session lifecycle (batch, countdown, auto-advance, skip, pause/resume, finish)
 - `usePracticeActions` — shared `check()` submission + `Shift+Enter` handler consumed by both modes
@@ -149,6 +153,7 @@ One custom hook per concern (barrel-re-exported from `src/hooks/index.ts`):
 ### Stores (`src/stores/`)
 
 Zustand stores, one per concern (barrel-re-exported from `src/stores/index.ts`):
+
 - `practiceStore` — live session state only (current question, results, isActive, showFeedback)
 - `progressStore` (persisted) — `PracticeResult` history, per-topic accuracy; exposes a `selectStats` selector for stable `PracticeStats` derivation
 - `settingsStore` (persisted) — theme, font, default mode, scope, difficulty, timer, max questions, auto-continue, shuffle, MCQ choices, decimal tolerance, sound, vibration, performance toggles, **and mental-mode config** (`mentalDifficulty`, `mentalScope`, `mentalShuffle`, `mentalUnlimited`)
@@ -197,6 +202,7 @@ Each math segment carries a `display` flag so `MathRenderer` renders display mat
 ## Tauri Desktop Shell (`src-tauri/`)
 
 The Tauri shell wraps the same Vite bundle for desktop builds. It exposes **no domain logic**:
+
 - `lib.rs` — Tauri bootstrap, no commands registered
 - `main.rs` — Tauri main entry
 - `Cargo.toml` — Tauri-only deps (no `physics_core` dependency)
@@ -216,6 +222,7 @@ TypeScript core + React UI
 ## CI/CD
 
 GitHub Actions workflows (`.github/workflows/`):
+
 - `code-quality.yml` — typecheck, lint, format check, test on every push/PR to main
 - `security-audit.yml` — weekly npm audit + CodeQL analysis
 - `release.yml` — on tagged versions: build web bundle and attach to GitHub Release
@@ -226,6 +233,7 @@ Obsolete workflows (Rust CI, Flutter CI, Apple/Android builds, Flutter web deplo
 ## Testing
 
 Vitest unit tests cover every core collaborator:
+
 - `evaluator.test.ts` — expression evaluator
 - `parser.test.ts` — specification parser
 - `random.test.ts` — RNG + variable handlers

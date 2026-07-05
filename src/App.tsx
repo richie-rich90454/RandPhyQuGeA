@@ -1,17 +1,17 @@
-import {useEffect} from 'react';
-import {AppShell} from './components/layout/AppShell';
-import {Toolbar} from './components/ui';
-import {ControlToolbarTop} from './components/practice/ControlToolbarTop';
-import {ControlToolbarBottom} from './components/practice/ControlToolbarBottom';
-import {MainContent} from './components/practice/MainContent';
-import {OnboardingModal} from './components/modals/OnboardingModal';
-import {ShortcutsModal} from './components/modals/ShortcutsModal';
-import {SettingsModal} from './components/modals/SettingsModal';
-import {PrintModal} from './components/modals/PrintModal';
-import {RecommendModal} from './components/modals/RecommendModal';
-import {ManageDataModal} from './components/modals/ManageDataModal';
-import {useTheme, useGlobalShortcuts} from './hooks';
-import {useSpecStore, useSettingsStore, useUiStore} from './stores';
+import {useEffect} from "react";
+import {AppShell} from "./components/layout/AppShell";
+import {Toolbar} from "./components/ui";
+import {ControlToolbarTop} from "./components/practice/ControlToolbarTop";
+import {ControlToolbarBottom} from "./components/practice/ControlToolbarBottom";
+import {MainContent} from "./components/practice/MainContent";
+import {OnboardingModal} from "./components/modals/OnboardingModal";
+import {ShortcutsModal} from "./components/modals/ShortcutsModal";
+import {SettingsModal} from "./components/modals/SettingsModal";
+import {PrintModal} from "./components/modals/PrintModal";
+import {RecommendModal} from "./components/modals/RecommendModal";
+import {ManageDataModal} from "./components/modals/ManageDataModal";
+import {useTheme, useGlobalShortcuts} from "./hooks";
+import {useSpecStore, useSettingsStore, useUiStore} from "./stores";
 /**
  * Root application component.
  *
@@ -23,61 +23,61 @@ import {useSpecStore, useSettingsStore, useUiStore} from './stores';
  * launch (when `onboardingCompleted` is still false).
  */
 function App() {
-	useTheme();
-	useGlobalShortcuts();
-	const loadSpec = useSpecStore(state => state.load);
-	const specLoading = useSpecStore(state => state.loading);
-	const specError = useSpecStore(state => state.error);
-	const onboardingCompleted = useSettingsStore(state => state.onboardingCompleted);
-	const openModal = useUiStore(state => state.openModal);
-	useEffect(() => {
-		void loadSpec();
-	}, [loadSpec]);
-	useEffect(() => {
-		if (!onboardingCompleted) {
-			openModal('onboarding');
-		}
-	}, [onboardingCompleted, openModal]);
-	if (specError) {
-		return (
-			<AppShell>
-				<div className="spec-error" role="alert">
-					<h2>Failed to load specification</h2>
-					<p>{specError}</p>
-					<button type="button" className="primary-button" onClick={() => void loadSpec()}>
-						Retry
-					</button>
-				</div>
-			</AppShell>
-		);
-	}
-	if (specLoading) {
-		return (
-			<AppShell>
-				<div className="spec-skeleton" role="status" aria-live="polite" aria-busy="true">
-					<span className="visually-hidden">Loading specification…</span>
-					<div className="skeleton skeleton-bar skeleton-bar--lg" aria-hidden="true" />
-					<div className="skeleton skeleton-bar" aria-hidden="true" />
-					<div className="skeleton skeleton-bar" aria-hidden="true" />
-					<div className="skeleton skeleton-bar skeleton-bar--sm" aria-hidden="true" />
-				</div>
-			</AppShell>
-		);
-	}
-	return (
-		<AppShell>
-			<Toolbar>
-				<ControlToolbarTop />
-				<ControlToolbarBottom />
-			</Toolbar>
-			<MainContent />
-			<OnboardingModal />
-			<ShortcutsModal />
-			<SettingsModal />
-			<PrintModal />
-			<RecommendModal />
-			<ManageDataModal />
-		</AppShell>
-	);
+    useTheme();
+    useGlobalShortcuts();
+    const loadSpec = useSpecStore(state => state.load);
+    const specLoading = useSpecStore(state => state.loading);
+    const specError = useSpecStore(state => state.error);
+    const onboardingCompleted = useSettingsStore(state => state.onboardingCompleted);
+    const openModal = useUiStore(state => state.openModal);
+    useEffect(() => {
+        void loadSpec();
+    }, [loadSpec]);
+    useEffect(() => {
+        if (!onboardingCompleted) {
+            openModal("onboarding");
+        }
+    }, [onboardingCompleted, openModal]);
+    if (specError) {
+        return (
+            <AppShell>
+                <div className="spec-error" role="alert">
+                    <h2>Failed to load specification</h2>
+                    <p>{specError}</p>
+                    <button type="button" className="primary-button" onClick={() => void loadSpec()}>
+                        Retry
+                    </button>
+                </div>
+            </AppShell>
+        );
+    }
+    if (specLoading) {
+        return (
+            <AppShell>
+                <div className="spec-skeleton" role="status" aria-live="polite" aria-busy="true">
+                    <span className="visually-hidden">Loading specification…</span>
+                    <div className="skeleton skeleton-bar skeleton-bar--lg" aria-hidden="true" />
+                    <div className="skeleton skeleton-bar" aria-hidden="true" />
+                    <div className="skeleton skeleton-bar" aria-hidden="true" />
+                    <div className="skeleton skeleton-bar skeleton-bar--sm" aria-hidden="true" />
+                </div>
+            </AppShell>
+        );
+    }
+    return (
+        <AppShell>
+            <Toolbar>
+                <ControlToolbarTop />
+                <ControlToolbarBottom />
+            </Toolbar>
+            <MainContent />
+            <OnboardingModal />
+            <ShortcutsModal />
+            <SettingsModal />
+            <PrintModal />
+            <RecommendModal />
+            <ManageDataModal />
+        </AppShell>
+    );
 }
 export default App;

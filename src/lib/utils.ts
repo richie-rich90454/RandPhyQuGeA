@@ -1,9 +1,9 @@
-import type {Specification} from '../types/models';
+import type {Specification} from "../types/models";
 /**
  * Join truthy class names into a single string.
  */
 export function cn(...classes: (string | false | null | undefined)[]): string {
-	return classes.filter(Boolean).join(' ');
+    return classes.filter(Boolean).join(" ");
 }
 /**
  * Resolve the topic id used to scope question generation.
@@ -17,13 +17,13 @@ export function cn(...classes: (string | false | null | undefined)[]): string {
  * topic should be pinned (the generator then draws from all topics).
  */
 export function resolveTopicId(specification: Specification, scope: string, shuffle: boolean, selectedTopicId?: string | null, pickRandomWhenScoped = true): string | undefined {
-	if (selectedTopicId) return selectedTopicId;
-	const candidateTopics = scope === 'all' ? specification.topics : specification.topics.filter(t => t.unit_id === scope);
-	if (candidateTopics.length === 0) return undefined;
-	const pickRandom = pickRandomWhenScoped ? shuffle || scope !== 'all' : shuffle;
-	if (pickRandom) {
-		const index = Math.floor(Math.random() * candidateTopics.length);
-		return candidateTopics[index]?.id;
-	}
-	return undefined;
+    if (selectedTopicId) return selectedTopicId;
+    const candidateTopics = scope === "all" ? specification.topics : specification.topics.filter(t => t.unit_id === scope);
+    if (candidateTopics.length === 0) return undefined;
+    const pickRandom = pickRandomWhenScoped ? shuffle || scope !== "all" : shuffle;
+    if (pickRandom) {
+        const index = Math.floor(Math.random() * candidateTopics.length);
+        return candidateTopics[index]?.id;
+    }
+    return undefined;
 }

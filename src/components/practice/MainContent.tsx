@@ -1,5 +1,5 @@
-import {QuestionCard} from './QuestionCard';
-import {AnswerSection} from './AnswerSection';
+import {QuestionCard} from "./QuestionCard";
+import {AnswerSection} from "./AnswerSection";
 /**
  * Main content area mapped to `.main-content > .content-stack`.
  *
@@ -10,12 +10,12 @@ import {AnswerSection} from './AnswerSection';
  * with `tabIndex={-1}` so the skip-link can move keyboard focus into it.
  */
 export function MainContent() {
-	return (
-		<main id="main-content" className="main-content" tabIndex={-1} aria-label="Main content">
-			<div className="content-stack">
-				<QuestionCard />
-				<AnswerSection />
-			</div>
-		</main>
-	);
+    return (
+        <main id="main-content" className="main-content" tabIndex={-1} aria-label="Main content">
+            <div className="content-stack">
+                <QuestionCard />
+                <AnswerSection />
+            </div>
+        </main>
+    );
 }
