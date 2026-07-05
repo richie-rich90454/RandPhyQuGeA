@@ -67,6 +67,10 @@ export class PhysicsCore {
         const generator = new QuestionGenerator(spec.templates, this.evaluator, this.random, this.questionTypeRegistry, this.variableGenerator);
         return generator.generateUnique(count, filter);
     }
+    /** Evaluate a mathematical expression against the supplied variables. */
+    public evaluate(expression: string, variables: Record<string, unknown>): number {
+        return this.evaluator.evaluate(expression, variables);
+    }
     /** Export questions to a format string. */
     public exportQuestions(questions: GeneratedQuestion[], format: ExportFormat): string {
         return this.exporters.export(questions, format);
