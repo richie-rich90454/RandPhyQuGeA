@@ -1,27 +1,35 @@
 import {cn} from "../../lib/utils";
 export interface SpinnerProps {
-    /** Spinner diameter. */
-    size?: "sm" | "md" | "lg";
-    className?: string;
+	/** Spinner diameter. */
+	size?: "sm" | "md" | "lg";
+	/** Additional CSS classes. */
+	className?: string;
+	/** Whether the spinner is a standalone loading indicator. */
+	standalone?: boolean;
 }
 /** Pixel sizes for each spinner option. */
 const sizePx: Record<NonNullable<SpinnerProps["size"]>, number> = {
-    sm: 16,
-    md: 24,
-    lg: 32,
+	sm: 16,
+	md: 24,
+	lg: 32,
 };
 /**
- * Inline SVG spinner.
+ * CSS-only animated spinner.
  *
- * Uses `currentColor` and a CSS `spin` animation so it inherits the
- * surrounding text color. Marked `aria-hidden` because it is decorative.
+ * Uses the `.spinner` class from globals.css for the border animation,
+ * and scales the element via inline width/height for each size.
+ * Decorative inside buttons; set `standalone` for accessible loading status.
  */
-export function Spinner({size = "md", className}: SpinnerProps) {
-    const px = sizePx[size];
-    return (
-        <svg className={cn("spinner", className)} width={px} height={px} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" strokeOpacity="0.25" />
-            <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-        </svg>
-    );
+export function Spinner({size="md", className, standalone}: SpinnerProps) {
+	const px=sizePx[size];
+	if (standalone) {
+		return (
+			<div className={cn("spinner", className)} style={{width: px, height: px}} role="status">
+				<span className="visually-hidden">Loading</span>
+			</div>
+		);
+	}
+	return (
+		<div className={cn("spinner", className)} style={{width: px, height: px}} aria-hidden="true" />
+	);
 }

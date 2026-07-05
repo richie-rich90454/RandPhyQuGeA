@@ -76,13 +76,13 @@ describe("Button", () => {
 		render(<Button loading>Save</Button>);
 		const button=getButton();
 		expect(button.disabled).toBe(true);
-		expect(document.querySelector("svg")).not.toBeNull();
+		expect(document.querySelector(".spinner")).not.toBeNull();
 	});
 	it("preserves width in loading state by keeping children in flow", () => {
 		render(<Button loading>Save</Button>);
 		const content=screen.getByText("Save");
 		expect(content.classList.contains("invisible")).toBe(true);
-		expect(document.querySelector("svg")).not.toBeNull();
+		expect(document.querySelector(".spinner")).not.toBeNull();
 	});
 	it("renders leftIcon", () => {
 		render(<Button leftIcon={<span data-testid="left-icon">L</span>}>Label</Button>);
@@ -114,12 +114,12 @@ describe("Button", () => {
 		render(<Button isLoading>Save</Button>);
 		const button=getButton();
 		expect(button.disabled).toBe(true);
-		expect(document.querySelector("svg")).not.toBeNull();
+		expect(document.querySelector(".spinner")).not.toBeNull();
 	});
 	it("prefers loading over isLoading when both are provided", () => {
 		render(<Button loading={false} isLoading={true}>Save</Button>);
 		const button=getButton();
 		expect(button.disabled).toBe(false);
-		expect(document.querySelector("svg")).toBeNull();
+		expect(document.querySelector(".spinner")).toBeNull();
 	});
 });
