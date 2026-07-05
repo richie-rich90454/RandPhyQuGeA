@@ -100,7 +100,7 @@ export function TopicsSection() {
                         </div>
                     </>
                 )}
-                {error && <span className="topic-pill-name">Error: {error}</span>}
+                {error && <span className="topic-pill-name">Error: {error.message}</span>}
                 {!loading && !error && filteredEntries.length === 0 && <span className="topic-pill-name">No topics found.</span>}
                 {!loading &&
                     !error &&

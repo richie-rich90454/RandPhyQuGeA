@@ -1,37 +1,38 @@
 /**
  * Parsed specification store.
  *
- * Loads the bundled default specification once on app startup, parses it via
- * the {@link PhysicsCore} facade, and exposes the resulting {@link Specification}
- * for topic/skill/template rendering. Non-persisted — the spec is re-parsed
- * on each app launch.
+ * Holds only UI state for the parsed specification. Loading and parsing are
+ * delegated to the OOP service layer via {@link useSpecLoader}.
  */
 import {create} from "zustand";
-import {loadDefaultSpec, parseSpecification} from "../services/physicsCore";
 import type {Specification} from "../types/models";
-export interface SpecState {
-    /** Parsed specification, or null while loading/errored. */
-    specification: Specification | null;
-    /** True while the default spec is being loaded and parsed. */
-    loading: boolean;
-    /** Parse error message, or null when parsing succeeded. */
-    error: string | null;
-    /** Load and parse the bundled default specification. */
-    load: () => Promise<void>;
+export interface SpecError {
+	type: "parse" | "network" | "unknown";
+	message: string;
+	details?: string;
 }
-export const useSpecStore = create<SpecState>()(set => ({
-    specification: null,
-    loading: false,
-    error: null,
-    load: async () => {
-        set({loading: true, error: null});
-        try {
-            const text = await loadDefaultSpec();
-            const specification = await parseSpecification(text);
-            set({specification, loading: false});
-        } catch (err) {
-            const message = err instanceof Error ? err.message : String(err);
-            set({loading: false, error: message});
-        }
-    },
+export interface SpecState {
+	specification: Specification | null;
+	loading: boolean;
+	error: SpecError | null;
+	empty: boolean;
+	setSpecification: (specification: Specification | null) => void;
+	setLoading: (loading: boolean) => void;
+	setError: (error: SpecError | null) => void;
+	setEmpty: (empty: boolean) => void;
+	reset: () => void;
+}
+const initialState={
+	specification: null as Specification | null,
+	loading: false,
+	error: null as SpecError | null,
+	empty: true,
+};
+export const useSpecStore=create<SpecState>()(set => ({
+	...initialState,
+	setSpecification: specification => set({specification}),
+	setLoading: loading => set({loading}),
+	setError: error => set({error}),
+	setEmpty: empty => set({empty}),
+	reset: () => set({...initialState}),
 }));

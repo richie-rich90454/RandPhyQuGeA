@@ -8,14 +8,17 @@ import "@fontsource/noto-sans-mono/400.css";
 import "@fontsource/noto-sans-mono/500.css";
 import {ErrorBoundary} from "./components/ErrorBoundary";
 import {ToastProvider} from "./components/ui";
+import {ServiceProvider} from "./components/providers/ServiceProvider";
 import App from "./App";
 import "./styles/globals.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
-    <React.StrictMode>
-        <ErrorBoundary>
-            <ToastProvider>
-                <App />
-            </ToastProvider>
-        </ErrorBoundary>
-    </React.StrictMode>,
+	<React.StrictMode>
+		<ErrorBoundary>
+			<ToastProvider>
+				<ServiceProvider>
+					<App />
+				</ServiceProvider>
+			</ToastProvider>
+		</ErrorBoundary>
+	</React.StrictMode>,
 );

@@ -20,20 +20,20 @@ import {SettingsModal} from "./components/modals/SettingsModal";
 import {PrintModal} from "./components/modals/PrintModal";
 import {RecommendModal} from "./components/modals/RecommendModal";
 import {ManageDataModal} from "./components/modals/ManageDataModal";
-import {ServiceProvider} from "./components/providers/ServiceProvider";
 import {useTheme, useGlobalShortcuts} from "./hooks";
+import {useSpecLoader} from "./hooks/useSpecLoader";
 import {useSpecStore, useSettingsStore, useUiStore} from "./stores";
 function App() {
 	useTheme();
 	useGlobalShortcuts();
-	let loadSpec=useSpecStore(state => state.load);
+	let {load}=useSpecLoader();
 	let specLoading=useSpecStore(state => state.loading);
 	let specError=useSpecStore(state => state.error);
 	let onboardingCompleted=useSettingsStore(state => state.onboardingCompleted);
 	let openModal=useUiStore(state => state.openModal);
 	useEffect(() => {
-		void loadSpec();
-	}, [loadSpec]);
+		void load();
+	}, [load]);
 	useEffect(() => {
 		if (!onboardingCompleted) {
 			openModal("onboarding");
@@ -41,50 +41,44 @@ function App() {
 	}, [onboardingCompleted, openModal]);
 	if (specError) {
 		return (
-			<ServiceProvider>
-				<AppShell>
-					<div className="spec-error" role="alert">
-						<h2>Failed to load specification</h2>
-						<p>{specError}</p>
-						<button type="button" className="primary-button" onClick={() => void loadSpec()}>
-							Retry
-						</button>
-					</div>
-				</AppShell>
-			</ServiceProvider>
+			<AppShell>
+				<div className="spec-error" role="alert">
+					<h2>Failed to load specification</h2>
+					<p>{specError.message}</p>
+					<button type="button" className="primary-button" onClick={() => void load()}>
+						Retry
+					</button>
+				</div>
+			</AppShell>
 		);
 	}
 	if (specLoading) {
 		return (
-			<ServiceProvider>
-				<AppShell>
-					<div className="spec-skeleton" role="status" aria-live="polite" aria-busy="true">
-						<span className="visually-hidden">Loading specification…</span>
-						<div className="skeleton skeleton-bar skeleton-bar--lg" aria-hidden="true" />
-						<div className="skeleton skeleton-bar" aria-hidden="true" />
-						<div className="skeleton skeleton-bar" aria-hidden="true" />
-						<div className="skeleton skeleton-bar skeleton-bar--sm" aria-hidden="true" />
-					</div>
-				</AppShell>
-			</ServiceProvider>
+			<AppShell>
+				<div className="spec-skeleton" role="status" aria-live="polite" aria-busy="true">
+					<span className="visually-hidden">Loading specification…</span>
+					<div className="skeleton skeleton-bar skeleton-bar--lg" aria-hidden="true" />
+					<div className="skeleton skeleton-bar" aria-hidden="true" />
+					<div className="skeleton skeleton-bar" aria-hidden="true" />
+					<div className="skeleton skeleton-bar skeleton-bar--sm" aria-hidden="true" />
+				</div>
+			</AppShell>
 		);
 	}
 	return (
-		<ServiceProvider>
-			<AppShell>
-				<Toolbar>
-					<ControlToolbarTop />
-					<ControlToolbarBottom />
-				</Toolbar>
-				<MainContent />
-				<OnboardingModal />
-				<ShortcutsModal />
-				<SettingsModal />
-				<PrintModal />
-				<RecommendModal />
-				<ManageDataModal />
-			</AppShell>
-		</ServiceProvider>
+		<AppShell>
+			<Toolbar>
+				<ControlToolbarTop />
+				<ControlToolbarBottom />
+			</Toolbar>
+			<MainContent />
+			<OnboardingModal />
+			<ShortcutsModal />
+			<SettingsModal />
+			<PrintModal />
+			<RecommendModal />
+			<ManageDataModal />
+		</AppShell>
 	);
 }
 export default App;
