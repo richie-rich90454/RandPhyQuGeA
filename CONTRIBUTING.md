@@ -14,8 +14,8 @@ RandPhyQuGeA is a **pure-TypeScript** physics practice question generator. There
 | **Math**         | KaTeX (fast LaTeX rendering)                                                                  |
 | **Physics core** | Pure TypeScript (OOP), `src/lib/physics/`                                                     |
 | **Testing**      | Vitest 4                                                                                      |
-| **Linting**      | ESLint 10 (flat config, `eslint.config.mjs`)                                                  |
-| **Formatting**   | Prettier 3                                                                                    |
+| **Linting**      | Oxlint (`oxlint src`)                                                                         |
+| **Formatting**   | oxfmt (`oxfmt .`)                                                                             |
 | **Styles**       | Reference CSS ported into `globals.css` (source of truth) + Tailwind for incidental utilities |
 
 ## Getting Started
@@ -44,9 +44,9 @@ npm install
 | `npm run test:coverage` | Run tests with coverage                                           |
 | `npm run test:watch`    | Run Vitest in watch mode                                          |
 | `npm run typecheck`     | `tsc --noEmit` type check                                         |
-| `npm run lint`          | ESLint over `src/` (flat config)                                  |
-| `npm run format:check`  | Prettier check over `src/**/*.{ts,tsx,css}`                       |
-| `npm run format:write`  | Prettier write over `src/**/*.{ts,tsx,css}`                       |
+| `npm run lint`          | Oxlint over `src/`                                                |
+| `npm run format:check`  | oxfmt check over the repository                                   |
+| `npm run format:write`  | oxfmt write over the repository                                   |
 
 ### Desktop (Optional, via Tauri)
 
@@ -126,6 +126,16 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) with **atomi
 Example: `fix: grade MCQ answers against the correct choice index`
 
 ## Development Workflow
+
+### Pre-commit quality gates
+
+Every commit must pass the local quality gate with zero errors before it is created. Run:
+
+```bash
+npm run typecheck && npm run lint && npm run test
+```
+
+Do not commit while any gate is failing. Run `npm run build` as well before opening a pull request.
 
 ### Branching
 
