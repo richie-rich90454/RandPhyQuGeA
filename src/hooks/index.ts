@@ -9,3 +9,4 @@ export type {UseCountdownTimerReturn} from "./useCountdownTimer";
 export {useMediaQuery} from "./useMediaQuery";
 export {useGlobalShortcuts} from "./useGlobalShortcuts";
 export {useTheme} from "./useTheme";
+export {useServices} from "./useServices";
