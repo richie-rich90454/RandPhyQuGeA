@@ -1,6 +1,6 @@
 # RandPhyQuGeA
 
-A pure-TypeScript physics practice question generator with a liquid/glassmorphism reference UI. The app generates random physics questions from a specification file (`part_one.txt`), supports focused (Single) and timed (Mental) practice modes, exports worksheets, tracks progress, and ships as both a web app (Vite) and an optional Tauri desktop shell.
+A pure-TypeScript physics practice question generator with a liquid/glassmorphism reference UI. The app generates random physics questions from a specification file (`part_one.txt`), supports focused (Single) and timed (Mental) practice modes, exports worksheets, tracks progress, and ships as a web app built with Vite.
 
 ## Features
 
@@ -28,7 +28,7 @@ A pure-TypeScript physics practice question generator with a liquid/glassmorphis
 | **UI**           | React 19 + TypeScript    | Composable presentational components, store-backed containers, custom hooks per concern                                |
 | **Styling**      | Reference CSS + Tailwind | Reference `style.css` ported into `globals.css` is the source of truth; Tailwind for incidental utilities              |
 | **Math**         | KaTeX                    | Fast LaTeX math rendering                                                                                              |
-| **Build**        | Vite                     | Web build; Tauri shell wraps the same bundle for desktop                                                               |
+| **Build**        | Vite                     | Web build and dev server                                                                                               |
 
 The TypeScript core is **idiomatically object-oriented**: classes with single responsibilities, `interface`-defined contracts for extension points, the Registry and Strategy patterns for question types/exporters/variable handlers, dependency injection of the RNG into the generator for testability, and a facade class (`PhysicsCore`) that wires the collaborators and exposes the public API. The design follows the open-closed principle — adding a new question type, exporter, function, or variable type requires only registering a new class, not editing existing core logic.
 
@@ -55,22 +55,14 @@ npm run build    # Type-check (tsc) + production build (vite build) into dist/
 npm run preview  # Preview the production build locally
 ```
 
-### Desktop (Optional, via Tauri)
-
-The Tauri shell in `src-tauri/` wraps the same Vite bundle for desktop builds. It exposes no domain logic — all question generation happens in the TypeScript core. The shell is a minimal bootstrap (`lib.rs`/`main.rs` only); no Tauri commands are registered.
-
-```bash
-# Requires Rust toolchain and Tauri CLI installed separately
-npx tauri build
-```
-
 ## Quality Checks
 
 ```bash
 npm run typecheck      # tsc --noEmit
-npm run lint           # eslint src (flat config)
-npm run format:check   # prettier --check
-npm run format:write   # prettier --write
+npm run lint           # oxlint src
+npm run lint:fix       # oxlint src --fix
+npm run format:check   # oxfmt --check .
+npm run format:write   # oxfmt --write .
 npm test               # vitest run
 npm run test:coverage  # vitest run --coverage
 npm run test:watch     # vitest (watch mode)
@@ -137,13 +129,6 @@ src/
     models.ts                 # Shared UI-facing types (PracticeResult, etc.)
   App.tsx                     # App root: spec load, onboarding, modals, error states
   main.tsx                    # React entry, ErrorBoundary wrap
-
-src-tauri/                    # Optional Tauri desktop shell (no domain logic)
-  src/
-    lib.rs                    # Tauri bootstrap (no commands registered)
-    main.rs                   # Tauri main entry
-  Cargo.toml                  # Tauri-only deps (no physics_core)
-  tauri.conf.json             # Tauri window config
 
 .github/workflows/            # CI: code-quality, security-audit, release, version-bump
 ```
