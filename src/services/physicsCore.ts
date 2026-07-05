@@ -4,7 +4,7 @@
  * The application reaches domain logic exclusively through this module. A
  * single shared `PhysicsCore.default()` instance handles parsing, question
  * generation, export, and the formula library. The public API stays async
- * so existing call sites (originally written against the Tauri/WASM bridge)
+ * so existing call sites (originally written against an async bridge)
  * continue to compile and behave identically. Advanced consumers can swap the
  * singleton's collaborators (custom question/variable types, exporters,
  * evaluator functions, or a seeded random source) via {@link configureCore}.
@@ -79,7 +79,7 @@ export async function parseSpecification(input: string): Promise<Specification> 
  * Generate a single question from a specification.
  *
  * Throws when no template matches the requested filter, mirroring the
- * previous Tauri/WASM contract that always returned a question.
+ * original async contract that always returned a question.
  */
 export async function generateQuestion(spec: Specification, options?: GenerateOptions): Promise<GeneratedQuestion> {
     const question = core.generateQuestion(spec, toFilter(options));

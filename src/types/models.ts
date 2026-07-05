@@ -1,9 +1,8 @@
 /**
- * TypeScript domain models mirroring the `physics_core` Rust crate types.
+ * Canonical TypeScript domain models for the physics question generator.
  *
- * Field names are kept in snake_case to match the JSON serialization
- * produced by serde on the Rust side, so no runtime key transformation
- * is required when crossing the Tauri/WASM boundary.
+ * Field names use snake_case to match the specification file format and
+ * the internal parser/exporter conventions used by the pure-TypeScript core.
  */
 /** Practice mode for a study session: Single (deep focus) or Mental (timed drill). */
 export type PracticeMode = "Single" | "Mental";
