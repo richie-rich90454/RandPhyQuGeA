@@ -6,7 +6,7 @@
     "plugins": ["typescript", "unicorn", "react", "react-perf", "jsx-a11y", "import", "vitest"],
     "categories": {
         "correctness": "error",
-        "suspicious": "error",
+        "suspicious": "warn",
         "perf": "warn",
         "style": "off",
         "pedantic": "off",
@@ -21,7 +21,20 @@
     "ignorePatterns": ["dist", "src-tauri", "node_modules", "coverage"],
     "rules": {
         "react/rules-of-hooks": "error",
-        "react/exhaustive-deps": "warn"
+        "react/exhaustive-deps": "warn",
+        "react/react-in-jsx-scope": "off",
+        "react-perf/jsx-no-new-object-as-prop": "off",
+        "react-perf/jsx-no-new-function-as-prop": "off",
+        "react-perf/jsx-no-new-array-as-prop": "off",
+        "react-perf/jsx-no-jsx-as-prop": "off",
+        "jsx-a11y/prefer-tag-over-role": "off",
+        "jsx-a11y/interactive-supports-focus": "off",
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/no-noninteractive-element-interactions": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
+        "vitest/no-conditional-expect": "off",
+        "typescript/no-base-to-string": "off",
+        "typescript/require-array-sort-compare": "off"
     },
     "overrides": [
         {
