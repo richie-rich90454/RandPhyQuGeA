@@ -14,11 +14,11 @@ The formatting rules applied to the provided code files are as follows:
 
 - Opening braces `{` are placed on the same line as the preceding keyword (e.g., `function`, `if`, `else`, `for`, `switch`) with no space before the brace.
 - Example:
-  ```typescript
-  function factorial(n: number): number {
-  	// code
-  }
-  ```
+    ```typescript
+    function factorial(n: number): number {
+        // code
+    }
+    ```
 - Closing braces `}` are placed on a new line, aligned with the indentation level of the opening statement.
 
 ### 4. **Conditional Statements (`if`/`else if`/`else`)**
@@ -26,15 +26,15 @@ The formatting rules applied to the provided code files are as follows:
 - The `if` keyword is followed by a space, then the condition in parentheses, then the opening brace on the same line.
 - The `else if` and `else` clauses are placed on separate lines, each with its own opening brace on the same line.
 - Example:
-  ```typescript
-  if (condition) {
-  	// code
-  } else if (anotherCondition) {
-  	// code
-  } else {
-  	// code
-  }
-  ```
+    ```typescript
+    if (condition) {
+        // code
+    } else if (anotherCondition) {
+        // code
+    } else {
+        // code
+    }
+    ```
 
 ### 5. **Spacing Around Operators and Punctuation**
 
@@ -63,12 +63,12 @@ The formatting rules applied to the provided code files are as follows:
 - No spaces inside the braces unless the object spans multiple lines; in that case, each property is on a new line, indented.
 - Example (single-line): `{ correct: "even", alternate: "even" }`
 - Example (multi-line):
-  ```typescript
-  let answer = {
-  	correct: 'even',
-  	alternate: 'even'
-  };
-  ```
+    ```typescript
+    let answer = {
+        correct: "even",
+        alternate: "even",
+    };
+    ```
 
 ### 9. **String Concatenation**
 
@@ -85,17 +85,17 @@ The formatting rules applied to the provided code files are as follows:
 - `case` labels are indented one level, and the code inside each case is indented another level.
 - Each `case` block may or may not have a `break`; if present, it is indented at the same level as the code.
 - Example:
-  ```typescript
-  switch (type) {
-  	case 'basic':
-  		// code
-  		break;
-  	case 'equation': {
-  		// code
-  		break;
-  	}
-  }
-  ```
+    ```typescript
+    switch (type) {
+        case "basic":
+            // code
+            break;
+        case "equation": {
+            // code
+            break;
+        }
+    }
+    ```
 
 ### 12. **Comments**
 

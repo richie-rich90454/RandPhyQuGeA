@@ -140,13 +140,13 @@ Example: `fix: grade MCQ answers against the correct choice index`
 3. Add or update tests for new functionality
 4. Run the full quality gate locally:
 
-   ```bash
-   npm run typecheck
-   npm run lint
-   npm run format:check
-   npm test
-   npm run build
-   ```
+    ```bash
+    npm run typecheck
+    npm run lint
+    npm run format:check
+    npm test
+    npm run build
+    ```
 
 5. Update documentation (`README.md`, `ARCHITECTURE.md`, `CHANGELOG.md`) if your change affects the public surface
 6. Open a pull request with a brief description of the change and the validation results
