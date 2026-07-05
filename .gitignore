@@ -1,9 +1,21 @@
+# Rust
+target/
+Cargo.lock
+
+# WASM
+*.wasm
+*.wasm.map
+src/wasm/*
+!src/wasm/.gitkeep
+
 # Dependencies
 node_modules/
 
 # Build output
 dist/
 build/
+src-tauri/target
+src-tauri/gen/
 
 # Test coverage
 coverage/
@@ -39,10 +51,6 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 Desktop.ini
-
-# Tauri
-src-tauri/target
-src-tauri/gen/
 
 # Spec files (local)
 specifications/
