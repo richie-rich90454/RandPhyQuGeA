@@ -19,6 +19,8 @@ export interface UiState {
     openModal: (id: ModalId) => void;
     /** Close the currently open modal. */
     closeModal: () => void;
+    /** Close any open modal and open a new one atomically. */
+    replaceModal: (id: ModalId) => void;
 }
 export const useUiStore = create<UiState>()(set => ({
     searchQuery: "",
@@ -26,4 +28,5 @@ export const useUiStore = create<UiState>()(set => ({
     setSearchQuery: query => set({searchQuery: query}),
     openModal: id => set({activeModal: id}),
     closeModal: () => set({activeModal: null}),
+    replaceModal: id => set({activeModal: id}),
 }));
