@@ -1,5 +1,5 @@
 /** Service-layer contracts for the OOP domain services. */
-import type {ExportFormat, FormulaEntry, GeneratedQuestion, PracticeMode, PracticeResult, QuestionTemplate, Specification} from "../types/models";
+import type {ExportFormat, FormulaEntry, GeneratedQuestion, PracticeMode, PracticeResult, Specification} from "../types/models";
 import type {ParseError} from "../lib/physics/types";
 import type {StreakData} from "./streakService";
 /** Filter options forwarded to question generation. */
@@ -100,7 +100,7 @@ export interface IAnalyticsService {
 }
 /** Loads, validates, and previews specification content. */
 export interface ISpecService {
-	loadSpec(source: string | File): Promise<string>;
+	loadSpec(input: string): Promise<Specification>;
 	validateSpec(input: string): Promise<SpecValidationResult>;
-	previewTemplate(template: QuestionTemplate, variables?: Record<string, unknown>): Promise<string>;
+	previewTemplate(spec: Specification, templateId: string, count: number): Promise<GeneratedQuestion[]>;
 }
