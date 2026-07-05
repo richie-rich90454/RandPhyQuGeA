@@ -31,6 +31,7 @@ export interface Session {
 	isFinished: boolean;
 	questionStartTime: number;
 	sessionStartTime: number;
+	sessionEndTime?: number;
 }
 /** Serializable snapshot of a session for persistence. */
 export interface SessionSnapshot {
