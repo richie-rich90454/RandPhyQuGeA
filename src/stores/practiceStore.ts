@@ -1,185 +1,116 @@
 /**
  * Active practice session store (non-persisted).
  *
- * Holds the in-flight session state: the parsed specification, the
- * generated questions, the user's progress, and per-question answer
- * evaluation. State is reset whenever a new session starts.
+ * Holds only UI/session state and practice configuration. All business logic
+ * lives in the OOP service layer, accessed via {@link useServices}. The
+ * authoritative session object is the single source of truth for the session
+ * lifecycle; every derived value is computed from it.
  */
 import {create} from "zustand";
+import type {Session} from "../services/contracts";
 import type {Specification, GeneratedQuestion, PracticeResult, PracticeMode} from "../types/models";
-import {QUESTION_TYPES} from "../types/models";
 export interface AnswerFeedback {
-    isCorrect: boolean;
-    correctAnswer: string;
+	isCorrect: boolean;
+	correctAnswer: string;
 }
 export interface PracticeState {
-    // Session state
-    specification: Specification | null;
-    questions: GeneratedQuestion[];
-    currentIndex: number;
-    results: PracticeResult[];
-    mode: PracticeMode;
-    isActive: boolean;
-    isFinished: boolean;
-    questionStartTime: number | null;
-    sessionStartTime: number | null;
-    userAnswer: string;
-    selectedChoiceIndex: number;
-    showFeedback: boolean;
-    lastResult: AnswerFeedback | null;
-    // Practice configuration (persists across session resets)
-    selectedTopicId: string | null;
-    mcqEnabled: boolean;
-    // Single-mode configuration (persists across session resets)
-    autoEnabled: boolean;
-    scope: string;
-    shuffle: boolean;
-    // Actions
-    setMode: (mode: PracticeMode) => void;
-    setSelectedTopicId: (topicId: string | null) => void;
-    setMcqEnabled: (enabled: boolean) => void;
-    setAutoEnabled: (enabled: boolean) => void;
-    setScope: (scope: string) => void;
-    setShuffle: (enabled: boolean) => void;
-    startSession: (spec: Specification, questions: GeneratedQuestion[], mode: PracticeMode) => void;
-    setUserAnswer: (answer: string) => void;
-    selectChoice: (index: number) => void;
-    submitAnswer: () => void;
-    advanceQuestion: () => void;
-    finishSession: () => void;
-    resetSession: () => void;
-    loadQuestion: (question: GeneratedQuestion) => void;
-    getCurrentQuestion: () => GeneratedQuestion | null;
-}
-/**
- * Compare a user answer against the correct answer.
- *
- * Numeric answers are compared as floats with a small tolerance (0.01).
- * If either side fails to parse as a number, fall back to a trimmed,
- * case-insensitive string comparison.
- */
-function isAnswerCorrect(userAnswer: string, correctAnswer: string): boolean {
-    const trimmedUser = userAnswer.trim();
-    const trimmedCorrect = correctAnswer.trim();
-    if (trimmedUser !== "" && trimmedCorrect !== "") {
-        const userNum = Number(trimmedUser);
-        const correctNum = Number(trimmedCorrect);
-        if (!Number.isNaN(userNum) && !Number.isNaN(correctNum)) {
-            return Math.abs(userNum - correctNum) < 0.01;
-        }
-    }
-    return trimmedUser.toLowerCase() === trimmedCorrect.toLowerCase();
+	// The active session (null when no session is running).
+	session: Session | null;
+	// UI-only state for the current question.
+	userAnswer: string;
+	selectedChoiceIndex: number;
+	showFeedback: boolean;
+	lastResult: AnswerFeedback | null;
+	// Practice configuration (persists across session resets).
+	selectedTopicId: string | null;
+	mcqEnabled: boolean;
+	// Single-mode configuration (persists across session resets).
+	autoEnabled: boolean;
+	scope: string;
+	shuffle: boolean;
+	// Actions
+	setSession: (session: Session | null) => void;
+	setUserAnswer: (answer: string) => void;
+	selectChoice: (index: number) => void;
+	setShowFeedback: (show: boolean) => void;
+	setLastResult: (result: AnswerFeedback | null) => void;
+	setSelectedTopicId: (topicId: string | null) => void;
+	setMcqEnabled: (enabled: boolean) => void;
+	setAutoEnabled: (enabled: boolean) => void;
+	setScope: (scope: string) => void;
+	setShuffle: (enabled: boolean) => void;
+	resetSession: () => void;
+	resetAnswerUi: () => void;
 }
 const initialSessionState = {
-    specification: null as Specification | null,
-    questions: [] as GeneratedQuestion[],
-    currentIndex: 0,
-    results: [] as PracticeResult[],
-    mode: "Single" as PracticeMode,
-    isActive: false,
-    isFinished: false,
-    questionStartTime: null as number | null,
-    sessionStartTime: null as number | null,
-    userAnswer: "",
-    selectedChoiceIndex: -1,
-    showFeedback: false,
-    lastResult: null as AnswerFeedback | null,
+	session: null as Session | null,
+	userAnswer: "",
+	selectedChoiceIndex: -1,
+	showFeedback: false,
+	lastResult: null as AnswerFeedback | null,
 };
-export const usePracticeStore = create<PracticeState>()((set, get) => ({
-    ...initialSessionState,
-    selectedTopicId: null,
-    mcqEnabled: false,
-    autoEnabled: false,
-    scope: "all",
-    shuffle: false,
-    setMode: mode => set({mode}),
-    setSelectedTopicId: topicId => set({selectedTopicId: topicId}),
-    setMcqEnabled: enabled => set({mcqEnabled: enabled}),
-    setAutoEnabled: enabled => set({autoEnabled: enabled}),
-    setScope: scope => set({scope}),
-    setShuffle: enabled => set({shuffle: enabled}),
-    startSession: (spec, questions, mode) => {
-        const now = Date.now();
-        set({
-            ...initialSessionState,
-            specification: spec,
-            questions,
-            mode,
-            isActive: true,
-            isFinished: false,
-            questionStartTime: now,
-            sessionStartTime: now,
-        });
-    },
-    setUserAnswer: answer => set({userAnswer: answer}),
-    selectChoice: index => set({selectedChoiceIndex: index}),
-    submitAnswer: () => {
-        const state = get();
-        const question = state.questions[state.currentIndex];
-        if (!question || state.showFeedback) return;
-        const startTime = state.questionStartTime ?? Date.now();
-        const timeTakenMs = Date.now() - startTime;
-        let isCorrect: boolean;
-        let userAnswerValue = state.userAnswer;
-        if (question.question_type === QUESTION_TYPES.MC && question.choices) {
-            const correctIndex = question.choices.findIndex(choice => choice === question.answer);
-            isCorrect = state.selectedChoiceIndex === correctIndex;
-            userAnswerValue = state.selectedChoiceIndex >= 0 ? (question.choices[state.selectedChoiceIndex] ?? "") : "";
-        } else {
-            isCorrect = isAnswerCorrect(state.userAnswer, question.answer);
-        }
-        const result: PracticeResult = {
-            id: crypto.randomUUID(),
-            question_id: question.id,
-            topic_id: question.topic_id,
-            skill_id: question.skill_id,
-            is_correct: isCorrect,
-            time_taken_ms: timeTakenMs,
-            user_answer: userAnswerValue,
-            timestamp: new Date().toISOString(),
-            mode: state.mode,
-            difficulty: question.difficulty,
-        };
-        set({
-            results: [...state.results, result],
-            showFeedback: true,
-            lastResult: {isCorrect, correctAnswer: question.answer},
-        });
-    },
-    advanceQuestion: () => {
-        const state = get();
-        const nextIndex = state.currentIndex + 1;
-        if (nextIndex >= state.questions.length) {
-            get().finishSession();
-            return;
-        }
-        set({
-            currentIndex: nextIndex,
-            userAnswer: "",
-            selectedChoiceIndex: -1,
-            showFeedback: false,
-            lastResult: null,
-            questionStartTime: Date.now(),
-        });
-    },
-    finishSession: () => set({isActive: false, isFinished: true}),
-    resetSession: () => set({...initialSessionState}),
-    loadQuestion: question => {
-        set({
-            questions: [question],
-            currentIndex: 0,
-            userAnswer: "",
-            selectedChoiceIndex: -1,
-            showFeedback: false,
-            lastResult: null,
-            questionStartTime: Date.now(),
-            isActive: true,
-            isFinished: false,
-            mode: "Single",
-        });
-    },
-    getCurrentQuestion: () => {
-        const state = get();
-        return state.questions[state.currentIndex] ?? null;
-    },
+const initialConfigState = {
+	selectedTopicId: null as string | null,
+	mcqEnabled: false,
+	autoEnabled: false,
+	scope: "all",
+	shuffle: false,
+};
+export const usePracticeStore = create<PracticeState>()((set) => ({
+	...initialSessionState,
+	...initialConfigState,
+	setSession: session => set({session}),
+	setUserAnswer: answer => set({userAnswer: answer}),
+	selectChoice: index => set({selectedChoiceIndex: index}),
+	setShowFeedback: show => set({showFeedback: show}),
+	setLastResult: result => set({lastResult: result}),
+	setSelectedTopicId: topicId => set({selectedTopicId: topicId}),
+	setMcqEnabled: enabled => set({mcqEnabled: enabled}),
+	setAutoEnabled: enabled => set({autoEnabled: enabled}),
+	setScope: scope => set({scope}),
+	setShuffle: enabled => set({shuffle: enabled}),
+	resetSession: () => set({...initialSessionState}),
+	resetAnswerUi: () => set({userAnswer: "", selectedChoiceIndex: -1, showFeedback: false, lastResult: null}),
 }));
+/** Derive the current question from the active session. */
+export function selectCurrentQuestion(state: PracticeState): GeneratedQuestion | null {
+	const session = state.session;
+	if (!session) return null;
+	return session.questions[session.currentIndex] ?? null;
+}
+/** Derive whether a session is currently active. */
+export function selectIsActive(state: PracticeState): boolean {
+	return state.session?.isActive ?? false;
+}
+/** Derive whether the active session has finished. */
+export function selectIsFinished(state: PracticeState): boolean {
+	return state.session?.isFinished ?? false;
+}
+/** Derive the mode of the active session. */
+export function selectMode(state: PracticeState): PracticeMode {
+	return state.session?.mode ?? "Single";
+}
+/** Derive the results of the active session. */
+export function selectResults(state: PracticeState): PracticeResult[] {
+	return state.session?.results ?? [];
+}
+/** Derive the current question index of the active session. */
+export function selectCurrentIndex(state: PracticeState): number {
+	return state.session?.currentIndex ?? 0;
+}
+/** Derive the questions of the active session. */
+export function selectQuestions(state: PracticeState): GeneratedQuestion[] {
+	return state.session?.questions ?? [];
+}
+/** Derive the question start time of the active session. */
+export function selectQuestionStartTime(state: PracticeState): number | null {
+	return state.session?.questionStartTime ?? null;
+}
+/** Derive the session start time of the active session. */
+export function selectSessionStartTime(state: PracticeState): number | null {
+	return state.session?.sessionStartTime ?? null;
+}
+/** Derive the specification of the active session. */
+export function selectSpecification(state: PracticeState): Specification | null {
+	return state.session?.specification ?? null;
+}

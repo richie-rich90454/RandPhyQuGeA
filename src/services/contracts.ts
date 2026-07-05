@@ -82,6 +82,7 @@ export interface ISessionService {
 	submitAnswer(answer: string, choiceIndex?: number): Promise<PracticeResult>;
 	advanceQuestion(): Promise<boolean>;
 	finishSession(): Promise<PracticeResult[]>;
+	getSession(): Session | null;
 	resumeSession(snapshot: SessionSnapshot): Promise<Session>;
 	saveSessionSnapshot(key?: string): Promise<SessionSnapshot | null>;
 	loadSessionSnapshot(key?: string): Promise<SessionSnapshot | null>;

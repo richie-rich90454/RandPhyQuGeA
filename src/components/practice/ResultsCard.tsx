@@ -1,6 +1,6 @@
 import {useMemo} from "react";
 import katex from "katex";
-import {usePracticeStore} from "../../stores/practiceStore";
+import {usePracticeStore, selectCurrentQuestion} from "../../stores/practiceStore";
 import {EmptyState} from "../ui";
 import {MathText} from "../MathText";
 /** Mail/results empty-state icon path. */
@@ -20,7 +20,7 @@ const INCORRECT_ICON = "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59
 export function ResultsCard() {
     const showFeedback = usePracticeStore(state => state.showFeedback);
     const lastResult = usePracticeStore(state => state.lastResult);
-    const currentQuestion = usePracticeStore(state => state.questions[state.currentIndex] ?? null);
+    const currentQuestion = usePracticeStore(selectCurrentQuestion);
     const solutionRender = useMemo(() => {
         if (!currentQuestion) return null;
         const latex = currentQuestion.solution_latex;

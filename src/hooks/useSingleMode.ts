@@ -1,11 +1,13 @@
 import {useCallback, useEffect, useRef, useState} from "react";
-import {usePracticeStore} from "../stores/practiceStore";
+import {usePracticeStore, selectIsActive} from "../stores/practiceStore";
 import {useSpecStore} from "../stores/specStore";
-import {generateQuestion} from "../services/physicsCore";
+import {useServices} from "./useServices";
 import {useToast} from "../components/ui";
 import {usePracticeActions} from "./usePracticeActions";
 import {resolveTopicId} from "../lib/utils";
 import {QUESTION_TYPES} from "../types/models";
+import type {Session} from "../services/contracts";
+
 /**
  * Return value of {@link useSingleMode}.
  */
@@ -29,21 +31,22 @@ export interface UseSingleModeReturn {
     /** Generate a new question via the physics core and load it into the store. */
     generate: () => Promise<void>;
     /** Check the current answer, evaluate, and persist the result. */
-    check: () => void;
+    check: () => Promise<void>;
 }
+
 /**
  * Single-mode practice hook.
  *
- * Wires the Generate/Check buttons to the physics core and practice store.
- * Generate resolves a topic (from the selected pill, the scope unit, or
- * random shuffle), calls `generateQuestion`, and loads the result into the
- * store via `loadQuestion` (which preserves accumulated results). Check
- * delegates to `submitAnswer` and persists the latest result to the
- * progress store so it survives reloads. Auto-generate fires 3s after
- * feedback is shown. Ctrl+G triggers generate globally; Shift+Enter
- * triggers check from within a textarea/input.
+ * Wires the Generate/Check buttons to the OOP service layer and practice
+ * store. Generate resolves a topic, calls `PhysicsService.generateQuestion`,
+ * builds a Single-mode session, and hands it to `SessionService` before
+ * storing it. Check delegates to `SessionService.submitAnswer` and persists
+ * the returned result to the progress store. Auto-generate fires 3s after
+ * feedback is shown. Ctrl+G triggers generate globally; Shift+Enter triggers
+ * check from within a textarea/input.
  */
 export function useSingleMode(): UseSingleModeReturn {
+    const {physics: physicsService, session: sessionService} = useServices();
     const autoEnabled = usePracticeStore(state => state.autoEnabled);
     const setAutoEnabled = usePracticeStore(state => state.setAutoEnabled);
     const scope = usePracticeStore(state => state.scope);
@@ -52,7 +55,7 @@ export function useSingleMode(): UseSingleModeReturn {
     const setShuffle = usePracticeStore(state => state.setShuffle);
     const selectedTopicId = usePracticeStore(state => state.selectedTopicId);
     const mcqEnabled = usePracticeStore(state => state.mcqEnabled);
-    const isActive = usePracticeStore(state => state.isActive);
+    const isActive = usePracticeStore(selectIsActive);
     const showFeedback = usePracticeStore(state => state.showFeedback);
     const userAnswer = usePracticeStore(state => state.userAnswer);
     const selectedChoiceIndex = usePracticeStore(state => state.selectedChoiceIndex);
@@ -69,8 +72,24 @@ export function useSingleMode(): UseSingleModeReturn {
         const topicId = resolveTopicId(specification, scope, shuffle, selectedTopicId);
         const questionType = mcqEnabled ? QUESTION_TYPES.MC : undefined;
         try {
-            const question = await generateQuestion(specification, {topicId, questionType});
-            usePracticeStore.getState().loadQuestion(question);
+            const question = await physicsService.generateQuestion(specification, {topicId, questionType});
+            const now = Date.now();
+            const session: Session = {
+                id: crypto.randomUUID(),
+                specification,
+                questions: [question],
+                mode: "Single",
+                currentIndex: 0,
+                results: [],
+                isActive: true,
+                isFinished: false,
+                questionStartTime: now,
+                sessionStartTime: now,
+            };
+            await sessionService.resumeSession({session, createdAt: new Date().toISOString()});
+            const store = usePracticeStore.getState();
+            store.setSession(session);
+            store.resetAnswerUi();
         } catch (err) {
             const message = err instanceof Error ? err.message : String(err);
             toast({variant: "error", message: "Failed to generate question: " + message});
@@ -78,7 +97,7 @@ export function useSingleMode(): UseSingleModeReturn {
             isGeneratingRef.current = false;
             setIsGenerating(false);
         }
-    }, [specification, selectedTopicId, scope, shuffle, mcqEnabled, toast]);
+    }, [specification, selectedTopicId, scope, shuffle, mcqEnabled, physicsService, sessionService, toast]);
     const {check} = usePracticeActions();
     useEffect(() => {
         if (showFeedback && autoEnabled) {

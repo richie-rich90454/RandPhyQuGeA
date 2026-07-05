@@ -4,6 +4,7 @@ import {useUiStore} from "../../stores/uiStore";
 import {useProgressStore} from "../../stores/progressStore";
 import {useSpecStore} from "../../stores/specStore";
 import {usePracticeStore} from "../../stores/practiceStore";
+import {useSettingsStore} from "../../stores/settingsStore";
 /** Minimum number of attempts before a topic is considered for recommendations. */
 const MIN_ATTEMPTS = 1;
 /** Accuracy threshold below which a topic is considered weak. */
@@ -32,7 +33,7 @@ export function RecommendModal() {
     const results = useProgressStore(state => state.results);
     const specification = useSpecStore(state => state.specification);
     const setSelectedTopicId = usePracticeStore(state => state.setSelectedTopicId);
-    const setMode = usePracticeStore(state => state.setMode);
+    const setDefaultMode = useSettingsStore(state => state.setDefaultMode);
     const weakTopics = useMemo<TopicStats[]>(() => {
         if (results.length === 0) return [];
         const byTopic = new Map<string, {total: number; correct: number}>();
@@ -55,12 +56,12 @@ export function RecommendModal() {
     }, [results, specification]);
     const handlePractice = (topicId: string) => {
         setSelectedTopicId(topicId);
-        setMode("Single");
+        setDefaultMode("Single");
         closeModal();
     };
     const handlePracticeAll = () => {
         setSelectedTopicId(null);
-        setMode("Single");
+        setDefaultMode("Single");
         closeModal();
     };
     return (

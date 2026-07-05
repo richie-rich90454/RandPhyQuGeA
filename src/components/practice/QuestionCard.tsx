@@ -1,5 +1,5 @@
 import {useMemo} from "react";
-import {usePracticeStore} from "../../stores/practiceStore";
+import {usePracticeStore, selectCurrentQuestion} from "../../stores/practiceStore";
 import {useSpecStore} from "../../stores/specStore";
 import {CardHeader, CardTitle, CardSubtitle, CardContent, EmptyState} from "../ui";
 import {MathText} from "../MathText";
@@ -23,7 +23,7 @@ function findTopicName(specification: Specification | null, topicId: string | un
  * `.question-display` region.
  */
 export function QuestionCard() {
-    const currentQuestion = usePracticeStore(state => state.questions[state.currentIndex] ?? null);
+    const currentQuestion = usePracticeStore(selectCurrentQuestion);
     const specification = useSpecStore(state => state.specification);
     const topicName = useMemo(() => findTopicName(specification, currentQuestion?.topic_id), [specification, currentQuestion?.topic_id]);
     return (

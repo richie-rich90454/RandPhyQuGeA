@@ -1,13 +1,13 @@
 import {useEffect} from "react";
-import {usePracticeStore} from "../stores/practiceStore";
 import {useSettingsStore} from "../stores/settingsStore";
 import {useUiStore} from "../stores/uiStore";
+
 /**
  * Wire global keyboard shortcuts for app-level actions.
  *
  * Shortcuts handled:
- * - `Ctrl+1` — switch to Single mode
- * - `Ctrl+2` — switch to Mental mode
+ * - `Ctrl+1` — switch default mode to Single
+ * - `Ctrl+2` — switch default mode to Mental
  * - `Ctrl+,` — open the Settings modal
  * - `Ctrl+Shift+T` — toggle between light and dark theme
  * - `Ctrl+G` — generate a new question (Single mode) or start/skip (Mental mode)
@@ -22,7 +22,8 @@ import {useUiStore} from "../stores/uiStore";
  * Should be called once at the application root.
  */
 export function useGlobalShortcuts(): void {
-    const setMode = usePracticeStore(state => state.setMode);
+    const defaultMode = useSettingsStore(state => state.defaultMode);
+    const setDefaultMode = useSettingsStore(state => state.setDefaultMode);
     const themeMode = useSettingsStore(state => state.themeMode);
     const setThemeMode = useSettingsStore(state => state.setThemeMode);
     const openModal = useUiStore(state => state.openModal);
@@ -33,13 +34,13 @@ export function useGlobalShortcuts(): void {
             // Ctrl+1 → Single mode
             if (key === "1" && !event.shiftKey) {
                 event.preventDefault();
-                setMode("Single");
+                setDefaultMode("Single");
                 return;
             }
             // Ctrl+2 → Mental mode
             if (key === "2" && !event.shiftKey) {
                 event.preventDefault();
-                setMode("Mental");
+                setDefaultMode("Mental");
                 return;
             }
             // Ctrl+, → Settings
@@ -64,5 +65,5 @@ export function useGlobalShortcuts(): void {
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [setMode, themeMode, setThemeMode, openModal]);
+    }, [defaultMode, setDefaultMode, themeMode, setThemeMode, openModal]);
 }

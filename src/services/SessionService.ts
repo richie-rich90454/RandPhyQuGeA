@@ -137,6 +137,9 @@ export class SessionService implements ISessionService {
 		this.session.sessionEndTime=Date.now();
 		return this.session.results;
 	}
+	public getSession(): Session | null {
+		return this.session;
+	}
 	public async resumeSession(snapshot: SessionSnapshot): Promise<Session> {
 		this.session=snapshot.session;
 		return snapshot.session;

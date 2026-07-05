@@ -73,6 +73,9 @@ class FakeSessionService implements ISessionService {
 	public async finishSession(): Promise<import("../../types/models").PracticeResult[]> {
 		return [];
 	}
+	public getSession(): import("../../services/contracts").Session | null {
+		return null;
+	}
 	public async resumeSession(): Promise<import("../../services/contracts").Session> {
 		return {id: "s1", specification: {units: [], topics: [], skills: [], templates: []}, questions: [], mode: "Single", currentIndex: 0, results: [], isActive: true, isFinished: false, questionStartTime: 0, sessionStartTime: 0};
 	}

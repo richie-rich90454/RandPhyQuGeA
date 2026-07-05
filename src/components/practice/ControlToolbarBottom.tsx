@@ -1,16 +1,20 @@
 import {ToolbarRow} from "../ui";
-import {usePracticeStore} from "../../stores/practiceStore";
+import {usePracticeStore, selectIsActive, selectMode} from "../../stores/practiceStore";
+import {useSettingsStore} from "../../stores/settingsStore";
 import {SingleControls} from "./SingleControls";
 import {MentalControls} from "./MentalControls";
+
 /**
  * Bottom row of the control toolbar.
  *
  * Renders the Single-mode controls or the Mental-mode controls depending on
- * the current practice mode, mirroring the reference's
- * `.toolbar-row-bottom` which swaps `#single-controls` and
- * `#mental-controls` based on the selected mode.
+ * the active session mode (when a session is running) or the user's default
+ * mode preference (when no session is active).
  */
 export function ControlToolbarBottom() {
-    const mode = usePracticeStore(state => state.mode);
+    const isActive = usePracticeStore(selectIsActive);
+    const sessionMode = usePracticeStore(selectMode);
+    const defaultMode = useSettingsStore(state => state.defaultMode);
+    const mode = isActive ? sessionMode : defaultMode;
     return <ToolbarRow position="bottom">{mode === "Single" ? <SingleControls /> : <MentalControls />}</ToolbarRow>;
 }
