@@ -1,6 +1,6 @@
 import {describe, it, expect, vi, beforeEach, afterEach} from "vitest";
 import {ExportService} from "../ExportService";
-import type {ExportFormat} from "../../types/models";
+import type {ExportFormat, GeneratedQuestion} from "../../types/models";
 let EXPECTED_FORMATS: Record<ExportFormat, {extension: string; mimeType: string; label: string}> = {
 	html: {extension: ".html", mimeType: "text/html", label: "HTML"},
 	pdf: {extension: ".pdf", mimeType: "text/html", label: "PDF"},
@@ -96,6 +96,63 @@ describe("ExportService", () => {
 			expect(clickSpy).toHaveBeenCalledTimes(1);
 			expect(removeChildSpy).toHaveBeenCalledWith(anchor);
 			expect(revokeObjectURL).toHaveBeenCalledWith("blob:mock-url");
+		});
+	});
+	describe("buildWorksheetHtml", () => {
+		it("includes questions and answer key when requested", () => {
+			let service = new ExportService();
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, choices: ["3", "4", "5"]},
+			];
+			let html = service.buildWorksheetHtml(questions, true);
+			expect(html).toContain("Physics Worksheet");
+			expect(html).toContain("What is 2+2?");
+			expect(html).toContain("Answer: 4");
+			expect(html).toContain("A. 3");
+		});
+		it("omits answers when answer key is disabled", () => {
+			let service = new ExportService();
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}},
+			];
+			let html = service.buildWorksheetHtml(questions, false);
+			expect(html).toContain("What is 2+2?");
+			expect(html).not.toContain("Answer: 4");
+		});
+		it("escapes HTML in question text", () => {
+			let service = new ExportService();
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "<script>alert(1)</script>", answer: "&", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}},
+			];
+			let html = service.buildWorksheetHtml(questions, true);
+			expect(html).toContain("&lt;script&gt;");
+			expect(html).toContain("Answer: &amp;");
+		});
+	});
+	describe("printWorksheet", () => {
+		it("opens a print window, writes worksheet HTML, and calls print", () => {
+			let service = new ExportService();
+			let write = vi.fn<(html: string) => void>();
+			let print = vi.fn<() => void>();
+			let mockWindow = {document: {open: vi.fn<() => void>(), write, close: vi.fn<() => void>()}, focus: vi.fn<() => void>(), print} as unknown as Window;
+			vi.stubGlobal("open", vi.fn<() => Window | null>().mockReturnValue(mockWindow));
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}},
+			];
+			service.printWorksheet(questions, true);
+			expect(window.open).toHaveBeenCalledWith("", "_blank");
+			expect(write).toHaveBeenCalledTimes(1);
+			expect(print).toHaveBeenCalledTimes(1);
+			vi.unstubAllGlobals();
+		});
+		it("throws when pop-up is blocked", () => {
+			let service = new ExportService();
+			vi.stubGlobal("open", vi.fn().mockReturnValue(null));
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}},
+			];
+			expect(() => service.printWorksheet(questions, true)).toThrow("Pop-up blocked");
+			vi.unstubAllGlobals();
 		});
 	});
 });
