@@ -36,3 +36,9 @@ export function resolveTopicId(specification: Specification, scope: string, shuf
     }
     return undefined;
 }
+/**
+ * Convert a zero-based choice index to a letter label (0 -> A, 1 -> B, ...).
+ */
+export function choiceLetter(index: number): string {
+    return String.fromCharCode(65+index);
+}

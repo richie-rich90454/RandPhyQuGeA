@@ -3,7 +3,7 @@ export type {ButtonProps, ButtonVariant} from "./Button";
 export {Card, CardHeader, CardTitle, CardSubtitle, CardContent, CardFooter} from "./Card";
 export type {CardProps, CardHeaderProps, CardTitleProps, CardSubtitleProps, CardContentProps, CardFooterProps} from "./Card";
 export {Badge} from "./Badge";
-export type {BadgeProps} from "./Badge";
+export type {BadgeProps, BadgeVariant, BadgeSize} from "./Badge";
 export {Input} from "./Input";
 export type {InputProps} from "./Input";
 export {Select} from "./Select";
