@@ -30,12 +30,12 @@ const VARIANT_ICON: Record<ToastVariant, ComponentType<{color?: string; size?: n
 	warning: Warning,
 	info: Info,
 };
-/** Left-accent color for each toast variant, using reference CSS variables. */
+/** Left-accent color for each toast variant, using active theme CSS variables. */
 const VARIANT_COLOR: Record<ToastVariant, string> = {
 	success: "var(--success)",
-	error: "var(--error)",
-	info: "var(--primary)",
+	error: "var(--danger)",
 	warning: "var(--warning)",
+	info: "var(--accent-600)",
 };
 /** Framer Motion variants for toast enter/exit. */
 const toastVariants = {
