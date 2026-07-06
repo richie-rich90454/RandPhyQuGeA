@@ -501,6 +501,7 @@ body {
 	flex-wrap: wrap;
 	gap: var(--spacing-xs);
 	max-height: 18dvh;
+	min-width: 0;
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: var(--spacing-xs) 0;
@@ -3286,6 +3287,14 @@ hr.context-menu-divider {
 	.control-toolbar {
 		padding: var(--spacing-xs) var(--spacing-sm);
 		gap: var(--spacing-xs);
+	}
+	.toolbar-row-top,
+	.toolbar-row-bottom {
+		flex-wrap: nowrap;
+		gap: var(--spacing-xs);
+	}
+	.topic-pills-container {
+		max-height: 120px;
 	}
 	.main-content,
 	.question-display {
