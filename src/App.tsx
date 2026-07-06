@@ -20,12 +20,14 @@ import {SettingsModal} from "./components/modals/SettingsModal";
 import {PrintModal} from "./components/modals/PrintModal";
 import {RecommendModal} from "./components/modals/RecommendModal";
 import {ManageDataModal} from "./components/modals/ManageDataModal";
-import {useTheme, useGlobalShortcuts} from "./hooks";
+import {ResumeSessionModal} from "./components/modals/ResumeSessionModal";
+import {useTheme, useGlobalShortcuts, useSessionSnapshot} from "./hooks";
 import {useSpecLoader} from "./hooks/useSpecLoader";
 import {useSpecStore, useSettingsStore, useUiStore} from "./stores";
 function App() {
 	useTheme();
 	useGlobalShortcuts();
+	let {snapshot, resume, discard}=useSessionSnapshot();
 	let {load}=useSpecLoader();
 	let specLoading=useSpecStore(state => state.loading);
 	let specError=useSpecStore(state => state.error);
@@ -78,6 +80,7 @@ function App() {
 			<PrintModal />
 			<RecommendModal />
 			<ManageDataModal />
+			<ResumeSessionModal snapshot={snapshot} onResume={resume} onDiscard={discard} />
 		</AppShell>
 	);
 }
