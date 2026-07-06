@@ -26,3 +26,11 @@ export {Toolbar, ToolbarGroup, ToolbarItem, ToolbarSeparator, ToolbarRow, Toolba
 export type {ToolbarProps, ToolbarGroupProps, ToolbarItemProps, ToolbarSeparatorProps, ToolbarRowProps, ToolbarSectionProps, ToolbarTitleProps, ToolbarRowPosition} from "./Toolbar";
 export {ToastProvider, useToast} from "./Toast";
 export type {ToastProviderProps, ToastVariant, ToastOptions} from "./Toast";
+export {Switch} from "./Switch";
+export type {SwitchProps} from "./Switch";
+export {Tabs, TabsList, TabsTrigger, TabsContent} from "./Tabs";
+export type {TabsProps, TabsListProps, TabsTriggerProps, TabsContentProps} from "./Tabs";
+export {Accordion, AccordionItem, AccordionTrigger, AccordionContent} from "./Accordion";
+export type {AccordionProps, AccordionItemProps, AccordionTriggerProps, AccordionContentProps} from "./Accordion";
+export {Tooltip, TooltipTrigger, TooltipContent} from "./Tooltip";
+export type {TooltipProps, TooltipTriggerProps, TooltipContentProps, TooltipSide, TooltipAlign} from "./Tooltip";
