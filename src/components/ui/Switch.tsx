@@ -44,7 +44,7 @@ export const Switch=forwardRef<HTMLInputElement, SwitchProps>(function Switch({c
 					{...props}
 				/>
 				<span className={cn("absolute inset-0 rounded-full border border-border bg-surface-elevated transition-colors duration-fast peer-focus-visible:ring-2 peer-focus-visible:ring-accent-600 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface peer-disabled:cursor-not-allowed", currentChecked && "border-accent-600 bg-accent-600")} aria-hidden="true" />
-				<span className={cn("absolute left-0.5 h-5 w-5 rounded-full bg-text-inverse shadow-sm transition-transform duration-fast", currentChecked && "translate-x-5")} aria-hidden="true" />
+				<span className={cn("absolute left-0.5 h-5 w-5 rounded-full bg-white shadow-rest transition-transform duration-fast", currentChecked && "translate-x-5")} aria-hidden="true" />
 			</span>
 			{(label || hint) && (
 				<span className="flex flex-col">
