@@ -1,9 +1,18 @@
-import type {Specification} from "../types/models";
+import type {Specification, Topic} from "../types/models";
 /**
  * Join truthy class names into a single string.
  */
 export function cn(...classes: (string | false | null | undefined)[]): string {
     return classes.filter(Boolean).join(" ");
+}
+/**
+ * Look up the topic name for a given topic id from the parsed specification.
+ * Returns `null` when the topic id is not found or no spec is loaded.
+ */
+export function findTopicName(specification: Specification | null, topicId: string | undefined): string | null {
+    if (!specification || !topicId) return null;
+    const topic = specification.topics.find((t: Topic) => t.id === topicId);
+    return topic?.name ?? null;
 }
 /**
  * Resolve the topic id used to scope question generation.

@@ -1,10 +1,9 @@
 import {useRef, type KeyboardEvent} from "react";
+import {X} from "@phosphor-icons/react";
 import {usePracticeStore, selectCurrentQuestion} from "../../stores/practiceStore";
 import {MathToolbar} from "./MathToolbar";
 import {MathText} from "../MathText";
 import {QUESTION_TYPES} from "../../types/models";
-/** Clear (✕) icon path for the clear-answer button. */
-const CLEAR_ICON = "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z";
 /**
  * Answer input card mapped to `.answer-card`.
  *
@@ -110,9 +109,7 @@ export function AnswerCard() {
                         />
                         {previewHasContent && (
                             <button type="button" id="clear-answer" className="icon-button clear-answer-btn" aria-label="Clear answer" title="Clear answer input" onClick={handleClear}>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                    <path d={CLEAR_ICON} />
-                                </svg>
+                                <X weight="bold" size={14} aria-hidden="true" />
                             </button>
                         )}
                     </div>

@@ -1,14 +1,9 @@
 import {useMemo} from "react";
-import katex from "katex";
+import {Envelope, Check, X} from "@phosphor-icons/react";
 import {usePracticeStore, selectCurrentQuestion} from "../../stores/practiceStore";
-import {EmptyState} from "../ui";
+import {Card, CardHeader, CardTitle, CardContent, EmptyState} from "../ui";
 import {MathText} from "../MathText";
-/** Mail/results empty-state icon path. */
-const RESULTS_EMPTY_ICON = "M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8l8 5 8-5v10zm-8-7L4 6h16l-8 5z";
-/** Checkmark icon path for correct answers. */
-const CORRECT_ICON = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
-/** Cross icon path for incorrect answers. */
-const INCORRECT_ICON = "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z";
+import {MathRenderer} from "../MathRenderer";
 /**
  * Results feedback card mapped to `.results-card`.
  *
@@ -25,12 +20,7 @@ export function ResultsCard() {
         if (!currentQuestion) return null;
         const latex = currentQuestion.solution_latex;
         if (latex && latex.trim() !== "") {
-            try {
-                const html = katex.renderToString(latex, {displayMode: true, throwOnError: true});
-                return {kind: "katex" as const, html};
-            } catch {
-                return {kind: "text" as const, text: currentQuestion.solution_text};
-            }
+            return {kind: "katex" as const, latex};
         }
         if (currentQuestion.solution_text.trim() !== "") {
             return {kind: "text" as const, text: currentQuestion.solution_text};
@@ -39,41 +29,35 @@ export function ResultsCard() {
     }, [currentQuestion]);
     if (!showFeedback || !lastResult || !currentQuestion) {
         return (
-            <div className="results-card card">
-                <div className="card-header">
-                    <h2 className="card-title">Results</h2>
-                </div>
-                <div className="card-content">
+            <Card className="results-card" variant="default" padding="none">
+                <CardHeader>
+                    <CardTitle>Results</CardTitle>
+                </CardHeader>
+                <CardContent>
                     <div id="answer-results" className="results-display" role="status" aria-live="polite">
                         <EmptyState
-                            icon={
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                    <path d={RESULTS_EMPTY_ICON} />
-                                </svg>
-                            }
+                            icon={<Envelope weight="duotone" size={48} aria-hidden="true" />}
                             title="Your results will appear here after checking"
                         />
                     </div>
-                </div>
-            </div>
+                </CardContent>
+            </Card>
         );
     }
     const {isCorrect, correctAnswer} = lastResult;
     const displayClass = isCorrect ? "results-display has-content correct" : "results-display has-content incorrect";
     const bannerClass = isCorrect ? "result-success" : "result-error";
-    const bannerIcon = isCorrect ? CORRECT_ICON : INCORRECT_ICON;
+    const BannerIcon = isCorrect ? Check : X;
     const heading = isCorrect ? "Correct!" : "Incorrect";
     return (
-        <div className="results-card card">
-            <div className="card-header">
-                <h2 className="card-title">Results</h2>
-            </div>
-            <div className="card-content">
+        <Card className="results-card" variant="default" padding="none">
+            <CardHeader>
+                <CardTitle>Results</CardTitle>
+            </CardHeader>
+            <CardContent>
                 <div id="answer-results" className={displayClass} role="status" aria-live="polite">
                     <div className={bannerClass}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d={bannerIcon} />
-                        </svg>
+                        <BannerIcon weight="bold" size={20} aria-hidden="true" />
                         <div>
                             <h3>{heading}</h3>
                             <p>
@@ -84,11 +68,11 @@ export function ResultsCard() {
                     {solutionRender && (
                         <div className="solution-display">
                             <h4>Solution</h4>
-                            {solutionRender.kind === "katex" ? <div dangerouslySetInnerHTML={{__html: solutionRender.html}} /> : <MathText text={solutionRender.text} />}
+                            {solutionRender.kind === "katex" ? <MathRenderer display tex={solutionRender.latex} /> : <MathText text={solutionRender.text} />}
                         </div>
                     )}
                 </div>
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }

@@ -910,23 +910,15 @@ input[type="checkbox"]:hover {
 	display: flex;
 	flex-direction: column;
 	gap: var(--spacing-md);
-	overflow-y: auto;
 	background: var(--surface);
 	border-radius: var(--radius-lg);
 	border: 1px solid var(--border);
 	padding: var(--spacing-md);
-	box-shadow: var(--shadow-elevated);
+	box-shadow: var(--shadow-rest);
 	transition:
 		border-color var(--duration-fast),
 		box-shadow var(--duration-fast),
 		background-color 0.3s ease;
-}
-.main-content:hover {
-	border-color: rgba(255, 255, 255, 0.3);
-	background: var(--surface-elevated);
-	box-shadow:
-		var(--shadow-elevated),
-		0 16px 48px rgba(0, 0, 0, 0.25);
 }
 .content-stack {
 	display: flex;
@@ -943,33 +935,11 @@ input[type="checkbox"]:hover {
 	border-radius: var(--radius-lg);
 	border: 1px solid var(--border);
 	transition:
-		all var(--duration-normal),
+		border-color var(--duration-fast),
+		box-shadow var(--duration-fast),
 		background-color 0.3s ease;
 	overflow: hidden;
-	box-shadow: var(--shadow-elevated);
-	animation: cardFadeIn 0.3s ease;
-}
-.card:hover {
-	background: rgba(255, 255, 255, 0.25);
-	border-color: rgba(255, 255, 255, 0.4);
-	box-shadow:
-		var(--shadow-elevated),
-		0 20px 56px rgba(0, 0, 0, 0.3),
-		0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-	transform: translateY(-2px);
-}
-.dark .card:hover {
-	background: rgba(45, 55, 72, 0.3);
-}
-@keyframes cardFadeIn {
-	from {
-		opacity: 0;
-		transform: translateY(10px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+	box-shadow: var(--shadow-rest);
 }
 .card-header {
 	padding: var(--spacing-sm) var(--spacing-md);
@@ -1017,16 +987,11 @@ input[type="checkbox"]:hover {
 		background-color 0.3s ease;
 	box-shadow: var(--shadow-rest);
 }
-.card:hover .card-subtitle {
-	color: var(--accent-600);
-	border-color: rgba(255, 255, 255, 0.3);
-	background: var(--surface-elevated);
-}
 .card-content {
 	padding: var(--spacing-md);
 }
 .question-display {
-	display: inline-flexbox;
+	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
@@ -1048,9 +1013,6 @@ input[type="checkbox"]:hover {
 .question-display.has-content {
 	border: 1px solid var(--border);
 	background: var(--surface-elevated);
-}
-.question-display:hover {
-	border-color: var(--accent-400);
 }
 .empty-state {
 	display: flex;
@@ -1948,12 +1910,6 @@ input[type="checkbox"]:hover {
 	border-radius: var(--radius-sm);
 	padding: 2px 6px;
 	font-size: 0.75rem;
-}
-.answer-card .math-toolbar {
-	display: none;
-}
-.answer-card:focus-within .math-toolbar {
-	display: flex;
 }
 #pause-session,
 #skip-question {
