@@ -3270,3 +3270,42 @@ hr.context-menu-divider {
 	gap: var(--spacing-sm);
 	width: 100%;
 }
+@media (min-width: 1024px) {
+	.app-top-bar {
+		height: 52px;
+	}
+	.app-content {
+		padding: var(--spacing-md) var(--spacing-lg);
+	}
+	.control-toolbar {
+		padding: var(--spacing-xs) var(--spacing-sm);
+		gap: var(--spacing-xs);
+	}
+	.main-content,
+	.question-display {
+		padding: var(--spacing-sm);
+	}
+	.card-header {
+		padding: var(--spacing-xs) var(--spacing-sm);
+	}
+	.card-content {
+		padding: var(--spacing-sm);
+	}
+	.topic-pill {
+		padding: 3px 8px;
+		font-size: 0.7rem;
+	}
+	.mode-selector {
+		padding: 2px;
+		font-size: 0.65rem;
+	}
+	.mode-button {
+		padding: 3px var(--spacing-sm);
+		font-size: 0.65rem;
+	}
+	.primary-button,
+	.secondary-button {
+		padding: 4px var(--spacing-sm);
+		font-size: 0.75rem;
+	}
+}
