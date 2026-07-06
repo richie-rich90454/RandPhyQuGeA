@@ -24,7 +24,7 @@ const variantStyles: Record<CardVariant, string>={
 	hover: "bg-surface border border-border shadow-rest transition-all duration-normal ease-standard hover:-translate-y-0.5 hover:shadow-hover",
 	filled: "bg-surface-elevated border border-border shadow-rest",
 	outline: "bg-transparent border border-border",
-	"layer-02": "bg-[rgb(var(--layer-02))] border border-border shadow-rest",
+	"layer-02": "bg-surface-elevated border border-border shadow-rest",
 };
 const paddingStyles: Record<CardPadding, string>={
 	none: "p-0",

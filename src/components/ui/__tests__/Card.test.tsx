@@ -45,7 +45,7 @@ describe("Card", () => {
 	it("applies layer-02 variant classes", () => {
 		render(<Card variant="layer-02" data-testid="card" />);
 		const card=getCard();
-		expect(card.classList.contains("bg-[rgb(var(--layer-02))]")).toBe(true);
+		expect(card.classList.contains("bg-surface-elevated")).toBe(true);
 		expect(card.classList.contains("shadow-rest")).toBe(true);
 	});
 	it("applies none padding", () => {
