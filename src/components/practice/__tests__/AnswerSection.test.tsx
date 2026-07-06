@@ -107,6 +107,8 @@ class FakeExportService implements IExportService {
 	}
 	public downloadText(): void {}
 	public downloadBlob(): void {}
+	public buildWorksheetHtml(): string { return ""; }
+	public printWorksheet(): void {}
 }
 class FakeSpecService implements ISpecService {
 	public async loadSpec(): Promise<Specification> {
