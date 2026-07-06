@@ -1,10 +1,13 @@
 import {useMemo} from "react";
+import {motion, AnimatePresence} from "framer-motion";
 import {Question} from "@phosphor-icons/react";
 import {usePracticeStore, selectCurrentQuestion} from "../../stores/practiceStore";
 import {useSpecStore} from "../../stores/specStore";
 import {findTopicName} from "../../lib/utils";
 import {Card, CardHeader, CardTitle, CardSubtitle, CardContent, EmptyState} from "../ui";
 import {MathText} from "../MathText";
+import {questionSwap} from "../../lib/motion";
+import {useReducedMotion} from "../../hooks/useReducedMotion";
 /**
  * Question display card mapped to `.question-card`.
  *
@@ -17,7 +20,17 @@ import {MathText} from "../MathText";
 export function QuestionCard() {
     const currentQuestion = usePracticeStore(selectCurrentQuestion);
     const specification = useSpecStore(state => state.specification);
+    const {reducedMotion} = useReducedMotion();
     const topicName = useMemo(() => findTopicName(specification, currentQuestion?.topic_id), [specification, currentQuestion?.topic_id]);
+    const contentKey = currentQuestion ? currentQuestion.id : "empty";
+    const content = currentQuestion ? (
+        <MathText text={currentQuestion.text} />
+    ) : (
+        <EmptyState
+            icon={<Question weight="duotone" size={48} aria-hidden="true" />}
+            title="Pick a topic and click Generate to start"
+        />
+    );
     return (
         <Card className="question-card" variant="default" padding="none">
             <CardHeader>
@@ -26,14 +39,17 @@ export function QuestionCard() {
             </CardHeader>
             <CardContent>
                 <div className="question-display" aria-live="polite" role="region" aria-label="Question display">
-                    {currentQuestion ? (
-                        <MathText text={currentQuestion.text} />
-                    ) : (
-                        <EmptyState
-                            icon={<Question weight="duotone" size={48} aria-hidden="true" />}
-                            title="Pick a topic and click Generate to start"
-                        />
-                    )}
+                    <AnimatePresence mode="wait" initial={false}>
+                        <motion.div
+                            key={contentKey}
+                            variants={reducedMotion ? undefined : questionSwap}
+                            initial={reducedMotion ? false : "hidden"}
+                            animate={reducedMotion ? false : "visible"}
+                            exit={reducedMotion ? undefined : "exit"}
+                        >
+                            {content}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
             </CardContent>
         </Card>

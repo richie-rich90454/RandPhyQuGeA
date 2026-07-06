@@ -1,9 +1,12 @@
 import {useRef, type KeyboardEvent} from "react";
+import {motion} from "framer-motion";
 import {X} from "@phosphor-icons/react";
 import {usePracticeStore, selectCurrentQuestion} from "../../stores/practiceStore";
 import {MathToolbar} from "./MathToolbar";
 import {MathText} from "../MathText";
 import {QUESTION_TYPES} from "../../types/models";
+import {shake} from "../../lib/motion";
+import {useReducedMotion} from "../../hooks/useReducedMotion";
 /**
  * Answer input card mapped to `.answer-card`.
  *
@@ -20,11 +23,14 @@ export function AnswerCard() {
     const selectedChoiceIndex = usePracticeStore(state => state.selectedChoiceIndex);
     const selectChoice = usePracticeStore(state => state.selectChoice);
     const showFeedback = usePracticeStore(state => state.showFeedback);
+    const lastResult = usePracticeStore(state => state.lastResult);
+    const {reducedMotion} = useReducedMotion();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const choicesContainerRef = useRef<HTMLDivElement>(null);
     const isMcq = currentQuestion?.question_type === QUESTION_TYPES.MC && currentQuestion.choices && currentQuestion.choices.length > 0;
     const hasQuestion = currentQuestion !== null;
     const inputDisabled = !hasQuestion || showFeedback;
+    const shouldShake = showFeedback && lastResult !== null && !lastResult.isCorrect;
     const handleInsertSymbol = (latex: string) => {
         const textarea = textareaRef.current;
         if (!textarea || inputDisabled) return;
@@ -74,7 +80,12 @@ export function AnswerCard() {
             <div className="card-header">
                 <h2 className="card-title">Your Answer</h2>
             </div>
-            <div className="card-content answer-content">
+            <motion.div
+                className="card-content answer-content"
+                variants={reducedMotion ? undefined : shake}
+                initial="initial"
+                animate={reducedMotion || !shouldShake ? "initial" : "shake"}
+            >
                 <MathToolbar onInsert={handleInsertSymbol} disabled={inputDisabled || isMcq === true} />
                 {isMcq && currentQuestion?.choices ? (
                     <div ref={choicesContainerRef} className="choices-container" id="mcq-choices-container" role="radiogroup" aria-label="Answer choices" onKeyDown={handleChoiceKeyDown}>
@@ -122,7 +133,7 @@ export function AnswerCard() {
                 <div id="expected-format" className="expected-format">
                     {hasQuestion ? "Enter a numeric value or expression. Use LaTeX for symbols." : ""}
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 }
