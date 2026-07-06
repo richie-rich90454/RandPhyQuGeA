@@ -1449,12 +1449,6 @@ input[type="checkbox"]:hover {
 	.card-content {
 		padding: var(--spacing-sm);
 	}
-	.footer-content {
-		flex-direction: column;
-		gap: var(--spacing-xs);
-		text-align: center;
-		font-size: 0.7rem;
-	}
 	.topic-pills-container {
 		flex-wrap: nowrap;
 		overflow-x: auto;
