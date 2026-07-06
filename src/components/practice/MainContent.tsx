@@ -13,7 +13,7 @@ import {ProgressPanel} from "../analytics/ProgressPanel";
 export function MainContent() {
     return (
         <div className="main-content">
-            <ScrollReveal className="content-stack" direction="up" distance={16} duration={0.5}>
+            <ScrollReveal className="content-stack grid grid-cols-1 lg:grid-cols-2 gap-4" direction="up" distance={16} duration={0.5}>
                 <QuestionCard />
                 <AnswerSection />
             </ScrollReveal>
