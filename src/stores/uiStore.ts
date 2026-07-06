@@ -7,7 +7,7 @@
  */
 import {create} from "zustand";
 /** Identifiers for the modal overlays managed by the shell. */
-export type ModalId = "onboarding" | "help" | "shortcuts" | "settings" | "print" | "recommend" | "manage-data";
+export type ModalId = "onboarding" | "help" | "shortcuts" | "settings" | "print" | "recommend" | "manage-data" | "resume-session";
 export interface UiState {
     /** Current topic filter text. */
     searchQuery: string;

@@ -57,5 +57,9 @@ describe("uiStore", () => {
 			// @ts-expect-error "invalid" is not a valid ModalId
 			assertType("invalid");
 		});
+		it("accepts the resume-session modal id", () => {
+			useUiStore.getState().openModal("resume-session");
+			expect(useUiStore.getState().activeModal).toBe("resume-session");
+		});
 	});
 });
