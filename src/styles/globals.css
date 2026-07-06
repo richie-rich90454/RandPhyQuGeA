@@ -1814,20 +1814,53 @@ input[type="checkbox"]:hover {
 	min-width: 160px;
 	flex-shrink: 0;
 }
-.print-options {
+.worksheet-options-card + .worksheet-preview-card {
+	margin-top: var(--spacing-lg);
+}
+.worksheet-options-content {
 	display: flex;
 	flex-direction: column;
 	gap: var(--spacing-md);
 }
-.print-preview {
-	margin-top: var(--spacing-lg);
-	padding-top: var(--spacing-md);
-	border-top: 1px solid var(--border-subtle);
+.worksheet-option {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-md);
+	flex-wrap: wrap;
 }
-.print-preview h3 {
-	font-size: 0.9rem;
-	margin-bottom: var(--spacing-sm);
-	color: var(--text-secondary);
+.worksheet-option-label {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 180px;
+	flex: 1;
+}
+.worksheet-option-title {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--text-primary);
+}
+.worksheet-option-hint {
+	font-size: 0.75rem;
+	color: var(--text-muted);
+}
+.worksheet-option-control {
+	min-width: 160px;
+	flex-shrink: 0;
+}
+.worksheet-actions {
+	display: flex;
+	justify-content: flex-end;
+	padding-top: var(--spacing-sm);
+}
+.worksheet-error {
+	color: var(--danger);
+	font-size: 0.85rem;
+}
+.worksheet-preview-content {
+	max-height: 40vh;
+	overflow-y: auto;
 }
 .worksheet-preview-list {
 	list-style: decimal;
@@ -1844,10 +1877,6 @@ input[type="checkbox"]:hover {
 .preview-answer {
 	color: var(--success);
 	font-weight: 600;
-}
-.error-text {
-	color: var(--danger);
-	font-size: 0.85rem;
 }
 .weak-topics-list,
 .data-list {
