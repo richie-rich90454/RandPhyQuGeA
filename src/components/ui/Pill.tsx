@@ -14,7 +14,7 @@ export interface PillProps {
 }
 let variantClasses: Record<PillVariant, string> = {
 	default: "bg-surface text-text-primary border-border hover:bg-surface-elevated",
-	active: "bg-accent-600 text-text-inverse border-accent-600",
+	active: "bg-accent-600 text-white border-accent-600 shadow-elevated",
 	outline: "bg-transparent text-text-primary border-border hover:bg-surface-elevated",
 };
 let sizeClasses: Record<PillSize, string> = {

@@ -18,14 +18,14 @@ describe("Pill", () => {
 		render(<Pill name="Kinematics" variant="active" />);
 		let pill = getPill();
 		expect(pill.classList.contains("bg-accent-600")).toBe(true);
-		expect(pill.classList.contains("text-text-inverse")).toBe(true);
+		expect(pill.classList.contains("text-white")).toBe(true);
 		expect(pill.getAttribute("aria-pressed")).toBe("true");
 	});
 	it("maps active boolean to active variant", () => {
 		render(<Pill name="Kinematics" active />);
 		let pill = getPill();
 		expect(pill.classList.contains("bg-accent-600")).toBe(true);
-		expect(pill.classList.contains("text-text-inverse")).toBe(true);
+		expect(pill.classList.contains("text-white")).toBe(true);
 		expect(pill.getAttribute("aria-pressed")).toBe("true");
 	});
 	it("applies outline variant classes", () => {
