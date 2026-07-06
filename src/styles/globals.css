@@ -2797,6 +2797,90 @@ hr.context-menu-divider {
 		grid-template-columns: 1fr;
 	}
 }
+.shortcuts-intro {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+	margin-bottom: var(--spacing-md);
+	padding: var(--spacing-sm) var(--spacing-md);
+	background: var(--accent-50);
+	border: 1px solid var(--accent-200);
+	border-radius: var(--radius-md);
+	color: var(--accent-800);
+}
+.shortcuts-intro-text {
+	font-size: 0.85rem;
+	margin: 0;
+}
+.shortcuts-groups {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+}
+.shortcuts-group-card {
+	--tw-shadow: 0 0 #0000;
+}
+.shortcuts-group-header {
+	padding-bottom: var(--spacing-xs);
+}
+.shortcuts-group-title {
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--text-secondary);
+}
+.shortcuts-group-content {
+	padding-top: 0;
+}
+.shortcuts-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+.shortcuts-table th {
+	text-align: left;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--text-muted);
+	padding: var(--spacing-xs) var(--spacing-sm);
+	border-bottom: 1px solid var(--border);
+}
+.shortcuts-table td {
+	padding: var(--spacing-xs) var(--spacing-sm);
+	border-bottom: 1px solid var(--border-subtle);
+}
+.shortcuts-table tr:last-child td {
+	border-bottom: none;
+}
+.shortcuts-table-keys {
+	width: 40%;
+	white-space: nowrap;
+}
+.shortcuts-table-keys kbd {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+	padding: 2px 6px;
+	font-size: 0.75rem;
+	font-family: var(--font-mono);
+	color: var(--accent-700);
+	box-shadow: var(--shadow-rest);
+}
+.shortcuts-table-description {
+	font-size: 0.85rem;
+	color: var(--text-primary);
+}
+.dark .shortcuts-intro {
+	background: var(--accent-900);
+	border-color: var(--accent-700);
+	color: var(--accent-100);
+}
+.dark .shortcuts-table-keys kbd {
+	background: var(--surface-elevated);
+	color: var(--accent-400);
+}
 .print-preview {
 	margin-top: var(--spacing-lg);
 	border-top: 1px solid var(--border);
