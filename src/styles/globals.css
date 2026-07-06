@@ -998,6 +998,16 @@ input[type="checkbox"]:hover {
 	grid-template-columns: 1fr 1fr;
 	gap: var(--spacing-md);
 }
+.answer-card-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+}
+.answer-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--spacing-sm);
+}
 .card {
 	background: var(--surface-elevated);
 	border-radius: var(--radius-lg);
