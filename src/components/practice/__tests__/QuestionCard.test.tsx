@@ -1,5 +1,5 @@
 import {describe, it, expect, beforeEach} from "vitest";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, fireEvent, act} from "@testing-library/react";
 import {QuestionCard} from "../QuestionCard";
 import {usePracticeStore} from "../../../stores/practiceStore";
 import {useSpecStore} from "../../../stores/specStore";
@@ -164,6 +164,28 @@ describe("QuestionCard", () => {
         usePracticeStore.getState().setSession(makeSession(question));
         useSpecStore.getState().setSpecification(makeSession(question).specification);
         render(<QuestionCard />);
+        expect(screen.queryByRole("radiogroup")).toBeNull();
+    });
+    it("flips between SA and MC choices when the store session is hot-reconfigured", () => {
+        const saQuestion = makeQuestion({question_type: "SA"});
+        usePracticeStore.getState().setSession(makeSession(saQuestion));
+        useSpecStore.getState().setSpecification(makeSession(saQuestion).specification);
+        render(<QuestionCard />);
+        expect(screen.queryByRole("radiogroup")).toBeNull();
+        const mcQuestion = makeQuestion({question_type: "MC", choices: ["3", "4", "5"]});
+        act(() => {
+            usePracticeStore.getState().setSession(makeSession(mcQuestion));
+            useSpecStore.getState().setSpecification(makeSession(mcQuestion).specification);
+        });
+        expect(screen.getByRole("radiogroup")).toBeDefined();
+        const radios = screen.getAllByRole("radio");
+        expect(radios.length).toBe(3);
+        expect(radios[0]?.textContent).toContain("A");
+        expect(radios[0]?.textContent).toContain("3");
+        act(() => {
+            usePracticeStore.getState().setSession(makeSession(saQuestion));
+            useSpecStore.getState().setSpecification(makeSession(saQuestion).specification);
+        });
         expect(screen.queryByRole("radiogroup")).toBeNull();
     });
 });
