@@ -21,12 +21,13 @@ import {PrintModal} from "./components/modals/PrintModal";
 import {RecommendModal} from "./components/modals/RecommendModal";
 import {ManageDataModal} from "./components/modals/ManageDataModal";
 import {ResumeSessionModal} from "./components/modals/ResumeSessionModal";
-import {useTheme, useGlobalShortcuts, useSessionSnapshot} from "./hooks";
+import {useTheme, useGlobalShortcuts, useSessionSnapshot, useMcqHotReconfig} from "./hooks";
 import {useSpecLoader} from "./hooks/useSpecLoader";
 import {useSpecStore, useSettingsStore, useUiStore} from "./stores";
 function App() {
 	useTheme();
 	useGlobalShortcuts();
+	useMcqHotReconfig();
 	let {snapshot, resume, discard}=useSessionSnapshot();
 	let {load}=useSpecLoader();
 	let specLoading=useSpecStore(state => state.loading);

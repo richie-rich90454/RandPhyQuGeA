@@ -13,3 +13,4 @@ export {useServices} from "./useServices";
 export {useCountUp} from "./useCountUp";
 export {useSessionSnapshot} from "./useSessionSnapshot";
 export type {UseSessionSnapshotResult} from "./useSessionSnapshot";
+export {useMcqHotReconfig} from "./useMcqHotReconfig";
