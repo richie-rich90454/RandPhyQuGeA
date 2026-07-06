@@ -1,5 +1,6 @@
-import {useMemo} from "react";
+import {useMemo, useRef} from "react";
 import {Modal} from "../ui";
+import {ScrollReveal} from "../animations";
 import {useUiStore} from "../../stores/uiStore";
 import {useProgressStore} from "../../stores/progressStore";
 import {useSpecStore} from "../../stores/specStore";
@@ -34,6 +35,7 @@ export function RecommendModal() {
     const specification = useSpecStore(state => state.specification);
     const setSelectedTopicId = usePracticeStore(state => state.setSelectedTopicId);
     const setDefaultMode = useSettingsStore(state => state.setDefaultMode);
+    const scrollerRef = useRef<HTMLElement | null>(null);
     const weakTopics = useMemo<TopicStats[]>(() => {
         if (results.length === 0) return [];
         const byTopic = new Map<string, {total: number; correct: number}>();
@@ -72,6 +74,7 @@ export function RecommendModal() {
             title="Your Recommended Practice Topics"
             titleId="weak-topics-title"
             ariaLabel="Recommended topics"
+            scrollerRef={scrollerRef}
             footer={
                 <>
                     <button type="button" className="secondary-button" onClick={closeModal}>
@@ -91,8 +94,8 @@ export function RecommendModal() {
                 <>
                     <p>Based on your past performance, you should focus on these topics:</p>
                     <ul className="weak-topics-list">
-                        {weakTopics.map(topic => (
-                            <li key={topic.topicId} className="weak-topic-item">
+                        {weakTopics.map((topic, index) => (
+                            <ScrollReveal key={topic.topicId} className="weak-topic-item" as="li" direction="up" distance={12} duration={0.4} delay={index * 0.05} scrollerRef={scrollerRef}>
                                 <div className="weak-topic-info">
                                     <span className="weak-topic-name">{topic.topicName}</span>
                                     <span className="weak-topic-stats">
@@ -102,7 +105,7 @@ export function RecommendModal() {
                                 <button type="button" className="secondary-button" onClick={() => handlePractice(topic.topicId)}>
                                     Practice
                                 </button>
-                            </li>
+                            </ScrollReveal>
                         ))}
                     </ul>
                     <p className="weak-topics-note">Click "Practice" to start a session on that topic.</p>

@@ -1,5 +1,6 @@
 import {useRef, useState, type KeyboardEvent} from "react";
 import {Modal, ConfirmDialog} from "../ui";
+import {ScrollReveal} from "../animations";
 import {useUiStore} from "../../stores/uiStore";
 import {useSettingsStore, type ThemeMode, type FontMode} from "../../stores/settingsStore";
 import type {PracticeMode} from "../../types/models";
@@ -63,6 +64,7 @@ export function SettingsModal() {
     const [confirmReset, setConfirmReset] = useState(false);
     const settings = useSettingsStore();
     const tablistRef = useRef<HTMLDivElement>(null);
+    const scrollerRef = useRef<HTMLElement | null>(null);
     const handleTabKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
         event.preventDefault();
@@ -89,6 +91,7 @@ export function SettingsModal() {
                 title="Settings"
                 titleId="settings-title"
                 ariaLabel="Settings"
+                scrollerRef={scrollerRef}
                 footer={
                     <button type="button" className="primary-button" onClick={closeModal}>
                         Save &amp; Close
@@ -124,6 +127,7 @@ export function SettingsModal() {
                     </button>
                 </div>
                 {activeTab === "basic" && (
+                    <ScrollReveal className="settings-panel" direction="up" distance={16} duration={0.4} scrollerRef={scrollerRef}>
                     <div id="settings-basic" role="tabpanel" aria-labelledby="settings-tab-basic" tabIndex={0} className="settings-panel">
                         <div className="settings-section">
                             <h3>Updates</h3>
@@ -268,8 +272,10 @@ export function SettingsModal() {
                             </div>
                         </div>
                     </div>
+                    </ScrollReveal>
                 )}
                 {activeTab === "advanced" && (
+                    <ScrollReveal className="settings-panel" direction="up" distance={16} duration={0.4} scrollerRef={scrollerRef}>
                     <div id="settings-advanced" role="tabpanel" aria-labelledby="settings-tab-advanced" tabIndex={0} className="settings-panel">
                         <div className="settings-section">
                             <h3>Answer Options</h3>
@@ -406,6 +412,7 @@ export function SettingsModal() {
                             </div>
                         </div>
                     </div>
+                    </ScrollReveal>
                 )}
             </Modal>
             <ConfirmDialog

@@ -1,3 +1,4 @@
+import {ScrollReveal} from "../animations";
 import {QuestionCard} from "./QuestionCard";
 import {AnswerSection} from "./AnswerSection";
 /**
@@ -10,10 +11,10 @@ import {AnswerSection} from "./AnswerSection";
 export function MainContent() {
     return (
         <div className="main-content">
-            <div className="content-stack">
+            <ScrollReveal className="content-stack" direction="up" distance={16} duration={0.5}>
                 <QuestionCard />
                 <AnswerSection />
-            </div>
+            </ScrollReveal>
         </div>
     );
 }

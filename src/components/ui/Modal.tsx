@@ -1,4 +1,4 @@
-import {useEffect, useRef, type ReactNode} from "react";
+import {useCallback, useEffect, useRef, type ReactNode, type RefObject} from "react";
 import {createPortal} from "react-dom";
 import {motion, AnimatePresence, useReducedMotion} from "framer-motion";
 import {X} from "@phosphor-icons/react";
@@ -25,6 +25,8 @@ export interface ModalProps {
 	className?: string;
 	/** Accessible name when no title is supplied. */
 	ariaLabel?: string;
+	/** Ref forwarded to the scrollable modal-content container. */
+	scrollerRef?: RefObject<HTMLElement | null>;
 }
 /**
  * Modal dialog mapped to reference classes.
@@ -33,11 +35,17 @@ export interface ModalProps {
  * Escape and backdrop clicks call onClose. The optional modalId is set on the
  * outer .modal element so reference id-scoped CSS selectors apply.
  */
-export function Modal({open, onClose, title, titleId, modalId, children, footer, className, ariaLabel}: ModalProps) {
+export function Modal({open, onClose, title, titleId, modalId, children, footer, className, ariaLabel, scrollerRef}: ModalProps) {
 	const containerRef=useRef<HTMLDivElement|null>(null);
 	const previousFocusRef=useRef<HTMLElement|null>(null);
 	const previousOverflowRef=useRef<string>("");
 	const shouldReduceMotion=useReducedMotion() ?? false;
+	const setContainerRef=useCallback((node: HTMLDivElement|null) => {
+		containerRef.current=node;
+		if (scrollerRef) {
+			scrollerRef.current=node;
+		}
+	}, [scrollerRef]);
 	useEffect(() => {
 		if (!open) {
 			return;
@@ -119,7 +127,7 @@ export function Modal({open, onClose, title, titleId, modalId, children, footer,
 					variants={backdropVariants}
 				>
 					<motion.div
-						ref={containerRef}
+						ref={setContainerRef}
 						tabIndex={-1}
 						className={cn("modal-content", className)}
 						onClick={event => event.stopPropagation()}
