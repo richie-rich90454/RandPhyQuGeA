@@ -10,3 +10,4 @@ export {useMediaQuery} from "./useMediaQuery";
 export {useGlobalShortcuts} from "./useGlobalShortcuts";
 export {useTheme} from "./useTheme";
 export {useServices} from "./useServices";
+export {useCountUp} from "./useCountUp";

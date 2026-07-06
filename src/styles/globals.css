@@ -2881,6 +2881,197 @@ hr.context-menu-divider {
 	background: var(--surface-elevated);
 	color: var(--accent-400);
 }
+.progress-panel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+	margin-top: var(--spacing-md);
+}
+.progress-empty-card {
+	--tw-shadow: 0 0 #0000;
+}
+.progress-empty-content {
+	padding: var(--spacing-xl);
+}
+.progress-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: var(--spacing-md);
+}
+.progress-stat-card {
+	--tw-shadow: 0 0 #0000;
+}
+.progress-stat-header {
+	align-items: center;
+	gap: var(--spacing-sm);
+	padding-bottom: var(--spacing-xs);
+}
+.progress-stat-title {
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--text-secondary);
+}
+.progress-stat-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-xs);
+}
+.progress-stat-value {
+	font-size: 1.75rem;
+	font-weight: 700;
+	color: var(--text-primary);
+	line-height: 1.2;
+}
+.progress-stat-label,
+.progress-stat-meta {
+	font-size: 0.8rem;
+	color: var(--text-secondary);
+}
+.progress-stat-subgrid {
+	display: flex;
+	gap: var(--spacing-md);
+	margin-top: var(--spacing-xs);
+}
+.progress-stat-subvalue {
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--text-muted);
+	background: var(--surface);
+	padding: 2px 8px;
+	border-radius: var(--radius-full);
+	border: 1px solid var(--border);
+}
+.progress-weak-card,
+.progress-history-card {
+	--tw-shadow: 0 0 #0000;
+}
+.progress-weak-header,
+.progress-history-header {
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--spacing-sm);
+}
+.progress-weak-titles,
+.progress-history-titles {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+.progress-section-title {
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+.progress-section-subtitle {
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+}
+.progress-weak-content,
+.progress-history-content {
+	padding-top: var(--spacing-sm);
+}
+.progress-weak-list,
+.progress-history-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-sm);
+}
+.progress-weak-item {
+	display: grid;
+	gap: var(--spacing-xs);
+}
+.progress-weak-info {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-sm);
+}
+.progress-weak-name {
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.progress-weak-meta {
+	font-size: 0.75rem;
+	color: var(--text-muted);
+	flex-shrink: 0;
+}
+.progress-history-item {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: center;
+	gap: var(--spacing-sm);
+	padding: var(--spacing-xs) var(--spacing-sm);
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+}
+.progress-history-result {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	border-radius: var(--radius-full);
+	flex-shrink: 0;
+}
+.progress-history-result svg {
+	width: 14px;
+	height: 14px;
+}
+.progress-history-result.correct {
+	color: var(--success);
+	background: rgba(16, 185, 129, 0.1);
+}
+.progress-history-result.incorrect {
+	color: var(--danger);
+	background: rgba(239, 68, 68, 0.1);
+}
+.progress-history-topic {
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: var(--text-primary);
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.progress-history-meta,
+.progress-history-time {
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+	white-space: nowrap;
+}
+.progress-history-time {
+	text-align: right;
+}
+.progress-pagination {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--spacing-md);
+	margin-top: var(--spacing-md);
+}
+@media (max-width: 640px) {
+	.progress-grid {
+		grid-template-columns: 1fr;
+	}
+	.progress-history-item {
+		grid-template-columns: auto 1fr;
+	}
+	.progress-history-time {
+		grid-column: 1 / -1;
+		text-align: left;
+	}
+}
 .print-preview {
 	margin-top: var(--spacing-lg);
 	border-top: 1px solid var(--border);
