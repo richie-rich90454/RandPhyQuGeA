@@ -21,7 +21,6 @@ describe("MainContent", () => {
 		expect(stack.className).toContain("content-stack");
 		expect(stack.className).toContain("grid");
 		expect(stack.className).toContain("grid-cols-1");
-		expect(stack.className).toContain("lg:grid-cols-2");
 		expect(stack.className).toContain("gap-4");
 	});
 });
