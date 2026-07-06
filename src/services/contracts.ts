@@ -92,6 +92,8 @@ export interface IExportService {
 	getExportMetadata(format: ExportFormat): ExportMetadata;
 	downloadText(filename: string, content: string, format?: ExportFormat): void;
 	downloadBlob(filename: string, blob: Blob): void;
+	buildWorksheetHtml(questions: GeneratedQuestion[], includeAnswerKey: boolean): string;
+	printWorksheet(questions: GeneratedQuestion[], includeAnswerKey: boolean): void;
 }
 /** Computes streaks, weak topics, accuracy, and session summaries from practice results. */
 export interface IAnalyticsService {
