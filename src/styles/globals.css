@@ -1743,35 +1743,76 @@ input[type="checkbox"]:hover {
 	text-align: right;
 	background: var(--surface-elevated);
 }
-#settings-tab-basic,
-#settings-tab-advanced {
-	flex: 1;
-	border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-	border-bottom: 2px solid transparent;
-	background: transparent;
-	color: var(--text-secondary);
-	transition: all var(--duration-fast);
-}
-#settings-tab-basic.active,
-#settings-tab-advanced.active {
-	color: var(--accent-600);
-	border-bottom-color: var(--accent-600);
-	background: var(--surface);
-}
-.settings-panel {
-	display: block;
-}
-.settings-panel.hidden {
-	display: none;
-}
 .settings-tabs {
-	display: flex;
+	display: inline-flex;
 	gap: var(--spacing-xs);
 	margin-bottom: var(--spacing-lg);
+	padding: 4px;
+	background: var(--surface-elevated);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
 }
 .settings-tab {
 	padding: var(--spacing-xs) var(--spacing-md);
 	font-size: 0.8rem;
+	border: none;
+	background: transparent;
+	color: var(--text-secondary);
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	transition:
+		background-color var(--duration-fast) var(--easing-standard),
+		color var(--duration-fast) var(--easing-standard);
+}
+.settings-tab:hover {
+	background: var(--surface-elevated);
+	color: var(--text-primary);
+}
+.settings-tab.active {
+	background: var(--accent-100);
+	color: var(--accent-700);
+	font-weight: 600;
+}
+.settings-panel {
+	outline: none;
+}
+.settings-scroll > .card:last-child {
+	margin-bottom: var(--spacing-md);
+}
+.settings-section-card + .settings-section-card {
+	margin-top: var(--spacing-md);
+}
+.settings-section-content {
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacing-md);
+}
+.settings-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-md);
+	flex-wrap: wrap;
+}
+.settings-row-label {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 180px;
+	flex: 1;
+}
+.settings-row-title {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--text-primary);
+}
+.settings-row-hint {
+	font-size: 0.75rem;
+	color: var(--text-muted);
+}
+.settings-row-control {
+	min-width: 160px;
+	flex-shrink: 0;
 }
 .print-options {
 	display: flex;
