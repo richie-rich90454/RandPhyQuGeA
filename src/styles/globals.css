@@ -755,7 +755,7 @@ body {
 }
 .primary-button {
 	background: var(--accent-600);
-	color: var(--text-inverse);
+	color: #fff;
 	box-shadow: var(--shadow-elevated);
 	border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -765,8 +765,8 @@ body {
 	box-shadow:
 		var(--shadow-elevated),
 		0 12px 28px rgba(0, 0, 0, 0.25),
-		0 0 0 1px rgba(255, 255, 255, 0.3) inset;
-	border-color: rgba(255, 255, 255, 0.4);
+		0 0 0 1px color-mix(in srgb, var(--border) 30%, transparent) inset;
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 }
 .primary-button:active:not(:disabled) {
 	transform: translateY(0) scale(var(--press-scale));
@@ -798,12 +798,12 @@ body {
 }
 .confirm-button.destructive {
 	background: var(--danger);
-	color: #fff;
+	color: var(--text-inverse);
 	border: 1px solid var(--danger);
 }
 .confirm-button.destructive:hover:not(:disabled) {
-	background: #c0392b;
-	border-color: #c0392b;
+	background: var(--danger-600);
+	border-color: var(--danger-600);
 }
 .icon-button {
 	width: 28px;
@@ -1109,11 +1109,11 @@ input[type="checkbox"]:hover {
 }
 #start-session.stop-session {
 	background: var(--danger);
-	color: #fff;
+	color: var(--text-inverse);
 	border-color: var(--danger);
 }
 #start-session.stop-session:hover {
-	background: #c0392b;
+	background: var(--danger-600);
 }
 .main-content {
 	display: flex;

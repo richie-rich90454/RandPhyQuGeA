@@ -18,6 +18,7 @@ describe("Button", () => {
 		const button=getButton();
 		expect(button.classList.contains("primary-button")).toBe(true);
 		expect(button.classList.contains("bg-accent-600")).toBe(true);
+		expect(button.classList.contains("text-white")).toBe(true);
 		expect(button.classList.contains("!active:scale-[0.98]")).toBe(true);
 	});
 	it("applies secondary variant classes", () => {

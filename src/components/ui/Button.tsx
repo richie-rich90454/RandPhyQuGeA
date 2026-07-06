@@ -20,10 +20,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	rightIcon?: ReactNode;
 }
 const variantStyles: Record<ButtonVariant, string>={
-	primary: "primary-button bg-accent-600 text-text-inverse border border-white/20 shadow-elevated hover:bg-accent-700 hover:-translate-y-0.5 hover:shadow-hover focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 !active:scale-[0.98]",
+	primary: "primary-button bg-accent-600 text-white border border-white/20 shadow-elevated hover:bg-accent-700 hover:-translate-y-0.5 hover:shadow-hover focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 !active:scale-[0.98]",
 	secondary: "secondary-button bg-surface text-text-primary border border-border hover:bg-surface-elevated hover:-translate-y-0.5 hover:shadow-rest focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 !active:scale-[0.98]",
 	ghost: "bg-transparent text-text-secondary border border-transparent hover:bg-surface-elevated hover:text-text-primary focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 !active:scale-[0.98]",
-	danger: "bg-danger text-white border border-danger hover:bg-error-700 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-error-500 focus-visible:ring-offset-2 !active:scale-[0.98]",
+	danger: "bg-danger text-white border border-danger hover:bg-danger-600 hover:-translate-y-0.5 focus-visible:ring-2 focus-visible:ring-error-500 focus-visible:ring-offset-2 !active:scale-[0.98]",
 	icon: "icon-button bg-surface-elevated text-text-secondary border border-border shadow-rest hover:text-accent-600 hover:-translate-y-0.5 hover:scale-105 hover:shadow-elevated focus-visible:outline-2 focus-visible:outline-accent-600 focus-visible:outline-offset-2 !active:scale-95",
 };
 const sizeStyles: Record<ButtonSize, string>={
