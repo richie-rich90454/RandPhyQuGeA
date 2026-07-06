@@ -1,6 +1,8 @@
 import {usePracticeStore} from "../../stores/practiceStore";
+import {Switch, ToolbarGroup, Tooltip, TooltipContent, TooltipTrigger} from "../ui";
+
 /**
- * Multiple-choice mode toggle mapped to `.shuffle-toggle`.
+ * Multiple-choice mode toggle rendered as a Toolbar group.
  *
  * When enabled, question generation is forced to multiple-choice regardless of
  * the template's default type. Bound to the practice store so the generator
@@ -10,9 +12,13 @@ export function McqToggle() {
     const mcqEnabled = usePracticeStore(state => state.mcqEnabled);
     const setMcqEnabled = usePracticeStore(state => state.setMcqEnabled);
     return (
-        <label className="shuffle-toggle" title="Multiple-choice mode">
-            <input type="checkbox" checked={mcqEnabled} onChange={event => setMcqEnabled(event.target.checked)} />
-            {" MCQ"}
-        </label>
+        <ToolbarGroup label="Question format" className="options-group">
+            <Tooltip delay={300}>
+                <TooltipTrigger>
+                    <Switch label="MCQ" checked={mcqEnabled} onCheckedChange={setMcqEnabled} className="mcq-switch" />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Force multiple-choice questions</TooltipContent>
+            </Tooltip>
+        </ToolbarGroup>
     );
 }

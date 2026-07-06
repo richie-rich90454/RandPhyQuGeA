@@ -1,9 +1,11 @@
 import {useEffect, useMemo, useRef} from "react";
+import {Check, Clock, Pause, Play, SkipForward} from "@phosphor-icons/react";
 import {useMentalMode} from "../../hooks/useMentalMode";
 import {useSpecStore} from "../../stores/specStore";
 import {useSettingsStore} from "../../stores/settingsStore";
-import {Select, ProgressBar} from "../ui";
+import {Badge, Button, ProgressBar, Select, Switch, ToolbarGroup, Tooltip, TooltipContent, TooltipTrigger} from "../ui";
 import type {Specification} from "../../types/models";
+
 /**
  * Build scope-select options from the parsed specification's units, always
  * leading with an "All" option. Returns a single "All" option when no spec
@@ -18,21 +20,13 @@ function buildScopeOptions(specification: Specification | null): {value: string;
     }
     return options;
 }
-/** Difficulty options for the mental-mode difficulty select. */
+
 const DIFFICULTY_OPTIONS = [
     {value: "easy", label: "Easy"},
     {value: "medium", label: "Medium"},
     {value: "hard", label: "Hard"},
 ];
-/** Timer icon path. */
-const TIMER_ICON =
-    "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z";
-/** Checkmark icon path for the score display. */
-const SCORE_ICON = "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
-/** Pause icon path. */
-const PAUSE_ICON = "M6 19h4V5H6v14zm8-14v14h4V5h-4z";
-/** Skip icon path. */
-const SKIP_ICON = "M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z";
+
 /**
  * Format a number of seconds as `MM:SS`.
  */
@@ -41,15 +35,13 @@ function formatTime(seconds: number): string {
     const secs = seconds % 60;
     return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 }
+
 /**
  * Mental-mode bottom-row controls mapped to `#mental-controls`.
  *
- * Renders the difficulty select, timer display, score display, pause/skip
- * buttons (visible only during an active session), mental scope select,
- * shuffle and unlimited toggles, a live statistics panel, the Start Session
- * button, and a progress bar showing elapsed session time. When the session
- * finishes (timer expiry or question exhaustion) a summary banner replaces
- * the live statistics with the final score, accuracy, and average time.
+ * Renders session stats and options as Toolbar groups. Interactive icon
+ * buttons and the start button carry tooltips. The progress bar shows elapsed
+ * session time.
  */
 export function MentalControls() {
     const {
@@ -100,122 +92,100 @@ export function MentalControls() {
     }, [isPaused, isSessionActive]);
     return (
         <div id="mental-controls" className="mental-controls-wrapper">
-            <div className="mental-stats">
+            <ToolbarGroup label="Session stats" className="mental-stats">
                 <Select
                     id="difficulty-select"
                     variant="difficulty"
                     aria-label="Difficulty"
-                    title="Select difficulty level"
                     options={DIFFICULTY_OPTIONS}
                     value={difficulty}
                     onChange={event => setDifficulty(event.target.value as "easy" | "medium" | "hard")}
                 />
-                <span id="timer-display" className="stat-with-icon" role="timer" title="Time remaining">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d={TIMER_ICON} />
-                    </svg>
+                <Badge variant="default" size="sm" className="gap-1">
+                    <Clock weight="regular" aria-hidden="true" />
                     {formatTime(timeRemaining || mentalDurationSec)}
-                </span>
-                <span id="score-display" className="stat-with-icon" aria-live="polite" title="Correct / Total">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d={SCORE_ICON} />
-                    </svg>
+                </Badge>
+                <Badge variant="default" size="sm" className="gap-1">
+                    <Check weight="bold" aria-hidden="true" />
                     {score} / {total}
-                </span>
-                {isSessionActive && (
-                    <>
-                        <button
-                            ref={pauseBtnRef}
-                            type="button"
-                            className="icon-button mental-action-btn"
-                            id="pause-session"
-                            aria-label="Pause"
-                            title="Pause session"
-                            hidden={isPaused}
-                            onClick={pauseSession}
-                        >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path d={PAUSE_ICON} />
-                            </svg>
-                        </button>
-                        <button
-                            ref={resumeBtnRef}
-                            type="button"
-                            className="icon-button mental-action-btn"
-                            id="resume-session"
-                            aria-label="Resume"
-                            title="Resume session"
-                            hidden={!isPaused}
-                            onClick={resumeSession}
-                        >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path d="M8 5v14l11-7z" />
-                            </svg>
-                        </button>
-                    </>
+                </Badge>
+                {isSessionActive && !isPaused && (
+                    <Tooltip delay={300}>
+                        <TooltipTrigger>
+                            <Button ref={pauseBtnRef} variant="icon" size="sm" aria-label="Pause session" onClick={pauseSession}>
+                                <Pause weight="fill" aria-hidden="true" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">Pause session</TooltipContent>
+                    </Tooltip>
+                )}
+                {isSessionActive && isPaused && (
+                    <Tooltip delay={300}>
+                        <TooltipTrigger>
+                            <Button ref={resumeBtnRef} variant="icon" size="sm" aria-label="Resume session" onClick={resumeSession}>
+                                <Play weight="fill" aria-hidden="true" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">Resume session</TooltipContent>
+                    </Tooltip>
                 )}
                 {isSessionActive && (
-                    <button type="button" className="icon-button mental-action-btn" id="skip-question" aria-label="Skip" title="Skip this question" onClick={skipQuestion}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d={SKIP_ICON} />
-                        </svg>
-                    </button>
+                    <Tooltip delay={300}>
+                        <TooltipTrigger>
+                            <Button variant="icon" size="sm" aria-label="Skip question" onClick={skipQuestion}>
+                                <SkipForward weight="bold" aria-hidden="true" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom">Skip this question</TooltipContent>
+                    </Tooltip>
                 )}
-            </div>
-            <div className="mental-extra-controls">
+            </ToolbarGroup>
+            <ToolbarGroup label="Session options" className="mental-extra-controls">
                 <Select
                     id="mental-scope-select"
                     variant="scope"
                     aria-label="Mental scope"
-                    title="Select scope for mental mode"
                     options={scopeOptions}
                     value={scope}
                     onChange={event => setScope(event.target.value)}
                 />
-                <label className="shuffle-toggle" id="mental-shuffle-label" title="Randomly pick topics in mental mode">
-                    <input type="checkbox" id="mental-shuffle-toggle" checked={shuffle} onChange={event => setShuffle(event.target.checked)} /> Shuffle
-                </label>
-                <label className="shuffle-toggle" id="unlimited-label" title="Unlimited practice (no question limit)">
-                    <input type="checkbox" id="unlimited-toggle" checked={unlimited} onChange={event => setUnlimited(event.target.checked)} /> Unlimited
-                </label>
+                <Tooltip delay={300}>
+                    <TooltipTrigger>
+                        <Switch label="Shuffle" checked={shuffle} onCheckedChange={setShuffle} />
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">Randomly pick topics in mental mode</TooltipContent>
+                </Tooltip>
+                <Tooltip delay={300}>
+                    <TooltipTrigger>
+                        <Switch label="Unlimited" checked={unlimited} onCheckedChange={setUnlimited} />
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">Unlimited practice (no question limit)</TooltipContent>
+                </Tooltip>
                 {isFinished && (
                     <div id="session-summary" className="statistics-panel session-summary" role="status" aria-live="polite">
-                        <span className="stat-with-icon" id="summary-score" title="Final score">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                <path d={SCORE_ICON} />
-                            </svg>
+                        <Badge variant="default" size="sm" className="gap-1">
+                            <Check weight="bold" aria-hidden="true" />
                             {score} / {total}
-                        </span>
-                        <span className="stat-with-icon" id="summary-accuracy" title="Final accuracy">
-                            Accuracy: {Math.round(accuracy)}%
-                        </span>
-                        <span className="stat-with-icon" id="summary-avg-time" title="Average time per question">
-                            Avg: {(avgTimeMs / 1000).toFixed(1)}s
-                        </span>
+                        </Badge>
+                        <Badge variant="default" size="sm">Accuracy: {Math.round(accuracy)}%</Badge>
+                        <Badge variant="default" size="sm">Avg: {(avgTimeMs / 1000).toFixed(1)}s</Badge>
                     </div>
                 )}
                 {isSessionActive && (
                     <div id="statistics-panel" className="statistics-panel" aria-live="polite">
-                        <span className="stat-with-icon" id="accuracy-stat" title="Accuracy">
-                            Accuracy: {Math.round(accuracy)}%
-                        </span>
-                        <span className="stat-with-icon" id="avg-time-stat" title="Average time per question">
-                            Avg: {(avgTimeMs / 1000).toFixed(1)}s
-                        </span>
+                        <Badge variant="default" size="sm">Accuracy: {Math.round(accuracy)}%</Badge>
+                        <Badge variant="default" size="sm">Avg: {(avgTimeMs / 1000).toFixed(1)}s</Badge>
                     </div>
                 )}
-                <button
-                    type="button"
-                    id="start-session"
-                    className="primary-button"
-                    title="Start a mental math session"
-                    onClick={startSession}
-                    disabled={isSessionActive || isStarting}
-                    aria-busy={isStarting}
-                >
-                    {isStarting ? "Starting…" : "Start Session"}
-                </button>
-            </div>
+                <Tooltip delay={300}>
+                    <TooltipTrigger>
+                        <Button variant="primary" size="sm" onClick={startSession} disabled={isSessionActive || isStarting} loading={isStarting}>
+                            {isStarting ? "Starting…" : "Start Session"}
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">Start a mental math session</TooltipContent>
+                </Tooltip>
+            </ToolbarGroup>
             <ProgressBar value={progressPercent} />
         </div>
     );

@@ -67,7 +67,7 @@ function App() {
 	}
 	return (
 		<AppShell>
-			<Toolbar>
+			<Toolbar label="Practice controls">
 				<ControlToolbarTop />
 				<ControlToolbarBottom />
 			</Toolbar>

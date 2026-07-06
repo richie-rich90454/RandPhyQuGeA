@@ -1,30 +1,34 @@
 import {useSettingsStore} from "../../stores/settingsStore";
+import {ToolbarGroup, ToolbarItem, Tooltip, TooltipContent, TooltipTrigger} from "../ui";
 import type {PracticeMode} from "../../types/models";
 
-/** The two selectable practice modes surfaced in the toolbar. */
-const MODES: ReadonlyArray<{id: PracticeMode; label: string}> = [
-    {id: "Single", label: "Single"},
-    {id: "Mental", label: "Mental"},
+const MODES: ReadonlyArray<{id: PracticeMode; label: string; description: string}> = [
+    {id: "Single", label: "Single", description: "Practice one question at a time"},
+    {id: "Mental", label: "Mental", description: "Timed mental math session"},
 ];
 
 /**
- * Single/Mental mode toggle mapped to `.mode-selector` and `.mode-button`.
+ * Single/Mental mode toggle rendered as a Toolbar group.
  *
  * The active mode is read from and written to the persisted settings store so
- * the rest of the practice surface (bottom-row controls) stays in sync. The
- * authoritative mode for an in-flight session lives on the session object
- * managed by `SessionService`.
+ * the rest of the practice surface stays in sync. Each mode button carries a
+ * tooltip describing its behavior.
  */
 export function ModeSelector() {
     const mode = useSettingsStore(state => state.defaultMode);
     const setMode = useSettingsStore(state => state.setDefaultMode);
     return (
-        <div className="mode-selector" role="group" aria-label="Mode selection">
+        <ToolbarGroup label="Practice mode" className="mode-group">
             {MODES.map(option => (
-                <button key={option.id} type="button" className={mode === option.id ? "mode-button active" : "mode-button"} aria-pressed={mode === option.id} onClick={() => setMode(option.id)}>
-                    {option.label}
-                </button>
+                <Tooltip key={option.id} delay={300}>
+                    <TooltipTrigger>
+                        <ToolbarItem active={mode === option.id} onClick={() => setMode(option.id)} aria-label={option.label}>
+                            {option.label}
+                        </ToolbarItem>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">{option.description}</TooltipContent>
+                </Tooltip>
             ))}
-        </div>
+        </ToolbarGroup>
     );
 }

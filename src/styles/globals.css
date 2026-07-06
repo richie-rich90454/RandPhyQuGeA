@@ -432,6 +432,23 @@ body {
 	background: var(--surface-elevated);
 	border-color: rgba(255, 255, 255, 0.3);
 }
+.toolbar-group {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+	min-width: 0;
+}
+.mode-group,
+.options-group {
+	flex-shrink: 0;
+}
+.mcq-switch {
+	flex-shrink: 0;
+}
+.toolbar-section {
+	flex: 1;
+	min-width: 0;
+}
 .utility-buttons {
 	display: flex;
 	gap: var(--spacing-xs);
@@ -441,13 +458,11 @@ body {
 .topic-pills-container {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 6px;
-	padding-right: var(--spacing-xs);
-	max-height: 20dvh;
+	gap: var(--spacing-xs);
+	max-height: 18dvh;
 	overflow-y: auto;
-	padding-right: 0.5dvh;
-	padding-top: 0.4rem;
-	padding-bottom: 0.4rem;
+	overflow-x: hidden;
+	padding: var(--spacing-xs) 0;
 }
 .topic-pill {
 	padding: 5px var(--spacing-sm);
