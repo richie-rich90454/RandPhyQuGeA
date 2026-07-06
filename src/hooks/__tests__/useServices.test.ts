@@ -87,6 +87,7 @@ class FakeSessionService implements ISessionService {
 	public async loadSessionSnapshot(): Promise<import("../../services/contracts").SessionSnapshot|null> {
 		return null;
 	}
+	public clearSessionSnapshot(): void {}
 }
 function makeContainer(): ServiceContainer {
 	return new ServiceContainer(new FakePhysicsService(), new FakeSessionService(), new FakeAnalyticsService(), new FakeExportService(), new FakeSpecService());

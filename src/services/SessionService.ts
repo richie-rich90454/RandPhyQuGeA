@@ -170,4 +170,7 @@ export class SessionService implements ISessionService {
 			return null;
 		}
 	}
+	public clearSessionSnapshot(key: string=DEFAULT_SNAPSHOT_KEY): void {
+		localStorage.removeItem(key);
+	}
 }

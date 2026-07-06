@@ -264,6 +264,29 @@ describe("SessionService", () => {
 			expect(snapshot).toBeNull();
 		});
 	});
+	describe("clearSessionSnapshot", () => {
+		it("removes a previously saved snapshot", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			physics.generateBatch.mockResolvedValue([makeQuestion()]);
+			await service.startSession(emptySpec(), makeConfig());
+			await service.saveSessionSnapshot();
+			expect(localStorage.getItem("physics-session-snapshot")).not.toBeNull();
+			service.clearSessionSnapshot();
+			expect(localStorage.getItem("physics-session-snapshot")).toBeNull();
+		});
+		it("supports a custom storage key", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			physics.generateBatch.mockResolvedValue([makeQuestion()]);
+			await service.startSession(emptySpec(), makeConfig());
+			await service.saveSessionSnapshot("custom-key");
+			service.clearSessionSnapshot("custom-key");
+			expect(localStorage.getItem("custom-key")).toBeNull();
+		});
+	});
 	describe("loadSessionSnapshot", () => {
 		it("loads a previously saved snapshot", async () => {
 			let physics=new MockPhysicsService();

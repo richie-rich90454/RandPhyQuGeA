@@ -86,6 +86,7 @@ export interface ISessionService {
 	resumeSession(snapshot: SessionSnapshot): Promise<Session>;
 	saveSessionSnapshot(key?: string): Promise<SessionSnapshot | null>;
 	loadSessionSnapshot(key?: string): Promise<SessionSnapshot | null>;
+	clearSessionSnapshot(key?: string): void;
 }
 /** Provides file export metadata and browser download helpers. */
 export interface IExportService {
