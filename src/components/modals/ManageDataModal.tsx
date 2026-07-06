@@ -1,5 +1,5 @@
 import {useRef, useState, type ChangeEvent} from "react";
-import {DownloadSimple, UploadSimple, Trash, Warning, FileX} from "@phosphor-icons/react";
+import {Check, DownloadSimple, FileX, Trash, UploadSimple, Warning, X} from "@phosphor-icons/react";
 import {Modal, ConfirmDialog, Button, Card, CardContent, CardHeader, CardTitle, CardSubtitle, Badge, EmptyState, useToast} from "../ui";
 import {ScrollReveal} from "../animations";
 import {useUiStore} from "../../stores/uiStore";
@@ -243,7 +243,7 @@ export function ManageDataModal() {
 										<ScrollReveal key={result.id} as="div" direction="up" distance={12} duration={0.35} delay={index * 0.05} scrollerRef={scrollerRef}>
 											<div className="data-item">
 												<div className="data-item-info">
-													<span className={`data-item-result ${result.is_correct ? "correct" : "incorrect"}`}>{result.is_correct ? "✓" : "✗"}</span>
+													<span className={`data-item-result ${result.is_correct ? "correct" : "incorrect"}`}>{result.is_correct ? <Check weight="bold" size={16} aria-hidden="true" /> : <X weight="bold" size={16} aria-hidden="true" />}</span>
 													<span className="data-item-topic">{getTopicName(result.topic_id)}</span>
 													<span className="data-item-meta">
 														{result.mode} &middot; D{result.difficulty} &middot; {(result.time_taken_ms / 1000).toFixed(1)}s &middot; {new Date(result.timestamp).toLocaleString()}
@@ -257,7 +257,7 @@ export function ManageDataModal() {
 													title="Delete record"
 													onClick={() => setConfirmDeleteId(result.id)}
 												>
-													✕
+													<X weight="bold" size={16} aria-hidden="true" />
 												</Button>
 											</div>
 										</ScrollReveal>

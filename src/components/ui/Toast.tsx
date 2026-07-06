@@ -1,6 +1,6 @@
 import {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ComponentType, type ReactNode} from "react";
 import {motion, AnimatePresence, useReducedMotion} from "framer-motion";
-import {CheckCircle, Info, Warning, XCircle} from "@phosphor-icons/react";
+import {CheckCircle, Info, Warning, X, XCircle} from "@phosphor-icons/react";
 import {cn} from "../../lib/utils";
 export type ToastVariant = "success" | "error" | "info" | "warning";
 export interface ToastOptions {
@@ -131,7 +131,7 @@ export function ToastProvider({children}: ToastProviderProps) {
 								<Icon color={accent} size={20} aria-label={item.variant} />
 								<p className="toast-message">{item.message}</p>
 								<button type="button" className="toast-close" aria-label="Dismiss notification" onClick={() => dismiss(item.id)}>
-									✕
+									<X weight="bold" size={14} aria-hidden="true" />
 								</button>
 							</motion.div>
 						);
