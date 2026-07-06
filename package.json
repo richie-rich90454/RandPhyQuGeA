@@ -16,7 +16,10 @@
         "test:coverage": "vitest run --coverage",
         "test:watch": "vitest",
         "clean": "node --input-type=commonjs -e \"const fs=require('fs');['dist','coverage','node_modules/.vite'].forEach(function(p){try{fs.rmSync(p,{recursive:true,force:true})}catch(e){}});console.log('Cleaned dist/, coverage/, node_modules/.vite')\"",
-        "typecheck:watch": "tsc --noEmit --watch"
+        "typecheck:watch": "tsc --noEmit --watch",
+        "tauri": "tauri",
+        "tauri:dev": "tauri dev",
+        "tauri:build": "tauri build"
     },
     "dependencies": {
         "@fontsource/noto-sans": "^5.2.10",
@@ -31,6 +34,7 @@
         "zustand": "^5.0.14"
     },
     "devDependencies": {
+        "@tauri-apps/cli": "^2.11.4",
         "@testing-library/react": "^16.3.2",
         "@types/katex": "^0.16.8",
         "@types/react": "^19.2.17",
