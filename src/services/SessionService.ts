@@ -1,6 +1,6 @@
 /** Stateful service that manages a practice session lifecycle and persistence snapshots. */
 import type {IAnalyticsService, IPhysicsService, ISessionService, Session, SessionConfig, SessionSnapshot} from "./contracts";
-import type {GeneratedQuestion, PracticeResult, Specification} from "../types/models";
+import type {GeneratedQuestion, PracticeResult, QuestionType, Specification} from "../types/models";
 import {QUESTION_TYPES} from "../types/models";
 const DEFAULT_SNAPSHOT_KEY="physics-session-snapshot";
 const NUMERIC_TOLERANCE=0.01;
@@ -127,6 +127,25 @@ export class SessionService implements ISessionService {
 		this.session.currentIndex=nextIndex;
 		this.session.questionStartTime=Date.now();
 		return true;
+	}
+	public async regenerateCurrentQuestionAs(questionType: QuestionType): Promise<GeneratedQuestion> {
+		if (!this.session || !this.session.isActive || this.session.isFinished) {
+			throw new Error("No active session.");
+		}
+		let currentQuestion=this.session.questions[this.session.currentIndex];
+		if (!currentQuestion) {
+			throw new Error("No current question.");
+		}
+		let regeneratedQuestion=await this.physicsService.generateQuestion(this.session.specification, {
+			topicId: currentQuestion.topic_id,
+			skillId: currentQuestion.skill_id,
+			minDifficulty: currentQuestion.difficulty,
+			maxDifficulty: currentQuestion.difficulty,
+			questionType,
+		});
+		this.session.questions[this.session.currentIndex]=regeneratedQuestion;
+		this.session.questionStartTime=Date.now();
+		return regeneratedQuestion;
 	}
 	public async finishSession(): Promise<PracticeResult[]> {
 		if (!this.session) {

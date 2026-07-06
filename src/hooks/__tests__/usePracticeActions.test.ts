@@ -8,7 +8,7 @@ import {usePracticeStore} from "../../stores/practiceStore";
 import {useProgressStore} from "../../stores/progressStore";
 import {useUiStore} from "../../stores/uiStore";
 import type {IPhysicsService, ISessionService, IAnalyticsService, IExportService, ISpecService, Session, SessionSnapshot, SessionConfig, WeakTopic, SessionSummary, SpecValidationResult} from "../../services/contracts";
-import type {GeneratedQuestion, PracticeResult, Specification, ExportFormat, FormulaEntry} from "../../types/models";
+import type {GeneratedQuestion, PracticeResult, QuestionType, Specification, ExportFormat, FormulaEntry} from "../../types/models";
 import type {StreakData} from "../../services/streakService";
 function makeQuestion(overrides: Partial<GeneratedQuestion> = {}): GeneratedQuestion {
 	return {
@@ -129,6 +129,9 @@ class FakeSessionService implements ISessionService {
 	}
 	public async advanceQuestion(): Promise<boolean> {
 		return false;
+	}
+	public async regenerateCurrentQuestionAs(_questionType: QuestionType): Promise<GeneratedQuestion> {
+		return makeQuestion();
 	}
 	public async finishSession(): Promise<PracticeResult[]> {
 		return [];

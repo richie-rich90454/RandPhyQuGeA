@@ -8,7 +8,7 @@ import {usePracticeStore} from "../../../stores/practiceStore";
 import {useProgressStore} from "../../../stores/progressStore";
 import {useUiStore} from "../../../stores/uiStore";
 import type {IPhysicsService, ISessionService, IAnalyticsService, IExportService, ISpecService, Session, SessionSnapshot, SessionConfig, WeakTopic, SessionSummary, SpecValidationResult} from "../../../services/contracts";
-import type {GeneratedQuestion, PracticeResult, Specification, ExportFormat, FormulaEntry} from "../../../types/models";
+import type {GeneratedQuestion, PracticeResult, QuestionType, Specification, ExportFormat, FormulaEntry} from "../../../types/models";
 import type {StreakData} from "../../../services/streakService";
 function createMatchMedia(initialMatches: boolean): () => {matches: boolean; addEventListener: () => void; removeEventListener: () => void} {
 	return () => ({
@@ -139,6 +139,7 @@ class FakeSessionService implements ISessionService {
 		this.session.questionStartTime=Date.now();
 		return true;
 	});
+	public regenerateCurrentQuestionAs=vi.fn<(_questionType: QuestionType) => Promise<GeneratedQuestion>>(async () => makeQuestion());
 	public finishSession=vi.fn<() => Promise<PracticeResult[]>>(async () => {
 		if (!this.session) return [];
 		this.session.isActive=false;

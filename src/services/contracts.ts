@@ -1,5 +1,5 @@
 /** Service-layer contracts for the OOP domain services. */
-import type {ExportFormat, FormulaEntry, GeneratedQuestion, PracticeMode, PracticeResult, Specification} from "../types/models";
+import type {ExportFormat, FormulaEntry, GeneratedQuestion, PracticeMode, PracticeResult, QuestionType, Specification} from "../types/models";
 import type {ParseError} from "../lib/physics/types";
 import type {StreakData} from "./streakService";
 /** Filter options forwarded to question generation. */
@@ -81,6 +81,7 @@ export interface ISessionService {
 	startSession(spec: Specification, config: SessionConfig): Promise<Session>;
 	submitAnswer(answer: string, choiceIndex?: number): Promise<PracticeResult>;
 	advanceQuestion(): Promise<boolean>;
+	regenerateCurrentQuestionAs(questionType: QuestionType): Promise<GeneratedQuestion>;
 	finishSession(): Promise<PracticeResult[]>;
 	getSession(): Session | null;
 	resumeSession(snapshot: SessionSnapshot): Promise<Session>;

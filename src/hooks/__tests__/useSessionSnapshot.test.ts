@@ -32,6 +32,9 @@ class FakeSessionService implements ISessionService {
 	});
 	public startSession=vi.fn<() => Promise<Session>>(async () => makeSession());
 	public advanceQuestion=vi.fn<() => Promise<boolean>>(async () => false);
+	public regenerateCurrentQuestionAs=vi.fn<(_questionType: import("../../types/models").QuestionType) => Promise<import("../../types/models").GeneratedQuestion>>(async () => {
+		return {id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "42", solution_text: "", solution_latex: "", variables: {}};
+	});
 	public finishSession=vi.fn<() => Promise<import("../../types/models").PracticeResult[]>>(async () => []);
 	public getSession=vi.fn<() => Session|null>(() => this.session);
 	public resumeSession=vi.fn<(snapshot: SessionSnapshot) => Promise<Session>>(async snapshot => {

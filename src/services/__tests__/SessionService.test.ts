@@ -202,6 +202,77 @@ describe("SessionService", () => {
 			expect(await service.advanceQuestion()).toBe(false);
 		});
 	});
+	describe("regenerateCurrentQuestionAs", () => {
+		it("regenerates the current SA question as MC and preserves topic/skill/difficulty", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			let original=makeQuestion({id: "q1", topic_id: "t1", skill_id: "s1", difficulty: 2});
+			let regenerated=makeMcQuestion({id: "regen-mc", topic_id: "t1", skill_id: "s1", difficulty: 2});
+			physics.generateBatch.mockResolvedValue([original]);
+			physics.generateQuestion.mockResolvedValue(regenerated);
+			let session=await service.startSession(emptySpec(), makeConfig());
+			let result=await service.regenerateCurrentQuestionAs("MC");
+			expect(physics.generateQuestion).toHaveBeenCalledWith(emptySpec(), {
+				topicId: "t1",
+				skillId: "s1",
+				minDifficulty: 2,
+				maxDifficulty: 2,
+				questionType: "MC",
+			});
+			expect(result).toBe(regenerated);
+			expect(session.questions[0]).toBe(regenerated);
+			expect(session.currentIndex).toBe(0);
+		});
+		it("regenerates the current MC question as SA and preserves topic/skill/difficulty", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			let original=makeMcQuestion({id: "mc1", topic_id: "t2", skill_id: "s2", difficulty: 3});
+			let regenerated=makeQuestion({id: "regen-sa", topic_id: "t2", skill_id: "s2", difficulty: 3});
+			physics.generateBatch.mockResolvedValue([original]);
+			physics.generateQuestion.mockResolvedValue(regenerated);
+			let session=await service.startSession(emptySpec(), makeConfig());
+			let result=await service.regenerateCurrentQuestionAs("SA");
+			expect(physics.generateQuestion).toHaveBeenCalledWith(emptySpec(), {
+				topicId: "t2",
+				skillId: "s2",
+				minDifficulty: 3,
+				maxDifficulty: 3,
+				questionType: "SA",
+			});
+			expect(result).toBe(regenerated);
+			expect(session.questions[0]).toBe(regenerated);
+			expect(session.currentIndex).toBe(0);
+		});
+		it("throws when there is no active session", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			await expect(service.regenerateCurrentQuestionAs("MC")).rejects.toThrow("No active session.");
+		});
+		it("throws when there is no current question", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			physics.generateBatch.mockResolvedValue([]);
+			await service.startSession(emptySpec(), makeConfig({questionCount: 0}));
+			await expect(service.regenerateCurrentQuestionAs("MC")).rejects.toThrow("No current question.");
+		});
+		it("resets questionStartTime after regeneration", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			physics.generateBatch.mockResolvedValue([makeQuestion()]);
+			physics.generateQuestion.mockResolvedValue(makeMcQuestion());
+			let session=await service.startSession(emptySpec(), makeConfig());
+			let startTime=session.questionStartTime;
+			vi.advanceTimersByTime(1500);
+			await service.regenerateCurrentQuestionAs("MC");
+			expect(session.questionStartTime).toBeGreaterThan(startTime);
+			expect(session.questionStartTime).toBe(Date.now());
+		});
+	});
 	describe("finishSession", () => {
 		it("marks the session finished and returns all results", async () => {
 			let physics=new MockPhysicsService();

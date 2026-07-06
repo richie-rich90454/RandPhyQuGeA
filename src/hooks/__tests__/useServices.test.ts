@@ -72,6 +72,9 @@ class FakeSessionService implements ISessionService {
 	public async advanceQuestion(): Promise<boolean> {
 		return false;
 	}
+	public async regenerateCurrentQuestionAs(_questionType: import("../../types/models").QuestionType): Promise<import("../../types/models").GeneratedQuestion> {
+		return {id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "42", solution_text: "", solution_latex: "", variables: {}};
+	}
 	public async finishSession(): Promise<import("../../types/models").PracticeResult[]> {
 		return [];
 	}
