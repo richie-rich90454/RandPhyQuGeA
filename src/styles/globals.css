@@ -429,8 +429,8 @@ body {
 	top: 0;
 	z-index: 10000;
 	padding: 8px 16px;
-	background: var(--accent, #2b579a);
-	color: #fff;
+	background: var(--accent-600);
+	color: var(--text-inverse);
 	font-size: 0.875rem;
 	font-weight: 600;
 	text-decoration: none;
@@ -440,7 +440,7 @@ body {
 .skip-link:focus,
 .skip-link:focus-visible {
 	left: 0;
-	outline: 2px solid #fff;
+	outline: 2px solid var(--text-inverse);
 	outline-offset: 2px;
 }
 .app-container {
@@ -567,11 +567,11 @@ body {
 }
 .control-toolbar:hover {
 	background: var(--surface-elevated);
-	border-color: rgba(255, 255, 255, 0.3);
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 	box-shadow:
 		var(--shadow-elevated),
-		0 16px 48px rgba(0, 0, 0, 0.25),
-		0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+		0 16px 48px color-mix(in srgb, var(--text-primary) 25%, transparent),
+		0 0 0 1px color-mix(in srgb, var(--border) 10%, transparent) inset;
 	transform: translateY(-1px);
 }
 .toolbar-row-top {
@@ -588,9 +588,6 @@ body {
 	flex-wrap: wrap;
 	gap: var(--spacing-sm);
 	width: 100%;
-}
-.toolbar-section {
-	flex: 1;
 }
 .toolbar-title {
 	font-size: 0.7rem;
@@ -611,7 +608,7 @@ body {
 .toolbar-title:hover {
 	color: var(--accent-600);
 	background: var(--surface-elevated);
-	border-color: rgba(255, 255, 255, 0.3);
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 }
 .toolbar-group {
 	display: inline-flex;
@@ -646,18 +643,23 @@ body {
 	overflow-x: hidden;
 	padding: var(--spacing-xs) 0;
 }
-.topic-pill {
-	padding: 5px var(--spacing-sm);
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: var(--radius-full);
-	cursor: pointer;
+.topic-pill,
+.primary-button,
+.secondary-button,
+.icon-button {
 	transition:
 		transform var(--duration-fast) var(--easing-standard),
 		box-shadow var(--duration-fast) var(--easing-standard),
 		border-color var(--duration-fast) var(--easing-standard),
 		background-color var(--duration-fast) var(--easing-standard),
 		color var(--duration-fast) var(--easing-standard);
+}
+.topic-pill {
+	padding: 5px var(--spacing-sm);
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-full);
+	cursor: pointer;
 	font-size: 0.75rem;
 	color: var(--text-primary);
 	display: flex;
@@ -668,11 +670,11 @@ body {
 }
 .topic-pill:hover {
 	background: var(--surface-elevated);
-	border-color: rgba(255, 255, 255, 0.3);
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 	transform: translateY(var(--lift-translate));
 	box-shadow:
 		var(--shadow-elevated),
-		0 8px 20px rgba(0, 0, 0, 0.1);
+		0 8px 20px color-mix(in srgb, var(--text-primary) 10%, transparent);
 }
 .topic-pill:active:not(.active) {
 	transform: translateY(0) scale(var(--press-scale));
@@ -742,12 +744,6 @@ body {
 	font-size: 0.8rem;
 	font-weight: 600;
 	cursor: pointer;
-	transition:
-		transform var(--duration-fast) var(--easing-standard),
-		box-shadow var(--duration-fast) var(--easing-standard),
-		border-color var(--duration-fast) var(--easing-standard),
-		background-color var(--duration-fast) var(--easing-standard),
-		color var(--duration-fast) var(--easing-standard);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -757,14 +753,14 @@ body {
 	background: var(--accent-600);
 	color: #fff;
 	box-shadow: var(--shadow-elevated);
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	border: 1px solid color-mix(in srgb, var(--border) 20%, transparent);
 }
 .primary-button:hover:not(:disabled) {
 	background: var(--accent-700);
 	transform: translateY(-2px);
 	box-shadow:
 		var(--shadow-elevated),
-		0 12px 28px rgba(0, 0, 0, 0.25),
+		0 12px 28px color-mix(in srgb, var(--text-primary) 25%, transparent),
 		0 0 0 1px color-mix(in srgb, var(--border) 30%, transparent) inset;
 	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 }
@@ -778,12 +774,12 @@ body {
 }
 .secondary-button:hover:not(:disabled) {
 	background: var(--surface-elevated);
-	border-color: rgba(255, 255, 255, 0.3);
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 	transform: translateY(var(--lift-translate));
 	box-shadow:
 		var(--shadow-elevated),
-		0 12px 28px rgba(0, 0, 0, 0.2),
-		0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+		0 12px 28px color-mix(in srgb, var(--text-primary) 20%, transparent),
+		0 0 0 1px color-mix(in srgb, var(--border) 20%, transparent) inset;
 }
 .secondary-button:active:not(:disabled) {
 	transform: translateY(0) scale(var(--press-scale));
@@ -816,12 +812,6 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition:
-		transform var(--duration-fast) var(--easing-standard),
-		box-shadow var(--duration-fast) var(--easing-standard),
-		border-color var(--duration-fast) var(--easing-standard),
-		background-color var(--duration-fast) var(--easing-standard),
-		color var(--duration-fast) var(--easing-standard);
 	border: 1px solid var(--border);
 	box-shadow: var(--shadow-rest);
 }
@@ -831,8 +821,8 @@ body {
 	transform: translateY(-2px) scale(1.05);
 	box-shadow:
 		var(--shadow-elevated),
-		0 8px 20px rgba(0, 0, 0, 0.15);
-	border-color: rgba(255, 255, 255, 0.4);
+		0 8px 20px color-mix(in srgb, var(--text-primary) 15%, transparent);
+	border-color: color-mix(in srgb, var(--border) 40%, transparent);
 }
 .icon-button:active {
 	transform: translateY(0) scale(var(--press-scale));
@@ -886,7 +876,7 @@ kbd.shortcut-hint {
 	box-shadow: var(--shadow-rest);
 }
 .stat-with-icon:hover {
-	border-color: rgba(255, 255, 255, 0.3);
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 	background: var(--surface-elevated);
 	box-shadow: var(--shadow-elevated);
 	transform: translateY(var(--lift-translate));
@@ -999,7 +989,7 @@ kbd.shortcut-hint {
 }
 .difficulty-select:hover,
 .scope-select:hover {
-	border-color: rgba(255, 255, 255, 0.3);
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 	background: var(--surface-elevated);
 	box-shadow: var(--shadow-elevated);
 }
@@ -1053,7 +1043,7 @@ kbd.shortcut-hint {
 }
 .auto-toggle input[type="checkbox"]:hover,
 .shuffle-toggle input[type="checkbox"]:hover {
-	border-color: rgba(255, 255, 255, 0.4);
+	border-color: color-mix(in srgb, var(--border) 40%, transparent);
 	background: var(--surface-elevated);
 	box-shadow: var(--shadow-elevated);
 }
@@ -1073,7 +1063,7 @@ input[type="checkbox"]:hover {
 	left: 4px;
 	width: 4px;
 	height: 8px;
-	border: solid #fff;
+	border: solid var(--text-inverse);
 	border-width: 0 2px 2px 0;
 	transform: rotate(45deg);
 }
@@ -1099,7 +1089,7 @@ input[type="checkbox"]:hover {
 }
 #timer-display:hover,
 #score-display:hover {
-	border-color: rgba(255, 255, 255, 0.3);
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 	background: var(--surface-elevated);
 	box-shadow: var(--shadow-elevated);
 }
@@ -1471,12 +1461,12 @@ input[type="checkbox"]:hover {
 	background: var(--surface-elevated);
 }
 .results-display.correct {
-	background: rgba(13, 188, 121, 0.1);
+	background: var(--success-bg);
 	border: 1px solid var(--success);
 	color: var(--success);
 }
 .results-display.incorrect {
-	background: rgba(220, 53, 69, 0.1);
+	background: var(--danger-bg);
 	border: 1px solid var(--danger);
 	color: var(--danger);
 }
@@ -2523,7 +2513,7 @@ input[type="checkbox"]:hover {
 	transform: translateY(-1px);
 	box-shadow:
 		var(--shadow-elevated),
-		0 4px 12px rgba(0, 0, 0, 0.15);
+		var(--shadow-hover);
 }
 .math-toolbar-btn:active {
 	transform: translateY(0) scale(var(--press-scale));
@@ -2606,7 +2596,7 @@ input[type="checkbox"]:hover {
 	border-color: var(--accent-400);
 	box-shadow:
 		var(--shadow-elevated),
-		0 4px 12px rgba(0, 0, 0, 0.3);
+		var(--shadow-hover);
 }
 @media (max-width: 768px) {
 	.math-toolbar {
@@ -2718,6 +2708,14 @@ hr.context-menu-divider {
 .context-menu.hidden {
 	display: block;
 }
+.setting-item select,
+.setting-item input[type="number"] {
+	transition:
+		transform var(--duration-fast) var(--easing-standard),
+		border-color var(--duration-fast) var(--easing-standard),
+		box-shadow var(--duration-fast) var(--easing-standard),
+		background-color var(--duration-fast) var(--easing-standard);
+}
 .setting-item select {
 	width: 160px;
 	padding: var(--spacing-xs) var(--spacing-xl) var(--spacing-xs) var(--spacing-sm);
@@ -2735,11 +2733,6 @@ hr.context-menu-divider {
 	-moz-appearance: none;
 	appearance: none;
 	cursor: pointer;
-	transition:
-		transform var(--duration-fast) var(--easing-standard),
-		border-color var(--duration-fast) var(--easing-standard),
-		box-shadow var(--duration-fast) var(--easing-standard),
-		background-color var(--duration-fast) var(--easing-standard);
 }
 .setting-item input[type="number"] {
 	width: 160px;
@@ -2752,19 +2745,14 @@ hr.context-menu-divider {
 	box-shadow: var(--shadow-rest);
 	-moz-appearance: textfield;
 	appearance: textfield;
-	transition:
-		transform var(--duration-fast) var(--easing-standard),
-		border-color var(--duration-fast) var(--easing-standard),
-		box-shadow var(--duration-fast) var(--easing-standard),
-		background-color var(--duration-fast) var(--easing-standard);
 }
 .setting-item input[type="number"]:hover {
-	border-color: rgba(255, 255, 255, 0.3);
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 	background: var(--surface-elevated);
 	box-shadow: var(--shadow-elevated);
 }
 .setting-item select:hover {
-	border-color: rgba(255, 255, 255, 0.3);
+	border-color: color-mix(in srgb, var(--border) 30%, transparent);
 	background: var(--surface-elevated);
 	box-shadow: var(--shadow-elevated);
 }
