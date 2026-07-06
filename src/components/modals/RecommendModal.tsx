@@ -1,116 +1,119 @@
 import {useMemo, useRef} from "react";
-import {Modal} from "../ui";
+import {Target, TrendDown, CheckCircle, Lightbulb} from "@phosphor-icons/react";
+import {Modal, Button, Card, CardContent, CardHeader, CardTitle, Badge, EmptyState, ProgressBar} from "../ui";
 import {ScrollReveal} from "../animations";
 import {useUiStore} from "../../stores/uiStore";
 import {useProgressStore} from "../../stores/progressStore";
 import {useSpecStore} from "../../stores/specStore";
 import {usePracticeStore} from "../../stores/practiceStore";
 import {useSettingsStore} from "../../stores/settingsStore";
-/** Minimum number of attempts before a topic is considered for recommendations. */
-const MIN_ATTEMPTS = 1;
-/** Accuracy threshold below which a topic is considered weak. */
-const WEAK_THRESHOLD = 70;
+import {useServices} from "../../hooks/useServices";
+import type {WeakTopic} from "../../services/contracts";
 /** Maximum number of weak topics to display. */
 const MAX_RECOMMENDATIONS = 8;
-interface TopicStats {
-    topicId: string;
-    topicName: string;
-    total: number;
-    correct: number;
-    accuracy: number;
-}
+/** Weak-topic accuracy threshold passed to analytics. */
+const WEAK_THRESHOLD = 70;
 /**
  * Recommend overlay mapped to `#weak-topics-modal`.
  *
- * Computes per-topic accuracy from the persisted practice history, surfaces
- * topics below the weak threshold (sorted by lowest accuracy), and provides
- * per-topic Practice buttons that select the topic and drop into Single
- * mode. The "Practice All" button clears the topic filter so the next
- * generated question can come from any weak topic.
+ * Delegates weak-topic computation to the injected {@link IAnalyticsService},
+ * renders a ranked list with accuracy progress bars, and lets the user jump
+ * into targeted practice for one topic or all weak topics.
  */
 export function RecommendModal() {
-    const isOpen = useUiStore(state => state.activeModal === "recommend");
-    const closeModal = useUiStore(state => state.closeModal);
-    const results = useProgressStore(state => state.results);
-    const specification = useSpecStore(state => state.specification);
-    const setSelectedTopicId = usePracticeStore(state => state.setSelectedTopicId);
-    const setDefaultMode = useSettingsStore(state => state.setDefaultMode);
-    const scrollerRef = useRef<HTMLElement | null>(null);
-    const weakTopics = useMemo<TopicStats[]>(() => {
-        if (results.length === 0) return [];
-        const byTopic = new Map<string, {total: number; correct: number}>();
-        for (const result of results) {
-            const entry = byTopic.get(result.topic_id) ?? {total: 0, correct: 0};
-            entry.total += 1;
-            if (result.is_correct) entry.correct += 1;
-            byTopic.set(result.topic_id, entry);
-        }
-        const stats: TopicStats[] = [];
-        for (const [topicId, {total, correct}] of byTopic) {
-            if (total < MIN_ATTEMPTS) continue;
-            const accuracy = (correct / total) * 100;
-            if (accuracy >= WEAK_THRESHOLD) continue;
-            const topic = specification?.topics.find(t => t.id === topicId);
-            stats.push({topicId, topicName: topic?.name ?? topicId, total, correct, accuracy});
-        }
-        stats.sort((a, b) => a.accuracy - b.accuracy);
-        return stats.slice(0, MAX_RECOMMENDATIONS);
-    }, [results, specification]);
-    const handlePractice = (topicId: string) => {
-        setSelectedTopicId(topicId);
-        setDefaultMode("Single");
-        closeModal();
-    };
-    const handlePracticeAll = () => {
-        setSelectedTopicId(null);
-        setDefaultMode("Single");
-        closeModal();
-    };
-    return (
-        <Modal
-            open={isOpen}
-            onClose={closeModal}
-            modalId="weak-topics-modal"
-            title="Your Recommended Practice Topics"
-            titleId="weak-topics-title"
-            ariaLabel="Recommended topics"
-            scrollerRef={scrollerRef}
-            footer={
-                <>
-                    <button type="button" className="secondary-button" onClick={closeModal}>
-                        Dismiss
-                    </button>
-                    {weakTopics.length > 0 && (
-                        <button type="button" className="primary-button" onClick={handlePracticeAll}>
-                            Practice All (5 questions each)
-                        </button>
-                    )}
-                </>
-            }
-        >
-            {weakTopics.length === 0 ? (
-                <p className="empty-recommend">No weak topics found. Keep practicing to build your profile!</p>
-            ) : (
-                <>
-                    <p>Based on your past performance, you should focus on these topics:</p>
-                    <ul className="weak-topics-list">
-                        {weakTopics.map((topic, index) => (
-                            <ScrollReveal key={topic.topicId} className="weak-topic-item" as="li" direction="up" distance={12} duration={0.4} delay={index * 0.05} scrollerRef={scrollerRef}>
-                                <div className="weak-topic-info">
-                                    <span className="weak-topic-name">{topic.topicName}</span>
-                                    <span className="weak-topic-stats">
-                                        {topic.correct}/{topic.total} correct &middot; {Math.round(topic.accuracy)}% accuracy
-                                    </span>
-                                </div>
-                                <button type="button" className="secondary-button" onClick={() => handlePractice(topic.topicId)}>
-                                    Practice
-                                </button>
-                            </ScrollReveal>
-                        ))}
-                    </ul>
-                    <p className="weak-topics-note">Click "Practice" to start a session on that topic.</p>
-                </>
-            )}
-        </Modal>
-    );
+	const isOpen=useUiStore(state => state.activeModal === "recommend");
+	const closeModal=useUiStore(state => state.closeModal);
+	const results=useProgressStore(state => state.results);
+	const specification=useSpecStore(state => state.specification);
+	const setSelectedTopicId=usePracticeStore(state => state.setSelectedTopicId);
+	const setDefaultMode=useSettingsStore(state => state.setDefaultMode);
+	const {analytics}=useServices();
+	const scrollerRef=useRef<HTMLElement | null>(null);
+	const weakTopics=useMemo<WeakTopic[]>(() => {
+		if (!specification || results.length === 0) return [];
+		return analytics.getWeakTopics(results, specification, WEAK_THRESHOLD).slice(0, MAX_RECOMMENDATIONS);
+	}, [results, specification, analytics]);
+	const totalAttempts=results.length;
+	const handlePractice=(topicId: string) => {
+		setSelectedTopicId(topicId);
+		setDefaultMode("Single");
+		closeModal();
+	};
+	const handlePracticeAll=() => {
+		setSelectedTopicId(null);
+		setDefaultMode("Single");
+		closeModal();
+	};
+	return (
+		<Modal
+			open={isOpen}
+			onClose={closeModal}
+			modalId="weak-topics-modal"
+			title="Recommended Practice"
+			titleId="weak-topics-title"
+			ariaLabel="Recommended practice topics"
+			scrollerRef={scrollerRef}
+			footer={
+				<>
+					<Button variant="secondary" size="md" onClick={closeModal}>
+						Dismiss
+					</Button>
+					{weakTopics.length > 0 && (
+						<Button variant="primary" size="md" onClick={handlePracticeAll}>
+							Practice All
+						</Button>
+					)}
+				</>
+			}
+		>
+			{weakTopics.length === 0 ? (
+				<EmptyState
+					illustration={<Lightbulb className="h-12 w-12" aria-hidden="true" />}
+					title="No recommendations yet"
+					description={totalAttempts === 0 ? "Complete a few questions and we will highlight topics worth reviewing." : "Your accuracy is strong across every topic you have practiced. Keep it up."}
+				/>
+			) : (
+				<>
+					<Card variant="filled" className="recommend-summary-card">
+						<CardContent className="recommend-summary-content">
+							<div className="recommend-summary-item">
+								<TrendDown className="h-5 w-5 text-danger" aria-hidden="true" />
+								<span className="recommend-summary-value">{weakTopics.length}</span>
+								<span className="recommend-summary-label">topic{weakTopics.length === 1 ? "" : "s"} below {WEAK_THRESHOLD}%</span>
+							</div>
+							<div className="recommend-summary-item">
+								<CheckCircle className="h-5 w-5 text-success" aria-hidden="true" />
+								<span className="recommend-summary-value">{totalAttempts}</span>
+								<span className="recommend-summary-label">attempt{totalAttempts === 1 ? "" : "s"} recorded</span>
+							</div>
+						</CardContent>
+					</Card>
+					<ul className="recommend-topic-list">
+						{weakTopics.map((topic, index) => (
+							<ScrollReveal key={topic.topicId} as="li" direction="up" distance={12} duration={0.35} delay={index * 0.05} scrollerRef={scrollerRef}>
+								<Card variant="hover" className="recommend-topic-card">
+									<CardHeader className="recommend-topic-header">
+										<div className="recommend-topic-title-row">
+											<Target className="h-4 w-4 text-accent-600" aria-hidden="true" />
+											<CardTitle className="recommend-topic-title">{topic.topicName}</CardTitle>
+										</div>
+										<Badge variant={topic.accuracy < 50 ? "error" : "warning"} size="sm">
+											{Math.round(topic.accuracy)}%
+										</Badge>
+									</CardHeader>
+									<CardContent className="recommend-topic-content">
+										<ProgressBar value={topic.accuracy} ariaLabel={`${topic.topicName} accuracy`} />
+										<span className="recommend-topic-meta">{topic.attempts} attempt{topic.attempts === 1 ? "" : "s"} &middot; {Math.round((topic.accuracy / 100) * topic.attempts)} correct</span>
+										<Button variant="secondary" size="sm" className="recommend-topic-action" onClick={() => handlePractice(topic.topicId)}>
+											Practice
+										</Button>
+									</CardContent>
+								</Card>
+							</ScrollReveal>
+						))}
+						</ul>
+					</>
+				)}
+		</Modal>
+	);
 }

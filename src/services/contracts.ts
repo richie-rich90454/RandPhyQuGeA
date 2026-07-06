@@ -98,7 +98,7 @@ export interface IExportService {
 /** Computes streaks, weak topics, accuracy, and session summaries from practice results. */
 export interface IAnalyticsService {
 	getStreak(results: PracticeResult[]): StreakData;
-	getWeakTopics(results: PracticeResult[], spec: Specification): WeakTopic[];
+	getWeakTopics(results: PracticeResult[], spec: Specification, threshold?: number): WeakTopic[];
 	getAccuracy(results: PracticeResult[]): number;
 	getSessionSummary(results: PracticeResult[]): SessionSummary;
 }
