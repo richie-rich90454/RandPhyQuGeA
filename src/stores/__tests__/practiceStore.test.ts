@@ -11,6 +11,7 @@ function makeQuestion(overrides: Partial<GeneratedQuestion> = {}): GeneratedQues
 		difficulty: 1,
 		text: "What is 2+2?",
 		answer: "4",
+		response_mode: "frq",
 		solution_text: "",
 		solution_latex: "",
 		variables: {},

@@ -23,7 +23,7 @@ function emptySpec(): Specification {
 	return {units: [], topics: [], skills: [], templates: []};
 }
 function makeQuestion(overrides: Partial<GeneratedQuestion>={}): GeneratedQuestion {
-	return {id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "42", solution_text: "", solution_latex: "", variables: {}, ...overrides};
+	return {id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "42", response_mode: "frq", solution_text: "", solution_latex: "", variables: {}, ...overrides};
 }
 function makeMcQuestion(overrides: Partial<GeneratedQuestion>={}): GeneratedQuestion {
 	return makeQuestion({id: "mc1", question_type: "MC", answer: "B", choices: ["A", "B", "C"], ...overrides});

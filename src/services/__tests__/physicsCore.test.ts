@@ -13,6 +13,7 @@ class CustomHandler implements QuestionTypeHandler {
             difficulty: template.difficulty,
             text: "custom question dispatched via configureCore",
             answer: "42",
+            response_mode: "frq",
             solution_text: "",
             solution_latex: "",
             variables,

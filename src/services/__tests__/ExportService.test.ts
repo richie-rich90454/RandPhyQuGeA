@@ -102,7 +102,7 @@ describe("ExportService", () => {
 		it("includes questions and answer key when requested", () => {
 			let service = new ExportService();
 			let questions: GeneratedQuestion[] = [
-				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, choices: ["3", "4", "5"]},
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, choices: ["3", "4", "5"], response_mode: "frq"},
 			];
 			let html = service.buildWorksheetHtml(questions, true);
 			expect(html).toContain("Physics Worksheet");
@@ -113,7 +113,7 @@ describe("ExportService", () => {
 		it("omits answers when answer key is disabled", () => {
 			let service = new ExportService();
 			let questions: GeneratedQuestion[] = [
-				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}},
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
 			];
 			let html = service.buildWorksheetHtml(questions, false);
 			expect(html).toContain("What is 2+2?");
@@ -122,7 +122,7 @@ describe("ExportService", () => {
 		it("escapes HTML in question text", () => {
 			let service = new ExportService();
 			let questions: GeneratedQuestion[] = [
-				{id: "q1", text: "<script>alert(1)</script>", answer: "&", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}},
+				{id: "q1", text: "<script>alert(1)</script>", answer: "&", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
 			];
 			let html = service.buildWorksheetHtml(questions, true);
 			expect(html).toContain("&lt;script&gt;");
@@ -137,7 +137,7 @@ describe("ExportService", () => {
 			let mockWindow = {document: {open: vi.fn<() => void>(), write, close: vi.fn<() => void>()}, focus: vi.fn<() => void>(), print} as unknown as Window;
 			vi.stubGlobal("open", vi.fn<() => Window | null>().mockReturnValue(mockWindow));
 			let questions: GeneratedQuestion[] = [
-				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}},
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
 			];
 			service.printWorksheet(questions, true);
 			expect(window.open).toHaveBeenCalledWith("", "_blank");
@@ -149,7 +149,7 @@ describe("ExportService", () => {
 			let service = new ExportService();
 			vi.stubGlobal("open", vi.fn().mockReturnValue(null));
 			let questions: GeneratedQuestion[] = [
-				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}},
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
 			];
 			expect(() => service.printWorksheet(questions, true)).toThrow("Pop-up blocked");
 			vi.unstubAllGlobals();

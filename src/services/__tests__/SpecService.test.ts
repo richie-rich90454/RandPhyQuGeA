@@ -55,7 +55,7 @@ describe("SpecService", () => {
 			let physics=new MockPhysicsService();
 			let service=new SpecService(physics);
 			let spec=emptySpec();
-			let questions: GeneratedQuestion[]=[{id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "42", solution_text: "", solution_latex: "", variables: {}}];
+			let questions: GeneratedQuestion[]=[{id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "42", response_mode: "frq", solution_text: "", solution_latex: "", variables: {}}];
 			physics.generateBatch.mockResolvedValue(questions);
 			let result=await service.previewTemplate(spec, "tmpl-1", 3);
 			expect(physics.generateBatch).toHaveBeenCalledWith(spec, 3, {templateIds: ["tmpl-1"]});

@@ -37,6 +37,7 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
             text,
             answer,
             choices: choices.length > 0 ? choices : undefined,
+            response_mode: "frq",
             solution_text: solutionText,
             solution_latex: solutionLatex,
             variables,

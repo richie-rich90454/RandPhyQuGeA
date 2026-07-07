@@ -8,6 +8,8 @@
 export type PracticeMode = "Single" | "Mental";
 /** Supported question template types. */
 export type QuestionType = "MC" | "SA" | "TF" | "FB" | "NE";
+/** Response format dimension, orthogonal to {@link QuestionType}: 'mcq' (multiple-choice) or 'frq' (free-response). */
+export type ResponseMode = "mcq" | "frq";
 export const QUESTION_TYPES = {
     MC: "MC" as const,
     SA: "SA" as const,
@@ -71,6 +73,9 @@ export interface GeneratedQuestion {
     text: string;
     answer: string;
     choices?: string[];
+    response_mode: ResponseMode;
+    correct_choice_index?: number;
+    grader_hint?: string;
     solution_text: string;
     solution_latex: string;
     variables: Record<string, unknown>;

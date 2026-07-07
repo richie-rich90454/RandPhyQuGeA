@@ -29,7 +29,7 @@ describe("PhysicsService", () => {
 		it("returns the generated question", async () => {
 			const core = new MockCore();
 			const service = new PhysicsService(core);
-			const question: GeneratedQuestion = {id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "42", solution_text: "", solution_latex: "", variables: {}};
+			const question: GeneratedQuestion = {id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "42", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"};
 			core.generateQuestion.mockReturnValue(question);
 			const result = await service.generateQuestion(emptySpec());
 			expect(core.generateQuestion).toHaveBeenCalledWith(emptySpec(), undefined);
@@ -44,7 +44,7 @@ describe("PhysicsService", () => {
 		it("forwards mapped filter options", async () => {
 			const core = new MockCore();
 			const service = new PhysicsService(core);
-			const question: GeneratedQuestion = {id: "q1", topic_id: "t1", skill_id: "s1", question_type: "MC", difficulty: 2, text: "text", answer: "A", choices: ["A", "B"], solution_text: "", solution_latex: "", variables: {x: 1}};
+			const question: GeneratedQuestion = {id: "q1", topic_id: "t1", skill_id: "s1", question_type: "MC", difficulty: 2, text: "text", answer: "A", choices: ["A", "B"], solution_text: "", solution_latex: "", variables: {x: 1}, response_mode: "frq"};
 			core.generateQuestion.mockReturnValue(question);
 			const spec = emptySpec();
 			const options = {topicId: "t1", skillId: "s1", minDifficulty: 1, maxDifficulty: 3, questionType: "MC", excludeIds: ["q0"], templateIds: ["q1"]};
@@ -57,7 +57,7 @@ describe("PhysicsService", () => {
 		it("delegates to the core with mapped options", async () => {
 			const core = new MockCore();
 			const service = new PhysicsService(core);
-			const questions: GeneratedQuestion[] = [{id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "1", solution_text: "", solution_latex: "", variables: {}}];
+			const questions: GeneratedQuestion[] = [{id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "1", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"}];
 			core.generateBatch.mockReturnValue(questions);
 			const spec = emptySpec();
 			const options = {topicId: "t1", excludeIds: ["q0"], templateIds: ["q1"]};
@@ -79,7 +79,7 @@ describe("PhysicsService", () => {
 		it("delegates to the core with mapped options", async () => {
 			const core = new MockCore();
 			const service = new PhysicsService(core);
-			const questions: GeneratedQuestion[] = [{id: "q2", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 2, text: "text", answer: "2", solution_text: "", solution_latex: "", variables: {}}];
+			const questions: GeneratedQuestion[] = [{id: "q2", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 2, text: "text", answer: "2", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"}];
 			core.generateUnique.mockReturnValue(questions);
 			const spec = emptySpec();
 			const options = {skillId: "s1", minDifficulty: 1, maxDifficulty: 5, questionType: "SA"};
