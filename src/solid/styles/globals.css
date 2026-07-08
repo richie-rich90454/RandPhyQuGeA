@@ -171,3 +171,63 @@
 	--touch-target-comfortable: 44px;
 	color-scheme: light;
 }
+:root[data-theme="dark"] {
+	/* Semantic — background & surfaces (deep navy liquid) */
+	--bg: var(--blue-900);
+	--bg-elevated: var(--blue-800);
+	--surface: #0f2847;
+	--surface-muted: var(--blue-900);
+	--surface-glass: rgba(11, 37, 64, 0.55);
+	--surface-glass-strong: rgba(11, 37, 64, 0.72);
+	/* Semantic — text (light blue-tinted) */
+	--text: #e6edf3;
+	--text-muted: #9fbcd8;
+	--text-subtle: var(--slate-400);
+	--text-inverse: var(--blue-900);
+	--text-link: var(--teal-300);
+	/* Semantic — brand (teal-forward for dark contrast) */
+	--primary: var(--teal-500);
+	--primary-hover: var(--teal-400);
+	--primary-active: var(--teal-300);
+	--primary-contrast: var(--blue-900);
+	--accent: var(--teal-400);
+	--accent-hover: var(--teal-300);
+	--accent-active: var(--teal-200);
+	--accent-contrast: var(--blue-900);
+	/* Semantic — status (brighter for dark bg) */
+	--success: #4ade80;
+	--success-surface: rgba(22, 101, 52, 0.30);
+	--warning: #fbbf24;
+	--warning-surface: rgba(146, 64, 14, 0.30);
+	--error: #f87171;
+	--error-surface: rgba(153, 27, 27, 0.30);
+	--danger: var(--error);
+	--danger-surface: var(--error-surface);
+	--info: var(--teal-400);
+	--info-surface: rgba(14, 116, 144, 0.30);
+	/* Semantic — borders (light-on-dark) */
+	--border: rgba(255, 255, 255, 0.10);
+	--border-strong: rgba(255, 255, 255, 0.18);
+	--border-subtle: rgba(255, 255, 255, 0.06);
+	--border-glass: rgba(255, 255, 255, 0.12);
+	--border-focus: var(--teal-400);
+	/* Glassmorphism tokens (dark glass) */
+	--glass-opacity: 0.55;
+	--glass-opacity-strong: 0.72;
+	--glass-border: 1px solid var(--border-glass);
+	--glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.40);
+	--glass-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+	/* Liquid animated background tokens (brighter for dark visibility) */
+	--liquid-color-1: rgba(6, 182, 212, 0.30);
+	--liquid-color-2: rgba(14, 116, 144, 0.40);
+	--liquid-color-3: rgba(42, 95, 160, 0.50);
+	--liquid-color-4: rgba(125, 211, 252, 0.20);
+	/* Shadow scale (deeper for dark) */
+	--shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.30);
+	--shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+	--shadow-md: 0 4px 16px rgba(0, 0, 0, 0.40);
+	--shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.45);
+	--shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.50);
+	--shadow-focus: 0 0 0 3px rgba(34, 211, 238, 0.40);
+	color-scheme: dark;
+}
