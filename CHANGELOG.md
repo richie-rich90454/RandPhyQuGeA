@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Megatask — SolidJS Migration, MCQ/FRQ Decoupling & Mega UI/UX/DX Overhaul
+
+This Unreleased entry tracks the `solidjs-mcq-decouple-mega-rewrite` megatask, delivered as ~400 atomic Conventional Commits grouped by phase. The prior SaaS-quality polish pass content is preserved below under "Prior polish pass". Each phase lands its own summary here as it completes.
+
+- **Phase 0 — Scaffolding, Tooling & SolidJS Dependency Swap (~30 commits)**: Adds SolidJS tooling alongside the existing React app so both coexist during migration. Solid entry point lives in `src/solid/**`; the React app at `src/main.tsx` + `src/App.tsx` keeps building and testing green at every commit. A separate `tsconfig.solid.json`, a Solid Vitest environment, `vite-plugin-solid` (scoped to `src/solid/**`), and a `@solidjs/testing-library` setup are introduced. Design tokens (light/dark/dim) for the RandMatQuGeA liquid/glass aesthetic are ported to a new `src/styles/globals.css` token skeleton, and a minimal Solid shell + UI primitives (ErrorBoundary, theme/media-query/localStorage primitives, GlassCard, Button, Logo, Icon, KaTeX renderer, GSAP wrapper) are added. Phase 0 completion summary and per-task SHAs are recorded at the end of Phase 0 (see "Phase 0 completion" below).
+- **Phase 1 — Core: MCQ/FRQ Decoupling (~35 commits)**: COMPLETE. `ResponseMode` is now orthogonal to `QuestionType`; every type renders/grades as both MCQ and FRQ via `UniversalDistractorGenerator` + `McqAssembler` + `AnswerGrader` + `ExpressionNormalizer`. Pure-TS, zero JSX, fully unit-tested.
+- **Phase 2 — Core: New Domain Features (~35 commits)**: Pure-TS new features (sig-figs, units, glossary, spaced repetition, history, bookmarks, achievements, daily goals, leaderboards, new question types, etc.).
+- **Phase 3 — SolidJS UI Foundation (~60 commits)**: Each React component is ported to SolidJS + a co-located CSS Module in its own commit; the React original is deleted in the same commit. Final React dependency removal happens at the END of Phase 3.
+- **Phase 4 — RandMatQuGeA UI/UX/DX Mimicry (~55 commits)**: Liquid background, glassmorphism, control/math toolbars, modals, smart equivalence checking, responsive rules — excluding RandMatQuGeA's offline-exclusive affordances (system tray, OS shortcuts, SQLite UI, window effects, PWA SW).
+- **Phase 5 — Bug Fixes Batch (~80 commits, 200 bugs)**.
+- **Phase 6 — New Features Batch (~50 commits, 100 features)**.
+- **Phase 7 — Polish, Verification & Release (~20 commits)**.
+
+#### Deferred to end of Phase 3
+
+The original spec listed React/Tailwind dep removal as Phase 0 work (tasks 0.3 and 0.4). Removing them now would break the existing React app and its 797 tests, violating the "every commit green" rule. They are therefore deferred:
+
+- **Task 0.3 (deferred to end of Phase 3)**: Remove React deps (`react`, `react-dom`, `@types/react`, `@types/react-dom`, `@vitejs/plugin-react`, `@testing-library/react`, `framer-motion`, `@gsap/react`, `@phosphor-icons/react`) from `package.json`. Removal lands alongside the final React-file deletion at the end of Phase 3 (Task 3.20).
+- **Task 0.4 (deferred to end of Phase 3)**: Remove Tailwind/PostCSS deps (`tailwindcss`, `postcss`, `autoprefixer`) and delete `tailwind.config.js` + `postcss.config.js`. The React app still consumes Tailwind directives in `src/styles/globals.css`; once Phase 3 replaces that file with the Solid CSS-Modules token sheet, these deps and configs are removed.
+
+#### Prior polish pass
+
 The application is now a pure-TypeScript physics practice question generator. There is no WASM and no Rust domain logic — all question generation, evaluation, and export happens in TypeScript. The React 19 + Vite 8 + KaTeX + Zustand 5 + Tauri shell stack is in place, and this entry documents the SaaS-quality polish pass (Waves 1–6 complete, Wave 7 in progress).
 
 ### Added
