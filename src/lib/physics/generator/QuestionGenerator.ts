@@ -51,7 +51,13 @@ export class QuestionGenerator {
         return results;
     }
     public generateUnique(count: number, filter?: QuestionFilter): GeneratedQuestion[] {
-        const baseCandidates = this.filterTemplates(filter);
+        let baseCandidates = this.filterTemplates(filter);
+        if (baseCandidates.length === 0 && filter !== undefined && filter.excludeIds !== undefined) {
+            // Edge case: excludeIds emptied the pool. Fall back to ignoring excludeIds so a
+            // single-template topic can still produce a fresh instance by re-randomizing variables.
+            const fallbackFilter: QuestionFilter = {...filter, excludeIds: undefined};
+            baseCandidates = this.filterTemplates(fallbackFilter);
+        }
         if (baseCandidates.length === 0) {
             return [];
         }

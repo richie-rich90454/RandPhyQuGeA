@@ -164,6 +164,15 @@ describe("QuestionGenerator", () => {
         expect(unique.length).toBe(1);
         expect(unique[0]?.question_type).toBe("MC");
     });
+    it("generateUnique falls back to re-randomizing when excludeIds empties a single-template pool", () => {
+        const gen = buildGenerator(42);
+        // QMC is the only MC template; excludeIds would empty the pool.
+        // The guard falls back to re-randomizing variables so a fresh instance is still returned.
+        const unique = gen.generateUnique(1, {questionType: "MC", excludeIds: ["QMC"]});
+        expect(unique.length).toBe(1);
+        expect(unique[0]?.question_type).toBe("MC");
+        expect(unique[0]?.id).toBeDefined();
+    });
     it("generate returns null when templateIds filter excludes everything", () => {
         const gen = buildGenerator(42);
         expect(gen.generate({templateIds: ["MISSING"]})).toBeNull();
