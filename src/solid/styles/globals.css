@@ -291,3 +291,113 @@
 	--shadow-focus: 0 0 0 3px rgba(8, 145, 178, 0.40);
 	color-scheme: dark;
 }
+*, *::before, *::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+html {
+	font-size: 100%;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+html:focus-within {
+	scroll-behavior: smooth;
+}
+body {
+	min-height: 100vh;
+	min-height: 100dvh;
+	font-family: var(--font-sans);
+	font-size: var(--font-size-base);
+	font-weight: var(--font-weight-normal);
+	line-height: var(--line-height-normal);
+	color: var(--text);
+	background-color: var(--bg);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: var(--font-weight-semibold);
+	line-height: var(--line-height-tight);
+	letter-spacing: var(--letter-spacing-tight);
+	color: var(--text);
+}
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-xl); }
+h4 { font-size: var(--font-size-lg); }
+h5 { font-size: var(--font-size-md); }
+h6 { font-size: var(--font-size-base); }
+p { line-height: var(--line-height-relaxed); }
+a {
+	color: var(--text-link);
+	text-decoration: none;
+	transition: color var(--duration-fast) var(--ease-standard);
+}
+a:hover { text-decoration: underline; }
+button, input, select, textarea {
+	font: inherit;
+	color: inherit;
+}
+button {
+	background: none;
+	border: none;
+	cursor: pointer;
+}
+ul, ol { list-style: none; }
+img, svg, video, canvas, audio, iframe, embed, object {
+	display: block;
+	max-width: 100%;
+}
+img, svg, video, canvas {
+	height: auto;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+:focus-visible {
+	outline: 2px solid var(--border-focus);
+	outline-offset: 2px;
+	border-radius: var(--radius-xs);
+}
+::selection {
+	background-color: var(--accent);
+	color: var(--accent-contrast);
+}
+#root {
+	isolation: isolate;
+	min-height: 100vh;
+	min-height: 100dvh;
+}
+@media (prefers-reduced-motion: reduce) {
+	html:focus-within {
+		scroll-behavior: auto;
+	}
+	*, *::before, *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+@media (prefers-contrast-more: more) {
+	:root {
+		--border: var(--border-strong);
+		--surface-glass: var(--surface);
+		--surface-glass-strong: var(--surface);
+		--glass-blur: 0px;
+	}
+}
+@media (forced-colors: active) {
+	:root {
+		--glass-shadow: none;
+		--glass-shadow-inset: none;
+		--shadow-xs: none;
+		--shadow-sm: none;
+		--shadow-md: none;
+		--shadow-lg: none;
+		--shadow-xl: none;
+	}
+}
