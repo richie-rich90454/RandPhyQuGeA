@@ -39,6 +39,7 @@ The following anchors enumerate every React component/hook/store file scheduled 
 - **Task 0.22 → Phase 3 Task 3.5** — `src/components/MathText.tsx` + `src/components/MathRenderer.tsx` (KaTeX). Porting target: Solid `MathText` tokenizes `$...$`/`$$...$$`/`\(...\)`/`\[...\]`/`\$` and `MathRenderer` uses `createEffect` to re-render KaTeX on text change; single KaTeX engine shared with print popup.
 - **Task 0.23 → Phase 3 Task 3.6** — `src/components/layout/AppShell.tsx` + `AppTopBar.tsx` + `src/components/ErrorBoundary.tsx` (React). Porting target: Solid `AppShell` with skip-link + landmarks (`<header>`/`<nav>`/`<main>`/`<h1>`), `AppTopBar`, and the React `ErrorBoundary` deleted in favor of the Solid `ErrorBoundaryRetry` added in Phase 0 Task 0.16.
 - **Task 0.24 → Phase 3 Task 3.7** — `src/components/practice/**` toolbar rows: `ControlToolbarTop`, `ControlToolbarBottom`, `ModeSelector`, `TopicsSection`, `McqToggle` (now the Response Mode toggle, enabled for all types per Phase 1), `UtilityButtons`, `MentalControls`, `SingleControls`, `MathToolbar`. 9 commits in Phase 3 Task 3.7.
+- **Task 0.25 → Phase 3 Task 3.8** — `src/components/practice/**` main content: `MainContent`, `QuestionCard`, `AnswerSection`, `AnswerCard` (live KaTeX preview), `ResultsCard` (solution rendering in display mode). 6 commits in Phase 3 Task 3.8.
 
 #### Prior polish pass
 
