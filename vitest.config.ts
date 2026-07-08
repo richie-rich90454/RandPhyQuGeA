@@ -5,7 +5,7 @@ let solidFiles=/src[\\/]solid[\\/]/;
 export default defineConfig({
     plugins: [
         react({exclude: [solidFiles]}),
-        solid({include: [solidFiles]}),
+        solid({include: [solidFiles], hot: false}),
     ],
     test: {
         environment: "jsdom",
