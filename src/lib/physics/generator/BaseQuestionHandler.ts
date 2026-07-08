@@ -14,6 +14,7 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
     public constructor() {
         this.substituter = new TemplateSubstituter();
     }
+    /** Build a free-response {@link GeneratedQuestion} from `template` + resolved `variables`: substitute the text/solution templates, evaluate the answer expression (falling back to 0 on error), format the answer via {@link formatAnswer}, and substitute `{answer}` into the solution templates. Choice generation is NOT performed here — McqAssembler decorates the result when `response_mode='mcq'` is requested. */
     public handle(template: QuestionTemplate, variables: Record<string, unknown>, evaluator: ExpressionEvaluatorLike, _random: RandomGenerator): GeneratedQuestion {
         const text = this.substituter.substitute(template.text_template, variables);
         let answerValue: number;
@@ -41,5 +42,6 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
             variables,
         };
     }
+    /** Format the evaluated numeric `value` into the canonical answer string for this question type (e.g. "True"/"False" for TF, a formatted number for MC/SA/FB/NE). */
     protected abstract formatAnswer(value: number, evaluator: ExpressionEvaluatorLike): string;
 }
