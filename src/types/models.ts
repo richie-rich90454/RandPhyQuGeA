@@ -60,6 +60,8 @@ export interface QuestionTemplate {
     solution_template: string;
     /** KaTeX-renderable LaTeX solution template (substituted with variables and {answer}); empty when not provided. */
     solution_latex_template: string;
+    /** Optional SVG diagram template (supports {var} and {answer} substitution); undefined when no diagram is provided. */
+    diagram_svg?: string;
     variable_definitions: VariableDefinition[];
     distractor_expressions: string[];
 }
@@ -78,6 +80,8 @@ export interface GeneratedQuestion {
     grader_hint?: string;
     solution_text: string;
     solution_latex: string;
+    /** Substituted SVG diagram markup for the question; undefined when no diagram is provided. */
+    diagram_svg?: string;
     variables: Record<string, unknown>;
 }
 /** A full specification parsed from a spec text file. */

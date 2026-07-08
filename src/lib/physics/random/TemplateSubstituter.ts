@@ -13,6 +13,17 @@ export class TemplateSubstituter {
             return String(value);
         });
     }
+    /** Substitute {var} and {answer} tokens into a diagram SVG template. Returns "" when the template is empty/whitespace. */
+    public substituteDiagram(diagramTemplate: string, variables: Record<string, unknown>, answer?: string): string {
+        if (diagramTemplate.trim().length === 0) {
+            return "";
+        }
+        let result = this.substitute(diagramTemplate, variables);
+        if (answer !== undefined) {
+            result = result.replaceAll("{answer}", answer);
+        }
+        return result;
+    }
     /** Format a number: integers as-is, otherwise 4 decimals with trailing zeros stripped. Uses LaTeX scientific notation for very small or very large magnitudes. */
     public formatValue(value: number): string {
         if (value === Math.trunc(value) && Math.abs(value) < 1e6) {

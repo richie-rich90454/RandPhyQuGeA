@@ -28,6 +28,7 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
         const solutionText = this.substituter.substitute(template.solution_template, variables).replaceAll("{answer}", answer);
         const solutionLatex =
             template.solution_latex_template.trim().length > 0 ? this.substituter.substitute(template.solution_latex_template, variables).replaceAll("{answer}", answerLatex) : solutionText;
+        const diagramSvg = template.diagram_svg !== undefined ? this.substituter.substituteDiagram(template.diagram_svg, variables, answer) : undefined;
         return {
             id: generateId(),
             topic_id: template.topic_id,
@@ -39,6 +40,7 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
             response_mode: "frq",
             solution_text: solutionText,
             solution_latex: solutionLatex,
+            diagram_svg: diagramSvg,
             variables,
         };
     }
