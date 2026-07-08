@@ -7,6 +7,7 @@ import {ShortAnswerNeighborStrategy} from "./strategies/ShortAnswerNeighborStrat
 export class UniversalDistractorGenerator implements UniversalDistractorGeneratorLike {
     private readonly strategies: Map<string, ResponseFormatStrategy>;
     private readonly fallback: ResponseFormatStrategy;
+    /** Construct the generator. When `strategies` is omitted the five default strategies (NE/MC numeric, TF boolean, FB blank-token, SA short-answer-neighbor) are registered; the {@link ShortAnswerNeighborStrategy} is always installed as the fallback for unregistered question types. */
     public constructor(strategies?: ResponseFormatStrategy[]) {
         this.strategies = new Map();
         this.fallback = new ShortAnswerNeighborStrategy();
@@ -18,12 +19,15 @@ export class UniversalDistractorGenerator implements UniversalDistractorGenerato
             this.registerDefaults();
         }
     }
+    /** Register (or replace) the strategy for its `questionType` key (open-closed extension point). */
     public register(strategy: ResponseFormatStrategy): void {
         this.strategies.set(strategy.questionType, strategy);
     }
+    /** Look up the strategy registered for `questionType`, or `undefined` when none is registered (the fallback is applied by {@link generate}). */
     public get(questionType: string): ResponseFormatStrategy | undefined {
         return this.strategies.get(questionType);
     }
+    /** Generate up to `count` unique distractor strings for `context.template.question_type`, excluding `context.answer`. Selects the registered strategy (or the fallback), then dedupes raw output against the correct answer and itself, stopping once `count` unique items are collected. The returned array may be shorter than `count` when the strategy cannot produce enough unique distractors. */
     public generate(context: DistractorContext, count: number, random: RandomGenerator): string[] {
         const strategy = this.strategies.get(context.template.question_type) ?? this.fallback;
         const raw = strategy.generateDistractors(context, count, random);
@@ -41,9 +45,11 @@ export class UniversalDistractorGenerator implements UniversalDistractorGenerato
         }
         return deduped;
     }
+    /** Convenience factory returning a generator pre-loaded with the five default strategies. */
     public static createDefault(): UniversalDistractorGenerator {
         return new UniversalDistractorGenerator();
     }
+    /** Register the built-in strategies: NE/MC numeric, TF boolean, FB blank-token, SA short-answer-neighbor. */
     private registerDefaults(): void {
         const numeric = new NumericDistractorStrategy();
         this.strategies.set("NE", numeric);

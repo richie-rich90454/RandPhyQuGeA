@@ -8,10 +8,12 @@ const DEFAULT_CHOICE_COUNT = 4;
 export class McqAssembler implements McqAssemblerLike {
     private readonly generator: UniversalDistractorGenerator;
     private readonly defaultChoiceCount: number;
+    /** Construct an assembler; when `generator` is omitted a default {@link UniversalDistractorGenerator} is used, and `defaultChoiceCount` defaults to 4. */
     public constructor(generator?: UniversalDistractorGenerator, defaultChoiceCount?: number) {
         this.generator = generator ?? UniversalDistractorGenerator.createDefault();
         this.defaultChoiceCount = defaultChoiceCount ?? DEFAULT_CHOICE_COUNT;
     }
+    /** Decorate `question` with shuffled choices and `correct_choice_index`. When `seed` is supplied, distractor generation and the Fisher-Yates shuffle use a {@link SeededRandom} so ordering is stable for that seed; otherwise the passed `random` is used. When the strategy yields zero distractors the question falls back to `response_mode='frq'` with `grader_hint='mcq-unavailable-fallback'`. When it yields fewer distractors than requested (but at least one) the choices are padded with a single literal `"None of the above"` choice that is never marked correct. */
     public assemble(question: GeneratedQuestion, context: DistractorContext, random: RandomGenerator, choiceCount?: number, seed?: number): GeneratedQuestion {
         const target = choiceCount ?? this.defaultChoiceCount;
         const distractorCount = Math.max(1, target - 1);
@@ -40,6 +42,7 @@ export class McqAssembler implements McqAssemblerLike {
             response_mode: "mcq",
         };
     }
+    /** Fisher-Yates shuffle returning a new array; the input is not mutated. */
     private shuffle<T>(items: T[], random: RandomGenerator): T[] {
         const copy = [...items];
         for (let i = copy.length - 1; i > 0; i--) {

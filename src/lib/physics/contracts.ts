@@ -59,11 +59,11 @@ export interface DistractorContext {
     /** The expression evaluator (for evaluating distractor expressions). */
     evaluator: ExpressionEvaluatorLike;
 }
-/** Produces type-appropriate distractor choices for a question type (Strategy pattern). */
+/** Produces type-appropriate distractor choices for a question type (Strategy pattern). Implementations are registered with {@link UniversalDistractorGenerator} per `questionType` key; the generator dedupes their output against the correct answer before returning. */
 export interface ResponseFormatStrategy {
     /** The question type key this strategy serves (e.g. 'MC', 'NE', 'TF', 'FB', 'SA'). */
     readonly questionType: string;
-    /** Generate up to `count` distractor strings, excluding the correct answer. */
+    /** Generate up to `count` distractor strings, excluding the correct answer. The caller dedupes and scales the result, so strategies may return more or fewer than `count` items. */
     generateDistractors(context: DistractorContext, count: number, random: RandomGenerator): string[];
 }
 /** Result of grading a user response against a generated question. */
@@ -92,9 +92,9 @@ export interface McqAssemblerLike {
 }
 /** Picks a {@link ResponseFormatStrategy} per question type and dedupes/scales distractors. */
 export interface UniversalDistractorGeneratorLike {
-    /** Generate up to `count` distractors for the given question type, excluding the correct answer. */
+    /** Generate up to `count` unique distractors for the given question type, excluding the correct answer. The returned array may be shorter than `count` when the strategy cannot produce enough unique distractors. */
     generate(context: DistractorContext, count: number, random: RandomGenerator): string[];
-    /** Register a custom strategy for a question type (open-closed). */
+    /** Register a custom strategy for a question type (open-closed extension point). */
     register(strategy: ResponseFormatStrategy): void;
 }
 /** Resolves the response mode for a filter, defaulting to 'frq' when undefined. */
