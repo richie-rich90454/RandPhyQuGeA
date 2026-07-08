@@ -17,5 +17,6 @@
         "noUncheckedIndexedAccess": true
     },
     "include": ["src"],
+    "exclude": ["src/solid/**"],
     "references": [{"path": "./tsconfig.node.json"}]
 }
