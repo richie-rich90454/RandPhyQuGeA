@@ -1,4 +1,5 @@
 import type {EvaluatorFunction, ExpressionEvaluatorLike} from "./contracts";
+import {SigFigFormatter} from "./format/SigFigFormatter";
 interface ParseResult {
     value: number;
     position: number;
@@ -174,8 +175,10 @@ export class FunctionRegistry {
 /** Expression evaluator with tokenizer, recursive-descent parser, and degree-based trig. */
 export class ExpressionEvaluator implements ExpressionEvaluatorLike {
     private readonly functions: FunctionRegistry;
+    private readonly sigFigFormatter: SigFigFormatter;
     public constructor(functions?: FunctionRegistry) {
         this.functions = functions ?? FunctionRegistry.createDefault();
+        this.sigFigFormatter = new SigFigFormatter();
     }
     /** Evaluate an expression against a variable map. Throws on errors. */
     public evaluate(expression: string, variables: Record<string, unknown>): number {
@@ -186,8 +189,11 @@ export class ExpressionEvaluator implements ExpressionEvaluatorLike {
         const tokens = this.tokenize(expr);
         return this.parseExpression(tokens, 0, variables).value;
     }
-    /** Format a numeric answer: integers as-is, otherwise 4 decimals with trailing zeros stripped. Uses scientific notation for very small or very large magnitudes. */
-    public formatNumeric(value: number): string {
+    /** Format a numeric answer: integers as-is, otherwise 4 decimals with trailing zeros stripped. Uses scientific notation for very small or very large magnitudes. When `sigFigs` is supplied (opt-in) the value is formatted to exactly that many significant figures via {@link SigFigFormatter}, preserving trailing significant zeros (e.g. formatNumeric(1.2, 3) -> "1.20"). */
+    public formatNumeric(value: number, sigFigs?: number): string {
+        if (sigFigs !== undefined && sigFigs > 0) {
+            return this.sigFigFormatter.format(value, sigFigs);
+        }
         if (value === Math.trunc(value) && Math.abs(value) < 1e15) {
             return String(Math.trunc(value));
         }
