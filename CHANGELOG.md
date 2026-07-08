@@ -44,6 +44,7 @@ The following anchors enumerate every React component/hook/store file scheduled 
 - **Task 0.27 → Phase 3 Task 3.10** — `src/components/analytics/ProgressPanel.tsx`. Porting target: Solid `ProgressPanel` + analytics wiring consuming `progressStore.selectStats`; `aria-live` regions for score/timer.
 - **Task 0.28 → Phase 3 Task 3.16** — `src/components/animations/ScrollReveal.tsx` (+ `src/lib/motion.ts`/`src/lib/gsap.ts` helpers). Porting target: replace framer-motion with GSAP (already a dep) or CSS transitions; Solid `useGsapContext` equivalent with `onCleanup` teardown.
 - **Task 0.29 → Phase 3 Task 3.20** — `src/App.tsx` + `src/main.tsx` (React root shell). Porting target: final React-file deletion; the Solid root (`src/solid/main.tsx`) becomes the sole entry. Gated on a CI grep verifying zero `from "react"`/`from "react-dom"`/`@vitejs/plugin-react` imports under `src/` (excluding `src/solid/**`).
+- **Task 0.30 → end of Phase 3** — `src/styles/globals.css` (React/Tailwind global stylesheet with `@tailwind base/components/utilities` + `@apply`) + final React/Tailwind dep removal gate. Porting target: delete the React `globals.css` once all components are ported; remove `tailwindcss`/`postcss`/`autoprefixer` + `tailwind.config.js`/`postcss.config.js` (Task 0.4 deferral) and the React deps (Task 0.3 deferral). Gated on a CI grep verifying zero `@tailwind`/`@apply` directives and zero React-idiom hooks remaining anywhere under `src/`.
 
 #### Prior polish pass
 
