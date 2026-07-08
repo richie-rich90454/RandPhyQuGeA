@@ -6,3 +6,6 @@ export {QuestionGenerator} from "./QuestionGenerator";
 export {QuestionTypeRegistry} from "./QuestionTypeRegistry";
 export {ShortAnswerHandler} from "./ShortAnswerHandler";
 export {TrueFalseHandler} from "./TrueFalseHandler";
+export {McqAssembler} from "./McqAssembler";
+export {UniversalDistractorGenerator} from "./UniversalDistractorGenerator";
+export {NumericDistractorStrategy, BooleanDistractorStrategy, BlankTokenDistractorStrategy, ShortAnswerNeighborStrategy} from "./strategies";

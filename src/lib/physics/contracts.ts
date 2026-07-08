@@ -1,4 +1,4 @@
-import type {GeneratedQuestion, QuestionTemplate, VariableDefinition, ExportFormat} from "./types";
+import type {GeneratedQuestion, QuestionTemplate, VariableDefinition, ExportFormat, ResponseMode} from "./types";
 /** A random number generator abstraction for dependency injection. */
 export interface RandomGenerator {
     /** Returns a float in [0, 1). */
@@ -45,4 +45,59 @@ export interface EvaluatorFunction {
     readonly name: string;
     readonly arity: number | null; // null = variadic
     invoke(args: number[]): number;
+}
+/** Context passed to a {@link ResponseFormatStrategy} when generating distractors. */
+export interface DistractorContext {
+    /** The canonical formatted answer string (e.g. "42" or "True"). */
+    answer: string;
+    /** The raw numeric answer value before formatting (NaN when non-numeric). */
+    answerValue: number;
+    /** The template being rendered (provides distractor_expressions as hints). */
+    template: QuestionTemplate;
+    /** The resolved variables for this question instance. */
+    variables: Record<string, unknown>;
+    /** The expression evaluator (for evaluating distractor expressions). */
+    evaluator: ExpressionEvaluatorLike;
+}
+/** Produces type-appropriate distractor choices for a question type (Strategy pattern). */
+export interface ResponseFormatStrategy {
+    /** The question type key this strategy serves (e.g. 'MC', 'NE', 'TF', 'FB', 'SA'). */
+    readonly questionType: string;
+    /** Generate up to `count` distractor strings, excluding the correct answer. */
+    generateDistractors(context: DistractorContext, count: number, random: RandomGenerator): string[];
+}
+/** Result of grading a user response against a generated question. */
+export interface GradeResult {
+    /** Whether the response is correct. */
+    is_correct: boolean;
+    /** The normalized user response used for comparison. */
+    normalized_response: string;
+    /** The normalized canonical answer used for comparison. */
+    normalized_answer: string;
+}
+/** Grades a user response against a {@link GeneratedQuestion}, dispatching by response mode and question type. */
+export interface AnswerGraderLike {
+    /** Grade the response; `selectedIndex` applies to MCQ mode (choice index). */
+    grade(question: GeneratedQuestion, response: string, selectedIndex?: number): GradeResult;
+}
+/** Normalizes a mathematical/string expression for equivalence comparison. */
+export interface ExpressionNormalizerLike {
+    /** Return a canonical normalized form of the input expression. */
+    normalize(input: string): string;
+}
+/** Assembles a multiple-choice question from a base free-response question by attaching choices. */
+export interface McqAssemblerLike {
+    /** Decorate a base FRQ question with choices, correct_choice_index, and response_mode='mcq'. */
+    assemble(question: GeneratedQuestion, context: DistractorContext, random: RandomGenerator, choiceCount?: number): GeneratedQuestion;
+}
+/** Picks a {@link ResponseFormatStrategy} per question type and dedupes/scales distractors. */
+export interface UniversalDistractorGeneratorLike {
+    /** Generate up to `count` distractors for the given question type, excluding the correct answer. */
+    generate(context: DistractorContext, count: number, random: RandomGenerator): string[];
+    /** Register a custom strategy for a question type (open-closed). */
+    register(strategy: ResponseFormatStrategy): void;
+}
+/** Resolves the response mode for a filter, defaulting to 'frq' when undefined. */
+export function resolveResponseMode(mode: ResponseMode | undefined): ResponseMode {
+    return mode ?? "frq";
 }

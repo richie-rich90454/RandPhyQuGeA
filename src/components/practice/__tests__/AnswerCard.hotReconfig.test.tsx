@@ -17,6 +17,7 @@ function makeQuestion(overrides: Partial<GeneratedQuestion> = {}): GeneratedQues
 		topic_id: "t1",
 		skill_id: "s1",
 		question_type: "SA",
+		response_mode: "frq",
 		difficulty: 1,
 		text: "What is 2+2?",
 		answer: "4",

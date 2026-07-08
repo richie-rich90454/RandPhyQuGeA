@@ -10,9 +10,9 @@
  * evaluator functions, or a seeded random source) via {@link configureCore}.
  */
 import partOneSpec from "../assets/part_one.txt?raw";
-import {PhysicsCore, ExpressionEvaluator, VariableGenerator} from "../lib/physics";
-import type {QuestionFilter, RandomGenerator, ExporterRegistry, FunctionRegistry, QuestionTypeRegistry, VariableTypeRegistry} from "../lib/physics";
-import type {Specification, GeneratedQuestion, FormulaEntry, ExportFormat} from "../types/models";
+import {PhysicsCore, ExpressionEvaluator, VariableGenerator, McqAssembler, UniversalDistractorGenerator, AnswerGrader} from "../lib/physics";
+import type {QuestionFilter, RandomGenerator, ExporterRegistry, FunctionRegistry, QuestionTypeRegistry, VariableTypeRegistry, ResponseFormatStrategy, McqAssemblerLike, UniversalDistractorGeneratorLike, AnswerGraderLike} from "../lib/physics";
+import type {Specification, GeneratedQuestion, FormulaEntry, ExportFormat, ResponseMode} from "../types/models";
 /** Optional filters applied to question generation. */
 export interface GenerateOptions {
     topicId?: string;
@@ -20,6 +20,8 @@ export interface GenerateOptions {
     minDifficulty?: number;
     maxDifficulty?: number;
     questionType?: string;
+    /** Response format: 'mcq' (multiple-choice) or 'frq' (free-response); undefined defaults to 'frq'. */
+    responseMode?: ResponseMode;
 }
 /** Shared singleton physics core used by every service function; replaced by {@link configureCore}. */
 let core = PhysicsCore.default();
@@ -34,6 +36,7 @@ function toFilter(options?: GenerateOptions): QuestionFilter | undefined {
         minDifficulty: options.minDifficulty,
         maxDifficulty: options.maxDifficulty,
         questionType: options.questionType,
+        responseMode: options.responseMode,
     };
 }
 /** Collaborators that can be injected when (re)building the shared core via {@link configureCore}. Any omitted field keeps its default implementation. */
@@ -48,6 +51,14 @@ export interface ConfigureCoreOptions {
     variableTypes?: VariableTypeRegistry;
     /** Custom random generator (e.g. a seeded generator for reproducible output). */
     random?: RandomGenerator;
+    /** Custom response-format strategies (one per question type) for distractor generation. */
+    responseFormatStrategies?: ResponseFormatStrategy[];
+    /** Custom universal distractor generator (overrides responseFormatStrategies when supplied). */
+    distractorGenerator?: UniversalDistractorGeneratorLike;
+    /** Custom MCQ assembler (overrides the default when supplied). */
+    mcqAssembler?: McqAssemblerLike;
+    /** Custom answer grader for response evaluation. */
+    grader?: AnswerGraderLike;
 }
 /**
  * Replace the shared physics-core singleton with one built from the given
@@ -69,7 +80,9 @@ export interface ConfigureCoreOptions {
 export function configureCore(options: ConfigureCoreOptions): void {
     const evaluator = options.functions !== undefined ? new ExpressionEvaluator(options.functions) : undefined;
     const variableGenerator = options.variableTypes !== undefined ? new VariableGenerator(options.variableTypes) : undefined;
-    core = new PhysicsCore(undefined, evaluator, options.exporters, undefined, options.random, options.questionTypes, variableGenerator);
+    const distractorGenerator = options.distractorGenerator ?? (options.responseFormatStrategies !== undefined ? new UniversalDistractorGenerator(options.responseFormatStrategies) : undefined);
+    const mcqAssembler = options.mcqAssembler ?? (distractorGenerator !== undefined ? new McqAssembler(distractorGenerator instanceof UniversalDistractorGenerator ? distractorGenerator : undefined) : undefined);
+    core = new PhysicsCore(undefined, evaluator, options.exporters, undefined, options.random, options.questionTypes, variableGenerator, mcqAssembler, distractorGenerator, options.grader);
 }
 /** Parse a spec text file into a {@link Specification}. */
 export async function parseSpecification(input: string): Promise<Specification> {

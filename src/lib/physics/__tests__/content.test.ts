@@ -143,7 +143,7 @@ describe("Template generation", () => {
             let checked = false;
             for (let seed = 1; seed <= 5; seed++) {
                 const gen = buildGenerator(seed);
-                const q = gen.generate({templateIds: [tpl.id]});
+                const q = gen.generate({templateIds: [tpl.id], responseMode: "mcq"});
                 if (q === null || q.choices === undefined) {
                     continue;
                 }
@@ -166,9 +166,9 @@ describe("Template generation", () => {
         const tfTemplates = spec.templates.filter(t => t.question_type === "TF");
         for (const tpl of tfTemplates) {
             const gen = buildGenerator(1);
-            const q = gen.generate({templateIds: [tpl.id]});
+            const q = gen.generate({templateIds: [tpl.id], responseMode: "mcq"});
             expect(q).not.toBeNull();
-            expect(q?.choices).toEqual(["True", "False"]);
+            expect(q?.choices?.slice().sort()).toEqual(["False", "True"]);
         }
     });
     it("every SA/FB/NE template produces no choices", () => {

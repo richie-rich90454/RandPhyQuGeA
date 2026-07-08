@@ -130,13 +130,13 @@ const specialChars: GeneratedQuestion = {
 describe("Exporter edge cases", () => {
     it("CsvExporter renders only the header for an empty list", () => {
         const exporter = new CsvExporter();
-        expect(exporter.export([])).toBe("id,topic_id,skill_id,type,difficulty,text,answer,solution,solution_latex,choices\n");
+        expect(exporter.export([])).toBe("id,topic_id,skill_id,type,difficulty,text,answer,solution,solution_latex,choices,response_mode\n");
     });
     it("CsvExporter renders an empty choices column when choices are undefined", () => {
         const exporter = new CsvExporter();
         const out = exporter.export([noChoices]);
         expect(out).toContain('"What is the speed?"');
-        expect(out).toContain(',""\n');
+        expect(out).toContain(',"","frq"\n');
         expect(out).not.toContain(" | ");
     });
     it("CsvExporter escapes embedded quotes and preserves commas in fields", () => {

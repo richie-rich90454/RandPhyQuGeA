@@ -5,6 +5,7 @@
  * physics core exposes a single import surface, and adds core-only types
  * used by the parser and generator.
  */
+import type {ResponseMode} from "../../types/models";
 export * from "../../types/models";
 /** A single parse error with line number and message. */
 export interface ParseError {
@@ -29,4 +30,6 @@ export interface QuestionFilter {
     questionType?: string;
     excludeIds?: string[];
     templateIds?: string[];
+    /** Response format requested for generation; orthogonal to questionType. Undefined defaults to 'frq'. */
+    responseMode?: ResponseMode;
 }

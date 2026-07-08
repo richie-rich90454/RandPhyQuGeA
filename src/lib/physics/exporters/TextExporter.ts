@@ -17,6 +17,7 @@ export class TextExporter implements Exporter {
                 }
             }
             parts.push(`Answer: ${q.answer}\n`);
+            parts.push(`Mode: ${q.response_mode === "mcq" ? "MCQ" : "FRQ"}\n`);
             parts.push(`Solution: ${q.solution_text}\n\n`);
         }
         return parts.join("");

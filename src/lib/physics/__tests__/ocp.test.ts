@@ -1,5 +1,6 @@
 import {describe, it, expect} from "vitest";
 import {QuestionTypeRegistry} from "../generator/QuestionTypeRegistry";
+import {UniversalDistractorGenerator} from "../generator/UniversalDistractorGenerator";
 import {ExporterRegistry} from "../exporters/ExporterRegistry";
 import {ExpressionEvaluator} from "../ExpressionEvaluator";
 import {SpecificationParser} from "../SpecificationParser";
@@ -7,6 +8,7 @@ import {PhysicsCore} from "../PhysicsCore";
 import {SeededRandomGenerator} from "../random";
 import type {QuestionTypeHandler} from "../contracts";
 import type {Exporter} from "../contracts";
+import type {DistractorContext, ResponseFormatStrategy} from "../contracts";
 import type {ExportFormat, GeneratedQuestion, QuestionTemplate} from "../types";
 class CustomHandler implements QuestionTypeHandler {
     public readonly type = "CustomType";
@@ -33,6 +35,30 @@ class CustomExporter implements Exporter {
         return "CUSTOM EXPORT";
     }
 }
+class NumericCustomHandler implements QuestionTypeHandler {
+    public readonly type = "CustomMcq";
+    public handle(template: QuestionTemplate, variables: Record<string, unknown>): GeneratedQuestion {
+        return {
+            id: "custom-mcq-1",
+            topic_id: template.topic_id,
+            skill_id: template.skill_id,
+            question_type: template.question_type,
+            difficulty: template.difficulty,
+            text: "custom mcq: " + String(variables["x"] ?? ""),
+            answer: "10",
+            response_mode: "frq",
+            solution_text: "",
+            solution_latex: "",
+            variables,
+        };
+    }
+}
+class CustomDistractorStrategy implements ResponseFormatStrategy {
+    public readonly questionType = "CustomMcq";
+    public generateDistractors(_context: DistractorContext, count: number): string[] {
+        return ["7", "8", "9", "11", "12"].slice(0, count);
+    }
+}
 const CUSTOM_SPEC = [
     "[UNIT]",
     "Id: U1",
@@ -50,6 +76,28 @@ const CUSTOM_SPEC = [
     "TopicId: T1",
     "SkillId: S1",
     "QuestionType: CustomType",
+    "Difficulty: 1",
+    "TextTemplate: custom {x}",
+    "AnswerExpression: x",
+    "Var.x: Type=int;Min=1;Max=10",
+].join("\n");
+const CUSTOM_MCQ_SPEC = [
+    "[UNIT]",
+    "Id: U1",
+    "Name: Test",
+    "[TOPIC]",
+    "Id: T1",
+    "Name: Test",
+    "UnitId: U1",
+    "[SKILL]",
+    "Id: S1",
+    "Name: Test",
+    "TopicId: T1",
+    "[TEMPLATE]",
+    "Id: Q1",
+    "TopicId: T1",
+    "SkillId: S1",
+    "QuestionType: CustomMcq",
     "Difficulty: 1",
     "TextTemplate: custom {x}",
     "AnswerExpression: x",
@@ -108,5 +156,77 @@ describe("Open-Closed Principle", () => {
         const core = new PhysicsCore(parser, evaluator);
         const spec = core.parseSpecification(CUSTOM_SPEC);
         expect(spec.templates[0]?.question_type).toBe("CustomType");
+    });
+    it("assembles MCQ choices end-to-end via an injected custom ResponseFormatStrategy", () => {
+        const registry = QuestionTypeRegistry.createDefault();
+        registry.register(new NumericCustomHandler());
+        const distractorGenerator = UniversalDistractorGenerator.createDefault();
+        distractorGenerator.register(new CustomDistractorStrategy());
+        const core = new PhysicsCore(
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            new SeededRandomGenerator(1),
+            registry,
+            undefined,
+            undefined,
+            distractorGenerator,
+        );
+        const spec = core.parseSpecification(CUSTOM_MCQ_SPEC);
+        const q = core.generateQuestion(spec, {templateIds: ["Q1"], responseMode: "mcq"});
+        expect(q).not.toBeNull();
+        expect(q?.question_type).toBe("CustomMcq");
+        expect(q?.response_mode).toBe("mcq");
+        expect(q?.choices).toBeDefined();
+        expect(q?.choices?.length).toBe(4);
+        expect(q?.choices).toContain("10");
+        expect(q?.correct_choice_index).toBeDefined();
+        expect(q?.choices?.[q?.correct_choice_index ?? -1]).toBe("10");
+        for (const d of ["7", "8", "9"]) {
+            expect(q?.choices).toContain(d);
+        }
+        const unique = new Set(q?.choices);
+        expect(unique.size).toBe(q?.choices?.length);
+    });
+    it("returns a free-response question for the custom type when responseMode is 'frq'", () => {
+        const registry = QuestionTypeRegistry.createDefault();
+        registry.register(new NumericCustomHandler());
+        const distractorGenerator = UniversalDistractorGenerator.createDefault();
+        distractorGenerator.register(new CustomDistractorStrategy());
+        const core = new PhysicsCore(
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            new SeededRandomGenerator(1),
+            registry,
+            undefined,
+            undefined,
+            distractorGenerator,
+        );
+        const spec = core.parseSpecification(CUSTOM_MCQ_SPEC);
+        const q = core.generateQuestion(spec, {templateIds: ["Q1"], responseMode: "frq"});
+        expect(q).not.toBeNull();
+        expect(q?.response_mode).toBe("frq");
+        expect(q?.choices).toBeUndefined();
+        expect(q?.answer).toBe("10");
+    });
+    it("exposes the injected distractor generator and mcq assembler through the facade", () => {
+        const distractorGenerator = UniversalDistractorGenerator.createDefault();
+        const core = new PhysicsCore(
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            distractorGenerator,
+        );
+        expect(core.getDistractorGenerator()).toBe(distractorGenerator);
+        expect(core.getMcqAssembler()).toBeDefined();
+        expect(core.getGrader()).toBeDefined();
     });
 });

@@ -64,11 +64,12 @@ function buildGenerator(seed: number): QuestionGenerator {
 describe("QuestionGenerator", () => {
     it("generates an MC question with no {var} tokens and choices present", () => {
         const gen = buildGenerator(42);
-        const q = gen.generate({templateIds: ["QMC"]});
+        const q = gen.generate({templateIds: ["QMC"], responseMode: "mcq"});
         expect(q).not.toBeNull();
         expect(q?.text).not.toContain("{");
         expect(q?.choices).toBeDefined();
-        expect(q?.choices?.length).toBe(3);
+        expect(q?.choices?.length).toBe(4);
+        expect(q?.response_mode).toBe("mcq");
         expect(q?.question_type).toBe("MC");
     });
     it("generates an SA question with no choices", () => {
@@ -113,9 +114,10 @@ describe("QuestionGenerator", () => {
     });
     it("generates a TF question with choices True and False", () => {
         const gen = buildGenerator(42);
-        const q = gen.generate({templateIds: ["QTF"]});
-        expect(q?.choices).toEqual(["True", "False"]);
+        const q = gen.generate({templateIds: ["QTF"], responseMode: "mcq"});
+        expect(q?.choices?.slice().sort()).toEqual(["False", "True"]);
         expect(["True", "False"]).toContain(q?.answer);
+        expect(q?.response_mode).toBe("mcq");
     });
     it("falls back to the SA handler for an unknown question type", () => {
         const gen = buildGenerator(42);
@@ -285,19 +287,21 @@ describe("Question type handlers", () => {
     });
     it("TrueFalseHandler answers False when the evaluated answer is zero", () => {
         const gen = buildHandlerGenerator(7);
-        const q = gen.generate({templateIds: ["QTF0"]});
+        const q = gen.generate({templateIds: ["QTF0"], responseMode: "mcq"});
         expect(q?.question_type).toBe("TF");
         expect(q?.answer).toBe("False");
-        expect(q?.choices).toEqual(["True", "False"]);
+        expect(q?.choices?.slice().sort()).toEqual(["False", "True"]);
+        expect(q?.response_mode).toBe("mcq");
     });
     it("MultipleChoiceHandler skips a distractor that throws during evaluation", () => {
         const gen = buildHandlerGenerator(7);
-        const q = gen.generate({templateIds: ["QMCDIV"]});
+        const q = gen.generate({templateIds: ["QMCDIV"], responseMode: "mcq"});
         expect(q?.question_type).toBe("MC");
         expect(q?.choices).toBeDefined();
-        expect(q?.choices?.length).toBe(2);
+        expect(q?.choices?.length).toBe(4);
         expect(q?.choices).toContain("5");
         expect(q?.choices).toContain("12");
+        expect(q?.response_mode).toBe("mcq");
     });
     it("BaseQuestionHandler falls back to answer 0 when the answer expression throws", () => {
         const gen = buildHandlerGenerator(7);
@@ -326,11 +330,11 @@ describe("Question type handlers", () => {
     });
     it("MultipleChoiceHandler de-duplicates distractors that evaluate to the same formatted value", () => {
         const gen = buildHandlerGenerator(7);
-        const q = gen.generate({templateIds: ["QDEDUP"]});
+        const q = gen.generate({templateIds: ["QDEDUP"], responseMode: "mcq"});
         expect(q).not.toBeNull();
         expect(q?.question_type).toBe("MC");
         expect(q?.choices).toBeDefined();
-        expect(q?.choices?.length).toBe(3);
+        expect(q?.choices?.length).toBe(4);
         expect(q?.choices).toContain("5");
         expect(q?.choices).toContain("6");
         expect(q?.choices).toContain("4");

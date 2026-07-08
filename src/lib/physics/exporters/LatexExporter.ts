@@ -14,6 +14,7 @@ export class LatexExporter implements Exporter {
         parts.push("\\begin{questions}\n");
         for (const q of questions) {
             parts.push(`\\question[${q.difficulty}] ${this.escapeLatex(q.text)}\n`);
+            parts.push(`% Response mode: ${q.response_mode}\n`);
             if (q.choices !== undefined) {
                 parts.push("\\begin{choices}\n");
                 for (const choice of q.choices) {

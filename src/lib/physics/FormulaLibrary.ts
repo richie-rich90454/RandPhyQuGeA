@@ -1,5 +1,12 @@
 import type {FormulaEntry} from "./types";
-/** Curated library of standard physics formulas organized by topic. */
+/**
+ * Curated library of standard physics formulas organized by topic.
+ *
+ * This API is response-mode-agnostic: formulas are pure reference data
+ * (name, LaTeX, variables, topic) and carry no MCQ/FRQ coupling. The same
+ * library is consulted regardless of whether a question is rendered as
+ * multiple-choice or free-response.
+ */
 export class FormulaLibrary {
     private readonly formulas: FormulaEntry[];
     public constructor(formulas?: FormulaEntry[]) {

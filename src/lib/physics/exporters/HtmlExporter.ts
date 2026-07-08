@@ -21,6 +21,7 @@ export class HtmlExporter implements Exporter {
             parts.push('<div class="question">\n');
             parts.push(`<p><strong>Question ${i + 1}:</strong> ${this.escapeHtml(q.text)}</p>\n`);
             parts.push(`<div class="answer">Answer: ${this.escapeHtml(q.answer)}</div>\n`);
+            parts.push(`<div class="mode">Mode: ${q.response_mode === "mcq" ? "MCQ" : "FRQ"}</div>\n`);
             if (q.choices !== undefined) {
                 parts.push('<div class="choices">\n');
                 for (const choice of q.choices) {

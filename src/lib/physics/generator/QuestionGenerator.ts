@@ -1,28 +1,32 @@
-import type {ExpressionEvaluatorLike, RandomGenerator} from "../contracts";
-import type {GeneratedQuestion, QuestionFilter, QuestionTemplate} from "../types";
+import type {DistractorContext, ExpressionEvaluatorLike, McqAssemblerLike, RandomGenerator} from "../contracts";
+import type {GeneratedQuestion, QuestionFilter, QuestionTemplate, ResponseMode} from "../types";
 import {SeededRandomGenerator} from "../random/SeededRandomGenerator";
 import {UniformRandomGenerator} from "../random/UniformRandomGenerator";
 import {VariableGenerator} from "../random/VariableGenerator";
+import {McqAssembler} from "./McqAssembler";
 import {QuestionTypeRegistry} from "./QuestionTypeRegistry";
-/** Selects templates matching a filter, generates variables, and dispatches to question type handlers to build GeneratedQuestions. */
+/** Selects templates matching a filter, generates variables, dispatches to question type handlers, and optionally assembles multiple-choice choices via the McqAssembler when responseMode is 'mcq'. */
 export class QuestionGenerator {
     private readonly templates: QuestionTemplate[];
     private readonly registry: QuestionTypeRegistry;
     private readonly evaluator: ExpressionEvaluatorLike;
     private readonly variableGenerator: VariableGenerator;
     private readonly random: RandomGenerator;
+    private readonly mcqAssembler: McqAssemblerLike;
     public constructor(
         templates: QuestionTemplate[],
         evaluator: ExpressionEvaluatorLike,
         random?: RandomGenerator,
         questionTypeRegistry?: QuestionTypeRegistry,
         variableGenerator?: VariableGenerator,
+        mcqAssembler?: McqAssemblerLike,
     ) {
         this.templates = templates;
         this.evaluator = evaluator;
         this.random = random ?? new UniformRandomGenerator();
         this.registry = questionTypeRegistry ?? QuestionTypeRegistry.createDefault();
         this.variableGenerator = variableGenerator ?? new VariableGenerator();
+        this.mcqAssembler = mcqAssembler ?? new McqAssembler();
     }
     public generate(filter?: QuestionFilter): GeneratedQuestion | null {
         const candidates = this.filterTemplates(filter);
@@ -34,7 +38,7 @@ export class QuestionGenerator {
         if (template === undefined) {
             return null;
         }
-        return this.generateFromTemplate(template);
+        return this.generateFromTemplate(template, filter?.responseMode);
     }
     public generateBatch(count: number, filter?: QuestionFilter): GeneratedQuestion[] {
         const results: GeneratedQuestion[] = [];
@@ -66,7 +70,7 @@ export class QuestionGenerator {
                 break;
             }
             usedTemplateIds.add(template.id);
-            results.push(this.generateFromTemplate(template));
+            results.push(this.generateFromTemplate(template, filter?.responseMode));
             attempts++;
         }
         return results;
@@ -78,7 +82,7 @@ export class QuestionGenerator {
         return this.filterTemplates(filter).map(t => t.id);
     }
     public createSeeded(seed: number): QuestionGenerator {
-        return new QuestionGenerator(this.templates, this.evaluator, new SeededRandomGenerator(seed), this.registry, this.variableGenerator);
+        return new QuestionGenerator(this.templates, this.evaluator, new SeededRandomGenerator(seed), this.registry, this.variableGenerator, this.mcqAssembler);
     }
     private filterTemplates(filter?: QuestionFilter): QuestionTemplate[] {
         return this.templates.filter(t => this.matchesFilter(t, filter));
@@ -110,9 +114,25 @@ export class QuestionGenerator {
         }
         return true;
     }
-    private generateFromTemplate(template: QuestionTemplate): GeneratedQuestion {
+    private generateFromTemplate(template: QuestionTemplate, responseMode?: ResponseMode): GeneratedQuestion {
         const variables = this.variableGenerator.generate(template.variable_definitions, this.random);
         const handler = this.registry.getOrDefault(template.question_type);
-        return handler.handle(template, variables, this.evaluator, this.random);
+        const base = handler.handle(template, variables, this.evaluator, this.random);
+        if (responseMode === "mcq") {
+            const context = this.buildDistractorContext(base, template);
+            return this.mcqAssembler.assemble(base, context, this.random);
+        }
+        return base;
+    }
+    private buildDistractorContext(question: GeneratedQuestion, template: QuestionTemplate): DistractorContext {
+        const parsed = Number(question.answer);
+        const answerValue = Number.isFinite(parsed) ? parsed : Number.NaN;
+        return {
+            answer: question.answer,
+            answerValue,
+            template,
+            variables: question.variables,
+            evaluator: this.evaluator,
+        };
     }
 }

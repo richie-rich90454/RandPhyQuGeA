@@ -7,14 +7,14 @@ function generateId(): string {
     }
     return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
-/** Shared base for question type handlers: substitutes templates, evaluates the answer, and builds the GeneratedQuestion, delegating answer formatting and choice generation to subclasses. */
+/** Shared base for question type handlers: substitutes templates, evaluates the answer, and builds the GeneratedQuestion in free-response mode (answer + solution only). Choice generation is handled by the McqAssembler, not the handler. */
 export abstract class BaseQuestionHandler implements QuestionTypeHandler {
     public abstract readonly type: string;
     private readonly substituter: TemplateSubstituter;
     public constructor() {
         this.substituter = new TemplateSubstituter();
     }
-    public handle(template: QuestionTemplate, variables: Record<string, unknown>, evaluator: ExpressionEvaluatorLike, random: RandomGenerator): GeneratedQuestion {
+    public handle(template: QuestionTemplate, variables: Record<string, unknown>, evaluator: ExpressionEvaluatorLike, _random: RandomGenerator): GeneratedQuestion {
         const text = this.substituter.substitute(template.text_template, variables);
         let answerValue: number;
         try {
@@ -23,7 +23,6 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
             answerValue = 0;
         }
         const answer = this.formatAnswer(answerValue, evaluator);
-        const choices = this.generateChoices(template, variables, answerValue, evaluator, random);
         const answerLatex = this.substituter.formatValue(answerValue);
         const solutionText = this.substituter.substitute(template.solution_template, variables).replaceAll("{answer}", answer);
         const solutionLatex =
@@ -36,7 +35,6 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
             difficulty: template.difficulty,
             text,
             answer,
-            choices: choices.length > 0 ? choices : undefined,
             response_mode: "frq",
             solution_text: solutionText,
             solution_latex: solutionLatex,
@@ -44,5 +42,4 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
         };
     }
     protected abstract formatAnswer(value: number, evaluator: ExpressionEvaluatorLike): string;
-    protected abstract generateChoices(template: QuestionTemplate, variables: Record<string, unknown>, answerValue: number, evaluator: ExpressionEvaluatorLike, random: RandomGenerator): string[];
 }
