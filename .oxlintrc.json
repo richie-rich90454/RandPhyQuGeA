@@ -38,6 +38,14 @@
     },
     "overrides": [
         {
+            "files": ["src/solid/**/*.{ts,tsx}"],
+            "rules": {
+                "react/rules-of-hooks": "off",
+                "react/exhaustive-deps": "off",
+                "react/react-in-jsx-scope": "off"
+            }
+        },
+        {
             "files": ["**/*.{test,spec}.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}"],
             "rules": {
                 "typescript/no-explicit-any": "off"
