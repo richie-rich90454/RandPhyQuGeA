@@ -32,6 +32,7 @@ The original spec listed React/Tailwind dep removal as Phase 0 work (tasks 0.3 a
 The following anchors enumerate every React component/hook/store file scheduled for porting to SolidJS during Phase 3. Each anchor maps a Phase 0 tracking task (0.17–0.30) to its Phase 3 destination task. The React originals are NOT touched in Phase 0; each is deleted in the same commit that lands its Solid replacement during Phase 3. Anchors are added incrementally as Phase 0 tasks 0.17–0.30 land.
 
 - **Task 0.17 → Phase 3 Task 3.1** — `src/stores/**`: `practiceStore.ts`, `progressStore.ts`, `settingsStore.ts`, `specStore.ts`, `uiStore.ts`, `index.ts`. Porting target: re-implement as Solid `createSignal`/`createStore` stores (or Zustand-vanilla + a Solid `useStore` primitive); persistence via `createPersistedSignal`/`createPersistedStore` (Phase 3 Task 3.15). 5 commits in Phase 3 Task 3.1.
+- **Task 0.18 → Phase 3 Task 3.2** — `src/components/providers/ServiceProvider.tsx` + `src/hooks/useServices.ts`. Porting target: Solid context-based provider exposing `PhysicsCore`, `AnswerGrader`, and the Solid stores via `createContext`/`useContext`; replaces the React context + hook wrapper.
 
 #### Prior polish pass
 
