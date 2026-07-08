@@ -2,6 +2,7 @@ import type {DistractorContext, RandomGenerator, ResponseFormatStrategy} from ".
 /** Numeric distractor strategy for NE and MC question types: evaluates template distractor expressions first, then falls back to numeric perturbation (off-by-one, scaling, sign flip, rounding drift). Distractors are formatted to the canonical answer's significant-figure count where possible so trailing significant zeros are preserved (e.g. answer "1.20" yields "2.20" rather than "2.2"). */
 export class NumericDistractorStrategy implements ResponseFormatStrategy {
     public readonly questionType = "NE";
+    /** Generate up to `count` numeric distractors: first evaluates `template.distractor_expressions`, then falls back to magnitude-aware perturbations (off-by-one, doubling, halving, sign flip, rounding drift), shuffled by `random`. Each distractor is formatted to the canonical answer's significant-figure count when the answer has a decimal point. Distractors equal to the correct answer or already collected are skipped. */
     public generateDistractors(context: DistractorContext, count: number, random: RandomGenerator): string[] {
         const {answer, answerValue, template, variables, evaluator} = context;
         const seen: Set<string> = new Set([answer]);

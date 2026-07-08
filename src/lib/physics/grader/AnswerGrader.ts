@@ -7,16 +7,19 @@ const DEFAULT_NUMERIC_TOLERANCE = 0.01;
 export class AnswerGrader implements AnswerGraderLike {
     private readonly normalizer: ExpressionNormalizerLike;
     private readonly numericTolerance: number;
+    /** Construct the grader. `normalizer` defaults to a new {@link ExpressionNormalizer} (used for SA equivalence); `numericTolerance` defaults to 0.01 (absolute) for NE/MC numeric comparison. */
     public constructor(normalizer?: ExpressionNormalizerLike, numericTolerance?: number) {
         this.normalizer = normalizer ?? new ExpressionNormalizer();
         this.numericTolerance = numericTolerance ?? DEFAULT_NUMERIC_TOLERANCE;
     }
+    /** Grade `response` against `question`. For `response_mode='mcq'`, `selectedIndex` (the chosen choice index) is matched against `correct_choice_index`; for `response_mode='frq'`, grading dispatches by question type (TF boolean, NE/MC numeric-tolerance, SA expression-equivalence, FB exact-or-numeric). */
     public grade(question: GeneratedQuestion, response: string, selectedIndex?: number): GradeResult {
         if (question.response_mode === "mcq") {
             return this.gradeMcq(question, response, selectedIndex);
         }
         return this.gradeFrq(question, response);
     }
+    /** MCQ grading: prefer the supplied `selectedIndex` against `correct_choice_index`; otherwise match the response text to a choice index; fall back to exact text comparison. */
     private gradeMcq(question: GeneratedQuestion, response: string, selectedIndex?: number): GradeResult {
         const normalizedResponse = response.trim().toLowerCase();
         const normalizedAnswer = question.answer.trim().toLowerCase();
@@ -34,6 +37,7 @@ export class AnswerGrader implements AnswerGraderLike {
         const isExact = normalizedResponse === normalizedAnswer;
         return {is_correct: isExact, normalized_response: normalizedResponse, normalized_answer: normalizedAnswer};
     }
+    /** FRQ grading dispatch by question type: TF→boolean, NE/MC→numeric-tolerance, SA→expression-equivalence, else exact-or-numeric. */
     private gradeFrq(question: GeneratedQuestion, response: string): GradeResult {
         const type = question.question_type;
         if (type === "TF") {
@@ -47,11 +51,13 @@ export class AnswerGrader implements AnswerGraderLike {
         }
         return this.gradeExactOrNumeric(response, question.answer);
     }
+    /** Boolean grading: normalizes true/false/t/1/f/0 (case-insensitive) and compares. */
     private gradeBoolean(response: string, answer: string): GradeResult {
         const normalizedResponse = this.normalizeBoolean(response);
         const normalizedAnswer = this.normalizeBoolean(answer);
         return {is_correct: normalizedResponse === normalizedAnswer, normalized_response: normalizedResponse, normalized_answer: normalizedAnswer};
     }
+    /** Normalize a boolean-ish string to "true"/"false" (preserving unknown values lowercased for diagnostics). */
     private normalizeBoolean(value: string): string {
         const lower = value.trim().toLowerCase();
         if (lower === "true" || lower === "t" || lower === "1") {
@@ -62,6 +68,7 @@ export class AnswerGrader implements AnswerGraderLike {
         }
         return lower;
     }
+    /** Numeric grading: correct when |response − answer| ≤ numericTolerance; falls back to exact string match when either side is non-numeric. */
     private gradeNumeric(response: string, answer: string): GradeResult {
         const responseNum = Number(response.trim());
         const answerNum = Number(answer.trim());
@@ -73,6 +80,7 @@ export class AnswerGrader implements AnswerGraderLike {
         const normalizedAnswer = answer.trim().toLowerCase();
         return {is_correct: normalizedResponse === normalizedAnswer, normalized_response: normalizedResponse, normalized_answer: normalizedAnswer};
     }
+    /** Expression grading: correct when the normalizer equates response and answer; otherwise falls back to numeric-tolerance comparison. */
     private gradeExpression(response: string, answer: string): GradeResult {
         const normalizedResponse = this.normalizer.normalize(response);
         const normalizedAnswer = this.normalizer.normalize(answer);
@@ -81,6 +89,7 @@ export class AnswerGrader implements AnswerGraderLike {
         }
         return this.gradeNumeric(response, answer);
     }
+    /** Default FRQ grading for unrecognized types: exact (case-insensitive, trimmed) match, then numeric-tolerance fallback. */
     private gradeExactOrNumeric(response: string, answer: string): GradeResult {
         const normalizedResponse = response.trim().toLowerCase();
         const normalizedAnswer = answer.trim().toLowerCase();

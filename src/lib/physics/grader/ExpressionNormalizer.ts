@@ -1,6 +1,7 @@
 import type {ExpressionNormalizerLike} from "../contracts";
 /** Normalizes mathematical/string expressions for equivalence comparison without requiring math.js. Handles whitespace, case, implicit multiplication (2x → 2*x), fraction↔decimal (1/2 → 0.5), trailing zeros (1.0 → 1), LaTeX delimiter stripping, and commutative term reordering (b+a → a+b). */
 export class ExpressionNormalizer implements ExpressionNormalizerLike {
+    /** Return a canonical normalized form of `input`: strips LaTeX delimiters, lowercases, removes whitespace, inserts explicit multiplication, converts numeric fractions to decimals, strips trailing zeros, and reorders commutative `+`/`*` terms so equivalent expressions collapse to the same string. */
     public normalize(input: string): string {
         let s = input.trim();
         s = this.stripLatexDelimiters(s);
@@ -12,9 +13,11 @@ export class ExpressionNormalizer implements ExpressionNormalizerLike {
         s = this.sortCommutativeTerms(s);
         return s;
     }
+    /** True when `a` and `b` normalize to the same canonical string (equivalence check). */
     public isEquivalent(a: string, b: string): boolean {
         return this.normalize(a) === this.normalize(b);
     }
+    /** Strip `$$`, `$`, `\(...)`, `\[...\]`, `\text{...}`, `\,`, and rewrite `\cdot`/`\times`→`*`, `\div`→`/`, `\frac{a}{b}`→`(a)/(b)`. */
     private stripLatexDelimiters(s: string): string {
         return s
             .replace(/\$\$/g, "")

@@ -2,6 +2,7 @@ import type {DistractorContext, RandomGenerator, ResponseFormatStrategy} from ".
 /** Short-answer neighbor strategy for SA question types: evaluates template distractor expressions, then produces numeric neighbors of the answer (off-by-one, scaling, sign flip) as plausible short-answer distractors. */
 export class ShortAnswerNeighborStrategy implements ResponseFormatStrategy {
     public readonly questionType = "SA";
+    /** Generate up to `count` short-answer distractors: first evaluates `template.distractor_expressions`, then falls back to numeric neighbors of the answer (off-by-one, scaling, sign flip, ±10), shuffled by `random`. Distractors equal to the correct answer or already collected are skipped. */
     public generateDistractors(context: DistractorContext, count: number, random: RandomGenerator): string[] {
         const {answer, answerValue, template, variables, evaluator} = context;
         const seen: Set<string> = new Set([answer]);
