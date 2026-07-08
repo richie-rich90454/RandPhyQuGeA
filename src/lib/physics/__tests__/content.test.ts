@@ -161,14 +161,14 @@ describe("Template generation", () => {
             expect(checked).toBe(true);
         }
     });
-    it("every TF template produces exactly True and False choices", () => {
+    it("every TF template produces True, False, and a 'None of the above' pad choice", () => {
         const spec = parseSpec();
         const tfTemplates = spec.templates.filter(t => t.question_type === "TF");
         for (const tpl of tfTemplates) {
             const gen = buildGenerator(1);
             const q = gen.generate({templateIds: [tpl.id], responseMode: "mcq"});
             expect(q).not.toBeNull();
-            expect(q?.choices?.slice().sort()).toEqual(["False", "True"]);
+            expect(q?.choices?.slice().sort()).toEqual(["False", "None of the above", "True"]);
         }
     });
     it("every SA/FB/NE template produces no choices", () => {

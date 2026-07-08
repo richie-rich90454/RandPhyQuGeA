@@ -197,4 +197,102 @@ describe("McqAssembler", () => {
             expect(q.choices).toContain("99");
         });
     });
+    describe("short-distractor-set padding", () => {
+        it("pads with a single 'None of the above' choice when fewer distractors than requested are produced", () => {
+            const shortStrategy: ResponseFormatStrategy = {
+                questionType: "ShortType",
+                generateDistractors: (_ctx, count) => ["99"].slice(0, Math.min(count, 1)),
+            };
+            const generator = UniversalDistractorGenerator.createDefault();
+            generator.register(shortStrategy);
+            const assembler = new McqAssembler(generator);
+            const context: DistractorContext = {
+                answer: "42",
+                answerValue: 42,
+                template: buildTemplate({question_type: "ShortType"}),
+                variables: {},
+                evaluator: new ExpressionEvaluator(),
+            };
+            const base = buildBaseQuestion({question_type: "ShortType", answer: "42"});
+            const q = assembler.assemble(base, context, new SeededRandomGenerator(1), 4);
+            expect(q.response_mode).toBe("mcq");
+            expect(q.choices).toContain("None of the above");
+            expect(q.choices).toContain("42");
+            expect(q.choices).toContain("99");
+            const noneCount = q.choices?.filter(c => c === "None of the above").length ?? 0;
+            expect(noneCount).toBe(1);
+            const correctIndex = q.correct_choice_index ?? -1;
+            expect(q.choices?.[correctIndex]).toBe("42");
+            expect(q.choices?.[correctIndex]).not.toBe("None of the above");
+        });
+        it("never marks 'None of the above' as the correct choice", () => {
+            const shortStrategy: ResponseFormatStrategy = {
+                questionType: "ShortType2",
+                generateDistractors: (_ctx, count) => ["7", "8"].slice(0, Math.min(count, 2)),
+            };
+            const generator = UniversalDistractorGenerator.createDefault();
+            generator.register(shortStrategy);
+            const assembler = new McqAssembler(generator);
+            const context: DistractorContext = {
+                answer: "5",
+                answerValue: 5,
+                template: buildTemplate({question_type: "ShortType2"}),
+                variables: {},
+                evaluator: new ExpressionEvaluator(),
+            };
+            const base = buildBaseQuestion({question_type: "ShortType2", answer: "5"});
+            for (let seed = 1; seed <= 20; seed++) {
+                const q = assembler.assemble(base, context, new SeededRandomGenerator(seed), 4);
+                const correctIndex = q.correct_choice_index ?? -1;
+                expect(q.choices?.[correctIndex]).toBe("5");
+                expect(q.choices?.[correctIndex]).not.toBe("None of the above");
+            }
+        });
+        it("does not pad when the strategy yields enough distractors to fill the target", () => {
+            const fullStrategy: ResponseFormatStrategy = {
+                questionType: "FullType",
+                generateDistractors: (_ctx, count) => {
+                    const out: string[] = [];
+                    for (let i = 1; i <= count; i++) {
+                        out.push(String(100 + i));
+                    }
+                    return out;
+                },
+            };
+            const generator = UniversalDistractorGenerator.createDefault();
+            generator.register(fullStrategy);
+            const assembler = new McqAssembler(generator);
+            const context: DistractorContext = {
+                answer: "5",
+                answerValue: 5,
+                template: buildTemplate({question_type: "FullType"}),
+                variables: {},
+                evaluator: new ExpressionEvaluator(),
+            };
+            const base = buildBaseQuestion({question_type: "FullType", answer: "5"});
+            const q = assembler.assemble(base, context, new SeededRandomGenerator(1), 4);
+            expect(q.choices).not.toContain("None of the above");
+            expect(q.choices?.length).toBe(4);
+        });
+        it("keeps all choices unique after padding", () => {
+            const shortStrategy: ResponseFormatStrategy = {
+                questionType: "ShortType3",
+                generateDistractors: (_ctx, count) => ["99"].slice(0, Math.min(count, 1)),
+            };
+            const generator = UniversalDistractorGenerator.createDefault();
+            generator.register(shortStrategy);
+            const assembler = new McqAssembler(generator);
+            const context: DistractorContext = {
+                answer: "42",
+                answerValue: 42,
+                template: buildTemplate({question_type: "ShortType3"}),
+                variables: {},
+                evaluator: new ExpressionEvaluator(),
+            };
+            const base = buildBaseQuestion({question_type: "ShortType3", answer: "42"});
+            const q = assembler.assemble(base, context, new SeededRandomGenerator(1), 4);
+            const unique = new Set(q.choices);
+            expect(unique.size).toBe(q.choices?.length);
+        });
+    });
 });

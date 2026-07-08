@@ -26,6 +26,11 @@ export class McqAssembler implements McqAssemblerLike {
             };
         }
         const choices: string[] = [...distractors, context.answer];
+        if (choices.length < target && !choices.includes("None of the above")) {
+            // Strategy yielded fewer unique distractors than requested: pad with a literal
+            // "None of the above" choice that is never the correct answer.
+            choices.push("None of the above");
+        }
         const shuffled = this.shuffle(choices, rng);
         const correctIndex = shuffled.indexOf(context.answer);
         return {
