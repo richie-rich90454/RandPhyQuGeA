@@ -33,6 +33,7 @@ The following anchors enumerate every React component/hook/store file scheduled 
 
 - **Task 0.17 → Phase 3 Task 3.1** — `src/stores/**`: `practiceStore.ts`, `progressStore.ts`, `settingsStore.ts`, `specStore.ts`, `uiStore.ts`, `index.ts`. Porting target: re-implement as Solid `createSignal`/`createStore` stores (or Zustand-vanilla + a Solid `useStore` primitive); persistence via `createPersistedSignal`/`createPersistedStore` (Phase 3 Task 3.15). 5 commits in Phase 3 Task 3.1.
 - **Task 0.18 → Phase 3 Task 3.2** — `src/components/providers/ServiceProvider.tsx` + `src/hooks/useServices.ts`. Porting target: Solid context-based provider exposing `PhysicsCore`, `AnswerGrader`, and the Solid stores via `createContext`/`useContext`; replaces the React context + hook wrapper.
+- **Task 0.19 → Phase 3 Task 3.3** — `src/hooks/**` Solid primitives: `useTheme`, `useGlobalShortcuts`, `useSpecLoader`, `useSessionSnapshot`, `usePracticeActions`, `useMcqHotReconfig`, `useReducedMotion`, `useMediaQuery`, `useCountUp`, `useCountdownTimer`, `useGsapContext`, `useAnswerActions`, `useMentalMode`, `useSingleMode`, `index.ts`. Porting target: Solid primitives built on `createSignal`/`createEffect`/`onCleanup`/`onMount`; `useGlobalShortcuts` becomes `createShortcut` (Phase 3 Task 3.14). 10 commits in Phase 3 Task 3.3.
 
 #### Prior polish pass
 
