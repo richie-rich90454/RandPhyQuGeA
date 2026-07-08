@@ -120,9 +120,19 @@ export class QuestionGenerator {
         const base = handler.handle(template, variables, this.evaluator, this.random);
         if (responseMode === "mcq") {
             const context = this.buildDistractorContext(base, template);
-            return this.mcqAssembler.assemble(base, context, this.random);
+            const seed = this.deriveSeed(template.id, variables);
+            return this.mcqAssembler.assemble(base, context, this.random, undefined, seed);
         }
         return base;
+    }
+    private deriveSeed(templateId: string, variables: Record<string, unknown>): number {
+        const payload = templateId + "|" + JSON.stringify(variables);
+        let h = 2166136261;
+        for (let i = 0; i < payload.length; i++) {
+            h ^= payload.charCodeAt(i);
+            h = Math.imul(h, 16777619);
+        }
+        return h >>> 0;
     }
     private buildDistractorContext(question: GeneratedQuestion, template: QuestionTemplate): DistractorContext {
         const parsed = Number(question.answer);

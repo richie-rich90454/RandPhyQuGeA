@@ -87,8 +87,8 @@ export interface ExpressionNormalizerLike {
 }
 /** Assembles a multiple-choice question from a base free-response question by attaching choices. */
 export interface McqAssemblerLike {
-    /** Decorate a base FRQ question with choices, correct_choice_index, and response_mode='mcq'. */
-    assemble(question: GeneratedQuestion, context: DistractorContext, random: RandomGenerator, choiceCount?: number): GeneratedQuestion;
+    /** Decorate a base FRQ question with choices, correct_choice_index, and response_mode='mcq'. When `seed` is provided, distractor generation and shuffle use a SeededRandom so ordering is stable for that seed. */
+    assemble(question: GeneratedQuestion, context: DistractorContext, random: RandomGenerator, choiceCount?: number, seed?: number): GeneratedQuestion;
 }
 /** Picks a {@link ResponseFormatStrategy} per question type and dedupes/scales distractors. */
 export interface UniversalDistractorGeneratorLike {

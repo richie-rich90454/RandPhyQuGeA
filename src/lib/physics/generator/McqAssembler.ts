@@ -1,5 +1,6 @@
 import type {DistractorContext, McqAssemblerLike, RandomGenerator} from "../contracts";
 import type {GeneratedQuestion} from "../types";
+import {SeededRandom} from "../random/SeededRandom";
 import {UniversalDistractorGenerator} from "./UniversalDistractorGenerator";
 /** Default number of choices (1 correct + N distractors) when no explicit count is supplied. */
 const DEFAULT_CHOICE_COUNT = 4;
@@ -11,12 +12,13 @@ export class McqAssembler implements McqAssemblerLike {
         this.generator = generator ?? UniversalDistractorGenerator.createDefault();
         this.defaultChoiceCount = defaultChoiceCount ?? DEFAULT_CHOICE_COUNT;
     }
-    public assemble(question: GeneratedQuestion, context: DistractorContext, random: RandomGenerator, choiceCount?: number): GeneratedQuestion {
+    public assemble(question: GeneratedQuestion, context: DistractorContext, random: RandomGenerator, choiceCount?: number, seed?: number): GeneratedQuestion {
         const target = choiceCount ?? this.defaultChoiceCount;
         const distractorCount = Math.max(1, target - 1);
-        const distractors = this.generator.generate(context, distractorCount, random);
+        const rng: RandomGenerator = seed !== undefined ? new SeededRandom(seed) : random;
+        const distractors = this.generator.generate(context, distractorCount, rng);
         const choices: string[] = [...distractors, context.answer];
-        const shuffled = this.shuffle(choices, random);
+        const shuffled = this.shuffle(choices, rng);
         const correctIndex = shuffled.indexOf(context.answer);
         return {
             ...question,
