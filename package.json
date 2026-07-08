@@ -19,7 +19,7 @@
         "typecheck:watch": "tsc --noEmit --watch",
         "typecheck:solid": "tsc --noEmit -p tsconfig.solid.json",
         "dev:solid": "vite --open /src/solid/index.html",
-        "build:solid": "vite build --root src/solid --outDir dist --emptyOutDir",
+        "build:solid": "vite build src/solid --outDir dist --emptyOutDir",
         "tauri": "tauri",
         "tauri:dev": "tauri dev",
         "tauri:build": "tauri build"
