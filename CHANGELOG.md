@@ -37,6 +37,7 @@ The following anchors enumerate every React component/hook/store file scheduled 
 - **Task 0.20 → Phase 3 Task 3.4 (part 1)** — `src/components/ui/**` primitives part 1: `Button`, `Card`, `Modal` (focus trap via `Portal` + `onCleanup`), `Input`, `Select`, `Slider`, `Switch`, `Tabs` (`role="tablist"` + arrow-key nav), `Toast` (`Portal` + live region). Each gets a co-located `*.module.css`. 9 of 18 commits in Phase 3 Task 3.4.
 - **Task 0.21 → Phase 3 Task 3.4 (part 2)** — `src/components/ui/**` primitives part 2: `Tooltip`, `Badge`, `Pill`, `ProgressBar` (`aria-label`/`aria-valuetext`), `Spinner`, `Accordion`, `EmptyState`, `ConfirmDialog` (built on `Modal`), `Toolbar`, `index.ts`. Each gets a co-located `*.module.css`. Remaining 9 commits in Phase 3 Task 3.4.
 - **Task 0.22 → Phase 3 Task 3.5** — `src/components/MathText.tsx` + `src/components/MathRenderer.tsx` (KaTeX). Porting target: Solid `MathText` tokenizes `$...$`/`$$...$$`/`\(...\)`/`\[...\]`/`\$` and `MathRenderer` uses `createEffect` to re-render KaTeX on text change; single KaTeX engine shared with print popup.
+- **Task 0.23 → Phase 3 Task 3.6** — `src/components/layout/AppShell.tsx` + `AppTopBar.tsx` + `src/components/ErrorBoundary.tsx` (React). Porting target: Solid `AppShell` with skip-link + landmarks (`<header>`/`<nav>`/`<main>`/`<h1>`), `AppTopBar`, and the React `ErrorBoundary` deleted in favor of the Solid `ErrorBoundaryRetry` added in Phase 0 Task 0.16.
 
 #### Prior polish pass
 
