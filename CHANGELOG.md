@@ -41,6 +41,7 @@ The following anchors enumerate every React component/hook/store file scheduled 
 - **Task 0.24 → Phase 3 Task 3.7** — `src/components/practice/**` toolbar rows: `ControlToolbarTop`, `ControlToolbarBottom`, `ModeSelector`, `TopicsSection`, `McqToggle` (now the Response Mode toggle, enabled for all types per Phase 1), `UtilityButtons`, `MentalControls`, `SingleControls`, `MathToolbar`. 9 commits in Phase 3 Task 3.7.
 - **Task 0.25 → Phase 3 Task 3.8** — `src/components/practice/**` main content: `MainContent`, `QuestionCard`, `AnswerSection`, `AnswerCard` (live KaTeX preview), `ResultsCard` (solution rendering in display mode). 6 commits in Phase 3 Task 3.8.
 - **Task 0.26 → Phase 3 Task 3.9** — `src/components/modals/**`: `OnboardingModal` (`<ol>`), `PrintModal` (+ `@media print`), `RecommendModal` (`<ul>`), `ManageDataModal` (in-app confirm), `SettingsModal` (Basic/Advanced `role="tablist"`), `ShortcutsModal` (`<thead>`/`<th scope>`), `ResumeSessionModal`. 7 commits in Phase 3 Task 3.9.
+- **Task 0.27 → Phase 3 Task 3.10** — `src/components/analytics/ProgressPanel.tsx`. Porting target: Solid `ProgressPanel` + analytics wiring consuming `progressStore.selectStats`; `aria-live` regions for score/timer.
 
 #### Prior polish pass
 
