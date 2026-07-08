@@ -18,8 +18,10 @@ jobs:
                   cache: "npm"
             - name: Install dependencies
               run: npm ci
-            - name: Typecheck
+            - name: Typecheck (React/base)
               run: npm run typecheck
+            - name: Typecheck (Solid)
+              run: npx tsc --noEmit -p tsconfig.solid.json
             - name: Lint
               run: npm run lint
             - name: Format check
