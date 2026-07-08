@@ -17,6 +17,9 @@
         "test:watch": "vitest",
         "clean": "node --input-type=commonjs -e \"const fs=require('fs');['dist','coverage','node_modules/.vite'].forEach(function(p){try{fs.rmSync(p,{recursive:true,force:true})}catch(e){}});console.log('Cleaned dist/, coverage/, node_modules/.vite')\"",
         "typecheck:watch": "tsc --noEmit --watch",
+        "typecheck:solid": "tsc --noEmit -p tsconfig.solid.json",
+        "dev:solid": "vite --open /src/solid/index.html",
+        "build:solid": "vite build --root src/solid --outDir dist --emptyOutDir",
         "tauri": "tauri",
         "tauri:dev": "tauri dev",
         "tauri:build": "tauri build"
