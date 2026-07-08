@@ -6,7 +6,7 @@ import {SeededRandomGenerator} from "../random/SeededRandomGenerator";
 import {ExpressionEvaluator} from "../ExpressionEvaluator";
 import {SpecificationParser} from "../SpecificationParser";
 import {QuestionGenerator} from "../generator/QuestionGenerator";
-import type {DistractorContext} from "../contracts";
+import type {DistractorContext, ResponseFormatStrategy} from "../contracts";
 import type {GeneratedQuestion, QuestionTemplate} from "../types";
 function buildTemplate(overrides: Partial<QuestionTemplate>): QuestionTemplate {
     return {
@@ -148,6 +148,53 @@ describe("McqAssembler", () => {
             const base = buildBaseQuestion({});
             const q = assembler.assemble(base, context, new SeededRandomGenerator(1));
             expect(q.choices?.length).toBe(4);
+        });
+    });
+    describe("no-distractor-available fallback", () => {
+        it("falls back to frq with grader_hint when the strategy produces 0 distractors", () => {
+            const emptyStrategy: ResponseFormatStrategy = {
+                questionType: "EmptyType",
+                generateDistractors: () => [],
+            };
+            const generator = UniversalDistractorGenerator.createDefault();
+            generator.register(emptyStrategy);
+            const assembler = new McqAssembler(generator);
+            const context: DistractorContext = {
+                answer: "42",
+                answerValue: 42,
+                template: buildTemplate({question_type: "EmptyType"}),
+                variables: {},
+                evaluator: new ExpressionEvaluator(),
+            };
+            const base = buildBaseQuestion({question_type: "EmptyType", answer: "42"});
+            const q = assembler.assemble(base, context, new SeededRandomGenerator(1), 4);
+            expect(q.response_mode).toBe("frq");
+            expect(q.grader_hint).toBe("mcq-unavailable-fallback");
+            expect(q.choices).toBeUndefined();
+            expect(q.correct_choice_index).toBeUndefined();
+        });
+        it("still assembles mcq when at least 1 distractor is produced", () => {
+            const singleStrategy: ResponseFormatStrategy = {
+                questionType: "SingleType",
+                generateDistractors: (_ctx, count) => ["99"].slice(0, count),
+            };
+            const generator = UniversalDistractorGenerator.createDefault();
+            generator.register(singleStrategy);
+            const assembler = new McqAssembler(generator);
+            const context: DistractorContext = {
+                answer: "42",
+                answerValue: 42,
+                template: buildTemplate({question_type: "SingleType"}),
+                variables: {},
+                evaluator: new ExpressionEvaluator(),
+            };
+            const base = buildBaseQuestion({question_type: "SingleType", answer: "42"});
+            const q = assembler.assemble(base, context, new SeededRandomGenerator(1), 4);
+            expect(q.response_mode).toBe("mcq");
+            expect(q.grader_hint).toBeUndefined();
+            expect(q.choices).toBeDefined();
+            expect(q.choices).toContain("42");
+            expect(q.choices).toContain("99");
         });
     });
 });

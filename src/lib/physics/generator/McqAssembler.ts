@@ -17,6 +17,14 @@ export class McqAssembler implements McqAssemblerLike {
         const distractorCount = Math.max(1, target - 1);
         const rng: RandomGenerator = seed !== undefined ? new SeededRandom(seed) : random;
         const distractors = this.generator.generate(context, distractorCount, rng);
+        if (distractors.length === 0) {
+            // No distractors available: fall back to free-response mode with a grader hint.
+            return {
+                ...question,
+                response_mode: "frq",
+                grader_hint: "mcq-unavailable-fallback",
+            };
+        }
         const choices: string[] = [...distractors, context.answer];
         const shuffled = this.shuffle(choices, rng);
         const correctIndex = shuffled.indexOf(context.answer);
