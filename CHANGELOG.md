@@ -43,6 +43,7 @@ The following anchors enumerate every React component/hook/store file scheduled 
 - **Task 0.26 → Phase 3 Task 3.9** — `src/components/modals/**`: `OnboardingModal` (`<ol>`), `PrintModal` (+ `@media print`), `RecommendModal` (`<ul>`), `ManageDataModal` (in-app confirm), `SettingsModal` (Basic/Advanced `role="tablist"`), `ShortcutsModal` (`<thead>`/`<th scope>`), `ResumeSessionModal`. 7 commits in Phase 3 Task 3.9.
 - **Task 0.27 → Phase 3 Task 3.10** — `src/components/analytics/ProgressPanel.tsx`. Porting target: Solid `ProgressPanel` + analytics wiring consuming `progressStore.selectStats`; `aria-live` regions for score/timer.
 - **Task 0.28 → Phase 3 Task 3.16** — `src/components/animations/ScrollReveal.tsx` (+ `src/lib/motion.ts`/`src/lib/gsap.ts` helpers). Porting target: replace framer-motion with GSAP (already a dep) or CSS transitions; Solid `useGsapContext` equivalent with `onCleanup` teardown.
+- **Task 0.29 → Phase 3 Task 3.20** — `src/App.tsx` + `src/main.tsx` (React root shell). Porting target: final React-file deletion; the Solid root (`src/solid/main.tsx`) becomes the sole entry. Gated on a CI grep verifying zero `from "react"`/`from "react-dom"`/`@vitejs/plugin-react` imports under `src/` (excluding `src/solid/**`).
 
 #### Prior polish pass
 
