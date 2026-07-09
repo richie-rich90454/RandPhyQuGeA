@@ -19,6 +19,7 @@ export interface DimensionalResult {
 	/** Human-readable explanation of the result. */
 	message: string;
 }
+/** Validates dimensional consistency of equations by resolving each side's compound unit into a dimension vector and comparing exponents. */
 export class DimensionalAnalysisChecker {
 	private readonly comparator: UnitComparator;
 	public constructor(comparator?: UnitComparator) {

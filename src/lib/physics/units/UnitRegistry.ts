@@ -48,6 +48,7 @@ const SI_PREFIXES: Record<string, number> = {
 	z: 1e-21,
 	y: 1e-24,
 };
+/** Resolves unit tokens (including SI-prefixed forms like "km", "cm", "ms") into {factor, dimensions} pairs against the registered SI base and derived units. */
 export class UnitRegistry {
 	private readonly units: Map<string, UnitDefinition>;
 	private readonly prefixes: Record<string, number>;

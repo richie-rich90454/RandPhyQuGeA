@@ -36,6 +36,7 @@ export interface SpacedRepetitionStats {
 	/** Items with at least one successful review. */
 	learned: number;
 }
+/** Schedules review of weak topics using a simplified SuperMemo-2 algorithm (quality 0-5; >= 3 is a successful recall). */
 export class SpacedRepetitionQueue {
 	private readonly items: Map<string, SpacedRepetitionItem>;
 	private readonly dayMs: number;

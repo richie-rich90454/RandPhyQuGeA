@@ -19,6 +19,7 @@ export interface AdaptiveDifficultyConfig {
 	/** Amount to step the difficulty by. Default 1. */
 	step: number;
 }
+/** Tracks recent results in a sliding window and recommends a difficulty that scales with learner accuracy. */
 export class AdaptiveDifficulty {
 	private difficulty: number;
 	private readonly results: boolean[];

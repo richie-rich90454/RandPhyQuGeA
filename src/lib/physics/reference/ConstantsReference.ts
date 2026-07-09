@@ -21,6 +21,7 @@ export interface PhysicalConstant {
 	/** Optional uncertainty (1-sigma) in the same units as value. */
 	uncertainty?: number;
 }
+/** Lookup, search, and categorical access over the standard set of physics constants. */
 export class ConstantsReference {
 	private readonly constants: Map<string, PhysicalConstant>;
 	private readonly order: string[];

@@ -13,6 +13,7 @@ export interface BookmarkEntry {
 	/** Epoch milliseconds when the bookmark was created. */
 	createdAt: number;
 }
+/** Insertion-ordered, deduplicated store of bookmarked question ids with optional notes. */
 export class Bookmarks {
 	private readonly entries: Map<string, BookmarkEntry>;
 	private readonly order: string[];

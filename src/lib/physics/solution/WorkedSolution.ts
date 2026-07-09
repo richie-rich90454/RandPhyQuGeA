@@ -17,6 +17,7 @@ export interface WorkedSolutionStep {
 	/** Optional result of the step (e.g. "a = 5"). */
 	result?: string;
 }
+/** An immutable worked-solution document assembled by {@link WorkedSolutionBuilder}. */
 export interface WorkedSolution {
 	/** The question id this solution belongs to. */
 	questionId: string;
@@ -27,6 +28,7 @@ export interface WorkedSolution {
 	/** Optional final answer string. */
 	finalAnswer?: string;
 }
+/** Fluent builder for constructing immutable {@link WorkedSolution} instances step by step. */
 export class WorkedSolutionBuilder {
 	private readonly questionId: string;
 	private title: string;

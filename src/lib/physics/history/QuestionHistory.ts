@@ -30,6 +30,7 @@ export interface HistoryStats {
 	/** Accuracy in the range [0, 1]; 0 when empty. */
 	accuracy: number;
 }
+/** Fixed-capacity ring buffer of {@link QuestionAttempt} records supporting recent-query, per-question lookup, accuracy stats, and re-attempt detection. */
 export class QuestionHistory {
 	private readonly capacity: number;
 	private readonly attempts: QuestionAttempt[];

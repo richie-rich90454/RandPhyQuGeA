@@ -18,6 +18,7 @@ export interface GlossaryEntry {
 	/** Optional LaTeX representation of the term's symbol. */
 	latex?: string;
 }
+/** Lookup, search, and categorical access over the standard physics glossary. */
 export class Glossary {
 	private readonly entries: Map<string, GlossaryEntry>;
 	private readonly order: string[];

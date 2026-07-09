@@ -20,6 +20,7 @@ export interface ParsedValueUnit {
 	/** The SI-converted scalar (value * factor). */
 	siValue: number;
 }
+/** Parses "value unit" strings, resolves compound units to SI base units, and compares two answers by dimension vector and SI-converted value within a relative tolerance. */
 export class UnitComparator {
 	private readonly registry: UnitRegistry;
 	private readonly defaultTolerance: number;
