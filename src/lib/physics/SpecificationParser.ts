@@ -1,4 +1,4 @@
-import type {Specification, Unit, Topic, Skill, QuestionTemplate, VariableDefinition, ParseError} from "./types";
+import type {Specification, Unit, Topic, Skill, QuestionTemplate, VariableDefinition, Diagram, Hint, UnitConversion, ParseError} from "./types";
 import {ParseException} from "./types";
 /** Stateless parser for the part_one.txt specification format. */
 export class SpecificationParser {
@@ -10,6 +10,9 @@ export class SpecificationParser {
         const topics: Topic[] = [];
         const skills: Skill[] = [];
         const templates: QuestionTemplate[] = [];
+        const diagrams: Diagram[] = [];
+        const hints: Hint[] = [];
+        const unitConversions: UnitConversion[] = [];
         let currentSection: string | null = null;
         let currentBlock: Map<string, string[]> = new Map();
         for (let i = 0; i < lines.length; i++) {
@@ -26,7 +29,7 @@ export class SpecificationParser {
                     continue;
                 }
                 if (currentSection !== null && currentBlock.size > 0) {
-                    this.processBlock(currentSection, currentBlock, lineNumber, units, topics, skills, templates, errors);
+                    this.processBlock(currentSection, currentBlock, lineNumber, units, topics, skills, templates, diagrams, hints, unitConversions, errors);
                 }
                 currentSection = sectionName.toUpperCase();
                 currentBlock = new Map();
@@ -51,13 +54,13 @@ export class SpecificationParser {
             existing.push(value);
         }
         if (currentSection !== null && currentBlock.size > 0) {
-            this.processBlock(currentSection, currentBlock, lines.length, units, topics, skills, templates, errors);
+            this.processBlock(currentSection, currentBlock, lines.length, units, topics, skills, templates, diagrams, hints, unitConversions, errors);
         }
-        this.validateCrossReferences(units, topics, skills, templates, errors);
+        this.validateCrossReferences(units, topics, skills, templates, diagrams, hints, errors);
         if (errors.length > 0) {
             throw new ParseException(errors);
         }
-        return {units, topics, skills, templates};
+        return {units, topics, skills, templates, diagrams, hints, unit_conversions: unitConversions};
     }
     /** Dispatch a finished block to the section-specific parser. */
     private processBlock(
@@ -68,6 +71,9 @@ export class SpecificationParser {
         topics: Topic[],
         skills: Skill[],
         templates: QuestionTemplate[],
+        diagrams: Diagram[],
+        hints: Hint[],
+        unitConversions: UnitConversion[],
         errors: ParseError[],
     ): void {
         if (section === "UNIT") {
@@ -95,6 +101,27 @@ export class SpecificationParser {
             const template: QuestionTemplate | undefined = this.parseTemplate(block, errors);
             if (template !== undefined) {
                 templates.push(template);
+            }
+            return;
+        }
+        if (section === "DIAGRAM") {
+            const diagram: Diagram | undefined = this.parseDiagram(block);
+            if (diagram !== undefined) {
+                diagrams.push(diagram);
+            }
+            return;
+        }
+        if (section === "HINT") {
+            const hint: Hint | undefined = this.parseHint(block);
+            if (hint !== undefined) {
+                hints.push(hint);
+            }
+            return;
+        }
+        if (section === "UNIT_CONVERT") {
+            const conversion: UnitConversion | undefined = this.parseUnitConversion(block, errors);
+            if (conversion !== undefined) {
+                unitConversions.push(conversion);
             }
             return;
         }
@@ -236,6 +263,63 @@ export class SpecificationParser {
             distractor_expressions: distractorExpressions,
         };
     }
+    /** Parse a DIAGRAM block (Id, TemplateId required; Caption, Svg optional). */
+    private parseDiagram(block: Map<string, string[]>): Diagram | undefined {
+        const id: string | undefined = this.getSingle(block, "Id");
+        if (id === undefined) {
+            return undefined;
+        }
+        const templateId: string | undefined = this.getSingle(block, "TemplateId");
+        if (templateId === undefined) {
+            return undefined;
+        }
+        const caption: string | undefined = this.getSingle(block, "Caption");
+        const svg: string = this.getSingle(block, "Svg") ?? "";
+        return {id, template_id: templateId, caption, svg};
+    }
+    /** Parse a HINT block (Id, TemplateId required; Text, Difficulty optional). */
+    private parseHint(block: Map<string, string[]>): Hint | undefined {
+        const id: string | undefined = this.getSingle(block, "Id");
+        if (id === undefined) {
+            return undefined;
+        }
+        const templateId: string | undefined = this.getSingle(block, "TemplateId");
+        if (templateId === undefined) {
+            return undefined;
+        }
+        const text: string = this.getSingle(block, "Text") ?? "";
+        const difficulty: number | undefined = this.parseOptionalNumber(this.getSingle(block, "Difficulty"));
+        return {id, template_id: templateId, text, difficulty};
+    }
+    /** Parse a UNIT_CONVERT block (Id, From, To, Factor required; Offset optional). Reports errors for missing or non-numeric required keys once the Id is known. */
+    private parseUnitConversion(block: Map<string, string[]>, errors: ParseError[]): UnitConversion | undefined {
+        const id: string | undefined = this.getSingle(block, "Id");
+        if (id === undefined) {
+            return undefined;
+        }
+        const fromUnit: string | undefined = this.getSingle(block, "From");
+        if (fromUnit === undefined) {
+            errors.push({line: 0, message: `UnitConversion '${id}' is missing required 'From' key.`});
+            return undefined;
+        }
+        const toUnit: string | undefined = this.getSingle(block, "To");
+        if (toUnit === undefined) {
+            errors.push({line: 0, message: `UnitConversion '${id}' is missing required 'To' key.`});
+            return undefined;
+        }
+        const factorStr: string | undefined = this.getSingle(block, "Factor");
+        if (factorStr === undefined) {
+            errors.push({line: 0, message: `UnitConversion '${id}' is missing required 'Factor' key.`});
+            return undefined;
+        }
+        const factor: number = Number(factorStr);
+        if (!Number.isFinite(factor)) {
+            errors.push({line: 0, message: `UnitConversion '${id}' has a non-numeric Factor '${factorStr}'.`});
+            return undefined;
+        }
+        const offset: number | undefined = this.parseOptionalNumber(this.getSingle(block, "Offset"));
+        return {id, from_unit: fromUnit, to_unit: toUnit, factor, offset};
+    }
     /** Collect VariableDefinitions from all Var.* keys (case-insensitive prefix). */
     private parseVariableDefinitions(block: Map<string, string[]>, errors: ParseError[]): VariableDefinition[] {
         const result: VariableDefinition[] = [];
@@ -306,11 +390,12 @@ export class SpecificationParser {
         }
         return parsed;
     }
-    /** Validate Topic->Unit, Skill->Topic, and Template->Topic/Skill references; pushes errors for dangling refs. */
-    private validateCrossReferences(units: Unit[], topics: Topic[], skills: Skill[], templates: QuestionTemplate[], errors: ParseError[]): void {
+    /** Validate Topic->Unit, Skill->Topic, Template->Topic/Skill, Diagram->Template, and Hint->Template references; pushes errors for dangling refs. */
+    private validateCrossReferences(units: Unit[], topics: Topic[], skills: Skill[], templates: QuestionTemplate[], diagrams: Diagram[], hints: Hint[], errors: ParseError[]): void {
         const unitIds: Set<string> = new Set(units.map(u => u.id));
         const topicIds: Set<string> = new Set(topics.map(t => t.id));
         const skillIds: Set<string> = new Set(skills.map(s => s.id));
+        const templateIds: Set<string> = new Set(templates.map(t => t.id));
         for (const topic of topics) {
             if (!unitIds.has(topic.unit_id)) {
                 errors.push({line: 0, message: `Topic '${topic.id}' references unknown Unit '${topic.unit_id}'.`});
@@ -327,6 +412,16 @@ export class SpecificationParser {
             }
             if (!skillIds.has(template.skill_id)) {
                 errors.push({line: 0, message: `Template '${template.id}' references unknown Skill '${template.skill_id}'.`});
+            }
+        }
+        for (const diagram of diagrams) {
+            if (!templateIds.has(diagram.template_id)) {
+                errors.push({line: 0, message: `Diagram '${diagram.id}' references unknown Template '${diagram.template_id}'.`});
+            }
+        }
+        for (const hint of hints) {
+            if (!templateIds.has(hint.template_id)) {
+                errors.push({line: 0, message: `Hint '${hint.id}' references unknown Template '${hint.template_id}'.`});
             }
         }
     }

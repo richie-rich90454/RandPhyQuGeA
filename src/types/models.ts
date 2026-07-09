@@ -86,12 +86,40 @@ export interface GeneratedQuestion {
     diagram_svg?: string;
     variables: Record<string, unknown>;
 }
+/** A diagram block referencing a template by id with substitutable SVG markup. */
+export interface Diagram {
+    id: string;
+    template_id: string;
+    caption?: string;
+    svg: string;
+}
+/** A hint block referencing a template by id with optional difficulty gating. */
+export interface Hint {
+    id: string;
+    template_id: string;
+    text: string;
+    difficulty?: number;
+}
+/** A unit conversion rule with a multiplicative factor and an optional additive offset. */
+export interface UnitConversion {
+    id: string;
+    from_unit: string;
+    to_unit: string;
+    factor: number;
+    offset?: number;
+}
 /** A full specification parsed from a spec text file. */
 export interface Specification {
     units: Unit[];
     topics: Topic[];
     skills: Skill[];
     templates: QuestionTemplate[];
+    /** Diagram blocks parsed from [DIAGRAM] sections; undefined when none are present. */
+    diagrams?: Diagram[];
+    /** Hint blocks parsed from [HINT] sections; undefined when none are present. */
+    hints?: Hint[];
+    /** Unit conversion rules parsed from [UNIT_CONVERT] sections; undefined when none are present. */
+    unit_conversions?: UnitConversion[];
 }
 /** The result of a single practice attempt. */
 export interface PracticeResult {
