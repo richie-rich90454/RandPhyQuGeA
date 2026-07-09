@@ -3,6 +3,7 @@ import {BoolVariableHandler} from "./BoolVariableHandler";
 import {DoubleVariableHandler} from "./DoubleVariableHandler";
 import {EnumVariableHandler} from "./EnumVariableHandler";
 import {IntVariableHandler} from "./IntVariableHandler";
+import {SetVariableHandler} from "./SetVariableHandler";
 /** Open-closed registry for variable type handlers. */
 export class VariableTypeRegistry {
     private readonly handlers: Map<string, VariableTypeHandler>;
@@ -17,13 +18,14 @@ export class VariableTypeRegistry {
     public get(type: string): VariableTypeHandler | undefined {
         return this.handlers.get(type);
     }
-    /** Build a registry pre-populated with the standard Int, Double, Enum, Bool handlers. */
+    /** Build a registry pre-populated with the standard Int, Double, Enum, Bool, Set handlers. */
     public static createDefault(): VariableTypeRegistry {
         const registry = new VariableTypeRegistry();
         registry.register(new IntVariableHandler());
         registry.register(new DoubleVariableHandler());
         registry.register(new EnumVariableHandler());
         registry.register(new BoolVariableHandler());
+        registry.register(new SetVariableHandler());
         return registry;
     }
 }

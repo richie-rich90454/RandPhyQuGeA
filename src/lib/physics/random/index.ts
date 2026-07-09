@@ -3,6 +3,7 @@ export {DoubleVariableHandler} from "./DoubleVariableHandler";
 export {EnumVariableHandler} from "./EnumVariableHandler";
 export {IntVariableHandler} from "./IntVariableHandler";
 export {SeededRandom} from "./SeededRandom";
+export {SetVariableHandler} from "./SetVariableHandler";
 export {SeededRandomGenerator} from "./SeededRandomGenerator";
 export {TemplateSubstituter} from "./TemplateSubstituter";
 export {UniformRandomGenerator} from "./UniformRandomGenerator";
