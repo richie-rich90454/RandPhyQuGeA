@@ -77,6 +77,8 @@ export interface GeneratedQuestion {
     choices?: string[];
     response_mode: ResponseMode;
     correct_choice_index?: number;
+    /** Indices of all correct choices for select-all-that-apply (Multiple Response) MCQ questions; mutually exclusive with {@link correct_choice_index}. */
+    correct_choice_indices?: number[];
     grader_hint?: string;
     solution_text: string;
     solution_latex: string;

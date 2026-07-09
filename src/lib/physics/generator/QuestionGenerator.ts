@@ -4,6 +4,7 @@ import {SeededRandomGenerator} from "../random/SeededRandomGenerator";
 import {UniformRandomGenerator} from "../random/UniformRandomGenerator";
 import {VariableGenerator} from "../random/VariableGenerator";
 import {McqAssembler} from "./McqAssembler";
+import {MultipleResponseAssembler} from "./MultipleResponseAssembler";
 import {QuestionTypeRegistry} from "./QuestionTypeRegistry";
 /** Selects templates matching a filter, generates variables, dispatches to question type handlers, and optionally assembles multiple-choice choices via the McqAssembler when responseMode is 'mcq'. */
 export class QuestionGenerator {
@@ -13,6 +14,7 @@ export class QuestionGenerator {
     private readonly variableGenerator: VariableGenerator;
     private readonly random: RandomGenerator;
     private readonly mcqAssembler: McqAssemblerLike;
+    private readonly multipleResponseAssembler: MultipleResponseAssembler;
     public constructor(
         templates: QuestionTemplate[],
         evaluator: ExpressionEvaluatorLike,
@@ -27,6 +29,7 @@ export class QuestionGenerator {
         this.registry = questionTypeRegistry ?? QuestionTypeRegistry.createDefault();
         this.variableGenerator = variableGenerator ?? new VariableGenerator();
         this.mcqAssembler = mcqAssembler ?? new McqAssembler();
+        this.multipleResponseAssembler = new MultipleResponseAssembler();
     }
     public generate(filter?: QuestionFilter): GeneratedQuestion | null {
         const candidates = this.filterTemplates(filter);
@@ -125,6 +128,9 @@ export class QuestionGenerator {
         const handler = this.registry.getOrDefault(template.question_type);
         const base = handler.handle(template, variables, this.evaluator, this.random);
         if (responseMode === "mcq") {
+            if (template.question_type === "MULTI_RESPONSE") {
+                return this.multipleResponseAssembler.assemble(base, template, this.random);
+            }
             const context = this.buildDistractorContext(base, template);
             const seed = this.deriveSeed(template.id, variables);
             return this.mcqAssembler.assemble(base, context, this.random, undefined, seed);

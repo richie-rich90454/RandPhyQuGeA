@@ -2,6 +2,8 @@ export {BaseQuestionHandler} from "./BaseQuestionHandler";
 export {FillInBlankHandler} from "./FillInBlankHandler";
 export {MatchingHandler} from "./MatchingHandler";
 export {MultipleChoiceHandler} from "./MultipleChoiceHandler";
+export {MultipleResponseAssembler} from "./MultipleResponseAssembler";
+export {MultipleResponseHandler} from "./MultipleResponseHandler";
 export {OrderingHandler} from "./OrderingHandler";
 export {NumericEntryHandler} from "./NumericEntryHandler";
 export {QuestionGenerator} from "./QuestionGenerator";

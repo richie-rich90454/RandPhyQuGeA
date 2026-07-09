@@ -19,8 +19,11 @@ export class AnswerGrader implements AnswerGraderLike {
         }
         return this.gradeFrq(question, response);
     }
-    /** MCQ grading: prefer the supplied `selectedIndex` against `correct_choice_index`; otherwise match the response text to a choice index; fall back to exact text comparison. */
+    /** MCQ grading: prefer the supplied `selectedIndex` against `correct_choice_index`; otherwise match the response text to a choice index; fall back to exact text comparison. For select-all-that-apply questions carrying `correct_choice_indices`, delegate to {@link gradeMultiSelect}. */
     private gradeMcq(question: GeneratedQuestion, response: string, selectedIndex?: number): GradeResult {
+        if (question.correct_choice_indices !== undefined) {
+            return this.gradeMultiSelect(question, response);
+        }
         const normalizedResponse = response.trim().toLowerCase();
         const normalizedAnswer = question.answer.trim().toLowerCase();
         if (selectedIndex !== undefined && question.correct_choice_index !== undefined) {
@@ -36,6 +39,32 @@ export class AnswerGrader implements AnswerGraderLike {
         }
         const isExact = normalizedResponse === normalizedAnswer;
         return {is_correct: isExact, normalized_response: normalizedResponse, normalized_answer: normalizedAnswer};
+    }
+    /** Multi-select (select-all-that-apply) grading: `response` is a comma-separated list of selected choice indices (e.g. "0,2"). Correct iff the selected set exactly equals the {@link GeneratedQuestion.correct_choice_indices} set. */
+    private gradeMultiSelect(question: GeneratedQuestion, response: string): GradeResult {
+        const correctIndices = question.correct_choice_indices ?? [];
+        const selected = response
+            .split(",")
+            .map(part => parseInt(part.trim(), 10))
+            .filter(n => Number.isInteger(n));
+        const correctSet: Set<number> = new Set(correctIndices);
+        const selectedSet: Set<number> = new Set(selected);
+        const isCorrect = this.setsEqual(selectedSet, correctSet);
+        const normalizedResponse = [...selectedSet].sort((a, b) => a - b).join(",");
+        const normalizedAnswer = [...correctSet].sort((a, b) => a - b).join(",");
+        return {is_correct: isCorrect, normalized_response: normalizedResponse, normalized_answer: normalizedAnswer};
+    }
+    /** Return true when both sets contain exactly the same elements. */
+    private setsEqual(a: Set<number>, b: Set<number>): boolean {
+        if (a.size !== b.size) {
+            return false;
+        }
+        for (const value of a) {
+            if (!b.has(value)) {
+                return false;
+            }
+        }
+        return true;
     }
     /** FRQ grading dispatch by question type: TF→boolean, NE/MC→numeric-tolerance, SA→expression-equivalence, else exact-or-numeric. */
     private gradeFrq(question: GeneratedQuestion, response: string): GradeResult {
