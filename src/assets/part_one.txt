@@ -1852,3 +1852,208 @@ SolutionTemplate: For parallel resistors, 1/Rp = 1/R1 + 1/R2, so Rp is less than
 SolutionLatexTemplate: \frac{1}{R_p} = \frac{1}{R_1} + \frac{1}{R_2} \Rightarrow R_p < \min(R_1, R_2) \Rightarrow \text{True}
 Var.R1: Type=double;Min=2;Max=50;Step=1
 Var.R2: Type=double;Min=2;Max=50;Step=1
+
+[UNIT]
+Id: thermodynamics
+Name: Thermodynamics
+Description: Temperature, heat, and the behavior of gases
+
+[TOPIC]
+Id: temperature-heat
+Name: Temperature and Heat
+UnitId: thermodynamics
+Description: Temperature scales, heat transfer, and latent heat
+
+[SKILL]
+Id: th-temp
+Name: Temperature Scales
+TopicId: temperature-heat
+Description: Convert between temperature scales
+
+[SKILL]
+Id: th-heat
+Name: Heat and Latent Heat
+TopicId: temperature-heat
+Description: Calculate heat transfer and latent heat
+
+[TOPIC]
+Id: gas-laws
+Name: Gas Laws
+UnitId: thermodynamics
+Description: Ideal gas law and gas processes
+
+[SKILL]
+Id: gl-ideal
+Name: Ideal Gas Law
+TopicId: gas-laws
+Description: Apply the ideal gas law PV = nRT
+
+[SKILL]
+Id: gl-processes
+Name: Gas Processes
+TopicId: gas-laws
+Description: Analyze isothermal, isobaric, and combined gas processes
+
+[TEMPLATE]
+Id: th-mc-1
+TopicId: temperature-heat
+SkillId: th-temp
+QuestionType: MultipleChoice
+Difficulty: 2
+TextTemplate: A substance is at {tc} degrees Celsius. What is its temperature in kelvin?
+AnswerExpression: tc + 273.15
+SolutionTemplate: Use T_K = T_C + 273.15 = {tc} + 273.15 = {answer} K.
+SolutionLatexTemplate: T_K = T_C + 273.15 = {tc} + 273.15 = {answer}\,\text{K}
+Var.tc: Type=double;Min=0;Max=100;Step=5
+Distractor: tc + 273
+Distractor: tc
+Distractor: tc - 273.15
+
+[TEMPLATE]
+Id: th-sa-1
+TopicId: temperature-heat
+SkillId: th-temp
+QuestionType: ShortAnswer
+Difficulty: 3
+TextTemplate: A gas has a temperature of {tk} kelvin. What is its temperature in degrees Celsius?
+AnswerExpression: tk - 273.15
+SolutionTemplate: Use T_C = T_K - 273.15 = {tk} - 273.15 = {answer} C.
+SolutionLatexTemplate: T_C = T_K - 273.15 = {tk} - 273.15 = {answer}\,\text{C}
+Var.tk: Type=double;Min=250;Max=400;Step=5
+
+[TEMPLATE]
+Id: th-mc-2
+TopicId: temperature-heat
+SkillId: th-heat
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A {m} kg sample of a substance with specific heat {sh} J/(kg*C) is heated by {dt} degrees Celsius. How much heat is added?
+AnswerExpression: m * sh * dt
+SolutionTemplate: Use Q = m c Delta T = {m} * {sh} * {dt} = {answer} J.
+SolutionLatexTemplate: Q = m c \Delta T = {m} \cdot {sh} \cdot {dt} = {answer}\,\text{J}
+Var.m: Type=double;Min=0.1;Max=5;Step=0.1
+Var.sh: Type=double;Min=400;Max=900;Step=50
+Var.dt: Type=double;Min=10;Max=80;Step=5
+Distractor: m * sh / dt
+Distractor: m * dt / sh
+Distractor: sh * dt
+
+[TEMPLATE]
+Id: th-sa-2
+TopicId: temperature-heat
+SkillId: th-heat
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A {m} kg block of ice at its melting point requires {lf} J/kg of latent heat of fusion to melt completely. How much heat is required to melt it?
+AnswerExpression: m * lf
+SolutionTemplate: Use Q = m L_f = {m} * {lf} = {answer} J.
+SolutionLatexTemplate: Q = m L_f = {m} \cdot {lf} = {answer}\,\text{J}
+Var.m: Type=double;Min=0.5;Max=5;Step=0.5
+Var.lf: Type=double;Min=330000;Max=340000;Step=1000
+
+[TEMPLATE]
+Id: th-tf-1
+TopicId: temperature-heat
+SkillId: th-heat
+QuestionType: TrueFalse
+Difficulty: 2
+TextTemplate: A hot object at {thot} degrees Celsius is placed in contact with a cold object at {tcold} degrees Celsius. Heat flows from the hot object to the cold object. (True = 1, False = 0)
+AnswerExpression: 1
+SolutionTemplate: Heat always flows from the hotter object to the colder object, so the answer is True.
+SolutionLatexTemplate: \text{Heat flows from hot to cold} \Rightarrow \text{True}
+Var.thot: Type=double;Min=50;Max=100;Step=5
+Var.tcold: Type=double;Min=0;Max=40;Step=5
+
+[TEMPLATE]
+Id: gl-mc-1
+TopicId: gas-laws
+SkillId: gl-ideal
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: An ideal gas has {n} moles at a temperature of {T} K in a volume of {V} m^3. What is its pressure? (Use R = 8.314 J/(mol*K))
+AnswerExpression: n * 8.314 * T / V
+SolutionTemplate: Use P V = n R T, so P = n R T / V = {n} * 8.314 * {T} / {V} = {answer} Pa.
+SolutionLatexTemplate: P = \frac{n R T}{V} = \frac{{{n} \cdot 8.314 \cdot {T}}}{{{V}}} = {answer}\,\text{Pa}
+Var.n: Type=double;Min=0.1;Max=5;Step=0.1
+Var.T: Type=double;Min=200;Max=400;Step=10
+Var.V: Type=double;Min=0.01;Max=0.1;Step=0.01
+Distractor: n * 8.314 * T * V
+Distractor: n * 8.314 / V
+Distractor: 8.314 * T / V
+
+[TEMPLATE]
+Id: gl-sa-1
+TopicId: gas-laws
+SkillId: gl-ideal
+QuestionType: ShortAnswer
+Difficulty: 6
+TextTemplate: An ideal gas has a temperature of {T} K and a molar mass of {M} kg/mol. What is the root-mean-square speed of its molecules? (Use R = 8.314 J/(mol*K))
+AnswerExpression: root(3 * 8.314 * T / M, 2)
+SolutionTemplate: Use v_rms = sqrt(3 R T / M) = root(3 * 8.314 * {T} / {M}, 2) = {answer} m/s.
+SolutionLatexTemplate: v_{\text{rms}} = \sqrt{\frac{3 R T}{M}} = \sqrt{\frac{{3 \cdot 8.314 \cdot {T}}}{{{M}}}} = {answer}\,\text{m/s}
+Var.T: Type=double;Min=200;Max=500;Step=10
+Var.M: Type=double;Min=0.002;Max=0.04;Step=0.002
+
+[TEMPLATE]
+Id: gl-ne-1
+TopicId: gas-laws
+SkillId: gl-ideal
+QuestionType: NumericEntry
+Difficulty: 4
+TextTemplate: An ideal gas at a pressure of {P} Pa occupies a volume of {V} m^3 at a temperature of {T} K. How many moles of gas are present? (Use R = 8.314 J/(mol*K))
+AnswerExpression: P * V / (8.314 * T)
+SolutionTemplate: Use n = P V / (R T) = {P} * {V} / (8.314 * {T}) = {answer} mol.
+SolutionLatexTemplate: n = \frac{P V}{R T} = \frac{{{P} \cdot {V}}}{{8.314 \cdot {T}}} = {answer}\,\text{mol}
+Var.P: Type=double;Min=100000;Max=200000;Step=10000
+Var.V: Type=double;Min=0.01;Max=0.1;Step=0.01
+Var.T: Type=double;Min=200;Max=400;Step=10
+
+[TEMPLATE]
+Id: gl-mc-2
+TopicId: gas-laws
+SkillId: gl-processes
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A gas at an initial pressure of {P1} Pa and volume {V1} m^3 is compressed isothermally to a volume of {V2} m^3. What is the final pressure?
+AnswerExpression: P1 * V1 / V2
+SolutionTemplate: Use Boyle's law P1 V1 = P2 V2, so P2 = P1 V1 / V2 = {P1} * {V1} / {V2} = {answer} Pa.
+SolutionLatexTemplate: P_1 V_1 = P_2 V_2 \Rightarrow P_2 = \frac{P_1 V_1}{V_2} = \frac{{{P1} \cdot {V1}}}{{{V2}}} = {answer}\,\text{Pa}
+Var.P1: Type=double;Min=100000;Max=200000;Step=10000
+Var.V1: Type=double;Min=0.01;Max=0.1;Step=0.01
+Var.V2: Type=double;Min=0.02;Max=0.2;Step=0.01
+Distractor: P1 * V2 / V1
+Distractor: P1 / V1 / V2
+Distractor: V1 * V2 / P1
+
+[TEMPLATE]
+Id: gl-sa-2
+TopicId: gas-laws
+SkillId: gl-processes
+QuestionType: ShortAnswer
+Difficulty: 4
+TextTemplate: A gas at an initial volume of {V1} m^3 and temperature {T1} K is heated at constant pressure to a temperature of {T2} K. What is the final volume?
+AnswerExpression: V1 * T2 / T1
+SolutionTemplate: Use Charles's law V1 / T1 = V2 / T2, so V2 = V1 T2 / T1 = {V1} * {T2} / {T1} = {answer} m^3.
+SolutionLatexTemplate: \frac{V_1}{T_1} = \frac{V_2}{T_2} \Rightarrow V_2 = \frac{V_1 T_2}{T_1} = \frac{{{V1} \cdot {T2}}}{{{T1}}} = {answer}\,\text{m}^3
+Var.V1: Type=double;Min=0.1;Max=1;Step=0.1
+Var.T1: Type=double;Min=200;Max=400;Step=10
+Var.T2: Type=double;Min=300;Max=500;Step=10
+
+[TEMPLATE]
+Id: gl-mc-3
+TopicId: gas-laws
+SkillId: gl-processes
+QuestionType: MultipleChoice
+Difficulty: 6
+TextTemplate: A gas has initial pressure {P1} Pa, volume {V1} m^3, and temperature {T1} K. It changes to a final state with volume {V2} m^3 and temperature {T2} K. What is the final pressure?
+AnswerExpression: P1 * V1 * T2 / (T1 * V2)
+SolutionTemplate: Use the combined gas law P1 V1 / T1 = P2 V2 / T2, so P2 = P1 V1 T2 / (T1 V2) = {P1} * {V1} * {T2} / ({T1} * {V2}) = {answer} Pa.
+SolutionLatexTemplate: \frac{P_1 V_1}{T_1} = \frac{P_2 V_2}{T_2} \Rightarrow P_2 = \frac{P_1 V_1 T_2}{T_1 V_2} = \frac{{{P1} \cdot {V1} \cdot {T2}}}{{{T1} \cdot {V2}}} = {answer}\,\text{Pa}
+Var.P1: Type=double;Min=100000;Max=200000;Step=10000
+Var.V1: Type=double;Min=0.01;Max=0.1;Step=0.01
+Var.T1: Type=double;Min=200;Max=400;Step=10
+Var.V2: Type=double;Min=0.02;Max=0.2;Step=0.01
+Var.T2: Type=double;Min=300;Max=500;Step=10
+Distractor: P1 * V1 * T1 / (T2 * V2)
+Distractor: P1 * V2 * T2 / (T1 * V1)
+Distractor: P1 * V1 / (T1 * V2)
