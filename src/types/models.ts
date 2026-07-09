@@ -18,7 +18,7 @@ export const QUESTION_TYPES = {
     NE: "NE" as const,
 } satisfies Record<string, QuestionType>;
 /** Supported export formats for the question exporters. */
-export type ExportFormat = "html" | "pdf" | "markdown" | "text" | "json" | "csv" | "latex";
+export type ExportFormat = "html" | "pdf" | "markdown" | "text" | "json" | "csv" | "latex" | "anki";
 /** A top-level organizational unit (e.g. "Mechanics"). */
 export interface Unit {
     id: string;

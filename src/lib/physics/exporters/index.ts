@@ -1,3 +1,4 @@
+export {AnkiExporter} from "./AnkiExporter";
 export {CsvExporter} from "./CsvExporter";
 export {ExporterRegistry} from "./ExporterRegistry";
 export {HtmlExporter} from "./HtmlExporter";
