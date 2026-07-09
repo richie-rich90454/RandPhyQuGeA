@@ -2057,3 +2057,197 @@ Var.T2: Type=double;Min=300;Max=500;Step=10
 Distractor: P1 * V1 * T1 / (T2 * V2)
 Distractor: P1 * V2 * T2 / (T1 * V1)
 Distractor: P1 * V1 / (T1 * V2)
+
+[UNIT]
+Id: modern-physics
+Name: Modern Physics
+Description: Quantum physics, nuclear physics, and relativity
+
+[TOPIC]
+Id: quantum
+Name: Quantum Physics
+UnitId: modern-physics
+Description: Photons, the photoelectric effect, and wave-particle duality
+
+[SKILL]
+Id: qu-photons
+Name: Photon Energy
+TopicId: quantum
+Description: Calculate photon energy from wavelength
+
+[SKILL]
+Id: qu-photoelectric
+Name: Photoelectric Effect
+TopicId: quantum
+Description: Apply the photoelectric effect equation
+
+[TOPIC]
+Id: nuclear
+Name: Nuclear Physics
+UnitId: modern-physics
+Description: Mass-energy equivalence and radioactive decay
+
+[SKILL]
+Id: nu-massenergy
+Name: Mass-Energy Equivalence
+TopicId: nuclear
+Description: Apply E = mc^2
+
+[SKILL]
+Id: nu-halflife
+Name: Half-Life
+TopicId: nuclear
+Description: Calculate remaining quantity from half-life
+
+[TEMPLATE]
+Id: qu-mc-1
+TopicId: quantum
+SkillId: qu-photons
+QuestionType: MultipleChoice
+Difficulty: 3
+TextTemplate: A photon has a wavelength of {lambda} nm. What is its energy in electronvolts? (Use hc = 1240 eV*nm)
+AnswerExpression: 1240 / lambda
+SolutionTemplate: Use E = hc / lambda = 1240 / {lambda} = {answer} eV.
+SolutionLatexTemplate: E = \frac{hc}{\lambda} = \frac{1240}{{{lambda}}} = {answer}\,\text{eV}
+Var.lambda: Type=double;Min=200;Max=700;Step=50
+Distractor: 1240 * lambda
+Distractor: lambda / 1240
+Distractor: 1240 + lambda
+
+[TEMPLATE]
+Id: qu-sa-1
+TopicId: quantum
+SkillId: qu-photons
+QuestionType: ShortAnswer
+Difficulty: 2
+TextTemplate: A photon has a wavelength of {lambda} nm. What is its energy in electronvolts? (Use hc = 1240 eV*nm)
+AnswerExpression: 1240 / lambda
+SolutionTemplate: Use E = hc / lambda = 1240 / {lambda} = {answer} eV.
+SolutionLatexTemplate: E = \frac{hc}{\lambda} = \frac{1240}{{{lambda}}} = {answer}\,\text{eV}
+Var.lambda: Type=double;Min=100;Max=1000;Step=50
+
+[TEMPLATE]
+Id: qu-mc-2
+TopicId: quantum
+SkillId: qu-photoelectric
+QuestionType: MultipleChoice
+Difficulty: 4
+TextTemplate: A photon with energy {ep} eV strikes a metal with a work function of {w} eV. What is the maximum kinetic energy of the emitted electrons?
+AnswerExpression: ep - w
+SolutionTemplate: Use K_max = E - W = {ep} - {w} = {answer} eV.
+SolutionLatexTemplate: K_{\max} = E - W = {ep} - {w} = {answer}\,\text{eV}
+Var.ep: Type=double;Min=5;Max=10;Step=0.5
+Var.w: Type=double;Min=1;Max=4;Step=0.5
+Distractor: ep + w
+Distractor: ep * w
+Distractor: w - ep
+
+[TEMPLATE]
+Id: qu-ne-1
+TopicId: quantum
+SkillId: qu-photoelectric
+QuestionType: NumericEntry
+Difficulty: 5
+TextTemplate: A photon with energy {ep} eV strikes a metal with a work function of {w} eV. What is the maximum kinetic energy of the emitted electrons in eV?
+AnswerExpression: ep - w
+SolutionTemplate: Use K_max = E - W = {ep} - {w} = {answer} eV.
+SolutionLatexTemplate: K_{\max} = E - W = {ep} - {w} = {answer}\,\text{eV}
+Var.ep: Type=double;Min=6;Max=12;Step=0.5
+Var.w: Type=double;Min=1;Max=5;Step=0.5
+
+[TEMPLATE]
+Id: qu-tf-1
+TopicId: quantum
+SkillId: qu-photoelectric
+QuestionType: TrueFalse
+Difficulty: 2
+TextTemplate: A photon with energy {ep} eV strikes a metal with a work function of {w} eV. Electrons are emitted only if the photon energy exceeds the work function. (True = 1, False = 0)
+AnswerExpression: 1
+SolutionTemplate: The photoelectric effect requires E > W for emission, so the statement is True.
+SolutionLatexTemplate: K_{\max} = E - W > 0 \Rightarrow E > W \Rightarrow \text{True}
+Var.ep: Type=double;Min=5;Max=10;Step=0.5
+Var.w: Type=double;Min=1;Max=4;Step=0.5
+
+[TEMPLATE]
+Id: nu-mc-1
+TopicId: nuclear
+SkillId: nu-massenergy
+QuestionType: MultipleChoice
+Difficulty: 3
+TextTemplate: A nucleus has a mass of {m} atomic mass units. What is its rest mass energy in MeV? (Use 1 u = 931.5 MeV/c^2)
+AnswerExpression: m * 931.5
+SolutionTemplate: Use E = m c^2 = {m} * 931.5 = {answer} MeV.
+SolutionLatexTemplate: E = mc^2 = {m} \cdot 931.5 = {answer}\,\text{MeV}
+Var.m: Type=double;Min=1;Max=10;Step=0.5
+Distractor: m / 931.5
+Distractor: 931.5 / m
+Distractor: m + 931.5
+
+[TEMPLATE]
+Id: nu-sa-1
+TopicId: nuclear
+SkillId: nu-massenergy
+QuestionType: ShortAnswer
+Difficulty: 4
+TextTemplate: A particle has a mass of {m} atomic mass units. What is its rest mass energy in MeV? (Use 1 u = 931.5 MeV/c^2)
+AnswerExpression: m * 931.5
+SolutionTemplate: Use E = m c^2 = {m} * 931.5 = {answer} MeV.
+SolutionLatexTemplate: E = mc^2 = {m} \cdot 931.5 = {answer}\,\text{MeV}
+Var.m: Type=double;Min=0.5;Max=5;Step=0.5
+
+[TEMPLATE]
+Id: nu-ne-1
+TopicId: nuclear
+SkillId: nu-massenergy
+QuestionType: NumericEntry
+Difficulty: 4
+TextTemplate: A nucleus has a mass of {m} atomic mass units. What is its rest mass energy in MeV? (Use 1 u = 931.5 MeV/c^2)
+AnswerExpression: m * 931.5
+SolutionTemplate: Use E = m c^2 = {m} * 931.5 = {answer} MeV.
+SolutionLatexTemplate: E = mc^2 = {m} \cdot 931.5 = {answer}\,\text{MeV}
+Var.m: Type=double;Min=2;Max=20;Step=1
+
+[TEMPLATE]
+Id: nu-mc-2
+TopicId: nuclear
+SkillId: nu-halflife
+QuestionType: MultipleChoice
+Difficulty: 5
+TextTemplate: A radioactive sample initially has {n0} nuclei. After {t} years, what is the remaining number of nuclei if the half-life is {thalf} years?
+AnswerExpression: n0 * 0.5 ^ (t / thalf)
+SolutionTemplate: Use N = N0 * (1/2)^(t/T) = {n0} * 0.5^({t}/{thalf}) = {answer}.
+SolutionLatexTemplate: N = N_0 \cdot 2^{-t/T_{1/2}} = {n0} \cdot 2^{-{t}/{thalf}} = {answer}
+Var.n0: Type=double;Min=100;Max=1000;Step=50
+Var.t: Type=double;Min=1;Max=10;Step=1
+Var.thalf: Type=double;Min=2;Max=5;Step=0.5
+Distractor: n0 * 2 ^ (t / thalf)
+Distractor: n0 - n0 * 0.5 ^ (t / thalf)
+Distractor: n0 / (t + thalf)
+
+[TEMPLATE]
+Id: nu-sa-2
+TopicId: nuclear
+SkillId: nu-halflife
+QuestionType: ShortAnswer
+Difficulty: 5
+TextTemplate: A radioactive sample initially has {n0} nuclei. After {t} years, what is the remaining number of nuclei if the half-life is {thalf} years?
+AnswerExpression: n0 * 0.5 ^ (t / thalf)
+SolutionTemplate: Use N = N0 * (1/2)^(t/T) = {n0} * 0.5^({t}/{thalf}) = {answer}.
+SolutionLatexTemplate: N = N_0 \cdot 2^{-t/T_{1/2}} = {n0} \cdot 2^{-{t}/{thalf}} = {answer}
+Var.n0: Type=double;Min=200;Max=2000;Step=100
+Var.t: Type=double;Min=2;Max=20;Step=2
+Var.thalf: Type=double;Min=1;Max=10;Step=1
+
+[TEMPLATE]
+Id: nu-ne-2
+TopicId: nuclear
+SkillId: nu-halflife
+QuestionType: NumericEntry
+Difficulty: 6
+TextTemplate: A radioactive sample initially has {n0} nuclei. After some time, {n} nuclei remain. If the half-life is {thalf} years, how much time has elapsed?
+AnswerExpression: thalf * log2(n0 / n)
+SolutionTemplate: Use t = T * log2(N0/N) = {thalf} * log2({n0}/{n}) = {answer} years.
+SolutionLatexTemplate: t = T_{1/2} \cdot \log_2\!\left(\frac{N_0}{N}\right) = {thalf} \cdot \log_2\!\left(\frac{{{n0}}}{{{n}}}\right) = {answer}\,\text{yr}
+Var.n0: Type=double;Min=100;Max=1000;Step=100
+Var.n: Type=double;Min=10;Max=50;Step=5
+Var.thalf: Type=double;Min=2;Max=10;Step=1
