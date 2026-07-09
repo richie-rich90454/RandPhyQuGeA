@@ -2,6 +2,7 @@ import type {QuestionTypeHandler} from "../contracts";
 import {FillInBlankHandler} from "./FillInBlankHandler";
 import {MatchingHandler} from "./MatchingHandler";
 import {MultipleChoiceHandler} from "./MultipleChoiceHandler";
+import {OrderingHandler} from "./OrderingHandler";
 import {NumericEntryHandler} from "./NumericEntryHandler";
 import {ShortAnswerHandler} from "./ShortAnswerHandler";
 import {TrueFalseHandler} from "./TrueFalseHandler";
@@ -34,6 +35,7 @@ export class QuestionTypeRegistry {
         registry.register(new FillInBlankHandler());
         registry.register(new NumericEntryHandler());
         registry.register(new MatchingHandler());
+        registry.register(new OrderingHandler());
         return registry;
     }
 }
