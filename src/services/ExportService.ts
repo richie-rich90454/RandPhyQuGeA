@@ -10,6 +10,7 @@ const EXPORT_REGISTRY: Record<ExportFormat, ExportMetadata> = {
 	csv: {format: "csv", extension: ".csv", mimeType: "text/csv", label: "CSV"},
 	latex: {format: "latex", extension: ".tex", mimeType: "application/x-latex", label: "LaTeX"},
 	anki: {format: "anki", extension: ".txt", mimeType: "text/tab-separated-values", label: "Anki"},
+	quizlet: {format: "quizlet", extension: ".csv", mimeType: "text/csv", label: "Quizlet"},
 };
 export class ExportService implements IExportService {
 	public getExportMetadata(format: ExportFormat): ExportMetadata {

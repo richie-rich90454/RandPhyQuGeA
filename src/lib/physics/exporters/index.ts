@@ -6,4 +6,5 @@ export {JsonExporter} from "./JsonExporter";
 export {LatexExporter} from "./LatexExporter";
 export {MarkdownExporter} from "./MarkdownExporter";
 export {PdfExporter} from "./PdfExporter";
+export {QuizletExporter} from "./QuizletExporter";
 export {TextExporter} from "./TextExporter";

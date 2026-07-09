@@ -8,6 +8,7 @@ import {JsonExporter} from "./JsonExporter";
 import {CsvExporter} from "./CsvExporter";
 import {LatexExporter} from "./LatexExporter";
 import {AnkiExporter} from "./AnkiExporter";
+import {QuizletExporter} from "./QuizletExporter";
 /** Open-closed registry of exporters keyed by format. */
 export class ExporterRegistry {
     private readonly exporters: Map<ExportFormat, Exporter>;
@@ -41,6 +42,7 @@ export class ExporterRegistry {
         registry.register(new CsvExporter());
         registry.register(new LatexExporter());
         registry.register(new AnkiExporter());
+        registry.register(new QuizletExporter());
         return registry;
     }
 }

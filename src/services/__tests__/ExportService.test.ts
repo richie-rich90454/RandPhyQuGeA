@@ -10,6 +10,7 @@ let EXPECTED_FORMATS: Record<ExportFormat, {extension: string; mimeType: string;
 	csv: {extension: ".csv", mimeType: "text/csv", label: "CSV"},
 	latex: {extension: ".tex", mimeType: "application/x-latex", label: "LaTeX"},
 	anki: {extension: ".txt", mimeType: "text/tab-separated-values", label: "Anki"},
+	quizlet: {extension: ".csv", mimeType: "text/csv", label: "Quizlet"},
 };
 describe("ExportService", () => {
 	let createObjectURL: ReturnType<typeof vi.fn<(_blob: Blob) => string>>;
