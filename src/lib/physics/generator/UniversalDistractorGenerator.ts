@@ -3,6 +3,7 @@ import {NumericDistractorStrategy} from "./strategies/NumericDistractorStrategy"
 import {BooleanDistractorStrategy} from "./strategies/BooleanDistractorStrategy";
 import {BlankTokenDistractorStrategy} from "./strategies/BlankTokenDistractorStrategy";
 import {ShortAnswerNeighborStrategy} from "./strategies/ShortAnswerNeighborStrategy";
+import {MatchingDistractorStrategy} from "./strategies/MatchingDistractorStrategy";
 /** Picks the right {@link ResponseFormatStrategy} per question type, generates distractors, dedupes against the correct answer, and scales to the requested count. */
 export class UniversalDistractorGenerator implements UniversalDistractorGeneratorLike {
     private readonly strategies: Map<string, ResponseFormatStrategy>;
@@ -57,5 +58,6 @@ export class UniversalDistractorGenerator implements UniversalDistractorGenerato
         this.strategies.set("TF", new BooleanDistractorStrategy());
         this.strategies.set("FB", new BlankTokenDistractorStrategy());
         this.strategies.set("SA", new ShortAnswerNeighborStrategy());
+        this.strategies.set("MATCHING", new MatchingDistractorStrategy());
     }
 }

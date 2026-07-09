@@ -1,5 +1,6 @@
 export {BaseQuestionHandler} from "./BaseQuestionHandler";
 export {FillInBlankHandler} from "./FillInBlankHandler";
+export {MatchingHandler} from "./MatchingHandler";
 export {MultipleChoiceHandler} from "./MultipleChoiceHandler";
 export {NumericEntryHandler} from "./NumericEntryHandler";
 export {QuestionGenerator} from "./QuestionGenerator";
@@ -8,4 +9,4 @@ export {ShortAnswerHandler} from "./ShortAnswerHandler";
 export {TrueFalseHandler} from "./TrueFalseHandler";
 export {McqAssembler} from "./McqAssembler";
 export {UniversalDistractorGenerator} from "./UniversalDistractorGenerator";
-export {NumericDistractorStrategy, BooleanDistractorStrategy, BlankTokenDistractorStrategy, ShortAnswerNeighborStrategy} from "./strategies";
+export {NumericDistractorStrategy, BooleanDistractorStrategy, BlankTokenDistractorStrategy, ShortAnswerNeighborStrategy, MatchingDistractorStrategy} from "./strategies";
