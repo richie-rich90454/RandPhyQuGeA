@@ -5,6 +5,7 @@ import {usePracticeStore} from "../../../stores/practiceStore";
 import {useSpecStore} from "../../../stores/specStore";
 import type {Session} from "../../../../services/contracts";
 import type {GeneratedQuestion} from "../../../../types/models";
+import type {WorkedSolution} from "../../../../lib/physics/solution/WorkedSolution";
 function makeQuestion(overrides?: Partial<GeneratedQuestion>): GeneratedQuestion {
 	return {
 		id: "q1",
@@ -115,5 +116,89 @@ describe("ResultsCard", () => {
 		});
 		render(() => <ResultsCard />);
 		expect(screen.getByText("Your results will appear here after checking")).toBeInTheDocument();
+	});
+	it("renders the worked solution title and steps when provided", () => {
+		let workedSolution: WorkedSolution={
+			questionId: "q1",
+			title: "Step-by-step solution",
+			steps: [
+				{description: "Identify the knowns", latex: "v = 20, t = 4"},
+				{description: "Apply the formula", latex: "a = \\frac{v}{t}", substitution: "a = \\frac{20}{4}", result: "a = 5"},
+			],
+		};
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion()),
+			showFeedback: true,
+			lastResult: {isCorrect: true, correctAnswer: "5"},
+		});
+		render(() => <ResultsCard workedSolution={workedSolution} />);
+		expect(screen.getByText("Step-by-step solution")).toBeInTheDocument();
+		expect(screen.getByText("Identify the knowns")).toBeInTheDocument();
+		expect(screen.getByText("Apply the formula")).toBeInTheDocument();
+	});
+	it("renders the worked solution steps as an ordered list", () => {
+		let workedSolution: WorkedSolution={
+			questionId: "q1",
+			title: "Solution",
+			steps: [
+				{description: "Step one"},
+				{description: "Step two"},
+			],
+		};
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion()),
+			showFeedback: true,
+			lastResult: {isCorrect: true, correctAnswer: "force"},
+		});
+		render(() => <ResultsCard workedSolution={workedSolution} />);
+		let list=screen.getByRole("list");
+		expect(list.tagName).toBe("OL");
+		expect(screen.getAllByRole("listitem")).toHaveLength(2);
+	});
+	it("renders the final answer when provided in the worked solution", () => {
+		let workedSolution: WorkedSolution={
+			questionId: "q1",
+			title: "Solution",
+			steps: [{description: "Compute"}],
+			finalAnswer: "5 m/s",
+		};
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion()),
+			showFeedback: true,
+			lastResult: {isCorrect: true, correctAnswer: "5"},
+		});
+		render(() => <ResultsCard workedSolution={workedSolution} />);
+		expect(screen.getByText("Final answer:")).toBeInTheDocument();
+		expect(screen.getByText("5 m/s")).toBeInTheDocument();
+	});
+	it("does not render the worked solution when steps are empty", () => {
+		let workedSolution: WorkedSolution={
+			questionId: "q1",
+			title: "Empty",
+			steps: [],
+		};
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion()),
+			showFeedback: true,
+			lastResult: {isCorrect: true, correctAnswer: "force"},
+		});
+		render(() => <ResultsCard workedSolution={workedSolution} />);
+		expect(screen.queryByText("Empty")).not.toBeInTheDocument();
+		expect(screen.queryByRole("list")).not.toBeInTheDocument();
+	});
+	it("does not render the worked solution section when not provided", () => {
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion()),
+			showFeedback: true,
+			lastResult: {isCorrect: true, correctAnswer: "force"},
+		});
+		render(() => <ResultsCard />);
+		expect(screen.queryByRole("list")).not.toBeInTheDocument();
+		expect(screen.queryByText("Final answer:")).not.toBeInTheDocument();
 	});
 });

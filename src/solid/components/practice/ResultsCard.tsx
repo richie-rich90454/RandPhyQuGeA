@@ -1,10 +1,11 @@
 import type {JSX} from "solid-js";
-import {Show, createMemo} from "solid-js";
+import {For, Show, createMemo} from "solid-js";
 import {Card, CardHeader, CardTitle, CardContent} from "../ui/Card";
 import {EmptyState} from "../ui/EmptyState";
 import {MathText} from "../MathText";
 import {MathRenderer} from "../MathRenderer";
 import {usePracticeStore, selectCurrentQuestion, type AnswerFeedback} from "../../stores/practiceStore";
+import type {WorkedSolution} from "../../../lib/physics/solution/WorkedSolution";
 import styles from "./ResultsCard.module.css";
 type SolutionRender={kind: "katex"; latex: string} | {kind: "text"; text: string};
 function EnvelopeIcon(): JSX.Element {
@@ -29,19 +30,24 @@ function XIcon(): JSX.Element {
 		</svg>
 	);
 }
+export interface ResultsCardProps {
+	/** Optional worked-solution document rendered as an ordered list of steps. */
+	workedSolution?: WorkedSolution;
+}
 /**
  * Results feedback card mapped to `.results-card`.
  *
  * Solid port of {@link ../../../components/practice/ResultsCard}. Reads
  * `showFeedback` and `lastResult` from the practice store. When no feedback is
  * available, renders the empty-state placeholder. When feedback is shown,
- * renders a correct (green) or incorrect (red) banner with the correct answer
- * and the solution (LaTeX-rendered via `MathRenderer` when available, plain
- * text via `MathText` otherwise). Framer Motion swap animations are replaced
- * by CSS; `@phosphor-icons/react` icons are replaced with inline SVG.
+ * renders a correct (green) or incorrect (red) banner with the correct answer,
+ * the solution (LaTeX-rendered via `MathRenderer` when available, plain text
+ * via `MathText` otherwise), and an optional worked-solution document rendered
+ * as an ordered list of steps. Framer Motion swap animations are replaced by
+ * CSS; `@phosphor-icons/react` icons are replaced with inline SVG.
  * Reduced-motion preference is handled via CSS media queries.
  */
-export function ResultsCard(): JSX.Element {
+export function ResultsCard(props: ResultsCardProps): JSX.Element {
 	let showFeedback=usePracticeStore(s => s.showFeedback);
 	let lastResult=usePracticeStore(s => s.lastResult);
 	let currentQuestion=usePracticeStore(selectCurrentQuestion);
@@ -68,7 +74,7 @@ export function ResultsCard(): JSX.Element {
 					<Show when={hasFeedback()} fallback={
 						<EmptyState illustration={<EnvelopeIcon />} title="Your results will appear here after checking" />
 					}>
-						<FeedbackContent lastResult={lastResult()!} solutionRender={solutionRender()} />
+						<FeedbackContent lastResult={lastResult()!} solutionRender={solutionRender()} workedSolution={props.workedSolution} />
 					</Show>
 				</div>
 			</CardContent>
@@ -78,6 +84,7 @@ export function ResultsCard(): JSX.Element {
 interface FeedbackContentProps {
 	lastResult: AnswerFeedback;
 	solutionRender: SolutionRender | null;
+	workedSolution?: WorkedSolution;
 }
 function FeedbackContent(props: FeedbackContentProps): JSX.Element {
 	let isCorrect=props.lastResult.isCorrect;
@@ -112,6 +119,43 @@ function FeedbackContent(props: FeedbackContentProps): JSX.Element {
 					<h4>Solution</h4>
 					<Show when={solKind() === "katex"} fallback={<MathText text={solText()} />}>
 						<MathRenderer display={true} tex={solLatex()} />
+					</Show>
+				</div>
+			</Show>
+			<Show when={props.workedSolution && props.workedSolution.steps.length > 0}>
+				<div class={styles.workedSolution}>
+					<Show when={props.workedSolution!.title}>
+						<h4>{props.workedSolution!.title}</h4>
+					</Show>
+					<ol class={styles.stepList}>
+						<For each={props.workedSolution!.steps}>{(step) => (
+							<li class={styles.step}>
+								<p class={styles.stepDescription}>
+									<MathText text={step.description} />
+								</p>
+								<Show when={step.latex}>
+									<div class={styles.stepExpression}>
+										<MathRenderer display={true} tex={step.latex!} />
+									</div>
+								</Show>
+								<Show when={step.substitution}>
+									<div class={styles.stepSubstitution}>
+										<MathText text={step.substitution!} />
+									</div>
+								</Show>
+								<Show when={step.result}>
+									<div class={styles.stepResult}>
+										<MathText text={step.result!} />
+									</div>
+								</Show>
+							</li>
+						)}</For>
+					</ol>
+					<Show when={props.workedSolution!.finalAnswer}>
+						<div class={styles.finalAnswer}>
+							<span class={styles.finalAnswerLabel}>Final answer:</span>
+							<MathText text={props.workedSolution!.finalAnswer!} />
+						</div>
 					</Show>
 				</div>
 			</Show>
