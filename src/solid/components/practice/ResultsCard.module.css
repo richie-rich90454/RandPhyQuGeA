@@ -1,0 +1,55 @@
+.resultsCard {
+	width: 100%;
+}
+.resultsDisplay {
+	min-height: 80px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+	width: 100%;
+}
+.hasContent {
+	padding: var(--space-3);
+	border-radius: var(--radius-md);
+}
+.correct {
+	background: var(--surface-success, rgba(34, 197, 94, 0.08));
+	border: 1px solid var(--border-success, rgba(34, 197, 94, 0.3));
+}
+.incorrect {
+	background: var(--surface-error, rgba(239, 68, 68, 0.08));
+	border: 1px solid var(--border-error, rgba(239, 68, 68, 0.3));
+}
+.resultSuccess {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-2);
+	color: var(--color-success, rgb(22, 163, 74));
+}
+.resultError {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-2);
+	color: var(--color-error, rgb(220, 38, 38));
+}
+.resultSuccess h3,
+.resultError h3 {
+	margin: 0;
+	font-size: var(--font-size-md);
+	font-weight: 700;
+}
+.resultSuccess p,
+.resultError p {
+	margin: var(--space-1) 0 0 0;
+	font-size: var(--font-size-md);
+}
+.solutionDisplay {
+	padding-top: var(--space-3);
+	border-top: 1px solid var(--border);
+}
+.solutionDisplay h4 {
+	margin: 0 0 var(--space-2) 0;
+	font-size: var(--font-size-sm);
+	font-weight: 600;
+	color: var(--text-secondary);
+}
