@@ -1,0 +1,29 @@
+.buttons {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-1);
+}
+.iconButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: var(--radius-md);
+	border: 1px solid transparent;
+	background: transparent;
+	color: var(--text);
+	cursor: pointer;
+	transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+}
+.iconButton:hover {
+	background: var(--surface-elevated);
+}
+.iconButton:focus-visible {
+	outline: 2px solid var(--border-focus);
+	outline-offset: 2px;
+}
+.iconButton[aria-pressed="true"] {
+	background: var(--accent);
+	color: var(--text-inverse, var(--surface));
+}
