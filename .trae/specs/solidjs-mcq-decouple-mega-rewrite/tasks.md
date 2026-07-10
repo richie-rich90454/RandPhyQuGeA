@@ -119,7 +119,7 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 
 > Port each React component to SolidJS + a co-located CSS Module. Delete the React original in the same commit.
 
-- [ ] Task 3.1: Solid `createSignal`/`createStore`-based store shims: re-implement `practiceStore`, `progressStore`, `settingsStore`, `specStore`, `uiStore` as Solid stores (or Zustand-vanilla + Solid `useStore` primitive) — 5 commits.
+- [x] Task 3.1: Solid `createSignal`/`createStore`-based store shims: re-implement `practiceStore`, `progressStore`, `settingsStore`, `specStore`, `uiStore` as Solid stores (or Zustand-vanilla + Solid `useStore` primitive) — 5 commits. (3.1a–3.1e; createSolidStore bridges Zustand-vanilla to Solid accessors)
 - [ ] Task 3.2: Solid `ServiceProvider`/context equivalents (provide `PhysicsCore`, `AnswerGrader`, stores via context).
 - [ ] Task 3.3: Solid primitives replacing hooks: `useTheme`, `useGlobalShortcuts`, `useSpecLoader`, `useSessionSnapshot`, `usePracticeActions`, `useMcqHotReconfig`, `useReducedMotion`, `useMediaQuery`, `useCountUp`, `useCountdownTimer` — 10 commits.
 - [ ] Task 3.4: UI primitives (SolidJS + `*.module.css`): `Button`, `Card`, `Modal` (with focus trap via `Portal` + `onCleanup`), `Input`, `Select`, `Slider`, `Switch`, `Tabs`, `Toast` (Portal + live region), `Tooltip`, `Badge`, `Pill`, `ProgressBar`, `Spinner`, `Accordion`, `EmptyState`, `ConfirmDialog`, `Toolbar` — 18 commits.
