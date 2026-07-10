@@ -1,0 +1,12 @@
+.inline {
+	display: inline;
+}
+.display {
+	display: block;
+	margin: var(--space-2) 0;
+	text-align: center;
+	overflow-x: auto;
+}
+.display .katex-display {
+	margin: 0;
+}
