@@ -1,0 +1,25 @@
+.track {
+	height: 4px;
+	width: 100%;
+	overflow: hidden;
+	border-radius: var(--radius-full);
+	background: var(--border);
+}
+.fill {
+	height: 100%;
+	border-radius: var(--radius-full);
+	background: var(--accent);
+	transition: width var(--duration-normal) var(--ease-standard);
+}
+.indeterminate {
+	width: 40%;
+	animation: progress-indeterminate var(--duration-slow) var(--ease-standard) infinite;
+}
+@keyframes progress-indeterminate {
+	0% {
+		transform: translateX(-100%);
+	}
+	100% {
+		transform: translateX(350%);
+	}
+}
