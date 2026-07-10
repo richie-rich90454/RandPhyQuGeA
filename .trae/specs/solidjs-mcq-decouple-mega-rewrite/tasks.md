@@ -125,8 +125,8 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [ ] Task 3.4: UI primitives (SolidJS + `*.module.css`): `Button`, `Card`, `Modal` (with focus trap via `Portal` + `onCleanup`), `Input`, `Select`, `Slider`, `Switch`, `Tabs`, `Toast` (Portal + live region), `Tooltip`, `Badge`, `Pill`, `ProgressBar`, `Spinner`, `Accordion`, `EmptyState`, `ConfirmDialog`, `Toolbar` — 18 commits.
 - [ ] Task 3.5: `MathText` + `MathRenderer` (KaTeX) ported to Solid (`createEffect` to re-render on text change).
 - [ ] Task 3.6: `AppShell`, `AppTopBar`, `ErrorBoundary` (Solid).
-- [ ] Task 3.7: `ControlToolbarTop`, `ControlToolbarBottom`, `ModeSelector`, `TopicsSection`, `McqToggle` (now the **Response Mode** toggle, enabled for all types), `UtilityButtons`, `MentalControls`, `SingleControls`, `MathToolbar` — 9 commits.
-- [ ] Task 3.8: `MainContent`, `QuestionCard`, `AnswerSection`, `AnswerCard` (with live KaTeX preview), `ResultsCard`, `ResultsCard` solution rendering — 6 commits.
+- [x] Task 3.7: `ControlToolbarTop`, `ControlToolbarBottom`, `ModeSelector`, `TopicsSection`, `McqToggle` (now the **Response Mode** toggle, enabled for all types), `UtilityButtons`, `MentalControls`, `SingleControls`, `MathToolbar` — 9 commits.
+- [x] Task 3.8: `MainContent`, `QuestionCard`, `AnswerSection`, `AnswerCard` (with live KaTeX preview), `ResultsCard`, `ResultsCard` solution rendering — 6 commits.
 - [ ] Task 3.9: Modals: `OnboardingModal`, `PrintModal`, `RecommendModal`, `ManageDataModal`, `SettingsModal` (Basic/Advanced tabs), `ShortcutsModal`, `ResumeSessionModal` — 7 commits.
 - [ ] Task 3.10: `ProgressPanel` (analytics) + `analytics` wiring.
 - [ ] Task 3.11: Liquid animated background component (pure CSS) + glassmorphism surfaces.
