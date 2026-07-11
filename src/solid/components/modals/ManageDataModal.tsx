@@ -15,6 +15,14 @@ import {ExportService} from "../../../services/ExportService";
 import type {IExportService} from "../../../services/contracts";
 import type {PracticeResult} from "../../../types/models";
 import styles from "./ManageDataModal.module.css";
+/** localStorage keys managed by the app's persisted stores. */
+const STORAGE_KEYS=["physics-quest-settings", "physics-quest-progress"] as const;
+/** Format a byte count as a human-readable string. */
+function formatBytes(bytes: number): string {
+	if (bytes<1024) return `${bytes} B`;
+	if (bytes<1024*1024) return `${(bytes/1024).toFixed(1)} KB`;
+	return `${(bytes/(1024*1024)).toFixed(2)} MB`;
+}
 /** Number of records to show per page in the data list. */
 const PAGE_SIZE=20;
 function DownloadIcon(): JSX.Element {
@@ -71,6 +79,15 @@ function FileXIcon(): JSX.Element {
 		</svg>
 	);
 }
+function DatabaseIcon(): JSX.Element {
+	return (
+		<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+			<ellipse cx="12" cy="5" rx="8" ry="3" stroke-linejoin="round" />
+			<path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5" stroke-linecap="round" stroke-linejoin="round" />
+			<path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" stroke-linecap="round" stroke-linejoin="round" />
+		</svg>
+	);
+}
 function isValidResult(value: unknown): value is PracticeResult {
 	if (!value || typeof value !== "object") {
 		return false;
@@ -114,7 +131,9 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 	let [confirmDeleteAll, setConfirmDeleteAll]=createSignal<boolean>(false);
 	let [confirmDeleteId, setConfirmDeleteId]=createSignal<string | null>(null);
 	let [confirmReset, setConfirmReset]=createSignal<boolean>(false);
+	let [confirmResetSettings, setConfirmResetSettings]=createSignal<boolean>(false);
 	let [pendingImport, setPendingImport]=createSignal<PracticeResult[] | null>(null);
+	let [storageVersion, setStorageVersion]=createSignal<number>(0);
 	let fileInput: HTMLInputElement | null=null;
 	let exportService: IExportService=props.exportService ?? new ExportService();
 	let sortedResults=createMemo(() => [...results()].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
@@ -130,6 +149,18 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 		let total=totalAttempts();
 		return total===0 ? 0 : Math.round((correctCount()/total)*100);
 	});
+	let storageUsage=createMemo(() => {
+		void storageVersion();
+		let bytes=0;
+		for (let key of STORAGE_KEYS) {
+			let raw=localStorage.getItem(key);
+			if (raw) {
+				bytes+=raw.length;
+			}
+		}
+		return {bytes, label: formatBytes(bytes)};
+	});
+	let refreshStorage=() => setStorageVersion(v => v+1);
 	let handleExport=() => {
 		let payload={appVersion: useSettingsStore.getState().appVersion, exportedAt: new Date().toISOString(), results: results()};
 		let content=JSON.stringify(payload, null, 2);
@@ -176,6 +207,7 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 			useProgressStore.setState({results: pending});
 			setPendingImport(null);
 			setPage(0);
+			refreshStorage();
 			toast({variant: "success", message: `Imported ${pending.length} records.`});
 		}
 	};
@@ -183,6 +215,7 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 		useProgressStore.getState().clearResults();
 		setPage(0);
 		setConfirmDeleteAll(false);
+		refreshStorage();
 		toast({variant: "info", message: "All practice data deleted."});
 	};
 	let handleConfirmDeleteOne=() => {
@@ -191,12 +224,20 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 			useProgressStore.getState().deleteResult(id);
 		}
 		setConfirmDeleteId(null);
+		refreshStorage();
+	};
+	let handleConfirmResetSettings=() => {
+		useSettingsStore.getState().resetToDefaults();
+		setConfirmResetSettings(false);
+		refreshStorage();
+		toast({variant: "info", message: "Settings reset to defaults."});
 	};
 	let handleConfirmReset=() => {
 		useProgressStore.getState().clearResults();
 		useSettingsStore.getState().resetToDefaults();
 		useSpecStore.getState().reset();
 		setConfirmReset(false);
+		refreshStorage();
 		useUiStore.getState().closeModal();
 		toast({variant: "info", message: "App reset to defaults."});
 	};
@@ -246,14 +287,14 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 					</Card>
 					<Card variant="filled" class={styles.actionCard}>
 						<CardHeader class={styles.actionHeader}>
-							<span class={`${styles.actionIcon} ${styles.resetIcon}`}><WarningIcon /></span>
+							<span class={`${styles.actionIcon} ${styles.storageIcon}`}><DatabaseIcon /></span>
 							<div class={styles.actionTitles}>
-								<CardTitle>Reset App</CardTitle>
-								<CardSubtitle>Clear data and restore default settings.</CardSubtitle>
+								<CardTitle>Storage Usage</CardTitle>
+								<CardSubtitle>Estimated local storage used by the app.</CardSubtitle>
 							</div>
 						</CardHeader>
 						<CardContent class={styles.actionContent}>
-							<Button variant="danger" size="sm" leftIcon={<WarningIcon />} onClick={() => setConfirmReset(true)}>Reset Everything</Button>
+							<span class={styles.storageValue} aria-live="polite">{storageUsage().label}</span>
 						</CardContent>
 					</Card>
 				</div>
@@ -304,6 +345,31 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 						</Show>
 					</CardContent>
 				</Card>
+				<Card variant="outline" class={styles.dangerCard}>
+					<CardHeader class={styles.dangerHeader}>
+						<span class={styles.dangerIcon}><WarningIcon /></span>
+						<div class={styles.actionTitles}>
+							<CardTitle>Danger Zone</CardTitle>
+							<CardSubtitle>Irreversible actions. Confirm carefully.</CardSubtitle>
+						</div>
+					</CardHeader>
+					<CardContent class={styles.dangerContent}>
+						<div class={styles.dangerRow}>
+							<div class={styles.dangerRowInfo}>
+								<span class={styles.dangerRowTitle}>Reset settings</span>
+								<span class={styles.dangerRowHint}>Restore all preferences to defaults. Your practice history is kept.</span>
+							</div>
+							<Button variant="danger" size="sm" onClick={() => setConfirmResetSettings(true)}>Reset Settings</Button>
+						</div>
+						<div class={styles.dangerRow}>
+							<div class={styles.dangerRowInfo}>
+								<span class={styles.dangerRowTitle}>Reset everything</span>
+								<span class={styles.dangerRowHint}>Clear practice data, reset settings, and unload the specification.</span>
+							</div>
+							<Button variant="danger" size="sm" leftIcon={<WarningIcon />} onClick={() => setConfirmReset(true)}>Reset Everything</Button>
+						</div>
+					</CardContent>
+				</Card>
 			</Modal>
 			<ConfirmDialog
 				destructive
@@ -322,6 +388,15 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 				open={confirmDeleteId() !== null}
 				onConfirm={handleConfirmDeleteOne}
 				onCancel={() => setConfirmDeleteId(null)}
+			/>
+			<ConfirmDialog
+				destructive
+				title="Reset settings?"
+				message="This will restore all settings to their defaults. Your practice history will be kept. This cannot be undone."
+				confirmLabel="Reset"
+				open={confirmResetSettings()}
+				onConfirm={handleConfirmResetSettings}
+				onCancel={() => setConfirmResetSettings(false)}
 			/>
 			<ConfirmDialog
 				destructive
