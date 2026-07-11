@@ -142,7 +142,7 @@
 		page-break-inside: avoid;
 	}
 }
-@media (max-width: 600px) {
+@media (max-width: 768px) {
 	.print {
 		width: 100%;
 	}
@@ -152,5 +152,13 @@
 	}
 	.countInput {
 		width: 100%;
+	}
+}
+@media (max-width: 480px) {
+	.topicPills {
+		gap: var(--space-1);
+	}
+	.previewList {
+		padding-left: var(--space-4);
 	}
 }

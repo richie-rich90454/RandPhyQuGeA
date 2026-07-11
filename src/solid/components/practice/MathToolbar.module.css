@@ -107,3 +107,32 @@
 	flex-direction: column;
 	gap: var(--space-2);
 }
+@media (max-width: 1024px) {
+	.row {
+		gap: var(--space-1);
+	}
+	.primaryRow {
+		gap: var(--space-1);
+	}
+}
+@media (max-width: 768px) {
+	.primaryRow {
+		flex-wrap: wrap;
+	}
+	.section {
+		flex-wrap: wrap;
+	}
+	.dropdown {
+		right: auto;
+		left: 0;
+	}
+}
+@media (max-width: 480px) {
+	.btn {
+		min-width: 36px;
+		height: 32px;
+	}
+	.sectionHeader {
+		height: 32px;
+	}
+}

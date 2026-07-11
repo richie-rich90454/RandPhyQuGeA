@@ -98,7 +98,7 @@
 .description {
 	color: var(--text-muted);
 }
-@media (max-width: 600px) {
+@media (max-width: 768px) {
 	.shortcuts {
 		width: 100%;
 	}
@@ -123,6 +123,12 @@
 		content: attr(data-label) ": ";
 		font-weight: var(--font-weight-medium);
 		color: var(--text-muted);
+	}
+}
+@media (max-width: 480px) {
+	.shortcut kbd {
+		padding: 1px var(--space-1);
+		font-size: var(--font-size-xs);
 	}
 }
 @media (prefers-reduced-motion: reduce) {

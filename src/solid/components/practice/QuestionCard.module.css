@@ -75,3 +75,32 @@
 	flex: 1;
 	min-width: 0;
 }
+@media (max-width: 1024px) {
+	.questionDisplay {
+		gap: var(--space-2);
+	}
+}
+@media (max-width: 768px) {
+	.questionText {
+		font-size: var(--font-size-sm);
+	}
+	.choiceButton {
+		padding: var(--space-2);
+	}
+}
+@media (max-width: 480px) {
+	.questionDisplay {
+		gap: var(--space-2);
+	}
+	.choicesContainer {
+		gap: var(--space-1);
+	}
+	.choiceButton {
+		padding: var(--space-1) var(--space-2);
+	}
+	.choiceLetter {
+		width: 20px;
+		height: 20px;
+		font-size: var(--font-size-xs);
+	}
+}

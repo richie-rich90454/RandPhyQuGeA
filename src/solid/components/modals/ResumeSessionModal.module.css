@@ -84,7 +84,7 @@
 	font-variant-numeric: tabular-nums;
 	word-break: break-word;
 }
-@media (max-width: 600px) {
+@media (max-width: 768px) {
 	.resume {
 		width: 100%;
 	}
@@ -101,5 +101,13 @@
 	}
 	.actions button {
 		width: 100%;
+	}
+}
+@media (max-width: 480px) {
+	.statsGrid {
+		grid-template-columns: 1fr;
+	}
+	.stat {
+		padding: var(--space-2);
 	}
 }

@@ -146,3 +146,36 @@
 	backdrop-filter: blur(var(--glass-blur));
 	-webkit-backdrop-filter: blur(var(--glass-blur));
 }
+@media (max-width: 1024px) {
+	.stats {
+		gap: var(--space-1);
+	}
+	.extra {
+		gap: var(--space-1);
+	}
+}
+@media (max-width: 768px) {
+	.wrapper {
+		gap: var(--space-1);
+	}
+	.extra {
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--space-1);
+	}
+	.optionControls {
+		justify-content: center;
+	}
+}
+@media (max-width: 480px) {
+	.summary, .statsPanel, .difficultyPills, .sessionControls, .optionControls, .startWrapper {
+		width: 100%;
+		justify-content: center;
+	}
+	.startBtn {
+		min-width: 100%;
+	}
+	.difficultyPill {
+		padding: var(--space-1) var(--space-2);
+	}
+}
