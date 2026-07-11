@@ -16,8 +16,41 @@
 .section {
 	display: inline-flex;
 	align-items: center;
-	gap: 2px;
+	gap: var(--space-1);
 	position: relative;
+}
+.sectionHeader {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	padding: 0 var(--space-1);
+	height: 28px;
+	font-size: var(--font-size-xs);
+	font-weight: var(--font-weight-semibold);
+	color: var(--text-muted);
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	transition: color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
+}
+.sectionHeader:hover {
+	color: var(--text);
+	background: var(--surface-muted);
+}
+.sectionTitle {
+	white-space: nowrap;
+}
+.chevron {
+	transition: transform var(--duration-fast) var(--ease-standard);
+}
+.chevronOpen {
+	transform: rotate(90deg);
+}
+.sectionBody {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
 }
 .btn {
 	display: inline-flex;

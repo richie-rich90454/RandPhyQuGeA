@@ -59,4 +59,27 @@ describe("MathToolbar", () => {
 		fireEvent.mouseDown(document.body);
 		expect(trigger).toHaveAttribute("aria-expanded", "false");
 	});
+	it("renders collapsible section headers for each primary group", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		expect(screen.getByRole("button", {name: "Basic"})).toBeInTheDocument();
+		expect(screen.getByRole("button", {name: "Exponents & Roots"})).toBeInTheDocument();
+		expect(screen.getByRole("button", {name: "Calculus"})).toBeInTheDocument();
+	});
+	it("collapses a section when its header is clicked", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		let header=screen.getByRole("button", {name: "Basic"});
+		expect(header).toHaveAttribute("aria-expanded", "true");
+		fireEvent.click(header);
+		expect(header).toHaveAttribute("aria-expanded", "false");
+		expect(screen.queryByText("\u2212")).not.toBeInTheDocument();
+	});
+	it("renders the new basic symbols", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		expect(screen.getByText("\u221e")).toBeInTheDocument();
+	});
+	it("renders the x squared and d/dx symbols", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		expect(screen.getByText("x\u00b2")).toBeInTheDocument();
+		expect(screen.getByText("d/dx")).toBeInTheDocument();
+	});
 });

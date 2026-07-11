@@ -1,5 +1,5 @@
 import type {JSX} from "solid-js";
-import {For, createEffect, createSignal, onCleanup, splitProps} from "solid-js";
+import {For, Show, createEffect, createSignal, onCleanup, splitProps} from "solid-js";
 import styles from "./MathToolbar.module.css";
 export interface MathSymbol {
 	latex: string;
@@ -19,29 +19,36 @@ const PRIMARY_GROUPS: readonly SymbolGroup[]=[
 			{latex: "*", label: "\u00d7"},
 			{latex: "/", label: "\u00f7"},
 			{latex: "=", label: "="},
+			{latex: "\\pm", label: "\u00b1"},
+			{latex: "\\neq", label: "\u2260"},
+			{latex: "\\approx", label: "\u2248"},
+			{latex: "\\leq", label: "\u2264"},
+			{latex: "\\geq", label: "\u2265"},
+			{latex: "\\to", label: "\u2192"},
+			{latex: "\\infty", label: "\u221e"},
+			{latex: "\\frac{}{}", label: "\u2141"},
 		],
 	},
 	{
 		title: "Exponents & Roots",
 		symbols: [
+			{latex: "^{2}", label: "x\u00b2"},
 			{latex: "^{}", label: "x\u207f"},
-			{latex: "_{}", label: "x\u2099"},
 			{latex: "\\sqrt{}", label: "\u221a"},
-			{latex: "\\sqrt[]{}", label: "\u221b"},
-			{latex: "\\frac{}{}", label: "\u2141"},
+			{latex: "\\sqrt[3]{}", label: "\u221b"},
+			{latex: "\\sqrt[]{}", label: "\u207f\u221a"},
 		],
 	},
 	{
 		title: "Calculus",
 		symbols: [
 			{latex: "\\int", label: "\u222b"},
-			{latex: "\\int_{}^{}", label: "\u222b\u2090\u1d47"},
-			{latex: "\\sum", label: "\u2211"},
-			{latex: "\\prod", label: "\u220f"},
-			{latex: "\\lim_{}", label: "lim"},
 			{latex: "\\partial", label: "\u2202"},
 			{latex: "\\nabla", label: "\u2207"},
-			{latex: "\\prime", label: "\u2032"},
+			{latex: "\\sum", label: "\u2211"},
+			{latex: "\\prod", label: "\u220f"},
+			{latex: "\\frac{d}{dx}", label: "d/dx"},
+			{latex: "\\lim_{}", label: "lim"},
 		],
 	},
 	{
@@ -56,7 +63,6 @@ const PRIMARY_GROUPS: readonly SymbolGroup[]=[
 			{latex: "\\mu", label: "\u03bc"},
 			{latex: "\\sigma", label: "\u03c3"},
 			{latex: "\\omega", label: "\u03c9"},
-			{latex: "\\infty", label: "\u221e"},
 		],
 	},
 	{
@@ -179,6 +185,69 @@ export interface MathToolbarProps {
 	onInsert: (latex: string) => void;
 	disabled?: boolean;
 }
+function ChevronIcon(props: {open: boolean}): JSX.Element {
+	return (
+		<svg
+			viewBox="0 0 24 24"
+			width="10"
+			height="10"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2.5"
+			class={`${styles.chevron} ${props.open ? styles.chevronOpen : ""}`}
+			aria-hidden="true"
+		>
+			<path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+		</svg>
+	);
+}
+interface SymbolSectionProps {
+	group: SymbolGroup;
+	disabled?: boolean;
+	onInsert: (latex: string) => void;
+	defaultOpen?: boolean;
+}
+/**
+ * Collapsible symbol group with a header button that toggles the symbol body.
+ *
+ * Defaults to open so all primary symbols remain reachable and discoverable by
+ * the test suite. The header carries the group title plus a rotating chevron;
+ * the body unmounts when collapsed via `<Show>` so keyboard focus never lands on
+ * hidden buttons.
+ */
+function SymbolSection(props: SymbolSectionProps): JSX.Element {
+	let [open, setOpen]=createSignal(props.defaultOpen ?? true);
+	let toggle=() => setOpen(prev => !prev);
+	return (
+		<div class={styles.section} title={props.group.title}>
+			<button
+				type="button"
+				class={styles.sectionHeader}
+				aria-expanded={open() ? "true" : "false"}
+				onClick={toggle}
+			>
+				<span class={styles.sectionTitle}>{props.group.title}</span>
+				<ChevronIcon open={open()} />
+			</button>
+			<Show when={open()}>
+				<div class={styles.sectionBody}>
+					<For each={props.group.symbols}>{(symbol) => (
+						<button
+							type="button"
+							class={styles.btn}
+							data-symbol={symbol.latex}
+							title={symbol.title ?? symbol.label}
+							disabled={props.disabled}
+							onClick={() => props.onInsert(symbol.latex)}
+						>
+							{symbol.label}
+						</button>
+					)}</For>
+				</div>
+			</Show>
+		</div>
+	);
+}
 /**
  * Full math symbol toolbar mapped to `#math-toolbar`.
  *
@@ -215,20 +284,7 @@ export function MathToolbar(props: MathToolbarProps): JSX.Element {
 		<div id="math-toolbar" class={styles.toolbar}>
 			<div class={`${styles.row} ${styles.primaryRow}`}>
 				<For each={PRIMARY_GROUPS}>{(group) => (
-					<div class={styles.section} title={group.title}>
-						<For each={group.symbols}>{(symbol) => (
-							<button
-								type="button"
-								class={styles.btn}
-								data-symbol={symbol.latex}
-								title={symbol.title ?? symbol.label}
-								disabled={local.disabled}
-								onClick={() => handleClick(symbol.latex)}
-							>
-								{symbol.label}
-							</button>
-						)}</For>
-					</div>
+					<SymbolSection group={group} disabled={local.disabled} onInsert={handleClick} />
 				)}</For>
 				<div class={`${styles.section} ${styles.dropdownTrigger}`} ref={(el: HTMLDivElement) => { dropdownEl=el; }}>
 					<button
