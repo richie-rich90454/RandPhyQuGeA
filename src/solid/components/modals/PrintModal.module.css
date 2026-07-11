@@ -1,0 +1,77 @@
+.print {
+	width: 640px;
+}
+.optionsCard {
+	margin-bottom: var(--space-4);
+}
+.optionsContent {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+}
+.option {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-1);
+}
+.optionTitle {
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-semibold);
+	color: var(--text);
+}
+.optionHint {
+	font-size: var(--font-size-xs);
+	color: var(--text-muted);
+}
+.actions {
+	display: flex;
+	justify-content: flex-start;
+	margin-top: var(--space-2);
+}
+.generating {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2);
+}
+.error {
+	margin: var(--space-2) 0 0 0;
+	padding: var(--space-2) var(--space-3);
+	background: var(--danger-surface);
+	color: var(--danger);
+	border-radius: var(--radius-sm);
+	font-size: var(--font-size-sm);
+}
+.previewCard {
+	margin-top: var(--space-3);
+}
+.previewContent {
+	padding: var(--space-3);
+}
+.previewList {
+	margin: 0;
+	padding-left: var(--space-6);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+}
+.previewItem {
+	font-size: var(--font-size-sm);
+	color: var(--text);
+	line-height: 1.6;
+}
+.previewAnswer {
+	color: var(--success);
+	font-weight: var(--font-weight-medium);
+}
+@media print {
+	.optionsCard,
+	.actions {
+		display: none !important;
+	}
+	.previewList {
+		gap: var(--space-2);
+	}
+	.previewItem {
+		page-break-inside: avoid;
+	}
+}
