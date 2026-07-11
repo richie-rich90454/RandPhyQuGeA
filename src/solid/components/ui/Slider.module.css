@@ -82,3 +82,8 @@
 	font-size: var(--font-size-sm);
 	color: var(--text-muted);
 }
+@media (pointer: coarse) {
+	.trackWrap {
+		height: 44px;
+	}
+}

@@ -43,3 +43,8 @@
 	margin-top: var(--space-3);
 	border-radius: var(--radius-md);
 }
+@media (pointer: coarse) {
+	.trigger {
+		min-height: 44px;
+	}
+}

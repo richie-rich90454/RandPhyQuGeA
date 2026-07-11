@@ -119,3 +119,7 @@
 }
 .invisible { visibility: hidden; }
 .iconWrap { display: inline-flex; }
+@media (pointer: coarse) {
+	.xs, .sm, .md, .lg { min-height: 44px; }
+	.iconXs, .iconSm, .iconMd, .iconLg { min-width: 44px; min-height: 44px; }
+}

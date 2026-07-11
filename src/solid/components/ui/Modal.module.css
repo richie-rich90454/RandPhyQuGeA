@@ -92,3 +92,9 @@
 	padding: var(--space-3) var(--space-4);
 	border-top: 1px solid var(--border-subtle);
 }
+@media (pointer: coarse) {
+	.iconButton {
+		width: 44px;
+		height: 44px;
+	}
+}

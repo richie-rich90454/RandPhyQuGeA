@@ -136,3 +136,12 @@
 		height: 32px;
 	}
 }
+@media (pointer: coarse) {
+	.btn {
+		min-width: 44px;
+		min-height: 44px;
+	}
+	.sectionHeader {
+		min-height: 44px;
+	}
+}
