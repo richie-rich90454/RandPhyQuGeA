@@ -1,0 +1,79 @@
+.settings {
+	width: 640px;
+}
+.tabs {
+	display: flex;
+	gap: var(--space-1);
+	border-bottom: 1px solid var(--border-subtle);
+	margin-bottom: var(--space-4);
+}
+.tab {
+	padding: var(--space-2) var(--space-4);
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+	color: var(--text-muted);
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	cursor: pointer;
+	transition: color 0.15s ease, border-color 0.15s ease;
+}
+.tab:hover {
+	color: var(--text);
+}
+.panel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-4);
+}
+.sectionCard {
+	margin: 0;
+}
+.sectionContent {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+}
+.row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--space-4);
+	min-width: 0;
+}
+.rowLabel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-1);
+	min-width: 0;
+	flex: 1 1 auto;
+}
+.rowTitle {
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+	color: var(--text);
+}
+.rowHint {
+	font-size: var(--font-size-xs);
+	color: var(--text-muted);
+}
+.rowControl {
+	display: flex;
+	align-items: center;
+	flex: 0 0 auto;
+	min-width: 180px;
+	justify-content: flex-end;
+}
+@media (max-width: 600px) {
+	.settings {
+		width: 100%;
+	}
+	.row {
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+	.rowControl {
+		width: 100%;
+		justify-content: flex-start;
+	}
+}
