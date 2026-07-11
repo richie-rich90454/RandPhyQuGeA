@@ -119,12 +119,21 @@ export function MentalControls(): JSX.Element {
 	});
 	let displayTime=createMemo(() => timer.timeRemaining() || mentalDurationSec());
 	let stats=createMemo(() => {
-		let total=results().length;
-		let correct=results().filter(r => r.is_correct).length;
+		let list=results();
+		let total=list.length;
+		let correct=list.filter(r => r.is_correct).length;
 		let accuracy=total===0 ? 0 : (correct/total)*100;
-		let totalTimeMs=results().reduce((sum, r) => sum+r.time_taken_ms, 0);
+		let totalTimeMs=list.reduce((sum, r) => sum+r.time_taken_ms, 0);
 		let avgTimeMs=total===0 ? 0 : totalTimeMs/total;
-		return {score: correct, total, accuracy, avgTimeMs};
+		let streak=0;
+		for (let i=list.length-1; i>=0; i=i-1) {
+			if (list[i]!.is_correct) {
+				streak=streak+1;
+			} else {
+				break;
+			}
+		}
+		return {score: correct, total, accuracy, avgTimeMs, streak};
 	});
 	let progressPercent=createMemo(() => mentalDurationSec()>0 ? ((mentalDurationSec()-timer.timeRemaining())/mentalDurationSec())*100 : 0);
 	let scopeOptions=createMemo(() => buildScopeOptions(specification()));
@@ -330,21 +339,23 @@ export function MentalControls(): JSX.Element {
 					</Tooltip>
 				</div>
 				<Show when={isFinished()}>
-					<div id="session-summary" class={styles.summary} role="status" aria-live="polite">
-						<Badge variant="default" size="sm" class={styles.gap}>
-							<CheckIcon />
-							{stats().score} / {stats().total}
-						</Badge>
-						<Badge variant="default" size="sm">Accuracy: {Math.round(stats().accuracy)}%</Badge>
-						<Badge variant="default" size="sm">Avg: {(stats().avgTimeMs/1000).toFixed(1)}s</Badge>
-					</div>
-				</Show>
-				<Show when={isSessionActive()}>
-					<div id="statistics-panel" class={styles.statsPanel} aria-live="polite">
-						<Badge variant="default" size="sm">Accuracy: {Math.round(stats().accuracy)}%</Badge>
-						<Badge variant="default" size="sm">Avg: {(stats().avgTimeMs/1000).toFixed(1)}s</Badge>
-					</div>
-				</Show>
+				<div id="session-summary" class={styles.summary} role="status" aria-live="polite">
+					<Badge variant="default" size="sm" class={styles.gap}>
+						<CheckIcon />
+						{stats().score} / {stats().total}
+					</Badge>
+					<Badge variant="default" size="sm">Accuracy: {Math.round(stats().accuracy)}%</Badge>
+					<Badge variant="default" size="sm">Streak: {stats().streak}</Badge>
+					<Badge variant="default" size="sm">Avg: {(stats().avgTimeMs/1000).toFixed(1)}s</Badge>
+				</div>
+			</Show>
+			<Show when={isSessionActive()}>
+				<div id="statistics-panel" class={styles.statsPanel} aria-live="polite">
+					<Badge variant="default" size="sm">Accuracy: {Math.round(stats().accuracy)}%</Badge>
+					<Badge variant="default" size="sm">Streak: {stats().streak}</Badge>
+					<Badge variant="default" size="sm">Avg: {(stats().avgTimeMs/1000).toFixed(1)}s</Badge>
+				</div>
+			</Show>
 				<div class={styles.startWrapper}>
 					<Tooltip delay={300}>
 						<TooltipTrigger>
@@ -356,7 +367,7 @@ export function MentalControls(): JSX.Element {
 					</Tooltip>
 				</div>
 			</ToolbarGroup>
-			<ProgressBar value={progressPercent()} />
+			<ProgressBar value={progressPercent()} ariaLabel="Mental session time remaining" />
 		</div>
 	);
 }

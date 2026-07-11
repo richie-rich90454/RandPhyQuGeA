@@ -4,6 +4,26 @@ import {MentalControls} from "../MentalControls";
 import {usePracticeStore} from "../../../stores/practiceStore";
 import {useSettingsStore} from "../../../stores/settingsStore";
 import {useSpecStore} from "../../../stores/specStore";
+import type {Session} from "../../../../services/contracts";
+import type {PracticeResult} from "../../../../types/models";
+function makeResult(correct: boolean): PracticeResult {
+	return {id: "r", question_id: "q", topic_id: "t", skill_id: "s", is_correct: correct, time_taken_ms: 2000, user_answer: "x", timestamp: new Date().toISOString(), mode: "Mental", difficulty: 3};
+}
+function makeFinishedSession(results: PracticeResult[]): Session {
+	let now=Date.now();
+	return {
+		id: "sess",
+		specification: {units: [], topics: [], skills: [], templates: []},
+		questions: [],
+		mode: "Mental",
+		currentIndex: 0,
+		results,
+		isActive: false,
+		isFinished: true,
+		questionStartTime: now,
+		sessionStartTime: now,
+	};
+}
 beforeEach(() => {
 	usePracticeStore.setState(usePracticeStore.getInitialState());
 	useSettingsStore.setState({...useSettingsStore.getState(), mentalDifficulty: "medium", mentalDurationSec: 60, mentalScope: "all", mentalShuffle: false, mentalUnlimited: false});
@@ -70,5 +90,16 @@ describe("MentalControls", () => {
 		let select=screen.getByRole("combobox", {name: "Mental scope"}) as HTMLSelectElement;
 		let optionValues=Array.from(select.options).map(o => o.value);
 		expect(optionValues).toEqual(["all", "u1"]);
+	});
+	it("renders session statistics with streak in the finished summary", () => {
+		let results=[makeResult(false), makeResult(true), makeResult(true)];
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeFinishedSession(results)});
+		render(() => <MentalControls />);
+		expect(screen.getByText(/Streak: 2/)).toBeInTheDocument();
+		expect(screen.getByText(/Accuracy: 67%/)).toBeInTheDocument();
+	});
+	it("labels the progress bar with the time remaining context", () => {
+		render(() => <MentalControls />);
+		expect(screen.getByRole("progressbar", {name: "Mental session time remaining"})).toBeInTheDocument();
 	});
 });
