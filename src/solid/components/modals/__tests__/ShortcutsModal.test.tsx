@@ -36,7 +36,8 @@ describe("ShortcutsModal", () => {
 		expect(screen.getByText("Modes")).toBeInTheDocument();
 		expect(screen.getByText("App")).toBeInTheDocument();
 		expect(screen.getByText("Ctrl+G")).toBeInTheDocument();
-		expect(screen.getByText("Generate a new question")).toBeInTheDocument();
+		expect(screen.getByText("Generate question")).toBeInTheDocument();
+		expect(screen.getByText("Create a new random question with current settings.")).toBeInTheDocument();
 		expect(screen.getByText("Ctrl+Shift+T")).toBeInTheDocument();
 	});
 	it("closes when the Got it button is clicked", () => {

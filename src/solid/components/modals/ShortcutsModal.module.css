@@ -1,5 +1,5 @@
 .shortcuts {
-	width: 560px;
+	width: 640px;
 }
 .intro {
 	display: flex;
@@ -48,18 +48,46 @@
 	padding: var(--space-2) var(--space-3);
 	border-bottom: 1px solid var(--border-subtle);
 	font-size: var(--font-size-sm);
+	vertical-align: top;
 }
 .table tr:last-child td {
 	border-bottom: none;
 }
-.keys {
-	width: 40%;
+.row {
+	cursor: default;
+	transition: background 0.1s ease;
+}
+.row:nth-child(even) {
+	background: var(--surface-muted);
+}
+.row:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: -2px;
+}
+.row:hover {
+	background: var(--accent-surface);
+}
+.actionHeader {
+	width: 25%;
+}
+.shortcutHeader {
+	width: 25%;
+}
+.descriptionHeader {
+	width: 50%;
+}
+.action {
+	font-weight: var(--font-weight-medium);
+	color: var(--text);
 	white-space: nowrap;
 }
-.keys kbd {
+.shortcut {
+	white-space: nowrap;
+}
+.shortcut kbd {
 	display: inline-block;
 	padding: 2px var(--space-2);
-	background: var(--surface-muted);
+	background: var(--surface);
 	border: 1px solid var(--border-subtle);
 	border-radius: var(--radius-sm);
 	font-family: var(--font-mono, monospace);
@@ -68,13 +96,37 @@
 	line-height: 1.4;
 }
 .description {
-	color: var(--text);
+	color: var(--text-muted);
 }
 @media (max-width: 600px) {
 	.shortcuts {
 		width: 100%;
 	}
-	.keys {
+	.actionHeader, .shortcutHeader, .descriptionHeader {
 		width: auto;
+	}
+	.table, .table tbody, .table tr, .table td {
+		display: block;
+	}
+	.table thead {
+		display: none;
+	}
+	.table tr {
+		padding: var(--space-2) var(--space-3);
+		border-bottom: 1px solid var(--border-subtle);
+	}
+	.table td {
+		border-bottom: none;
+		padding: 2px 0;
+	}
+	.table td::before {
+		content: attr(data-label) ": ";
+		font-weight: var(--font-weight-medium);
+		color: var(--text-muted);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.row {
+		transition: none;
 	}
 }
