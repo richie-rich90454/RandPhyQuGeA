@@ -208,10 +208,17 @@ export function MentalControls(): JSX.Element {
 	};
 	let pauseSession=() => timer.pause();
 	let resumeSession=() => timer.resume();
-	let skipQuestion=() => {
+	let skipQuestion=async () => {
 		let store=usePracticeStore.getState();
 		if (!store.session || !store.session.isActive || store.session.mode!=="Mental") return;
-		void advance();
+		let {session}=resolveServices();
+		try {
+			await session.submitAnswer("", undefined);
+		} catch {
+			return;
+		}
+		usePracticeStore.getState().setSession(session.getSession());
+		await advance();
 	};
 	createPracticeActions({mode: "Mental"});
 	createEffect(() => {
@@ -266,6 +273,7 @@ export function MentalControls(): JSX.Element {
 					<CheckIcon />
 					{stats().score} / {stats().total}
 				</Badge>
+				<div class={styles.sessionControls}>
 				<Show when={isSessionActive() && !isPaused()}>
 					<Tooltip delay={300}>
 						<TooltipTrigger>
@@ -293,31 +301,34 @@ export function MentalControls(): JSX.Element {
 								<SkipIcon />
 							</Button>
 						</TooltipTrigger>
-						<TooltipContent side="bottom">Skip this question</TooltipContent>
+						<TooltipContent side="bottom">Skip this question (counts as incorrect)</TooltipContent>
 					</Tooltip>
 				</Show>
-			</ToolbarGroup>
+			</div>
+		</ToolbarGroup>
 			<ToolbarGroup label="Session options" class={styles.extra}>
-				<Select
-					id="mental-scope-select"
-					variant="scope"
-					aria-label="Mental scope"
-					options={scopeOptions()}
-					value={scope()}
-					onInput={handleScope}
-				/>
-				<Tooltip delay={300}>
-					<TooltipTrigger>
-						<Switch label="Shuffle" checked={shuffle()} onCheckedChange={(checked) => useSettingsStore.getState().setMentalShuffle(checked)} />
-					</TooltipTrigger>
-					<TooltipContent side="bottom">Randomly pick topics in mental mode</TooltipContent>
-				</Tooltip>
-				<Tooltip delay={300}>
-					<TooltipTrigger>
-						<Switch label="Unlimited" checked={unlimited()} onCheckedChange={(checked) => useSettingsStore.getState().setMentalUnlimited(checked)} />
-					</TooltipTrigger>
-					<TooltipContent side="bottom">Unlimited practice (no question limit)</TooltipContent>
-				</Tooltip>
+				<div class={styles.optionControls}>
+					<Select
+						id="mental-scope-select"
+						variant="scope"
+						aria-label="Mental scope"
+						options={scopeOptions()}
+						value={scope()}
+						onInput={handleScope}
+					/>
+					<Tooltip delay={300}>
+						<TooltipTrigger>
+							<Switch label="Shuffle" checked={shuffle()} onCheckedChange={(checked) => useSettingsStore.getState().setMentalShuffle(checked)} />
+						</TooltipTrigger>
+						<TooltipContent side="bottom">Randomly pick topics in mental mode</TooltipContent>
+					</Tooltip>
+					<Tooltip delay={300}>
+						<TooltipTrigger>
+							<Switch label="Unlimited" checked={unlimited()} onCheckedChange={(checked) => useSettingsStore.getState().setMentalUnlimited(checked)} />
+						</TooltipTrigger>
+						<TooltipContent side="bottom">Unlimited practice (no question limit)</TooltipContent>
+					</Tooltip>
+				</div>
 				<Show when={isFinished()}>
 					<div id="session-summary" class={styles.summary} role="status" aria-live="polite">
 						<Badge variant="default" size="sm" class={styles.gap}>
