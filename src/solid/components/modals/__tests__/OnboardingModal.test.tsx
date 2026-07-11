@@ -70,7 +70,7 @@ describe("OnboardingModal", () => {
 		await flush();
 		let dots=screen.getAllByRole("tab");
 		fireEvent.click(dots[2]!);
-		expect(screen.getByText("Stay in flow")).toBeInTheDocument();
+		expect(screen.getByText("Quick setup")).toBeInTheDocument();
 	});
 	it("advances with ArrowRight and goes back with ArrowLeft", async () => {
 		useUiStore.getState().openModal("onboarding");
@@ -86,7 +86,7 @@ describe("OnboardingModal", () => {
 		render(() => <OnboardingModal />);
 		await flush();
 		fireEvent.keyDown(document, {key: "End"});
-		expect(screen.getByText("Build momentum")).toBeInTheDocument();
+		expect(screen.getByText("You are ready to begin")).toBeInTheDocument();
 		fireEvent.keyDown(document, {key: "Home"});
 		expect(screen.getByText("Physics practice, simplified")).toBeInTheDocument();
 	});
