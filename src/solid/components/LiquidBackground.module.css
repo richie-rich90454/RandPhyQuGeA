@@ -6,12 +6,23 @@
 	pointer-events: none;
 	background: var(--bg);
 }
+.root::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background:
+		radial-gradient(ellipse at 28% 18%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
+		radial-gradient(ellipse at 78% 82%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 55%);
+	pointer-events: none;
+	z-index: 0;
+}
 .blob {
 	position: absolute;
-	border-radius: var(--radius-full);
+	border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
 	filter: blur(var(--liquid-blur));
-	will-change: transform;
+	will-change: transform, border-radius;
 	mix-blend-mode: screen;
+	z-index: 1;
 }
 .blob1 {
 	top: -10%;
@@ -19,7 +30,7 @@
 	width: 45vmax;
 	height: 45vmax;
 	background: var(--liquid-color-1);
-	animation: liquidFloat1 var(--liquid-duration-slow) var(--ease-emphasized) infinite alternate;
+	animation: liquidFloat1 var(--liquid-duration-slow) var(--ease-emphasized) infinite alternate, blobMorph1 18s var(--ease-in-out) infinite alternate;
 }
 .blob2 {
 	top: 20%;
@@ -27,7 +38,7 @@
 	width: 40vmax;
 	height: 40vmax;
 	background: var(--liquid-color-2);
-	animation: liquidFloat2 var(--liquid-duration) var(--ease-decelerated) infinite alternate;
+	animation: liquidFloat2 var(--liquid-duration) var(--ease-decelerated) infinite alternate, blobMorph2 22s var(--ease-in-out) infinite alternate;
 }
 .blob3 {
 	bottom: -15%;
@@ -35,7 +46,7 @@
 	width: 50vmax;
 	height: 50vmax;
 	background: var(--liquid-color-3);
-	animation: liquidFloat3 var(--liquid-duration-slow) var(--ease-accelerated) infinite alternate;
+	animation: liquidFloat3 var(--liquid-duration-slow) var(--ease-accelerated) infinite alternate, blobMorph3 26s var(--ease-in-out) infinite alternate;
 }
 .blob4 {
 	bottom: 10%;
@@ -43,12 +54,13 @@
 	width: 35vmax;
 	height: 35vmax;
 	background: var(--liquid-color-4);
-	animation: liquidFloat4 var(--liquid-duration) var(--ease-standard) infinite alternate;
+	animation: liquidFloat4 var(--liquid-duration) var(--ease-standard) infinite alternate, blobMorph4 20s var(--ease-in-out) infinite alternate;
 }
 .veil {
 	position: absolute;
 	inset: 0;
 	background: radial-gradient(circle at 50% 50%, transparent 0%, color-mix(in srgb, var(--bg) 35%, transparent) 100%);
+	z-index: 2;
 }
 @keyframes liquidFloat1 {
 	0% {
@@ -94,11 +106,56 @@
 		transform: translate3d(10vmax, 6vmax, 0) scale(0.85);
 	}
 }
+@keyframes blobMorph1 {
+	0% {
+		border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+	}
+	50% {
+		border-radius: 58% 42% 37% 63% / 56% 59% 41% 44%;
+	}
+	100% {
+		border-radius: 37% 63% 58% 42% / 59% 41% 44% 56%;
+	}
+}
+@keyframes blobMorph2 {
+	0% {
+		border-radius: 63% 37% 41% 59% / 44% 56% 58% 42%;
+	}
+	50% {
+		border-radius: 41% 59% 56% 44% / 63% 37% 42% 58%;
+	}
+	100% {
+		border-radius: 56% 44% 63% 37% / 42% 58% 37% 63%;
+	}
+}
+@keyframes blobMorph3 {
+	0% {
+		border-radius: 58% 42% 56% 44% / 37% 63% 41% 59%;
+	}
+	50% {
+		border-radius: 44% 56% 37% 63% / 58% 42% 59% 41%;
+	}
+	100% {
+		border-radius: 63% 37% 44% 56% / 41% 59% 37% 63%;
+	}
+}
+@keyframes blobMorph4 {
+	0% {
+		border-radius: 37% 63% 58% 42% / 56% 44% 37% 63%;
+	}
+	50% {
+		border-radius: 59% 41% 42% 58% / 37% 63% 56% 44%;
+	}
+	100% {
+		border-radius: 42% 58% 37% 63% / 63% 37% 44% 56%;
+	}
+}
 @media (prefers-reduced-motion: reduce) {
 	.blob {
 		animation: none;
 	}
 	.blob1, .blob2, .blob3, .blob4 {
 		transform: none;
+		border-radius: var(--radius-full);
 	}
 }
