@@ -1,5 +1,5 @@
 import type {JSX, JSXElement} from "solid-js";
-import {Show, createSignal} from "solid-js";
+import {For, Show, createSignal} from "solid-js";
 import {Modal} from "../ui/Modal";
 import {ConfirmDialog} from "../ui/ConfirmDialog";
 import {Button} from "../ui/Button";
@@ -31,6 +31,13 @@ const FONT_SIZE_OPTIONS: {value: FontSize; label: string}[]=[
 const RESPONSE_MODE_OPTIONS: {value: ResponseMode; label: string}[]=[
 	{value: "frq", label: "Free Response"},
 	{value: "mcq", label: "Multiple Choice"},
+];
+const SHORTCUT_ITEMS: {action: string; label: string; default: string}[]=[
+	{action: "generate", label: "Generate question", default: "Ctrl+G"},
+	{action: "submit", label: "Submit answer", default: "Enter"},
+	{action: "nextQuestion", label: "Next question", default: "Shift+Enter"},
+	{action: "toggleTheme", label: "Toggle theme", default: "Ctrl+Shift+T"},
+	{action: "openSettings", label: "Open settings", default: "Ctrl+,"},
 ];
 const MODE_OPTIONS: {value: PracticeMode; label: string}[]=[
 	{value: "Single", label: "Single"},
@@ -117,6 +124,12 @@ export function SettingsModal(): JSX.Element {
 			let target=event.target as HTMLInputElement;
 			setter(Number(target.value));
 		};
+	let handleShortcutChange=(action: string)=>
+		(event: Event) => {
+			let target=event.target as HTMLInputElement;
+			useSettingsStore.getState().setCustomShortcut(action, target.value);
+		};
+	let getShortcut=(action: string, fallback: string): string => settings().customShortcuts[action] ?? fallback;
 	let handleConfirmReset=() => {
 		useSettingsStore.getState().resetToDefaults();
 		setConfirmReset(false);
@@ -220,30 +233,40 @@ export function SettingsModal(): JSX.Element {
 							</SettingsRow>
 						</SettingsSection>
 						<SettingsSection title="Performance">
-							<SettingsRow>
-								<Switch id="settings-perf-master" label="Performance mode" hint="Disable decorative effects for smoother rendering." checked={settings().perfMode} onCheckedChange={useSettingsStore.getState().setPerfMode} />
+						<SettingsRow>
+							<Switch id="settings-perf-master" label="Performance mode" hint="Disable decorative effects for smoother rendering." checked={settings().perfMode} onCheckedChange={useSettingsStore.getState().setPerfMode} />
+						</SettingsRow>
+						<SettingsRow>
+							<Switch id="settings-perf-wave" label="Wave background" hint="Show the animated background layer." checked={settings().waveBackground} onCheckedChange={useSettingsStore.getState().setWaveBackground} />
+						</SettingsRow>
+						<SettingsRow>
+							<Switch id="settings-perf-blur" label="Blur effects" hint="Enable backdrop blur on elevated surfaces." checked={settings().blurEffects} onCheckedChange={useSettingsStore.getState().setBlurEffects} />
+						</SettingsRow>
+						<SettingsRow>
+							<Switch id="settings-perf-preview" label="Live preview" hint="Render KaTeX previews while editing." checked={settings().livePreview} onCheckedChange={useSettingsStore.getState().setLivePreview} />
+						</SettingsRow>
+						<SettingsRow>
+							<Switch id="settings-perf-animations" label="Animations" hint="Enable motion transitions throughout the app." checked={settings().animations} onCheckedChange={useSettingsStore.getState().setAnimations} />
+						</SettingsRow>
+						<SettingsRow>
+							<Switch id="settings-reduced-data" label="Reduced data" hint="Disable background animations and heavy assets to save bandwidth." checked={settings().reducedDataMode} onCheckedChange={useSettingsStore.getState().setReducedDataMode} />
+						</SettingsRow>
+						<SettingsRow label="FPS cap" hint="Limit frame rate for JavaScript-driven animations." controlId="settings-fps-cap">
+							<Select id="settings-fps-cap" variant="scope" options={FPS_OPTIONS.map(o => ({value: String(o.value), label: o.label}))} value={String(settings().fpsCap)} onChange={handleNumber(useSettingsStore.getState().setFpsCap)} />
+						</SettingsRow>
+					</SettingsSection>
+					<SettingsSection title="Keyboard Shortcuts">
+						<For each={SHORTCUT_ITEMS}>{(item) => (
+							<SettingsRow label={item.label} hint={`Default: ${item.default}`} controlId={`settings-shortcut-${item.action}`}>
+								<Input id={`settings-shortcut-${item.action}`} type="text" value={getShortcut(item.action, item.default)} onChange={handleShortcutChange(item.action)} />
 							</SettingsRow>
-							<SettingsRow>
-								<Switch id="settings-perf-wave" label="Wave background" hint="Show the animated background layer." checked={settings().waveBackground} onCheckedChange={useSettingsStore.getState().setWaveBackground} />
-							</SettingsRow>
-							<SettingsRow>
-								<Switch id="settings-perf-blur" label="Blur effects" hint="Enable backdrop blur on elevated surfaces." checked={settings().blurEffects} onCheckedChange={useSettingsStore.getState().setBlurEffects} />
-							</SettingsRow>
-							<SettingsRow>
-								<Switch id="settings-perf-preview" label="Live preview" hint="Render KaTeX previews while editing." checked={settings().livePreview} onCheckedChange={useSettingsStore.getState().setLivePreview} />
-							</SettingsRow>
-							<SettingsRow>
-								<Switch id="settings-perf-animations" label="Animations" hint="Enable motion transitions throughout the app." checked={settings().animations} onCheckedChange={useSettingsStore.getState().setAnimations} />
-							</SettingsRow>
-							<SettingsRow label="FPS cap" hint="Limit frame rate for JavaScript-driven animations." controlId="settings-fps-cap">
-								<Select id="settings-fps-cap" variant="scope" options={FPS_OPTIONS.map(o => ({value: String(o.value), label: o.label}))} value={String(settings().fpsCap)} onChange={handleNumber(useSettingsStore.getState().setFpsCap)} />
-							</SettingsRow>
-						</SettingsSection>
-							<SettingsSection title="Data">
-								<SettingsRow label="Reset settings" hint="Restore all settings to their default values.">
-									<Button variant="danger" size="sm" aria-label="Reset settings" onClick={() => setConfirmReset(true)}>Reset to defaults</Button>
-								</SettingsRow>
-							</SettingsSection>
+						)}</For>
+					</SettingsSection>
+					<SettingsSection title="Data">
+						<SettingsRow label="Reset settings" hint="Restore all settings to their default values.">
+							<Button variant="danger" size="sm" aria-label="Reset settings" onClick={() => setConfirmReset(true)}>Reset to defaults</Button>
+						</SettingsRow>
+					</SettingsSection>
 						</div>
 					</TabsContent>
 				</Tabs>

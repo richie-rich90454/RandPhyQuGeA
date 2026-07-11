@@ -49,6 +49,8 @@ export interface SettingsState {
 	livePreview: boolean;
 	animations: boolean;
 	fpsCap: number;
+	reducedDataMode: boolean;
+	customShortcuts: Record<string, string>;
 	onboardingCompleted: boolean;
 	locale: string;
 	accentHue: number;
@@ -85,6 +87,8 @@ export interface SettingsState {
 	setLivePreview: (enabled: boolean) => void;
 	setAnimations: (enabled: boolean) => void;
 	setFpsCap: (cap: number) => void;
+	setReducedDataMode: (enabled: boolean) => void;
+	setCustomShortcut: (action: string, shortcut: string) => void;
 	setOnboardingCompleted: (completed: boolean) => void;
 	setLocale: (locale: string) => void;
 	setAccentHue: (hue: number) => void;
@@ -125,6 +129,8 @@ const defaultState= {
 	livePreview: true,
 	animations: true,
 	fpsCap: 0,
+	reducedDataMode: false,
+	customShortcuts: {} as Record<string, string>,
 	onboardingCompleted: false,
 	locale: "en",
 	accentHue: 210,
@@ -166,6 +172,8 @@ const settingsStore=createStore<SettingsState>()(
 			setLivePreview: enabled => set({livePreview: enabled}),
 			setAnimations: enabled => set({animations: enabled}),
 			setFpsCap: cap => set({fpsCap: cap}),
+			setReducedDataMode: enabled => set({reducedDataMode: enabled}),
+			setCustomShortcut: (action, shortcut) => set(state => ({customShortcuts: {...state.customShortcuts, [action]: shortcut}})),
 			setOnboardingCompleted: completed => set({onboardingCompleted: completed}),
 			setLocale: locale => set({locale: locale}),
 			setAccentHue: hue => set({accentHue: hue}),
