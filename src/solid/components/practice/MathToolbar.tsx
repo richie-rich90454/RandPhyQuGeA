@@ -130,6 +130,37 @@ const PRIMARY_GROUPS: readonly SymbolGroup[]=[
 			{latex: "\\pm", label: "\u00b1"},
 		],
 	},
+	{
+		title: "Physics",
+		symbols: [
+			{latex: "\\alpha", label: "\u03b1"},
+			{latex: "\\beta", label: "\u03b2"},
+			{latex: "\\gamma", label: "\u03b3"},
+			{latex: "\\theta", label: "\u03b8"},
+			{latex: "\\lambda", label: "\u03bb"},
+			{latex: "\\mu", label: "\u03bc"},
+			{latex: "\\nu", label: "\u03bd"},
+			{latex: "\\rho", label: "\u03c1"},
+			{latex: "\\sigma", label: "\u03c3"},
+			{latex: "\\tau", label: "\u03c4"},
+			{latex: "\\omega", label: "\u03c9"},
+			{latex: "\\Delta", label: "\u0394"},
+			{latex: "\\nabla", label: "\u2207"},
+			{latex: "\\partial", label: "\u2202"},
+			{latex: "\\int", label: "\u222b"},
+			{latex: "\\sum", label: "\u2211"},
+			{latex: "\\Pi", label: "\u03a0"},
+			{latex: "^{\\circ}", label: "\u00b0"},
+			{latex: "\\text{K}", label: "K"},
+			{latex: "\\text{J}", label: "J"},
+			{latex: "\\text{N}", label: "N"},
+			{latex: "\\text{W}", label: "W"},
+			{latex: "\\text{V}", label: "V"},
+			{latex: "\\text{A}", label: "A"},
+			{latex: "\\text{Hz}", label: "Hz"},
+			{latex: "\\text{mol}", label: "mol"},
+		],
+	},
 ];
 const DROPDOWN_GROUPS: readonly SymbolGroup[]=[
 	{
@@ -263,9 +294,9 @@ function SymbolSection(props: SymbolSectionProps): JSX.Element {
  * Solid port of {@link ../../../components/practice/MathToolbar}. Data-driven
  * via {@link PRIMARY_GROUPS} and {@link DROPDOWN_GROUPS}: adding a group or
  * symbol is one entry. The primary row renders Basic, Exponents & Roots,
- * Calculus, Greek, Trig & Log, Vectors, Matrices, Logic & Sets, and Relations
- * sections. A `⋯` dropdown trigger reveals Advanced Vectors/Matrices, More
- * Logic & Sets, Geometry & Special, and Arrows sections. Each button calls
+ * Calculus, Greek, Trig & Log, Vectors, Matrices, Logic & Sets, Relations, and
+ * Physics sections. A `⋯` dropdown trigger reveals Advanced Vectors/Matrices,
+ * More Logic & Sets, Geometry & Special, and Arrows sections. Each button calls
  * `onInsert` with the LaTeX to insert at the cursor. Outside-click closes the
  * dropdown via a `createEffect`-driven `mousedown` listener.
  */

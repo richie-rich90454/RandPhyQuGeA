@@ -6,8 +6,8 @@ describe("MathToolbar", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
 		expect(screen.getByText("\u2212")).toBeInTheDocument();
 		expect(screen.getAllByText("\u00d7")).toHaveLength(2);
-		expect(screen.getByText("\u222b")).toBeInTheDocument();
-		expect(screen.getByText("\u03b1")).toBeInTheDocument();
+		expect(screen.getAllByText("\u222b")).toHaveLength(2);
+		expect(screen.getAllByText("\u03b1")).toHaveLength(2);
 	});
 	it("renders the dropdown trigger button", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
@@ -87,7 +87,7 @@ describe("MathToolbar", () => {
 		expect(screen.getByText("\u03c6")).toBeInTheDocument();
 		expect(screen.getByText("\u03a8")).toBeInTheDocument();
 		expect(screen.getByText("\u03a9")).toBeInTheDocument();
-		expect(screen.getAllByText("\u0394")).toHaveLength(2);
+		expect(screen.getAllByText("\u0394")).toHaveLength(3);
 	});
 	it("renders the enhanced trig and log symbols", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
@@ -101,6 +101,23 @@ describe("MathToolbar", () => {
 	it("renders the enhanced vector symbols", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
 		expect(screen.getByText("\u2016\u2016")).toBeInTheDocument();
-		expect(screen.getAllByText("\u2207")).toHaveLength(2);
+		expect(screen.getAllByText("\u2207")).toHaveLength(3);
+	});
+	it("renders the Physics section header and physics-specific symbols", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		expect(screen.getByRole("button", {name: "Physics"})).toBeInTheDocument();
+		expect(screen.getByText("\u03bd")).toBeInTheDocument();
+		expect(screen.getByText("\u03c1")).toBeInTheDocument();
+		expect(screen.getByText("\u03c4")).toBeInTheDocument();
+		expect(screen.getByText("\u03c9")).toBeInTheDocument();
+		expect(screen.getByText("\u00b0")).toBeInTheDocument();
+		expect(screen.getByText("Hz")).toBeInTheDocument();
+		expect(screen.getByText("mol")).toBeInTheDocument();
+	});
+	it("calls onInsert with the LaTeX when a physics symbol is clicked", () => {
+		let handler=vi.fn();
+		render(() => <MathToolbar onInsert={handler} />);
+		fireEvent.click(screen.getByText("Hz"));
+		expect(handler).toHaveBeenCalledWith("\\text{Hz}");
 	});
 });
