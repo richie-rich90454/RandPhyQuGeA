@@ -14,13 +14,13 @@
 	padding: var(--space-2) var(--space-3);
 	font-size: var(--font-size-sm);
 	color: var(--text);
-	transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+	transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 .input::placeholder { color: var(--text-subtle); }
 .input:focus {
 	outline: none;
 	border-color: var(--border-focus);
-	box-shadow: var(--shadow-focus);
+	box-shadow: var(--micro-focus-ring);
 }
 .input:disabled {
 	cursor: not-allowed;

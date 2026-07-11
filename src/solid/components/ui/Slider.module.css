@@ -52,6 +52,11 @@
 	background: var(--primary);
 	border: 2px solid var(--surface);
 	box-shadow: var(--shadow-sm);
+	transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+.thumb:hover::-webkit-slider-thumb {
+	transform: scale(1.1);
+	box-shadow: var(--micro-shadow-hover);
 }
 .thumb::-moz-range-thumb {
 	pointer-events: auto;
@@ -61,6 +66,11 @@
 	background: var(--primary);
 	border: 2px solid var(--surface);
 	box-shadow: var(--shadow-sm);
+	transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+.thumb:hover::-moz-range-thumb {
+	transform: scale(1.1);
+	box-shadow: var(--micro-shadow-hover);
 }
 .error {
 	margin-top: var(--space-1);

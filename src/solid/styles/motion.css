@@ -1,0 +1,18 @@
+/*
+ * RandPhyQuGeA Solid — micro-interaction tokens and shared motion utilities.
+ * Centralises the hover/active/focus scale + shadow elevations used across
+ * component CSS modules. All interactions use --duration-fast and --ease-out
+ * for a consistent, snappy feel. Under prefers-reduced-motion the global
+ * guard in globals.css restricts transitions to opacity only, so transform
+ * and shadow changes become instant while fades remain.
+ */
+:root {
+	--micro-scale-hover: 1.02;
+	--micro-scale-active: 0.98;
+	--micro-lift: translateY(-1px);
+	--micro-shadow-hover: var(--shadow-md);
+	--micro-shadow-active: var(--shadow-xs);
+	--micro-border-hover: var(--border-strong);
+	--micro-focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
+	--micro-transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), opacity var(--duration-fast) var(--ease-out);
+}

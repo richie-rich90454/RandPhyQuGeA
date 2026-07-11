@@ -17,12 +17,12 @@
 	padding-right: var(--space-8);
 	font-size: var(--font-size-sm);
 	color: var(--text);
-	transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+	transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 .select:focus {
 	outline: none;
 	border-color: var(--border-focus);
-	box-shadow: var(--shadow-focus);
+	box-shadow: var(--micro-focus-ring);
 }
 .select:disabled {
 	cursor: not-allowed;

@@ -20,16 +20,16 @@
 	background: var(--surface-elevated);
 	box-shadow: var(--shadow-md);
 	color: var(--text);
-	animation: toast-in var(--duration-normal) var(--ease-standard);
+	animation: toast-in var(--duration-normal) var(--ease-out);
 }
 @keyframes toast-in {
 	from {
 		opacity: 0;
-		transform: translateX(100%);
+		transform: translateY(100%);
 	}
 	to {
 		opacity: 1;
-		transform: translateX(0);
+		transform: translateY(0);
 	}
 }
 .toast svg {
@@ -55,7 +55,7 @@
 	cursor: pointer;
 	font-size: var(--font-size-md);
 	line-height: 1;
-	transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
+	transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
 }
 .close:hover {
 	background: var(--surface);

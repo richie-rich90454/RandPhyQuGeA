@@ -2,6 +2,7 @@ import {render} from "solid-js/web";
 import App from "./App";
 import "./styles/globals.css";
 import "./styles/glass.css";
+import "./styles/motion.css";
 let root=document.getElementById("root");
 if (!root) {
 	root=document.createElement("div");

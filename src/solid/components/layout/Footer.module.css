@@ -24,7 +24,7 @@
 .link {
 	color: var(--text-link);
 	text-decoration: none;
-	transition: color var(--duration-fast) var(--ease-standard);
+	transition: color var(--duration-fast) var(--ease-out);
 }
 .link:hover {
 	text-decoration: underline;
@@ -44,7 +44,7 @@
 	color: var(--text-link);
 	font-size: inherit;
 	cursor: pointer;
-	transition: color var(--duration-fast) var(--ease-standard);
+	transition: color var(--duration-fast) var(--ease-out);
 }
 .linkButton:hover {
 	text-decoration: underline;
