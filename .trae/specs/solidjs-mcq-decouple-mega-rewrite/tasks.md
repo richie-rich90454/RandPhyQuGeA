@@ -151,15 +151,15 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 4.7: Math toolbar: all symbol sections (Basic, Exponents/Roots, Calculus, Greek, Trig/Log, Vectors, Matrices, Logic/Sets, Relations, "more" dropdown) — 3 commits.
 - [x] Task 4.8: Live KaTeX preview in answer card (matches RandMatQuGeA feedback pattern).
 - [x] Task 4.9: Smart answer checking feedback UI (correct answer in KaTeX + plain-text alternate + equivalence note).
-- [ ] Task 4.10: Onboarding modal fidelity (steps as `<ol>`).
-- [ ] Task 4.11: Print worksheet modal + printable preview (`@media print`) — KaTeX only.
-- [ ] Task 4.12: Weak-topics recommendation modal (`<ul>`).
-- [ ] Task 4.13: Manage-data modal (in-app confirm dialog, no native `confirm`).
-- [ ] Task 4.14: Settings modal Basic tab (theme, font, mode, scope, difficulty, timer, response mode, MCQ choice count, decimal tolerance, sig figs).
-- [ ] Task 4.15: Settings modal Advanced tab (sound, vibration, reduced-data, performance toggles, shortcut customization, reset-to-defaults with confirm).
-- [ ] Task 4.16: Keyboard shortcuts modal (`<thead>`/`<th scope>`).
-- [ ] Task 4.17: Resume-session modal.
-- [ ] Task 4.18: Theme toggle honoring `system` + `dim` (utility button, settings, `Ctrl+Shift+T`).
+- [x] Task 4.10: Onboarding modal fidelity (steps as `<ol>`).
+- [x] Task 4.11: Print worksheet modal + printable preview (`@media print`) — KaTeX only.
+- [x] Task 4.12: Weak-topics recommendation modal (`<ul>`).
+- [x] Task 4.13: Manage-data modal (in-app confirm dialog, no native `confirm`).
+- [x] Task 4.14: Settings modal Basic tab (theme, font, mode, scope, difficulty, timer, response mode, MCQ choice count, decimal tolerance, sig figs).
+- [x] Task 4.15: Settings modal Advanced tab (sound, vibration, reduced-data, performance toggles, shortcut customization, reset-to-defaults with confirm).
+- [x] Task 4.16: Keyboard shortcuts modal (`<thead>`/`<th scope>`).
+- [x] Task 4.17: Resume-session modal.
+- [x] Task 4.18: Theme toggle honoring `system` + `dim` (utility button, settings, `Ctrl+Shift+T`).
 - [ ] Task 4.19: Footer matching RandMatQuGeA.
 - [ ] Task 4.20: Micro-interactions + hover/focus states per RandMatQuGeA.
 - [ ] Task 4.21: Responsive rules (<1024, <768, <480) matching RandMatQuGeA breakpoints.
