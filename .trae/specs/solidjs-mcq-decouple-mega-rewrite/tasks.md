@@ -129,12 +129,12 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 3.8: `MainContent`, `QuestionCard`, `AnswerSection`, `AnswerCard` (with live KaTeX preview), `ResultsCard`, `ResultsCard` solution rendering — 6 commits.
 - [x] Task 3.9: Modals: `OnboardingModal`, `PrintModal`, `RecommendModal`, `ManageDataModal`, `SettingsModal` (Basic/Advanced tabs), `ShortcutsModal`, `ResumeSessionModal` — 7 commits.
 - [x] Task 3.10: `ProgressPanel` (analytics) + `analytics` wiring.
-- [ ] Task 3.11: Liquid animated background component (pure CSS) + glassmorphism surfaces.
-- [ ] Task 3.12: Skip-link, landmarks (`<header>`/`<nav>`/`<main>`/`<h1>`), live regions ported to Solid.
-- [ ] Task 3.13: `ToastProvider` mounted at root (Solid context + Portal).
-- [ ] Task 3.14: Keyboard-shortcut primitive (`createShortcut`) replacing `useGlobalShortcuts`.
-- [ ] Task 3.15: `createPersistedSignal`/`createPersistedStore` for localStorage/IndexedDB persistence.
-- [ ] Task 3.16: Motion: replace framer-motion with GSAP (already a dep) or CSS transitions; add `useGsapContext` Solid equivalent.
+- [x] Task 3.11: Liquid animated background component (pure CSS) + glassmorphism surfaces.
+- [x] Task 3.12: Skip-link, landmarks (`<header>`/`<nav>`/`<main>`/`<h1>`), live regions ported to Solid.
+- [x] Task 3.13: `ToastProvider` mounted at root (Solid context + Portal).
+- [x] Task 3.14: Keyboard-shortcut primitive (`createShortcut`) replacing `useGlobalShortcuts`.
+- [x] Task 3.15: `createPersistedSignal`/`createPersistedStore` for localStorage/IndexedDB persistence.
+- [x] Task 3.16: Motion: replace framer-motion with GSAP (already a dep) or CSS transitions; add `useGsapContext` Solid equivalent.
 - [ ] Task 3.17: Smoke tests for each Solid component using `@solidjs/testing-library` — 10 commits covering primitives, toolbars, modals, main content.
 - [ ] Task 3.18: Accessibility pass on Solid components (focus-visible, ARIA, radiogroup/tablist roles, focus trap).
 - [ ] Task 3.19: Responsive breakpoints via CSS Modules `@media` + container queries.
