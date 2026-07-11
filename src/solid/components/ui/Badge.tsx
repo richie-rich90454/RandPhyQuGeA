@@ -12,6 +12,8 @@ export interface BadgeProps {
 	children?: JSXElement;
 	/** Extra class for the badge. */
 	class?: string;
+	/** Accessible label override for screen readers. */
+	"aria-label"?: string;
 }
 let variantClass: Record<BadgeVariant, string | undefined>={
 	default: styles.default,
@@ -27,11 +29,11 @@ let sizeClass: Record<BadgeSize, string | undefined>={
 };
 /** Compact pill-shaped label for statuses and counts. */
 export function Badge(props: BadgeProps): JSX.Element {
-	let [local]=splitProps(props, ["variant", "size", "children", "class"]);
+	let [local]=splitProps(props, ["variant", "size", "children", "class", "aria-label"]);
 	let variant=local.variant ?? "default";
 	let size=local.size ?? "md";
 	return (
-		<span class={`${styles.badge} ${variantClass[variant] ?? ""} ${sizeClass[size] ?? ""} ${local.class ?? ""}`}>
+		<span class={`${styles.badge} ${variantClass[variant] ?? ""} ${sizeClass[size] ?? ""} ${local.class ?? ""}`} aria-label={local["aria-label"]}>
 			{local.children}
 		</span>
 	);

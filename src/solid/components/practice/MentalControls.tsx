@@ -113,6 +113,11 @@ export function MentalControls(): JSX.Element {
 	let [isStarting, setIsStarting]=createSignal(false);
 	let isSessionActive=createMemo(() => isActive() && mode()==="Mental");
 	let isPaused=createMemo(() => isSessionActive() && !timer.isRunning() && timer.timeRemaining()>0);
+	let timeUrgent=createMemo(() => {
+		let remaining=timer.timeRemaining();
+		return isSessionActive() && remaining>0 && remaining<10;
+	});
+	let displayTime=createMemo(() => timer.timeRemaining() || mentalDurationSec());
 	let stats=createMemo(() => {
 		let total=results().length;
 		let correct=results().filter(r => r.is_correct).length;
@@ -253,11 +258,11 @@ export function MentalControls(): JSX.Element {
 						</button>
 					)}</For>
 				</div>
-				<Badge variant="default" size="sm" class={styles.gap}>
+				<Badge variant="default" size="sm" class={`${styles.gap} ${styles.timerBadge} ${timeUrgent() ? styles.timerUrgent : ""}`} aria-label="Time remaining">
 					<ClockIcon />
-					{formatTime(timer.timeRemaining() || mentalDurationSec())}
+					{formatTime(displayTime())}
 				</Badge>
-				<Badge variant="default" size="sm" class={styles.gap}>
+				<Badge variant="default" size="sm" class={`${styles.gap} ${styles.scoreBadge} ${isSessionActive() ? styles.scoreLive : ""}`} aria-label="Current score">
 					<CheckIcon />
 					{stats().score} / {stats().total}
 				</Badge>

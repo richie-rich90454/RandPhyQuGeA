@@ -29,9 +29,17 @@ describe("MentalControls", () => {
 		render(() => <MentalControls />);
 		expect(screen.getByText("01:00")).toBeInTheDocument();
 	});
+	it("labels the timer badge with an accessible name", () => {
+		render(() => <MentalControls />);
+		expect(screen.getByLabelText("Time remaining")).toBeInTheDocument();
+	});
 	it("renders the score badge at zero in idle state", () => {
 		render(() => <MentalControls />);
 		expect(screen.getByText("0 / 0")).toBeInTheDocument();
+	});
+	it("labels the score badge with an accessible name", () => {
+		render(() => <MentalControls />);
+		expect(screen.getByLabelText("Current score")).toBeInTheDocument();
 	});
 	it("renders an enabled Start Session button in idle state", () => {
 		render(() => <MentalControls />);

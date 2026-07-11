@@ -89,3 +89,30 @@
 	min-width: 132px;
 	font-weight: var(--font-weight-bold);
 }
+.timerBadge {
+	font-variant-numeric: tabular-nums;
+	font-weight: var(--font-weight-semibold);
+	color: var(--text);
+	transition: color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
+}
+.timerUrgent {
+	color: var(--color-error);
+	background: var(--error-surface);
+	animation: pulseUrgent 1s var(--ease-standard) infinite;
+}
+.scoreBadge {
+	font-variant-numeric: tabular-nums;
+	font-weight: var(--font-weight-semibold);
+}
+.scoreLive {
+	color: var(--color-success);
+}
+@keyframes pulseUrgent {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.6; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.timerUrgent {
+		animation: none;
+	}
+}
