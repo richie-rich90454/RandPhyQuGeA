@@ -82,4 +82,25 @@ describe("MathToolbar", () => {
 		expect(screen.getByText("x\u00b2")).toBeInTheDocument();
 		expect(screen.getByText("d/dx")).toBeInTheDocument();
 	});
+	it("renders the enhanced Greek symbols", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		expect(screen.getByText("\u03c6")).toBeInTheDocument();
+		expect(screen.getByText("\u03a8")).toBeInTheDocument();
+		expect(screen.getByText("\u03a9")).toBeInTheDocument();
+		expect(screen.getAllByText("\u0394")).toHaveLength(2);
+	});
+	it("renders the enhanced trig and log symbols", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		expect(screen.getByText("sec")).toBeInTheDocument();
+		expect(screen.getByText("csc")).toBeInTheDocument();
+		expect(screen.getByText("cot")).toBeInTheDocument();
+		expect(screen.getByText("arcsin")).toBeInTheDocument();
+		expect(screen.getByText("arccos")).toBeInTheDocument();
+		expect(screen.getByText("arctan")).toBeInTheDocument();
+	});
+	it("renders the enhanced vector symbols", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		expect(screen.getByText("\u2016\u2016")).toBeInTheDocument();
+		expect(screen.getAllByText("\u2207")).toHaveLength(2);
+	});
 });
