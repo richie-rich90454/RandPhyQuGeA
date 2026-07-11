@@ -16,8 +16,12 @@ import {ExportService} from "../../../services/ExportService";
 import type {IPhysicsService, IExportService, GenerateOptions} from "../../../services/contracts";
 import type {GeneratedQuestion} from "../../../types/models";
 import styles from "./PrintModal.module.css";
-/** Question count options for the worksheet. */
-const COUNT_OPTIONS=[5, 10, 20, 30] as const;
+/** Minimum worksheet question count. */
+const MIN_COUNT=5;
+/** Maximum worksheet question count. */
+const MAX_COUNT=50;
+/** Default worksheet question count. */
+const DEFAULT_COUNT=10;
 /** Difficulty options for the worksheet. */
 const DIFFICULTY_OPTIONS: {value: "easy" | "medium" | "hard" | "mixed"; label: string}[]=[
 	{value: "easy", label: "Easy"},
@@ -58,20 +62,21 @@ export interface PrintModalProps {
  * Print worksheet overlay mapped to `#print-modal`.
  *
  * Solid port of {@link ../../../components/modals/PrintModal}. Renders worksheet
- * options (question count, topic, scope, difficulty, answer-key toggle),
- * generates a batch of questions on demand through the injected physics
- * service, shows a numbered preview, and delegates printing to the injected
- * export service. Services default to instances built from the
- * {@link useServiceProvider} core; pass `physics`/`exportService` to inject
- * test doubles. `@media print` styles in the co-located CSS module hide the
- * options and actions so only the preview list is printed.
+ * options (question count slider 5–50, multi-select topic pills, scope,
+ * difficulty, answer-key toggle), generates a batch of questions on demand
+ * through the injected physics service, shows a numbered preview, and delegates
+ * printing to `window.print()` via the injected export service. Services
+ * default to instances built from the {@link useServiceProvider} core; pass
+ * `physics`/`exportService` to inject test doubles. `@media print` styles in
+ * the co-located CSS module hide the options, actions, and app chrome so only
+ * the preview list is printed.
  */
 export function PrintModal(props: PrintModalProps): JSX.Element {
 	let isOpen=useUiStore(s => s.activeModal==="print");
 	let specification=useSpecStore(s => s.specification);
 	let {toast}=useToast();
-	let [questionCount, setQuestionCount]=createSignal<number>(10);
-	let [topicId, setTopicId]=createSignal<string>("all");
+	let [questionCount, setQuestionCount]=createSignal<number>(DEFAULT_COUNT);
+	let [selectedTopicIds, setSelectedTopicIds]=createSignal<string[]>([]);
 	let [scope, setScope]=createSignal<string>("all");
 	let [difficulty, setDifficulty]=createSignal<"easy" | "medium" | "hard" | "mixed">("medium");
 	let [includeAnswerKey, setIncludeAnswerKey]=createSignal<boolean>(true);
@@ -95,7 +100,7 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 		}
 		return cachedExport;
 	};
-	let topicOptions=createMemo<{value: string; label: string}[]>(() => {
+	let topicOptions=createMemo<{value: string; label: string; topicId: string}[]>(() => {
 		let spec=specification();
 		if (!spec) return [];
 		return spec.topics.filter(topic => {
@@ -104,13 +109,19 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 			return unit !== undefined && scopeMatchesUnit(scope(), unit);
 		}).map(topic => {
 			let unit=spec.units.find(u => u.id===topic.unit_id);
-			return {value: topic.id, label: `${unit?.name ?? "Unknown"} - ${topic.name}`};
+			return {value: topic.id, label: `${unit?.name ?? "Unknown"} - ${topic.name}`, topicId: topic.id};
 		});
 	});
-	let countSelectOptions=COUNT_OPTIONS.map(count => ({value: String(count), label: String(count)}));
-	let topicSelectOptions=createMemo(() => [{value: "all", label: "All topics (from selected scope)"}, ...topicOptions()]);
 	let scopeSelectOptions=SCOPE_OPTIONS.map(option => ({value: option.value, label: option.label}));
 	let difficultySelectOptions=DIFFICULTY_OPTIONS.map(option => ({value: option.value, label: option.label}));
+	let toggleTopic=(topicId: string) => {
+		let current=selectedTopicIds();
+		if (current.includes(topicId)) {
+			setSelectedTopicIds(current.filter(id => id !== topicId));
+		} else {
+			setSelectedTopicIds([...current, topicId]);
+		}
+	};
 	let handleGenerate=async () => {
 		let spec=specification();
 		if (!spec) {
@@ -121,11 +132,13 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 		setError(null);
 		try {
 			let d=difficulty();
+			let selected=selectedTopicIds();
 			let options: GenerateOptions;
+			let topicId: string | undefined=selected.length===1 ? selected[0] : undefined;
 			if (d==="mixed") {
-				options={topicId: topicId()==="all" ? undefined : topicId()};
+				options={topicId};
 			} else {
-				options={topicId: topicId()==="all" ? undefined : topicId(), ...DIFFICULTY_RANGES[d]};
+				options={topicId, ...DIFFICULTY_RANGES[d]};
 			}
 			let batch=await resolvePhysics().generateBatch(spec, questionCount(), options);
 			setQuestions(batch);
@@ -149,19 +162,24 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 	let handleScope=(event: Event) => {
 		let target=event.target as HTMLSelectElement;
 		setScope(target.value);
-		setTopicId("all");
-	};
-	let handleTopic=(event: Event) => {
-		let target=event.target as HTMLSelectElement;
-		setTopicId(target.value);
-	};
-	let handleCount=(event: Event) => {
-		let target=event.target as HTMLSelectElement;
-		setQuestionCount(Number(target.value));
+		setSelectedTopicIds([]);
 	};
 	let handleDifficulty=(event: Event) => {
 		let target=event.target as HTMLSelectElement;
 		setDifficulty(target.value as "easy" | "medium" | "hard" | "mixed");
+	};
+	let handleCountInput=(event: Event) => {
+		let target=event.target as HTMLInputElement;
+		let next=Number(target.value);
+		if (Number.isFinite(next)) {
+			let clamped=Math.max(MIN_COUNT, Math.min(MAX_COUNT, Math.round(next)));
+			setQuestionCount(clamped);
+		}
+	};
+	let handleCountSlider=(event: Event) => {
+		let target=event.target as HTMLInputElement;
+		let next=Number(target.value);
+		setQuestionCount(next);
 	};
 	let close=() => useUiStore.getState().closeModal();
 	return (
@@ -189,7 +207,29 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 				<CardContent class={styles.optionsContent}>
 					<div class={styles.option}>
 						<label for="print-question-count" class={styles.optionTitle}>Number of questions</label>
-						<Select id="print-question-count" variant="scope" options={countSelectOptions} value={String(questionCount())} onChange={handleCount} />
+						<span class={styles.optionHint}>Choose between {MIN_COUNT} and {MAX_COUNT} questions.</span>
+						<div class={styles.countControl}>
+							<input
+								id="print-question-count"
+								type="range"
+								min={MIN_COUNT}
+								max={MAX_COUNT}
+								step={1}
+								value={questionCount()}
+								onInput={handleCountSlider}
+								class={styles.countSlider}
+								aria-label="Number of questions slider"
+							/>
+							<input
+								type="number"
+								min={MIN_COUNT}
+								max={MAX_COUNT}
+								value={questionCount()}
+								onInput={handleCountInput}
+								class={styles.countInput}
+								aria-label="Number of questions"
+							/>
+						</div>
 					</div>
 					<div class={styles.option}>
 						<label for="print-scope" class={styles.optionTitle}>Topic scope</label>
@@ -197,9 +237,24 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 						<Select id="print-scope" variant="scope" options={scopeSelectOptions} value={scope()} onChange={handleScope} />
 					</div>
 					<div class={styles.option}>
-						<label for="print-topic" class={styles.optionTitle}>Topic</label>
-						<span class={styles.optionHint}>Limit the worksheet to a single topic.</span>
-						<Select id="print-topic" variant="scope" options={topicSelectOptions()} value={topicId()} onChange={handleTopic} disabled={topicSelectOptions().length<=1} />
+						<span class={styles.optionTitle}>Topics</span>
+						<span class={styles.optionHint}>Select one or more topics, or leave empty to use all topics in scope.</span>
+						<Show when={topicOptions().length>0} fallback={
+							<p class={styles.topicsEmpty}>No topics available for the selected scope.</p>
+						}>
+							<div class={styles.topicPills} role="group" aria-label="Topics">
+								<For each={topicOptions()}>{(option) => (
+									<button
+										type="button"
+										aria-pressed={selectedTopicIds().includes(option.topicId)}
+										class={`${styles.topicPill} ${selectedTopicIds().includes(option.topicId) ? styles.topicPillActive : ""}`}
+										onClick={() => toggleTopic(option.topicId)}
+									>
+										{option.label}
+									</button>
+								)}</For>
+							</div>
+						</Show>
 					</div>
 					<div class={styles.option}>
 						<label for="print-difficulty" class={styles.optionTitle}>Difficulty</label>

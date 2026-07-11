@@ -92,16 +92,19 @@ describe("PrintModal", () => {
 		fireEvent.click(screen.getByRole("button", {name: /print worksheet/i}));
 		await waitFor(() => expect(exportService.printWorksheet).toHaveBeenCalledTimes(1));
 	});
-	it("resets topic to all when scope changes", async () => {
+	it("resets selected topics when scope changes", async () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");
 		renderWithServices();
-		let topicSelect=screen.getByRole("combobox", {name: "Topic"}) as HTMLSelectElement;
-		fireEvent.change(topicSelect, {target: {value: "t1"}});
-		expect(topicSelect.value).toBe("t1");
+		let topicPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		fireEvent.click(topicPills[0]!);
+		await waitFor(() => expect(topicPills[0]).toHaveAttribute("aria-pressed", "true"));
 		let scopeSelect=screen.getByRole("combobox", {name: "Topic scope"}) as HTMLSelectElement;
 		fireEvent.change(scopeSelect, {target: {value: "simple"}});
-		await waitFor(() => expect(topicSelect.value).toBe("all"));
+		let remainingPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		for (let pill of remainingPills) {
+			expect(pill).toHaveAttribute("aria-pressed", "false");
+		}
 	});
 	it("toggles the answer key switch", async () => {
 		useSpecStore.setState({specification: makeSpecification()});
