@@ -92,6 +92,26 @@
 	color: var(--text-primary);
 	border-style: solid;
 }
+.previewPlaceholder {
+	color: var(--text-muted);
+	font-style: italic;
+}
+.mathPreview.previewError {
+	color: var(--color-error, rgb(220, 38, 38));
+	border-color: var(--border-error, rgba(239, 68, 68, 0.4));
+	background: var(--surface-error, rgba(239, 68, 68, 0.06));
+}
+.previewErrorContent {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-1);
+}
+.previewRawText {
+	font-family: var(--font-mono, monospace);
+	font-size: var(--font-size-sm);
+	color: var(--color-error, rgb(220, 38, 38));
+	opacity: 0.85;
+}
 .expectedFormat {
 	font-size: var(--font-size-sm);
 	color: var(--text-muted);

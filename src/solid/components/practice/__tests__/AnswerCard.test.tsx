@@ -109,4 +109,21 @@ describe("AnswerCard", () => {
 		render(() => <AnswerCard />);
 		expect(screen.getByRole("textbox", {name: "Answer"})).toBeDisabled();
 	});
+	it("shows the preview placeholder when the answer is empty", () => {
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion())});
+		render(() => <AnswerCard />);
+		expect(screen.getByText("Preview will appear here")).toBeInTheDocument();
+	});
+	it("renders the live preview when the answer has content", () => {
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "42 N"});
+		render(() => <AnswerCard />);
+		expect(screen.queryByText("Preview will appear here")).not.toBeInTheDocument();
+		expect(document.getElementById("preview")?.textContent).toContain("42 N");
+	});
+	it("shows an error indicator when the answer has invalid LaTeX", () => {
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "$\\sqrt{$"});
+		render(() => <AnswerCard />);
+		expect(screen.getByRole("alert")).toBeInTheDocument();
+		expect(document.getElementById("preview")?.textContent).toContain("$\\sqrt{$");
+	});
 });
