@@ -1,10 +1,8 @@
 import {defineConfig} from "vite";
-import react from "@vitejs/plugin-react";
 import solid from "vite-plugin-solid";
 let solidFiles=/src[\\/]solid[\\/]/;
 export default defineConfig({
     plugins: [
-        react({exclude: [solidFiles]}),
         solid({include: [solidFiles]}),
     ],
     clearScreen: false,
@@ -28,7 +26,6 @@ export default defineConfig({
             output: {
                 codeSplitting: {
                     groups: [
-                        {name: "react", test: /node_modules[\\/](react|react-dom)[\\/]/, priority: 20},
                         {name: "solid", test: /node_modules[\\/]solid-js[\\/]/, priority: 20},
                         {name: "katex", test: /node_modules[\\/]katex[\\/]/, priority: 15},
                         {name: "zustand", test: /node_modules[\\/]zustand[\\/]/, priority: 15},
