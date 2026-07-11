@@ -14,6 +14,8 @@ import type {Specification, GeneratedQuestion, PracticeResult, PracticeMode} fro
 export interface AnswerFeedback {
 	isCorrect: boolean;
 	correctAnswer: string;
+	userAnswer?: string;
+	partial?: boolean;
 }
 export interface PracticeState {
 	session: Session | null;

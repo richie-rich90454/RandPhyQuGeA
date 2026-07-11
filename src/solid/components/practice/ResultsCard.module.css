@@ -20,6 +20,10 @@
 	background: var(--surface-error, rgba(239, 68, 68, 0.08));
 	border: 1px solid var(--border-error, rgba(239, 68, 68, 0.3));
 }
+.partial {
+	background: var(--surface-warning, rgba(245, 158, 11, 0.08));
+	border: 1px solid var(--border-warning, rgba(245, 158, 11, 0.3));
+}
 .resultSuccess {
 	display: flex;
 	align-items: flex-start;
@@ -32,14 +36,56 @@
 	gap: var(--space-2);
 	color: var(--color-error, rgb(220, 38, 38));
 }
+.resultWarning {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-2);
+	color: var(--color-warning, rgb(217, 119, 6));
+}
+.bannerSlideIn {
+	animation: slideInFromTop 0.3s var(--ease-standard, ease-out);
+}
+@keyframes slideInFromTop {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.bannerSlideIn {
+		animation: none;
+	}
+}
+.answerComparison {
+	display: flex;
+	gap: var(--space-3);
+	flex-wrap: wrap;
+	margin-top: var(--space-1);
+}
+.comparisonItem {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+.comparisonLabel {
+	font-size: var(--font-size-sm);
+	font-weight: 600;
+	color: var(--text-secondary);
+}
 .resultSuccess h3,
-.resultError h3 {
+.resultError h3,
+.resultWarning h3 {
 	margin: 0;
 	font-size: var(--font-size-md);
 	font-weight: 700;
 }
 .resultSuccess p,
-.resultError p {
+.resultError p,
+.resultWarning p {
 	margin: var(--space-1) 0 0 0;
 	font-size: var(--font-size-md);
 }

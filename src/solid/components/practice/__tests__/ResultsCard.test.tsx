@@ -64,7 +64,28 @@ describe("ResultsCard", () => {
 			lastResult: {isCorrect: false, correctAnswer: "force"},
 		});
 		render(() => <ResultsCard />);
-		expect(screen.getByText("Incorrect")).toBeInTheDocument();
+		expect(screen.getByText("Not quite")).toBeInTheDocument();
+	});
+	it("renders the partial-correct banner when the last result is partial", () => {
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion()),
+			showFeedback: true,
+			lastResult: {isCorrect: false, correctAnswer: "force", partial: true, userAnswer: "F"},
+		});
+		render(() => <ResultsCard />);
+		expect(screen.getByText("Close!")).toBeInTheDocument();
+	});
+	it("renders the side-by-side answer comparison when userAnswer is present", () => {
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion()),
+			showFeedback: true,
+			lastResult: {isCorrect: false, correctAnswer: "42 N", userAnswer: "42"},
+		});
+		render(() => <ResultsCard />);
+		expect(screen.getByText("Your answer:")).toBeInTheDocument();
+		expect(screen.getByText("Correct answer:")).toBeInTheDocument();
 	});
 	it("renders the correct answer in the feedback banner", () => {
 		usePracticeStore.setState({

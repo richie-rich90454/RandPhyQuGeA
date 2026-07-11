@@ -30,6 +30,15 @@ function XIcon(): JSX.Element {
 		</svg>
 	);
 }
+function WarningIcon(): JSX.Element {
+	return (
+		<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+			<path d="M12 3l10 18H2L12 3z" stroke-linejoin="round" />
+			<line x1="12" y1="10" x2="12" y2="14" stroke-linecap="round" />
+			<circle cx="12" cy="17" r="0.5" fill="currentColor" stroke="none" />
+		</svg>
+	);
+}
 export interface ResultsCardProps {
 	/** Optional worked-solution document rendered as an ordered list of steps. */
 	workedSolution?: WorkedSolution;
@@ -88,10 +97,12 @@ interface FeedbackContentProps {
 }
 function FeedbackContent(props: FeedbackContentProps): JSX.Element {
 	let isCorrect=props.lastResult.isCorrect;
+	let isPartial=!isCorrect && props.lastResult.partial === true;
 	let correctAnswer=props.lastResult.correctAnswer;
-	let displayClass=`${styles.resultsDisplay} ${styles.hasContent} ${isCorrect ? styles.correct : styles.incorrect}`;
-	let bannerClass=isCorrect ? styles.resultSuccess : styles.resultError;
-	let heading=isCorrect ? "Correct!" : "Incorrect";
+	let userAnswer=props.lastResult.userAnswer;
+	let displayClass=`${styles.resultsDisplay} ${styles.hasContent} ${isCorrect ? styles.correct : isPartial ? styles.partial : styles.incorrect}`;
+	let bannerClass=`${isCorrect ? styles.resultSuccess : isPartial ? styles.resultWarning : styles.resultError} ${styles.bannerSlideIn}`;
+	let heading=isCorrect ? "Correct!" : isPartial ? "Close!" : "Not quite";
 	let solKind=createMemo(() => props.solutionRender?.kind);
 	let solLatex=createMemo(() => {
 		let sr=props.solutionRender;
@@ -104,14 +115,29 @@ function FeedbackContent(props: FeedbackContentProps): JSX.Element {
 	return (
 		<div class={displayClass}>
 			<div class={bannerClass}>
-				<Show when={isCorrect} fallback={<XIcon />}>
+				<Show when={isCorrect} fallback={
+					<Show when={isPartial} fallback={<XIcon />}>
+						<WarningIcon />
+					</Show>
+				}>
 					<CheckIcon />
 				</Show>
 				<div>
 					<h3>{heading}</h3>
-					<p>
-						Correct answer: <MathText text={correctAnswer} />
-					</p>
+					<Show when={!isCorrect && userAnswer !== undefined} fallback={
+						<p>Correct answer: <MathText text={correctAnswer} /></p>
+					}>
+						<div class={styles.answerComparison}>
+							<div class={styles.comparisonItem}>
+								<span class={styles.comparisonLabel}>Your answer:</span>
+								<MathText text={userAnswer!} />
+							</div>
+							<div class={styles.comparisonItem}>
+								<span class={styles.comparisonLabel}>Correct answer:</span>
+								<MathText text={correctAnswer} />
+							</div>
+						</div>
+					</Show>
 				</div>
 			</div>
 			<Show when={props.solutionRender}>

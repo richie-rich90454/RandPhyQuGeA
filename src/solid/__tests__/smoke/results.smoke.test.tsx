@@ -75,7 +75,7 @@ describe("results smoke", () => {
 			lastResult: {isCorrect: false, correctAnswer: "force"},
 		});
 		render(() => <ResultsCard />);
-		expect(screen.getByText("Incorrect")).toBeInTheDocument();
+		expect(screen.getByText("Not quite")).toBeInTheDocument();
 	});
 	it("renders the correct answer in the feedback banner", () => {
 		usePracticeStore.setState({

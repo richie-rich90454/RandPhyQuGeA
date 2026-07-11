@@ -82,7 +82,7 @@ export function createPracticeActions(options: CreatePracticeActionsOptions = {}
 			practice.setState({
 				session: sessionService.getSession(),
 				showFeedback: true,
-				lastResult: {isCorrect: result.is_correct, correctAnswer: currentQuestion.answer},
+				lastResult: {isCorrect: result.is_correct, correctAnswer: currentQuestion.answer, userAnswer: result.user_answer},
 			});
 		} finally {
 			isSubmitting=false;
