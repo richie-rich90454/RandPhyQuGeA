@@ -1,7 +1,7 @@
 import type {JSX, JSXElement} from "solid-js";
 import {Show} from "solid-js";
-import pkg from "../../../../package.json";
 import {AppTopBar} from "./AppTopBar";
+import {Footer} from "./Footer";
 import styles from "./AppShell.module.css";
 export interface AppShellProps {
 	/** Control toolbar rendered above the main landmark. */
@@ -10,6 +10,16 @@ export interface AppShellProps {
 	children?: JSXElement;
 	/** Optional global actions passed to AppTopBar. */
 	actions?: JSXElement;
+	/** Optional GitHub URL forwarded to the footer. */
+	githubUrl?: string;
+	/** Optional callback forwarded to the footer settings link. */
+	onOpenSettings?: () => void;
+	/** Optional callback forwarded to the footer shortcuts link. */
+	onOpenShortcuts?: () => void;
+	/** Optional callback forwarded to the footer theme toggle. */
+	onToggleTheme?: () => void;
+	/** Optional accessible label for the footer theme toggle. */
+	themeLabel?: string;
 }
 /**
  * Application shell layout for the SolidJS app.
@@ -38,11 +48,13 @@ export function AppShell(props: AppShellProps): JSX.Element {
 						{props.children}
 					</main>
 				</div>
-				<footer class={styles.footer}>
-					<span class={styles.footerText}>RandPhyQuGeA v{pkg.version}</span>
-					<span class={styles.footerDot} aria-hidden="true">·</span>
-					<span class={styles.footerText}>© 2026 Richard's Blogs</span>
-				</footer>
+				<Footer
+					githubUrl={props.githubUrl}
+					onOpenSettings={props.onOpenSettings}
+					onOpenShortcuts={props.onOpenShortcuts}
+					onToggleTheme={props.onToggleTheme}
+					themeLabel={props.themeLabel}
+				/>
 			</div>
 		</>
 	);

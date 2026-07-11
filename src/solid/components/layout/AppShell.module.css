@@ -48,22 +48,6 @@
 .main:focus {
 	outline: none;
 }
-.footer {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: var(--space-2);
-	padding: var(--space-3) var(--space-5);
-	border-top: 1px solid var(--border);
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
-}
-.footerText {
-	white-space: nowrap;
-}
-.footerDot {
-	user-select: none;
-}
 @media (max-width: 1024px) {
 	.container {
 		max-width: 100%;
@@ -76,16 +60,9 @@
 	.content {
 		padding: 0 var(--space-3);
 	}
-	.footer {
-		padding: var(--space-2) var(--space-3);
-		flex-wrap: wrap;
-	}
 }
 @media (max-width: 480px) {
 	.content {
 		padding: 0 var(--space-2);
-	}
-	.footer {
-		font-size: var(--font-size-xs);
 	}
 }
