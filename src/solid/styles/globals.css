@@ -362,6 +362,9 @@ table {
 	outline-offset: 2px;
 	border-radius: var(--radius-xs);
 }
+:focus:not(:focus-visible) {
+	outline: none;
+}
 ::selection {
 	background-color: var(--accent);
 	color: var(--accent-contrast);
