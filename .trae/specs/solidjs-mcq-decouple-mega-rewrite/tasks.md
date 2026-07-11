@@ -135,10 +135,10 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 3.14: Keyboard-shortcut primitive (`createShortcut`) replacing `useGlobalShortcuts`.
 - [x] Task 3.15: `createPersistedSignal`/`createPersistedStore` for localStorage/IndexedDB persistence.
 - [x] Task 3.16: Motion: replace framer-motion with GSAP (already a dep) or CSS transitions; add `useGsapContext` Solid equivalent.
-- [ ] Task 3.17: Smoke tests for each Solid component using `@solidjs/testing-library` — 10 commits covering primitives, toolbars, modals, main content.
-- [ ] Task 3.18: Accessibility pass on Solid components (focus-visible, ARIA, radiogroup/tablist roles, focus trap).
-- [ ] Task 3.19: Responsive breakpoints via CSS Modules `@media` + container queries.
-- [ ] Task 3.20: Final deletion of any remaining React-only files + `react` import sweep (grep-verified zero).
+- [x] Task 3.17: Smoke tests for each Solid component using `@solidjs/testing-library` — 10 commits covering primitives, toolbars, modals, main content.
+- [x] Task 3.18: Accessibility pass on Solid components (focus-visible, ARIA, radiogroup/tablist roles, focus trap).
+- [x] Task 3.19: Responsive breakpoints via CSS Modules `@media` + container queries.
+- [x] Task 3.20: Final deletion of any remaining React-only files + `react` import sweep (grep-verified zero).
 
 ## Phase 4 — RandMatQuGeA UI/UX/DX Mimicry (≈55 commits)
 
