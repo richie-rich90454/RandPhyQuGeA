@@ -13,8 +13,8 @@ import {createStore} from "zustand/vanilla";
 import {persist, createJSONStorage} from "zustand/middleware";
 import pkg from "../../../package.json";
 import {createSolidStore} from "./createSolidStore";
-import type {PracticeMode} from "../../types/models";
-export type ThemeMode = "light" | "dark" | "system";
+import type {PracticeMode, ResponseMode} from "../../types/models";
+export type ThemeMode = "light" | "dark" | "dim" | "system";
 export type FontMode = "default" | "opendyslexic";
 export type FontSize = "small" | "medium" | "large";
 export interface SettingsState {
@@ -41,6 +41,8 @@ export interface SettingsState {
 	autoCheckDelay: number;
 	decimalPlaces: number;
 	mcqChoices: number;
+	defaultResponseMode: ResponseMode;
+	sigFigs: number;
 	perfMode: boolean;
 	waveBackground: boolean;
 	blurEffects: boolean;
@@ -75,6 +77,8 @@ export interface SettingsState {
 	setAutoCheckDelay: (delay: number) => void;
 	setDecimalPlaces: (places: number) => void;
 	setMcqChoices: (count: number) => void;
+	setDefaultResponseMode: (mode: ResponseMode) => void;
+	setSigFigs: (figs: number) => void;
 	setPerfMode: (enabled: boolean) => void;
 	setWaveBackground: (enabled: boolean) => void;
 	setBlurEffects: (enabled: boolean) => void;
@@ -113,6 +117,8 @@ const defaultState= {
 	autoCheckDelay: 800,
 	decimalPlaces: 2,
 	mcqChoices: 4,
+	defaultResponseMode: "frq" as ResponseMode,
+	sigFigs: 3,
 	perfMode: false,
 	waveBackground: true,
 	blurEffects: true,
@@ -152,6 +158,8 @@ const settingsStore=createStore<SettingsState>()(
 			setAutoCheckDelay: delay => set({autoCheckDelay: delay}),
 			setDecimalPlaces: places => set({decimalPlaces: places}),
 			setMcqChoices: count => set({mcqChoices: count}),
+			setDefaultResponseMode: mode => set({defaultResponseMode: mode}),
+			setSigFigs: figs => set({sigFigs: figs}),
 			setPerfMode: enabled => set({perfMode: enabled}),
 			setWaveBackground: enabled => set({waveBackground: enabled}),
 			setBlurEffects: enabled => set({blurEffects: enabled}),
