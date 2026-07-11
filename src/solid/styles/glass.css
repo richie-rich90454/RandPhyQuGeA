@@ -3,7 +3,8 @@
  * Ported from RandMatQuGeA: frosted translucent surfaces with backdrop blur,
  * a subtle refractive inner highlight, and a soft cast shadow. The `.glass`
  * class is applied to elevated surfaces (top bar, toolbars, modal panel, cards).
- * Theme overrides live in tasks 4.3b (dark/dim). prefers-contrast-more disables
+ * Dark/dim theme overrides (task 4.3b) bump opacity and blur for contrast over
+ * the brighter liquid background. prefers-contrast-more disables
  * the blur for readability; forced-colors mode strips shadows.
  */
 :root {
@@ -16,6 +17,20 @@
 	backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 	border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
 	box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
+}
+:root[data-theme="dark"] .glass {
+	--glass-bg: color-mix(in srgb, var(--color-surface) 80%, transparent);
+	--glass-blur: 20px;
+}
+:root[data-theme="dim"] .glass {
+	--glass-bg: color-mix(in srgb, var(--color-surface) 75%, transparent);
+	--glass-blur: 18px;
+}
+@media (prefers-color-scheme: dark) {
+	:root[data-theme="system"] .glass {
+		--glass-bg: color-mix(in srgb, var(--color-surface) 80%, transparent);
+		--glass-blur: 20px;
+	}
 }
 @media (prefers-contrast-more: more) {
 	.glass {
