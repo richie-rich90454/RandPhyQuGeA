@@ -147,10 +147,10 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 4.3: Glassmorphism surface tokens (`--surface`, `--shadow-glass`, backdrop-filter) — 2 commits (light + dark/dim).
 - [x] Task 4.4: Control toolbar top-row layout fidelity (mode selector, topic pills + search, utility buttons, response-mode toggle).
 - [x] Task 4.5: Control toolbar bottom-row fidelity (Single + Mental variants).
-- [ ] Task 4.6: Mental mode: difficulty selector, countdown timer, score, pause/skip, scope/shuffle/unlimited, statistics, Start, progress bar — 4 commits.
-- [ ] Task 4.7: Math toolbar: all symbol sections (Basic, Exponents/Roots, Calculus, Greek, Trig/Log, Vectors, Matrices, Logic/Sets, Relations, "more" dropdown) — 3 commits.
-- [ ] Task 4.8: Live KaTeX preview in answer card (matches RandMatQuGeA feedback pattern).
-- [ ] Task 4.9: Smart answer checking feedback UI (correct answer in KaTeX + plain-text alternate + equivalence note).
+- [x] Task 4.6: Mental mode: difficulty selector, countdown timer, score, pause/skip, scope/shuffle/unlimited, statistics, Start, progress bar — 4 commits.
+- [x] Task 4.7: Math toolbar: all symbol sections (Basic, Exponents/Roots, Calculus, Greek, Trig/Log, Vectors, Matrices, Logic/Sets, Relations, "more" dropdown) — 3 commits.
+- [x] Task 4.8: Live KaTeX preview in answer card (matches RandMatQuGeA feedback pattern).
+- [x] Task 4.9: Smart answer checking feedback UI (correct answer in KaTeX + plain-text alternate + equivalence note).
 - [ ] Task 4.10: Onboarding modal fidelity (steps as `<ol>`).
 - [ ] Task 4.11: Print worksheet modal + printable preview (`@media print`) — KaTeX only.
 - [ ] Task 4.12: Weak-topics recommendation modal (`<ul>`).
