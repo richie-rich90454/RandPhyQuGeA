@@ -1,5 +1,5 @@
 import type {JSX} from "solid-js";
-import {Show, createMemo, createSignal, createEffect, onCleanup} from "solid-js";
+import {For, Show, createMemo, createSignal, createEffect, onCleanup} from "solid-js";
 import {ToolbarGroup} from "../ui/Toolbar";
 import {Badge} from "../ui/Badge";
 import {Button} from "../ui/Button";
@@ -227,9 +227,8 @@ export function MentalControls(): JSX.Element {
 		}, AUTO_ADVANCE_DELAY_MS);
 		onCleanup(() => window.clearTimeout(id));
 	});
-	let handleDifficulty=(e: Event) => {
-		let target=e.target as HTMLSelectElement;
-		useSettingsStore.getState().setMentalDifficulty(target.value as "easy" | "medium" | "hard");
+	let handleDifficulty=(value: "easy" | "medium" | "hard") => {
+		useSettingsStore.getState().setMentalDifficulty(value);
 	};
 	let handleScope=(e: Event) => {
 		let target=e.target as HTMLSelectElement;
@@ -238,14 +237,22 @@ export function MentalControls(): JSX.Element {
 	return (
 		<div id="mental-controls" class={styles.wrapper}>
 			<ToolbarGroup label="Session stats" class={styles.stats}>
-				<Select
-					id="difficulty-select"
-					variant="difficulty"
-					aria-label="Difficulty"
-					options={DIFFICULTY_OPTIONS}
-					value={difficulty()}
-					onInput={handleDifficulty}
-				/>
+				<div id="difficulty-select" class={styles.difficultyPills} role="radiogroup" aria-label="Difficulty">
+					<For each={DIFFICULTY_OPTIONS}>{(option) => (
+						<button
+							type="button"
+							class={`${styles.difficultyPill} ${difficulty() === option.value ? styles.difficultyPillActive : ""}`}
+							role="radio"
+							aria-checked={difficulty() === option.value ? "true" : "false"}
+							aria-label={option.label}
+							data-difficulty={option.value}
+							disabled={isSessionActive()}
+							onClick={() => handleDifficulty(option.value as "easy" | "medium" | "hard")}
+						>
+							{option.label}
+						</button>
+					)}</For>
+				</div>
 				<Badge variant="default" size="sm" class={styles.gap}>
 					<ClockIcon />
 					{formatTime(timer.timeRemaining() || mentalDurationSec())}
@@ -322,14 +329,16 @@ export function MentalControls(): JSX.Element {
 						<Badge variant="default" size="sm">Avg: {(stats().avgTimeMs/1000).toFixed(1)}s</Badge>
 					</div>
 				</Show>
-				<Tooltip delay={300}>
-					<TooltipTrigger>
-						<Button variant="primary" size="sm" onClick={startSession} disabled={isSessionActive() || isStarting()} loading={isStarting()}>
-							{isStarting() ? "Starting…" : "Start Session"}
-						</Button>
-					</TooltipTrigger>
-					<TooltipContent side="bottom">Start a mental math session</TooltipContent>
-				</Tooltip>
+				<div class={styles.startWrapper}>
+					<Tooltip delay={300}>
+						<TooltipTrigger>
+							<Button variant="primary" size="md" class={styles.startBtn} onClick={startSession} disabled={isSessionActive() || isStarting()} loading={isStarting()}>
+								{isStarting() ? "Starting…" : "Start Session"}
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent side="bottom">Start a mental math session</TooltipContent>
+					</Tooltip>
+				</div>
 			</ToolbarGroup>
 			<ProgressBar value={progressPercent()} />
 		</div>

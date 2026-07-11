@@ -10,12 +10,20 @@ beforeEach(() => {
 	useSpecStore.setState(useSpecStore.getInitialState());
 });
 describe("MentalControls", () => {
-	it("renders the difficulty select with all difficulty options", () => {
+	it("renders the difficulty pill radiogroup with all difficulty options", () => {
 		render(() => <MentalControls />);
-		let select=screen.getByRole("combobox", {name: "Difficulty"}) as HTMLSelectElement;
-		expect(select).toBeInTheDocument();
-		let optionValues=Array.from(select.options).map(o => o.value);
-		expect(optionValues).toEqual(["easy", "medium", "hard"]);
+		let group=screen.getByRole("radiogroup", {name: "Difficulty"});
+		expect(group).toBeInTheDocument();
+		let radios=screen.getAllByRole("radio");
+		let labels=radios.map(r => (r as HTMLElement).getAttribute("aria-label"));
+		expect(labels).toEqual(["Easy", "Medium", "Hard"]);
+	});
+	it("marks the active difficulty pill as checked", () => {
+		render(() => <MentalControls />);
+		let active=screen.getByRole("radio", {name: "Medium"});
+		expect(active).toHaveAttribute("aria-checked", "true");
+		let inactive=screen.getByRole("radio", {name: "Hard"});
+		expect(inactive).toHaveAttribute("aria-checked", "false");
 	});
 	it("renders the time badge formatted from the mental duration", () => {
 		render(() => <MentalControls />);
@@ -37,10 +45,9 @@ describe("MentalControls", () => {
 		expect(screen.queryByRole("button", {name: /Resume session/i})).not.toBeInTheDocument();
 		expect(screen.queryByRole("button", {name: /Skip question/i})).not.toBeInTheDocument();
 	});
-	it("updates the settings store when the difficulty changes", () => {
+	it("updates the settings store when a difficulty pill is clicked", () => {
 		render(() => <MentalControls />);
-		let select=screen.getByRole("combobox", {name: "Difficulty"});
-		fireEvent.input(select, {target: {value: "hard"}});
+		fireEvent.click(screen.getByRole("radio", {name: "Hard"}));
 		expect(useSettingsStore.getState().mentalDifficulty).toBe("hard");
 	});
 	it("updates the settings store when the scope changes", () => {

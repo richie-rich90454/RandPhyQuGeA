@@ -20,9 +20,9 @@ beforeEach(() => {
 	resetStores();
 });
 describe("controls smoke", () => {
-	it("MentalControls renders the difficulty select and start button", () => {
+	it("MentalControls renders the difficulty pills and start button", () => {
 		render(() => <MentalControls />);
-		expect(screen.getByRole("combobox", {name: "Difficulty"})).toBeInTheDocument();
+		expect(screen.getByRole("radiogroup", {name: "Difficulty"})).toBeInTheDocument();
 		expect(screen.getByRole("button", {name: /Start Session/i})).toBeInTheDocument();
 	});
 	it("MentalControls renders the time and score badges in idle state", () => {
