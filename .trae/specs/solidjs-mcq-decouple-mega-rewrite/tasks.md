@@ -127,8 +127,8 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [ ] Task 3.6: `AppShell`, `AppTopBar`, `ErrorBoundary` (Solid).
 - [x] Task 3.7: `ControlToolbarTop`, `ControlToolbarBottom`, `ModeSelector`, `TopicsSection`, `McqToggle` (now the **Response Mode** toggle, enabled for all types), `UtilityButtons`, `MentalControls`, `SingleControls`, `MathToolbar` — 9 commits.
 - [x] Task 3.8: `MainContent`, `QuestionCard`, `AnswerSection`, `AnswerCard` (with live KaTeX preview), `ResultsCard`, `ResultsCard` solution rendering — 6 commits.
-- [ ] Task 3.9: Modals: `OnboardingModal`, `PrintModal`, `RecommendModal`, `ManageDataModal`, `SettingsModal` (Basic/Advanced tabs), `ShortcutsModal`, `ResumeSessionModal` — 7 commits.
-- [ ] Task 3.10: `ProgressPanel` (analytics) + `analytics` wiring.
+- [x] Task 3.9: Modals: `OnboardingModal`, `PrintModal`, `RecommendModal`, `ManageDataModal`, `SettingsModal` (Basic/Advanced tabs), `ShortcutsModal`, `ResumeSessionModal` — 7 commits.
+- [x] Task 3.10: `ProgressPanel` (analytics) + `analytics` wiring.
 - [ ] Task 3.11: Liquid animated background component (pure CSS) + glassmorphism surfaces.
 - [ ] Task 3.12: Skip-link, landmarks (`<header>`/`<nav>`/`<main>`/`<h1>`), live regions ported to Solid.
 - [ ] Task 3.13: `ToastProvider` mounted at root (Solid context + Portal).
