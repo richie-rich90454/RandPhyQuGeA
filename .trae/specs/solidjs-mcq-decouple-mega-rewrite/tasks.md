@@ -142,11 +142,11 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 
 ## Phase 4 — RandMatQuGeA UI/UX/DX Mimicry (≈55 commits)
 
-- [ ] Task 4.1: Port RandMatQuGeA color tokens / typography / spacing / radii / shadows into `globals.css` (light/dark/dim/system) — verify no offline-exclusive affordances.
-- [ ] Task 4.2: Liquid animated background: match RandMatQuGeA's blob/gradient motion (CSS keyframes + `prefers-reduced-motion` guard).
-- [ ] Task 4.3: Glassmorphism surface tokens (`--surface`, `--shadow-glass`, backdrop-filter) — 2 commits (light + dark/dim).
-- [ ] Task 4.4: Control toolbar top-row layout fidelity (mode selector, topic pills + search, utility buttons, response-mode toggle).
-- [ ] Task 4.5: Control toolbar bottom-row fidelity (Single + Mental variants).
+- [x] Task 4.1: Port RandMatQuGeA color tokens / typography / spacing / radii / shadows into `globals.css` (light/dark/dim/system) — verify no offline-exclusive affordances.
+- [x] Task 4.2: Liquid animated background: match RandMatQuGeA's blob/gradient motion (CSS keyframes + `prefers-reduced-motion` guard).
+- [x] Task 4.3: Glassmorphism surface tokens (`--surface`, `--shadow-glass`, backdrop-filter) — 2 commits (light + dark/dim).
+- [x] Task 4.4: Control toolbar top-row layout fidelity (mode selector, topic pills + search, utility buttons, response-mode toggle).
+- [x] Task 4.5: Control toolbar bottom-row fidelity (Single + Mental variants).
 - [ ] Task 4.6: Mental mode: difficulty selector, countdown timer, score, pause/skip, scope/shuffle/unlimited, statistics, Start, progress bar — 4 commits.
 - [ ] Task 4.7: Math toolbar: all symbol sections (Basic, Exponents/Roots, Calculus, Greek, Trig/Log, Vectors, Matrices, Logic/Sets, Relations, "more" dropdown) — 3 commits.
 - [ ] Task 4.8: Live KaTeX preview in answer card (matches RandMatQuGeA feedback pattern).
