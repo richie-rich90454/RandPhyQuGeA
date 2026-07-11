@@ -19,7 +19,7 @@ export interface ControlToolbarTopProps {
  */
 export function ControlToolbarTop(props: ControlToolbarTopProps): JSX.Element {
 	return (
-		<ToolbarRow position="top" class={`${styles.row} ${props.class ?? ""}`}>
+		<ToolbarRow position="top" class={`glass ${styles.row} ${props.class ?? ""}`}>
 			{props.children}
 		</ToolbarRow>
 	);

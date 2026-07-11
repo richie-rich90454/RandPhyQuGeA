@@ -1,0 +1,32 @@
+/*
+ * RandPhyQuGeA Solid — glassmorphism surface utility.
+ * Ported from RandMatQuGeA: frosted translucent surfaces with backdrop blur,
+ * a subtle refractive inner highlight, and a soft cast shadow. The `.glass`
+ * class is applied to elevated surfaces (top bar, toolbars, modal panel, cards).
+ * Theme overrides live in tasks 4.3b (dark/dim). prefers-contrast-more disables
+ * the blur for readability; forced-colors mode strips shadows.
+ */
+:root {
+	--glass-bg: color-mix(in srgb, var(--color-surface) 70%, transparent);
+	--shadow-glass: var(--glass-shadow);
+}
+.glass {
+	background: var(--glass-bg);
+	-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+	backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+	border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+	box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
+}
+@media (prefers-contrast-more: more) {
+	.glass {
+		background: var(--surface);
+		-webkit-backdrop-filter: none;
+		backdrop-filter: none;
+	}
+}
+@media (forced-colors: active) {
+	.glass {
+		box-shadow: none;
+		border: 1px solid CanvasText;
+	}
+}

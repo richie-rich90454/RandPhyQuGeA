@@ -4,9 +4,7 @@
 	border-radius: var(--radius-lg);
 }
 .default {
-	background: var(--surface);
-	border: 1px solid var(--border);
-	box-shadow: var(--shadow-sm);
+	background: var(--glass-bg);
 }
 .hover {
 	background: var(--surface);

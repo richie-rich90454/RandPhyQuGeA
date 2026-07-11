@@ -23,7 +23,7 @@ export function AppTopBar(props: AppTopBarProps): JSX.Element {
 	let label=local.wordmark ?? "RandPhyQuGeA";
 	let href=local.href ?? "/";
 	return (
-		<header class={`${styles.bar} ${local.class ?? ""}`}>
+		<header class={`glass ${styles.bar} ${local.class ?? ""}`}>
 			<div class={styles.inner}>
 				<a href={href} class={styles.wordmark} aria-label={`${label} home`}>
 					<svg class={styles.icon} viewBox="0 0 24 24" fill="none" aria-hidden="true">

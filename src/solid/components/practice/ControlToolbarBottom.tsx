@@ -30,7 +30,7 @@ export function ControlToolbarBottom(props: ControlToolbarBottomProps): JSX.Elem
 	let defaultMode=useSettingsStore(s => s.defaultMode);
 	let mode=createMemo<PracticeMode>(() => (isActive() ? sessionMode() : defaultMode()));
 	return (
-		<ToolbarRow position="bottom" class={`${styles.row} ${props.class ?? ""}`}>
+		<ToolbarRow position="bottom" class={`glass ${styles.row} ${props.class ?? ""}`}>
 			<Show when={mode()==="Single"} fallback={props.mentalControls}>
 				{props.singleControls}
 			</Show>

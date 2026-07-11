@@ -12,9 +12,7 @@
 .show { opacity: 1; }
 .content {
 	position: relative;
-	background: var(--surface);
 	border-radius: var(--radius-lg);
-	box-shadow: var(--shadow-xl);
 	max-width: 90vw;
 	max-height: 90vh;
 	width: 480px;

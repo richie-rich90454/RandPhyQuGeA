@@ -94,7 +94,7 @@ export function Modal(props: ModalProps): JSX.Element {
 		<Show when={local.open}>
 			<Portal mount={document.body}>
 				<div id={local.modalId} class={`${styles.modal} ${styles.show}`} role="dialog" aria-modal="true" aria-labelledby={labelledBy()} aria-label={local.title ? undefined : local.ariaLabel} onClick={local.onClose}>
-					<div ref={setRef} tabIndex={-1} class={`${styles.content} ${local.class ?? ""}`} onClick={(event) => event.stopPropagation()}>
+					<div ref={setRef} tabIndex={-1} class={`${styles.content} glass ${local.class ?? ""}`} onClick={(event) => event.stopPropagation()}>
 						<div class={styles.header}>
 							<Show when={local.title}>
 								<h2 id={labelledBy() ?? undefined} class={styles.title}>{local.title}</h2>

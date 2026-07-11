@@ -34,7 +34,7 @@ export function Card(props: CardProps): JSX.Element {
 	let variant=local.variant ?? "default";
 	let padding=local.padding ?? "md";
 	return (
-		<Dynamic component={local.as ?? "div"} class={`${styles.card} ${variantClass[variant] ?? ""} ${paddingClass[padding] ?? ""} ${local.class ?? ""}`} {...others}>
+		<Dynamic component={local.as ?? "div"} class={`glass ${styles.card} ${variantClass[variant] ?? ""} ${paddingClass[padding] ?? ""} ${local.class ?? ""}`} {...others}>
 			{local.children}
 		</Dynamic>
 	);

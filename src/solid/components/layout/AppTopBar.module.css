@@ -3,10 +3,7 @@
 	top: 0;
 	z-index: 40;
 	height: 64px;
-	background: color-mix(in srgb, var(--surface) 92%, transparent);
 	border-bottom: 1px solid var(--border);
-	-webkit-backdrop-filter: blur(12px);
-	backdrop-filter: blur(12px);
 }
 .inner {
 	display: flex;
