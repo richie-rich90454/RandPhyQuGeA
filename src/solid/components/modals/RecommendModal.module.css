@@ -1,5 +1,5 @@
 .recommend {
-	width: 560px;
+	width: 580px;
 }
 .summaryCard {
 	margin-bottom: var(--space-4);
@@ -47,6 +47,10 @@
 }
 .topicCard {
 	width: 100%;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.topicCard:hover {
+	transform: translateY(-1px);
 }
 .topicHeader {
 	display: flex;
@@ -87,6 +91,14 @@
 }
 .topicAction {
 	align-self: flex-end;
+}
+@media (prefers-reduced-motion: reduce) {
+	.topicCard {
+		transition: none;
+	}
+	.topicCard:hover {
+		transform: none;
+	}
 }
 @media (max-width: 480px) {
 	.recommend {

@@ -58,7 +58,7 @@ describe("RecommendModal", () => {
 		useProgressStore.setState({results: [makeResult({id: "r1", topic_id: "t1", is_correct: true})]});
 		useUiStore.getState().openModal("recommend");
 		render(() => <RecommendModal />);
-		expect(screen.getByText(/accuracy is strong across every topic/i)).toBeInTheDocument();
+		expect(screen.getByText(/great job! no weak topics found/i)).toBeInTheDocument();
 	});
 	it("renders weak topics as a list when accuracy is below threshold", () => {
 		useSpecStore.setState({specification: makeSpecification(), empty: false});
@@ -83,7 +83,7 @@ describe("RecommendModal", () => {
 		useProgressStore.setState({results: [makeResult({id: "r1", topic_id: "t1", is_correct: false})]});
 		useUiStore.getState().openModal("recommend");
 		render(() => <RecommendModal />);
-		fireEvent.click(screen.getByRole("button", {name: /^practice$/i}));
+		fireEvent.click(screen.getByRole("button", {name: /practice this topic/i}));
 		expect(usePracticeStore.getState().selectedTopicId).toBe("t1");
 		expect(useSettingsStore.getState().defaultMode).toBe("Single");
 		expect(useUiStore.getState().activeModal).toBe(null);

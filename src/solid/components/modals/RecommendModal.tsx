@@ -141,7 +141,7 @@ export function RecommendModal(props: RecommendModalProps): JSX.Element {
 										<CardContent class={styles.topicContent}>
 											<ProgressBar value={topic.accuracy} ariaLabel={`${topic.topicName} accuracy`} />
 											<span class={styles.topicMeta}>{topic.attempts} attempt{topic.attempts===1 ? "" : "s"} · {correctCount()} correct</span>
-											<Button variant="secondary" size="sm" class={styles.topicAction} onClick={() => handlePractice(topic.topicId)}>Practice</Button>
+											<Button variant="secondary" size="sm" class={styles.topicAction} onClick={() => handlePractice(topic.topicId)}>Practice this topic</Button>
 										</CardContent>
 									</Card>
 								</li>
@@ -152,7 +152,7 @@ export function RecommendModal(props: RecommendModalProps): JSX.Element {
 			}>
 				<EmptyState
 					illustration={<LightbulbIcon />}
-					title="No recommendations yet"
+					title={totalAttempts()===0 ? "No recommendations yet" : "Great job! No weak topics found."}
 					description={totalAttempts()===0 ? "Complete a few questions and we will highlight topics worth reviewing." : "Your accuracy is strong across every topic you have practiced. Keep it up."}
 				/>
 			</Show>
