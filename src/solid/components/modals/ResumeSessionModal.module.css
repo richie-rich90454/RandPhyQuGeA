@@ -55,6 +55,35 @@
 	justify-content: flex-end;
 	gap: var(--space-2);
 }
+.statsGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: var(--space-2);
+}
+.stat {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-1);
+	padding: var(--space-3);
+	background: var(--surface-muted);
+	border-radius: var(--radius-md);
+	text-align: center;
+}
+.statLabel {
+	font-size: var(--font-size-xs);
+	font-weight: var(--font-weight-medium);
+	color: var(--text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+.statValue {
+	font-size: var(--font-size-lg);
+	font-weight: var(--font-weight-semibold);
+	color: var(--text);
+	font-variant-numeric: tabular-nums;
+	word-break: break-word;
+}
 @media (max-width: 600px) {
 	.resume {
 		width: 100%;
@@ -63,6 +92,9 @@
 		flex-direction: column;
 		align-items: flex-start;
 		gap: var(--space-1);
+	}
+	.statsGrid {
+		grid-template-columns: repeat(2, 1fr);
 	}
 	.actions {
 		flex-direction: column-reverse;
