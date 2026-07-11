@@ -70,7 +70,7 @@ function ThemeRoot(): JSX.Element {
 	createTheme({settingsStore: useSettingsStore});
 	return <div>theme</div>;
 }
-function resetSettings(overrides: {themeMode?: "light" | "dark" | "system", reducedMotion?: boolean}={}): void {
+function resetSettings(overrides: {themeMode?: "light" | "dark" | "dim" | "system", reducedMotion?: boolean}={}): void {
 	useSettingsStore.setState({themeMode: "light", reducedMotion: false, ...overrides});
 }
 beforeEach(() => {
@@ -92,6 +92,12 @@ describe("createTheme", () => {
 		render(() => <ThemeRoot />);
 		await flush();
 		expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+	});
+	it("applies data-theme dim when themeMode is dim", async () => {
+		resetSettings({themeMode: "dim"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("data-theme")).toBe("dim");
 	});
 	it("follows system preference when themeMode is system", async () => {
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", true);

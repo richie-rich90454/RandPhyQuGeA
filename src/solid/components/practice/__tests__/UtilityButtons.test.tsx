@@ -34,7 +34,14 @@ describe("UtilityButtons", () => {
 		fireEvent.click(screen.getByRole("button", {name: "Toggle theme"}));
 		expect(useSettingsStore.getState().themeMode).toBe("dark");
 		fireEvent.click(screen.getByRole("button", {name: "Toggle theme"}));
+		expect(useSettingsStore.getState().themeMode).toBe("dim");
+		fireEvent.click(screen.getByRole("button", {name: "Toggle theme"}));
 		expect(useSettingsStore.getState().themeMode).toBe("system");
+	});
+	it("reflects dim theme state on aria-pressed as mixed", () => {
+		useSettingsStore.setState({...useSettingsStore.getState(), themeMode: "dim"});
+		renderWithToast();
+		expect(screen.getByRole("button", {name: "Toggle theme"})).toHaveAttribute("aria-pressed", "mixed");
 	});
 	it("reflects theme state on aria-pressed", () => {
 		useSettingsStore.setState({...useSettingsStore.getState(), themeMode: "dark"});

@@ -33,14 +33,57 @@ const BUTTONS: readonly UtilityButtonConfig[]=[
 	{id: "recommend", label: "Recommend topics", title: "Recommend topics to practice", icon: "recommend"},
 	{id: "manage-data", label: "Manage data", title: "Manage performance data", icon: "manageData"},
 ];
+function SunIcon(): JSX.Element {
+	return (
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<circle cx="12" cy="12" r="4" />
+			<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+		</svg>
+	);
+}
+function MoonIcon(): JSX.Element {
+	return (
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+		</svg>
+	);
+}
+function EclipseIcon(): JSX.Element {
+	return (
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<circle cx="12" cy="12" r="9" />
+			<circle cx="15" cy="14" r="6" fill="currentColor" stroke="none" />
+		</svg>
+	);
+}
+function ContrastIcon(): JSX.Element {
+	return (
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+			<circle cx="12" cy="12" r="9" />
+			<path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" />
+		</svg>
+	);
+}
+function ThemeIcon(props: {mode: ThemeMode}): JSX.Element {
+	if (props.mode === "light") {
+		return <SunIcon />;
+	} else if (props.mode === "dark") {
+		return <MoonIcon />;
+	} else if (props.mode === "dim") {
+		return <EclipseIcon />;
+	} else {
+		return <ContrastIcon />;
+	}
+}
 /**
  * Utility icon buttons for theme, help, shortcuts, settings, print, recommend, and data management.
  *
  * Solid port of {@link ../../../components/practice/UtilityButtons}. The theme
- * button cycles the persisted theme mode (system → light → dark → system); every
- * other button opens its corresponding modal via the UI store. Icons are inline
- * SVG paths (no `@phosphor-icons/react` dependency). Theme state is surfaced via
- * `aria-pressed` (`true` for dark, `"mixed"` for system, `false` for light).
+ * button cycles the persisted theme mode (light → dark → dim → system → light);
+ * every other button opens its corresponding modal via the UI store. Icons are
+ * inline SVGs (no `@phosphor-icons/react` dependency). Theme state is surfaced
+ * via `aria-pressed` (`true` for dark, `"mixed"` for system/dim, `false` for
+ * light) and a dynamic tooltip shows the current mode.
  */
 export function UtilityButtons(): JSX.Element {
 	let themeMode=useSettingsStore(s => s.themeMode);
@@ -48,12 +91,17 @@ export function UtilityButtons(): JSX.Element {
 	let themeAriaPressed=createMemo<boolean | "mixed">(() => {
 		let mode=themeMode();
 		if (mode==="dark") return true;
-		if (mode==="system") return "mixed";
+		if (mode==="system" || mode==="dim") return "mixed";
 		return false;
+	});
+	let themeTitle=createMemo(() => {
+		let mode=themeMode();
+		let label=mode==="light" ? "Light" : mode==="dark" ? "Dark" : mode==="dim" ? "Dim" : "System";
+		return `Theme: ${label} (click to cycle)`;
 	});
 	let handleThemeToggle=() => {
 		let current=useSettingsStore.getState().themeMode;
-		let next: ThemeMode=current==="system" ? "light" : current==="light" ? "dark" : "system";
+		let next: ThemeMode=current==="light" ? "dark" : current==="dark" ? "dim" : current==="dim" ? "system" : "light";
 		useSettingsStore.getState().setThemeMode(next);
 		toast({variant: "info", message: "Theme: "+next});
 	};
@@ -67,23 +115,26 @@ export function UtilityButtons(): JSX.Element {
 	return (
 		<div class={styles.buttons}>
 			<For each={BUTTONS}>{(button) => {
-				let isTheme=button.id==="theme";
-				let pressed=() => isTheme ? themeAriaPressed() : undefined;
-				return (
-					<button
-						type="button"
-						class={styles.iconButton}
-						aria-label={button.label}
-						aria-pressed={pressed()}
-						title={button.title}
-						onClick={() => handleClick(button.id)}
-					>
+			let isTheme=button.id==="theme";
+			let pressed=() => isTheme ? themeAriaPressed() : undefined;
+			let title=() => isTheme ? themeTitle() : button.title;
+			return (
+				<button
+					type="button"
+					class={styles.iconButton}
+					aria-label={button.label}
+					aria-pressed={pressed()}
+					title={title()}
+					onClick={() => handleClick(button.id)}
+				>
+					{isTheme ? <ThemeIcon mode={themeMode()} /> : (
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
 							<path d={ICON_PATHS[button.icon]} />
 						</svg>
-					</button>
-				);
-			}}</For>
+					)}
+				</button>
+			);
+		}}</For>
 		</div>
 	);
 }

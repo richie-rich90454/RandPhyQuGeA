@@ -23,15 +23,15 @@ export function createTheme(options: CreateThemeOptions = {}): void {
 	let root=document.documentElement;
 	let colorSchemeMql=window.matchMedia("(prefers-color-scheme: dark)");
 	let reducedMotionMql=window.matchMedia("(prefers-reduced-motion: reduce)");
-	let updateMetaThemeColor=(isDark: boolean) => {
+	let updateMetaThemeColor=(content: string) => {
 		let meta=document.querySelector('meta[name="theme-color"]');
 		if (meta) {
-			meta.setAttribute("content", isDark ? "#1a1f2e" : "#F8FAFC");
+			meta.setAttribute("content", content);
 		}
 	};
 	let applyTheme=(isDark: boolean) => {
 		root.setAttribute("data-theme", isDark ? "dark" : "light");
-		updateMetaThemeColor(isDark);
+		updateMetaThemeColor(isDark ? "#1a1f2e" : "#F8FAFC");
 	};
 	let applyReducedMotion=(isReduced: boolean) => {
 		if (isReduced) {
@@ -46,6 +46,9 @@ export function createTheme(options: CreateThemeOptions = {}): void {
 			applyTheme(true);
 		} else if (mode === "light") {
 			applyTheme(false);
+		} else if (mode === "dim") {
+			root.setAttribute("data-theme", "dim");
+			updateMetaThemeColor("#1a2744");
 		} else {
 			applyTheme(colorSchemeMql.matches);
 		}
