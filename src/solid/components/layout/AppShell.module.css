@@ -64,3 +64,28 @@
 .footerDot {
 	user-select: none;
 }
+@media (max-width: 1024px) {
+	.container {
+		max-width: 100%;
+	}
+	.content {
+		padding: 0 var(--space-4);
+	}
+}
+@media (max-width: 768px) {
+	.content {
+		padding: 0 var(--space-3);
+	}
+	.footer {
+		padding: var(--space-2) var(--space-3);
+		flex-wrap: wrap;
+	}
+}
+@media (max-width: 480px) {
+	.content {
+		padding: 0 var(--space-2);
+	}
+	.footer {
+		font-size: var(--font-size-xs);
+	}
+}

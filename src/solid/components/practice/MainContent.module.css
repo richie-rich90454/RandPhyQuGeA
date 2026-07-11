@@ -3,9 +3,34 @@
 	flex-direction: column;
 	gap: var(--space-4);
 	width: 100%;
+	container-type: inline-size;
 }
 .contentStack {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: var(--space-4);
+}
+@container (max-width: 768px) {
+	.mainContent {
+		gap: var(--space-3);
+	}
+	.contentStack {
+		gap: var(--space-3);
+	}
+}
+@media (max-width: 768px) {
+	.mainContent {
+		gap: var(--space-3);
+	}
+	.contentStack {
+		gap: var(--space-3);
+	}
+}
+@media (max-width: 480px) {
+	.mainContent {
+		gap: var(--space-2);
+	}
+	.contentStack {
+		gap: var(--space-2);
+	}
 }
