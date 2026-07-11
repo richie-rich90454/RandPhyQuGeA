@@ -23,14 +23,21 @@ export interface ControlToolbarBottomProps {
  * The concrete control trees are supplied via the `singleControls` /
  * `mentalControls` slots so this shell stays decoupled from those components.
  * Framer Motion animations are replaced by CSS transitions handled by the slots.
+ *
+ * Task 4.5 fidelity: the row carries a mode-aware class (`single` / `mental`)
+ * so the module CSS can apply per-variant layout — Single spreads its action
+ * and option groups with `justify-content: space-between`; Mental stretches
+ * its children to fill the row height so the embedded progress bar spans the
+ * full width. The glassmorphism surface comes from the `.glass` utility (4.3a).
  */
 export function ControlToolbarBottom(props: ControlToolbarBottomProps): JSX.Element {
 	let isActive=usePracticeStore(selectIsActive);
 	let sessionMode=usePracticeStore(selectMode);
 	let defaultMode=useSettingsStore(s => s.defaultMode);
 	let mode=createMemo<PracticeMode>(() => (isActive() ? sessionMode() : defaultMode()));
+	let modeClass=() => mode()==="Mental" ? styles.mental : styles.single;
 	return (
-		<ToolbarRow position="bottom" class={`glass ${styles.row} ${props.class ?? ""}`}>
+		<ToolbarRow position="bottom" class={`glass ${styles.row} ${modeClass()} ${props.class ?? ""}`}>
 			<Show when={mode()==="Single"} fallback={props.mentalControls}>
 				{props.singleControls}
 			</Show>
