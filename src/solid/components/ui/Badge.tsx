@@ -14,6 +14,12 @@ export interface BadgeProps {
 	class?: string;
 	/** Accessible label override for screen readers. */
 	"aria-label"?: string;
+	/** ARIA role for the badge element (e.g. "timer"). */
+	role?: JSX.AriaAttributes["role"];
+	/** ARIA live politeness for screen-reader announcements. */
+	"aria-live"?: "polite" | "assertive" | "off";
+	/** Whether the live region announces the full content on change. */
+	"aria-atomic"?: "true" | "false";
 }
 let variantClass: Record<BadgeVariant, string | undefined>={
 	default: styles.default,
@@ -29,11 +35,17 @@ let sizeClass: Record<BadgeSize, string | undefined>={
 };
 /** Compact pill-shaped label for statuses and counts. */
 export function Badge(props: BadgeProps): JSX.Element {
-	let [local]=splitProps(props, ["variant", "size", "children", "class", "aria-label"]);
+	let [local]=splitProps(props, ["variant", "size", "children", "class", "aria-label", "role", "aria-live", "aria-atomic"]);
 	let variant=local.variant ?? "default";
 	let size=local.size ?? "md";
 	return (
-		<span class={`${styles.badge} ${variantClass[variant] ?? ""} ${sizeClass[size] ?? ""} ${local.class ?? ""}`} aria-label={local["aria-label"]}>
+		<span
+			class={`${styles.badge} ${variantClass[variant] ?? ""} ${sizeClass[size] ?? ""} ${local.class ?? ""}`}
+			aria-label={local["aria-label"]}
+			role={local.role}
+			aria-live={local["aria-live"]}
+			aria-atomic={local["aria-atomic"]}
+		>
 			{local.children}
 		</span>
 	);

@@ -79,7 +79,7 @@ export function ResultsCard(props: ResultsCardProps): JSX.Element {
 				<CardTitle>Results</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<div id="answer-results" class={styles.resultsDisplay} role="status" aria-live="polite">
+				<div id="answer-results" class={styles.resultsDisplay} role="status" aria-live="polite" aria-atomic="true">
 					<Show when={hasFeedback()} fallback={
 						<EmptyState illustration={<EnvelopeIcon />} title="Your results will appear here after checking" />
 					}>

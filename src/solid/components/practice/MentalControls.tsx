@@ -274,11 +274,11 @@ export function MentalControls(): JSX.Element {
 						</button>
 					)}</For>
 				</div>
-				<Badge variant="default" size="sm" class={`${styles.gap} ${styles.timerBadge} ${timeUrgent() ? styles.timerUrgent : ""}`} aria-label="Time remaining">
+				<Badge variant="default" size="sm" class={`${styles.gap} ${styles.timerBadge} ${timeUrgent() ? styles.timerUrgent : ""}`} aria-label="Time remaining" role="timer">
 					<ClockIcon />
 					{formatTime(displayTime())}
 				</Badge>
-				<Badge variant="default" size="sm" class={`${styles.gap} ${styles.scoreBadge} ${isSessionActive() ? styles.scoreLive : ""}`} aria-label="Current score">
+				<Badge variant="default" size="sm" class={`${styles.gap} ${styles.scoreBadge} ${isSessionActive() ? styles.scoreLive : ""}`} aria-label="Current score" aria-live="polite" aria-atomic="true">
 					<CheckIcon />
 					{stats().score} / {stats().total}
 				</Badge>

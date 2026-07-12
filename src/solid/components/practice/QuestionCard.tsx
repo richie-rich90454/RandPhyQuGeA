@@ -120,7 +120,7 @@ export function QuestionCard(): JSX.Element {
 				</div>
 			</CardHeader>
 			<CardContent>
-				<div class={styles.questionDisplay} aria-live="polite" role="region" aria-label="Question display">
+				<div class={styles.questionDisplay} aria-live="polite" role="region" aria-label="Question display" aria-atomic="true">
 					<Show when={currentQuestion()} fallback={
 						<EmptyState illustration={<QuestionIcon />} title="Pick a topic and click Generate to start" />
 					}>
