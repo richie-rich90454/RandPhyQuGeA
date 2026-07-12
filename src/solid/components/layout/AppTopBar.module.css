@@ -1,7 +1,7 @@
 .bar {
 	position: sticky;
 	top: 0;
-	z-index: 40;
+	z-index: var(--z-sticky);
 	height: 64px;
 	border-bottom: 1px solid var(--border);
 }
@@ -10,7 +10,7 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--space-3);
-	max-width: 1600px;
+	max-width: var(--app-max-width);
 	height: 100%;
 	margin: 0 auto;
 	padding: 0 var(--space-5);

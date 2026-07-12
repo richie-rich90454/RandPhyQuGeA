@@ -7,7 +7,7 @@
 	background: rgba(11, 37, 64, 0.55);
 	backdrop-filter: blur(4px);
 	-webkit-backdrop-filter: blur(4px);
-	z-index: var(--z-modal);
+	z-index: var(--z-command-palette);
 	padding: var(--space-12) var(--space-4);
 }
 .panel {

@@ -174,7 +174,19 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 4.30: DX: Live spec editor route (`/spec-editor`) with preview. (commit a44b3d8)
 - [x] Task 4.31: DX: Template-authoring wizard route (`/wizard`). (commit 387a940)
 - [x] Task 4.32: DX: Coverage/perf dashboard route (`/dx`). (commit c1440b5)
-- [ ] Task 4.33–4.55 (23 commits): Pixel/interaction polish iteratively comparing against RandMatQuGeA screenshots (each commit narrows one visual/UX gap: spacing, motion timing, focus ring, pill overflow, modal transition, choice-button states, toolbar wrapping, etc.).
+- [x] Task 4.33: Polish AppShell layout spacing, z-index stacking (liquid bg < content < modals < command palette < toasts), and content centering.
+- [ ] Task 4.34: Polish QuestionCard typography and KaTeX display sizing.
+- [ ] Task 4.35: Polish AnswerCard input/preview alignment and error states.
+- [ ] Task 4.36: Polish ResultsCard banner and solution formatting.
+- [ ] Task 4.37: Polish ControlToolbarTop pills/dropdown/utility buttons.
+- [ ] Task 4.38: Polish ControlToolbarBottom button group and timer.
+- [ ] Task 4.39: Polish Modal animations/backdrop/dialog transitions.
+- [ ] Task 4.40: Polish Button variants hover/active/focus/loading states.
+- [ ] Task 4.41: Polish form controls (Input/Select/Slider/Switch) states.
+- [ ] Task 4.42: Polish Toast positioning/animation/type indicators.
+- [ ] Task 4.43: Polish ProgressPanel stat cards and chart styling.
+- [ ] Task 4.44: Polish MathToolbar symbol grid/section tabs/scroll behavior.
+- [ ] Task 4.45–4.55 (11 commits): Remaining pixel/interaction polish iteratively comparing against RandMatQuGeA screenshots (each commit narrows one visual/UX gap: spacing, motion timing, focus ring, pill overflow, modal transition, choice-button states, toolbar wrapping, etc.).
 
 ## Phase 5 — Bug Fixes Batch (200 bugs, ≈80 commits; \~2–3 bugs per commit)
 

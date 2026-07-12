@@ -178,10 +178,11 @@
 	--z-sticky: 1100;
 	--z-overlay: 1200;
 	--z-modal: 1300;
+	--z-command-palette: 1350;
 	--z-toast: 1400;
 	--z-tooltip: 1500;
 	/* Layout */
-	--app-max-width: 1280px;
+	--app-max-width: 1600px;
 	--app-padding: var(--space-4);
 	--control-height-sm: 32px;
 	--control-height-md: 40px;
