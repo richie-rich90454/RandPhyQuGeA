@@ -130,13 +130,13 @@ const specialChars: GeneratedQuestion = {
 describe("Exporter edge cases", () => {
     it("CsvExporter renders only the header for an empty list", () => {
         const exporter = new CsvExporter();
-        expect(exporter.export([])).toBe("id,topic_id,skill_id,type,difficulty,text,answer,solution,solution_latex,choices,response_mode\n");
+        expect(exporter.export([])).toBe("id,topic_id,skill_id,type,difficulty,text,answer,solution,solution_latex,choices,correct_choice_index,response_mode\n");
     });
     it("CsvExporter renders an empty choices column when choices are undefined", () => {
         const exporter = new CsvExporter();
         const out = exporter.export([noChoices]);
         expect(out).toContain('"What is the speed?"');
-        expect(out).toContain(',"","frq"\n');
+        expect(out).toContain(',"","","frq"\n');
         expect(out).not.toContain(" | ");
     });
     it("CsvExporter escapes embedded quotes and preserves commas in fields", () => {
@@ -253,5 +253,53 @@ describe("Exporter edge cases", () => {
         expect(out).toContain("\\begin{solution}");
         expect(out).toContain("v=d/t");
         expect(out).not.toContain("$$v=d/t$$");
+    });
+    it("CsvExporter includes correct_choice_index column when present (task 5.16 bug 1)", () => {
+        const exporter = new CsvExporter();
+        const out = exporter.export([{...sample, correct_choice_index: 1, response_mode: "mcq"}]);
+        expect(out).toContain("correct_choice_index");
+        const lines = out.trim().split("\n");
+        const headerCols = lines[0]!.split(",");
+        const dataCols = lines[1]!.split(",");
+        const cciHeaderIdx = headerCols.indexOf("correct_choice_index");
+        expect(cciHeaderIdx).toBeGreaterThan(-1);
+        expect(dataCols[cciHeaderIdx]).toBe('"1"');
+        const rmIdx = headerCols.indexOf("response_mode");
+        expect(dataCols[rmIdx]).toBe('"mcq"');
+    });
+    it("CsvExporter emits empty correct_choice_index when undefined (task 5.16 bug 1)", () => {
+        const exporter = new CsvExporter();
+        const out = exporter.export([noChoices]);
+        const lines = out.trim().split("\n");
+        const headerCols = lines[0]!.split(",");
+        const dataCols = lines[1]!.split(",");
+        const cciHeaderIdx = headerCols.indexOf("correct_choice_index");
+        expect(dataCols[cciHeaderIdx]).toBe('""');
+    });
+    it("JsonExporter includes response_mode in output (task 5.16 bug 2, preventive fix)", () => {
+        const registry = ExporterRegistry.createDefault();
+        const out = registry.export([{...sample, response_mode: "mcq"}], "json");
+        const parsed = JSON.parse(out);
+        expect(parsed[0].response_mode).toBe("mcq");
+    });
+    it("JsonExporter includes response_mode for frq questions (task 5.16 bug 2, preventive fix)", () => {
+        const registry = ExporterRegistry.createDefault();
+        const out = registry.export([noChoices], "json");
+        const parsed = JSON.parse(out);
+        expect(parsed[0].response_mode).toBe("frq");
+    });
+    it("LatexExporter escapes backslash without mangling textbackslash braces (task 5.16 bug 3)", () => {
+        const exporter = new LatexExporter();
+        const out = exporter.export([{...sample, text: "a\\b", solution_text: "", solution_latex: ""}]);
+        expect(out).toContain("\\textbackslash{}");
+        expect(out).not.toContain("\\textbackslash\\{\\}");
+    });
+    it("LatexExporter single-pass escape does not double-escape added backslashes (task 5.16 bug 3)", () => {
+        const exporter = new LatexExporter();
+        const out = exporter.export([{...sample, text: "100% & x_1", solution_text: "", solution_latex: ""}]);
+        expect(out).toContain("\\%");
+        expect(out).toContain("\\&");
+        expect(out).toContain("\\_");
+        expect(out).not.toContain("\\textbackslash{}%");
     });
 });

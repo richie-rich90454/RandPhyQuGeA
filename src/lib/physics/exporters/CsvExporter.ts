@@ -5,9 +5,10 @@ export class CsvExporter implements Exporter {
     public readonly format: ExportFormat = "csv";
     public export(questions: GeneratedQuestion[]): string {
         const parts: string[] = [];
-        parts.push("id,topic_id,skill_id,type,difficulty,text,answer,solution,solution_latex,choices,response_mode\n");
+        parts.push("id,topic_id,skill_id,type,difficulty,text,answer,solution,solution_latex,choices,correct_choice_index,response_mode\n");
         for (const q of questions) {
             const choices = q.choices !== undefined ? q.choices.join(" | ") : "";
+            const correctChoiceIndex = q.correct_choice_index !== undefined ? String(q.correct_choice_index) : "";
             const row: string[] = [
                 `"${q.id}"`,
                 `"${q.topic_id}"`,
@@ -19,6 +20,7 @@ export class CsvExporter implements Exporter {
                 `"${this.escapeCsvField(q.solution_text)}"`,
                 `"${this.escapeCsvField(q.solution_latex)}"`,
                 `"${this.escapeCsvField(choices)}"`,
+                `"${correctChoiceIndex}"`,
                 `"${q.response_mode}"`,
             ];
             parts.push(row.join(",") + "\n");

@@ -30,16 +30,20 @@ export class LatexExporter implements Exporter {
         return parts.join("");
     }
     private escapeLatex(text: string): string {
-        return text
-            .replace(/\\/g, "\\textbackslash{}")
-            .replace(/&/g, "\\&")
-            .replace(/%/g, "\\%")
-            .replace(/\$/g, "\\$")
-            .replace(/#/g, "\\#")
-            .replace(/_/g, "\\_")
-            .replace(/{/g, "\\{")
-            .replace(/}/g, "\\}")
-            .replace(/~/g, "\\textasciitilde{}")
-            .replace(/\^/g, "\\textasciicircum{}");
+        return text.replace(/[\\&%$#_{}~^]/g, (ch: string): string => {
+            switch (ch) {
+                case "\\": return "\\textbackslash{}";
+                case "&": return "\\&";
+                case "%": return "\\%";
+                case "$": return "\\$";
+                case "#": return "\\#";
+                case "_": return "\\_";
+                case "{": return "\\{";
+                case "}": return "\\}";
+                case "~": return "\\textasciitilde{}";
+                case "^": return "\\textasciicircum{}";
+                default: return ch;
+            }
+        });
     }
 }
