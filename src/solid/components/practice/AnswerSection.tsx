@@ -133,7 +133,7 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 			if (store.showFeedback && canAdvance()) {
 				event.preventDefault();
 				void advance();
-			} else if (canSubmit()) {
+			} else if (event.shiftKey && canSubmit()) {
 				event.preventDefault();
 				void submit();
 			}

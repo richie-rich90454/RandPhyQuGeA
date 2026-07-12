@@ -100,4 +100,23 @@ describe("AnswerSection", () => {
 		render(() => <AnswerSection />);
 		expect(screen.getByRole("button", {name: /Check/i})).toBeInTheDocument();
 	});
+	it("plain Enter does not submit when an answer is ready (task 5.15 bug 1)", () => {
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "force"});
+		render(() => <AnswerSection />);
+		let event=new KeyboardEvent("keydown", {key: "Enter", bubbles: true, cancelable: true});
+		window.dispatchEvent(event);
+		expect(event.defaultPrevented).toBe(false);
+	});
+	it("digit keys do not select MCQ choices while typing in a textarea (task 5.15 bug 2)", () => {
+		let q=makeQuestion({question_type: "MC", choices: ["a", "b", "c", "d"], correct_choice_index: 0});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(q), userAnswer: ""});
+		render(() => <AnswerSection />);
+		let ta=document.createElement("textarea");
+		document.body.appendChild(ta);
+		ta.focus();
+		let event=new KeyboardEvent("keydown", {key: "1", bubbles: true, cancelable: true});
+		ta.dispatchEvent(event);
+		expect(usePracticeStore.getState().selectedChoiceIndex).toBe(-1);
+		document.body.removeChild(ta);
+	});
 });
