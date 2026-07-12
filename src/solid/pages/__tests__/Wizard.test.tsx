@@ -1,6 +1,7 @@
 import {render, screen, fireEvent, waitFor} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach} from "vitest";
 import {Wizard} from "../Wizard";
+import {QUESTION_TYPE_ALIASES} from "../../../types/models";
 beforeEach(() => {
 	window.location.hash="";
 });
@@ -52,6 +53,13 @@ describe("Wizard page", () => {
 	it("renders the question type select on step 1", () => {
 		render(() => <Wizard />);
 		expect(screen.getByRole("combobox", {name: /question type/i})).toBeInTheDocument();
+	});
+	it("derives question-type options from the canonical QUESTION_TYPE_ALIASES (regression 5.42)", () => {
+		render(() => <Wizard />);
+		let typeSelect=screen.getByRole("combobox", {name: /question type/i}) as HTMLSelectElement;
+		let optionValues=Array.from(typeSelect.options).map(o=>o.value);
+		let expected=Object.keys(QUESTION_TYPE_ALIASES).filter(k=>k!==QUESTION_TYPE_ALIASES[k]);
+		expect(optionValues).toEqual(expected);
 	});
 	it("updates the question type when the select changes", () => {
 		render(() => <Wizard />);

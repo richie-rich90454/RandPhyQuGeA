@@ -2,6 +2,7 @@ import type {JSX} from "solid-js";
 import {createSignal, createMemo, Show, For} from "solid-js";
 import {Button, Card, CardHeader, CardTitle, CardSubtitle, CardContent, CardFooter, Badge, EmptyState, Spinner} from "../components/ui";
 import {parseSpecification, generateQuestion} from "../../services/physicsCore";
+import {QUESTION_TYPE_ALIASES} from "../../types/models";
 import type {GeneratedQuestion} from "../../types/models";
 import styles from "./Wizard.module.css";
 interface WizardState {
@@ -29,7 +30,7 @@ const DEFAULT_STATE: WizardState={
 	solutionTemplate: "Use a = (v - v0) / t.",
 };
 const STEPS=["Type & Difficulty", "Identifiers & Text", "Answer & Variables", "Preview & Export"];
-const QUESTION_TYPES=["MultipleChoice", "ShortAnswer", "TrueFalse", "FillInBlank", "NumericEntry"];
+const QUESTION_TYPE_FULL_NAMES=Object.keys(QUESTION_TYPE_ALIASES).filter(k=>k!==QUESTION_TYPE_ALIASES[k]);
 const DIFFICULTY_LEVELS=[1, 2, 3, 4, 5];
 function generateSpecText(state: WizardState): string {
 	let lines: string[]=[];
@@ -159,7 +160,7 @@ export function Wizard(): JSX.Element {
 							<label class={styles.field}>
 								<span class={styles.fieldLabel}>Question Type</span>
 								<select class={styles.select} value={state().questionType} onChange={(e) => update({questionType: e.currentTarget.value})} aria-label="Question type">
-									<For each={QUESTION_TYPES}>{(t) => <option value={t}>{t}</option>}</For>
+									<For each={QUESTION_TYPE_FULL_NAMES}>{(t) => <option value={t}>{t}</option>}</For>
 								</select>
 							</label>
 							<label class={styles.field}>
