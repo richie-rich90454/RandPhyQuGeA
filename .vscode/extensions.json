@@ -1,0 +1,10 @@
+{
+	"recommendations": [
+		"solidjs.solid",
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"stylelint.vscode-stylelint",
+		"vitest.explorer",
+		"ms-vscode.vscode-typescript-next"
+	]
+}
