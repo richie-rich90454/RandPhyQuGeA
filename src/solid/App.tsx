@@ -5,6 +5,7 @@ import {ToastProvider} from "./components/ui/ToastProvider";
 import {CommandPalette} from "./components/CommandPalette";
 import {createHashRouter} from "./primitives/createHashRouter";
 import {Playground} from "./pages/Playground";
+import {SpecEditor} from "./pages/SpecEditor";
 import styles from "./App.module.css";
 function App(): JSX.Element {
 	let [paletteOpen, setPaletteOpen]=createSignal(false);
@@ -16,6 +17,9 @@ function App(): JSX.Element {
 				<Switch>
 					<Match when={router.route() === "/playground"}>
 						<Playground />
+					</Match>
+					<Match when={router.route() === "/spec-editor"}>
+						<SpecEditor />
 					</Match>
 					<Match when={true}>
 						<div class={styles.shell}>
