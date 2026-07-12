@@ -107,3 +107,16 @@
 		transform: translateY(-50%) translateX(20px);
 	}
 }
+@media (forced-colors: active) {
+	.track {
+		border: 1px solid CanvasText;
+	}
+	.trackOn {
+		background: Highlight;
+		border-color: Highlight;
+	}
+	.thumb {
+		border: 1px solid CanvasText;
+		box-shadow: none;
+	}
+}
