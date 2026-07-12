@@ -268,6 +268,27 @@ const HANDLER_SPEC = [
     "Distractor: x * 1",
     "Distractor: x + 1",
     "Distractor: x - 1",
+    "[TEMPLATE]",
+    "Id: QTFLATEX",
+    "TopicId: T1",
+    "SkillId: S1",
+    "QuestionType: TrueFalse",
+    "Difficulty: 1",
+    "TextTemplate: The value is positive. a={a}",
+    "AnswerExpression: a",
+    "SolutionTemplate: The answer is {answer}.",
+    "SolutionLatexTemplate: \\text{{The answer is} {answer}}",
+    "Var.a: Type=int;Min=5;Max=5",
+    "[TEMPLATE]",
+    "Id: QFBTEXT",
+    "TopicId: T1",
+    "SkillId: S1",
+    "QuestionType: FillInBlank",
+    "Difficulty: 2",
+    "TextTemplate: The value {x} doubled is ___.",
+    "AnswerExpression: x * 2",
+    "SolutionTemplate: Double {x} is {answer}.",
+    "Var.x: Type=int;Min=4;Max=4",
 ].join("\n");
 function buildHandlerGenerator(seed: number): QuestionGenerator {
     const spec = new SpecificationParser().parse(HANDLER_SPEC);
@@ -335,7 +356,23 @@ describe("Question type handlers", () => {
         const gen = buildHandlerGenerator(7);
         const q = gen.generate({templateIds: ["QFB"]});
         expect(q).not.toBeNull();
-        expect(q?.solution_latex).toBe(q?.solution_text);
+        expect(q?.solution_latex).toBe("");
+    });
+    it("BaseQuestionHandler substitutes {answer} with text-wrapped value for TF solution_latex (regression 5.2)", () => {
+        const gen = buildHandlerGenerator(7);
+        const q = gen.generate({templateIds: ["QTFLATEX"]});
+        expect(q).not.toBeNull();
+        expect(q?.question_type).toBe("TF");
+        expect(q?.answer).toBe("True");
+        expect(q?.solution_latex).toContain("\\text{True}");
+        expect(q?.solution_latex).not.toContain("{answer}");
+    });
+    it("BaseQuestionHandler leaves solution_latex empty when only SolutionTemplate is provided (regression 5.2)", () => {
+        const gen = buildHandlerGenerator(7);
+        const q = gen.generate({templateIds: ["QFBTEXT"]});
+        expect(q).not.toBeNull();
+        expect(q?.solution_text).toContain("Double 4 is 8.");
+        expect(q?.solution_latex).toBe("");
     });
     it("MultipleChoiceHandler de-duplicates distractors that evaluate to the same formatted value", () => {
         const gen = buildHandlerGenerator(7);

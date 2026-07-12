@@ -118,6 +118,19 @@ describe("ResultsCard", () => {
 		render(() => <ResultsCard />);
 		expect(screen.getByText("Solution")).toBeInTheDocument();
 	});
+	it("falls back to solution_text rendered as plain text when solution_latex is empty (regression 5.2)", () => {
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion({solution_latex: "", solution_text: "Use Newton's second law."})),
+			showFeedback: true,
+			lastResult: {isCorrect: true, correctAnswer: "force"},
+		});
+		let {container}=render(() => <ResultsCard />);
+		expect(screen.getByText("Use Newton's second law.")).toBeInTheDocument();
+		let solutionDisplay=container.querySelector('[class*="solutionDisplay"]');
+		expect(solutionDisplay).not.toBeNull();
+		expect(solutionDisplay?.querySelector("div[class*='display']")).toBeNull();
+	});
 	it("does not render the solution section when no solution is available", () => {
 		usePracticeStore.setState({
 			...usePracticeStore.getState(),

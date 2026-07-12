@@ -24,10 +24,10 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
             answerValue = 0;
         }
         const answer = this.formatAnswer(answerValue, evaluator);
-        const answerLatex = this.substituter.formatValue(answerValue);
+        const answerForLatex = this.formatAnswerForLatex(answer, answerValue);
         const solutionText = this.substituter.substitute(template.solution_template, variables).replaceAll("{answer}", answer);
         const solutionLatex =
-            template.solution_latex_template.trim().length > 0 ? this.substituter.substitute(template.solution_latex_template, variables).replaceAll("{answer}", answerLatex) : solutionText;
+            template.solution_latex_template.trim().length > 0 ? this.substituter.substitute(template.solution_latex_template, variables).replaceAll("{answer}", answerForLatex) : "";
         const diagramSvg = template.diagram_svg !== undefined ? this.substituter.substituteDiagram(template.diagram_svg, variables, answer) : undefined;
         return {
             id: generateId(),
@@ -43,6 +43,13 @@ export abstract class BaseQuestionHandler implements QuestionTypeHandler {
             diagram_svg: diagramSvg,
             variables,
         };
+    }
+    /** Format the answer for inclusion in solution_latex: numeric answers use LaTeX numeric format; text answers (e.g. True/False) are wrapped in \\text{...}. */
+    protected formatAnswerForLatex(answer: string, value: number): string {
+        if (!isNaN(Number(answer))) {
+            return this.substituter.formatValue(value);
+        }
+        return `\\text{${answer}}`;
     }
     /** Format the evaluated numeric `value` into the canonical answer string for this question type (e.g. "True"/"False" for TF, a formatted number for MC/SA/FB/NE). */
     protected abstract formatAnswer(value: number, evaluator: ExpressionEvaluatorLike): string;
