@@ -48,4 +48,36 @@ describe("UtilityButtons", () => {
 		renderWithToast();
 		expect(screen.getByRole("button", {name: "Toggle theme"})).toHaveAttribute("aria-pressed", "true");
 	});
+	it("reflects system theme state on aria-pressed as mixed (task 5.46, preventive fix)", () => {
+		useSettingsStore.setState({...useSettingsStore.getState(), themeMode: "system"});
+		renderWithToast();
+		expect(screen.getByRole("button", {name: "Toggle theme"})).toHaveAttribute("aria-pressed", "mixed");
+	});
+	it("reflects light theme state on aria-pressed as false (task 5.46, preventive fix)", () => {
+		useSettingsStore.setState({...useSettingsStore.getState(), themeMode: "light"});
+		renderWithToast();
+		expect(screen.getByRole("button", {name: "Toggle theme"})).toHaveAttribute("aria-pressed", "false");
+	});
+	it("shows a toast naming dim when the theme cycles to dim (task 5.46, preventive fix)", async () => {
+		useSettingsStore.setState({...useSettingsStore.getState(), themeMode: "dark"});
+		renderWithToast();
+		fireEvent.click(screen.getByRole("button", {name: "Toggle theme"}));
+		expect(await screen.findByText(/Theme: dim/)).toBeInTheDocument();
+	});
+	it("shows a toast naming system when the theme cycles to system (task 5.46, preventive fix)", async () => {
+		useSettingsStore.setState({...useSettingsStore.getState(), themeMode: "dim"});
+		renderWithToast();
+		fireEvent.click(screen.getByRole("button", {name: "Toggle theme"}));
+		expect(await screen.findByText(/Theme: system/)).toBeInTheDocument();
+	});
+	it("updates the theme button title to reflect system mode (task 5.46, preventive fix)", () => {
+		useSettingsStore.setState({...useSettingsStore.getState(), themeMode: "system"});
+		renderWithToast();
+		expect(screen.getByRole("button", {name: "Toggle theme"})).toHaveAttribute("title", "Theme: System (click to cycle)");
+	});
+	it("updates the theme button title to reflect dim mode (task 5.46, preventive fix)", () => {
+		useSettingsStore.setState({...useSettingsStore.getState(), themeMode: "dim"});
+		renderWithToast();
+		expect(screen.getByRole("button", {name: "Toggle theme"})).toHaveAttribute("title", "Theme: Dim (click to cycle)");
+	});
 });
