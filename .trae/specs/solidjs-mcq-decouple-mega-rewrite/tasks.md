@@ -192,16 +192,16 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 
 > Each commit fixes a categorized cluster + adds regression tests. Count targets 200 distinct bugs.
 
-- [ ] Task 5.1: Math pipeline — `$...$`/`$$...$$`/`\(...\)`/`\[...\]`/`\$` escape + unbalanced-delimiter handling (3 bugs).
-- [ ] Task 5.2: Math pipeline — `solution_latex` substituted (vars + `{answer}`) before render; fallback to `solution_text` (2 bugs).
-- [ ] Task 5.3: Math pipeline — exporters/print stop wrapping plain text in math delimiters (2 bugs).
-- [ ] Task 5.4: Math pipeline — single KaTeX engine on main + print popup (2 bugs).
-- [ ] Task 5.5: Math pipeline — no KaTeX error spans on standard templates (2 bugs).
-- [ ] Task 5.6: MCQ grading — `'MultipleChoice'` vs `'MC'` string drift eliminated (canonical `QUESTION_TYPES`) (2 bugs).
-- [ ] Task 5.7: MCQ grading — grading branch reachable for all types in both modes (2 bugs).
-- [ ] Task 5.8: MCQ grading — `correct_choice_index` correct after shuffle (deterministic with seed) (2 bugs).
-- [ ] Task 5.9: Stores — `practiceStore` slimmed; mode config moved to `settingsStore`; no duplication (3 bugs).
-- [ ] Task 5.10: Stores — `progressStore.getStats()` memoized (stable reference) (2 bugs).
+- [x] Task 5.1: Math pipeline — `$...$`/`$$...$$`/`\(...\)`/`\[...\]`/`\$` escape + unbalanced-delimiter handling (3 bugs).
+- [x] Task 5.2: Math pipeline — `solution_latex` substituted (vars + `{answer}`) before render; fallback to `solution_text` (2 bugs).
+- [x] Task 5.3: Math pipeline — exporters/print stop wrapping plain text in math delimiters (2 bugs).
+- [x] Task 5.4: Math pipeline — single KaTeX engine on main + print popup (2 bugs).
+- [x] Task 5.5: Math pipeline — no KaTeX error spans on standard templates (2 bugs).
+- [x] Task 5.6: MCQ grading — `'MultipleChoice'` vs `'MC'` string drift eliminated (canonical `QUESTION_TYPES`) (2 bugs).
+- [x] Task 5.7: MCQ grading — grading branch reachable for all types in both modes (2 bugs).
+- [x] Task 5.8: MCQ grading — `correct_choice_index` correct after shuffle (deterministic with seed) (2 bugs).
+- [x] Task 5.9: Stores — `practiceStore` slimmed; mode config moved to `settingsStore`; no duplication (3 bugs).
+- [x] Task 5.10: Stores — `progressStore.getStats()` memoized (stable reference) (2 bugs).
 - [ ] Task 5.11: Stores — persistence migration for schema changes (response mode, sig figs) (2 bugs).
 - [ ] Task 5.12: Modals — focus trap + return focus + scroll lock across all modals (3 bugs).
 - [ ] Task 5.13: Modals — Settings tabs `role="tablist"` + arrow keys + `aria-selected`/`aria-controls` (2 bugs).
