@@ -23,7 +23,7 @@
 	transition: background-color var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 .item:hover {
-	background: var(--surface-elevated);
+	background: var(--surface-muted);
 }
 .item:focus-visible {
 	outline: none;
@@ -33,9 +33,15 @@
 	cursor: not-allowed;
 	opacity: 0.5;
 }
+.item:active {
+	transform: translateY(1px);
+}
 .itemActive {
 	background: var(--accent);
-	color: var(--text-inverse, var(--surface));
+	color: var(--accent-contrast);
+}
+.itemActive:hover {
+	background: var(--accent-hover);
 }
 .separator {
 	margin: 0 var(--space-1);

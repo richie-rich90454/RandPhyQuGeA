@@ -16,10 +16,21 @@
 	background: var(--surface);
 	color: var(--text);
 	font-size: var(--font-size-sm);
+	transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+}
+.search::placeholder {
+	color: var(--text-subtle);
+}
+.search:hover {
+	border-color: var(--border-strong);
+}
+.search:focus {
+	outline: none;
+	border-color: var(--border-focus);
+	box-shadow: var(--shadow-focus);
 }
 .search:focus-visible {
-	outline: 2px solid var(--border-focus);
-	outline-offset: 1px;
+	outline: none;
 }
 .pills {
 	display: flex;
@@ -62,8 +73,8 @@
 	display: inline-block;
 	width: 4rem;
 	height: 1.75rem;
-	border-radius: var(--radius-pill);
-	background: var(--surface-elevated);
+	border-radius: var(--radius-full);
+	background: var(--surface-muted);
 	opacity: 0.6;
 }
 .name {
