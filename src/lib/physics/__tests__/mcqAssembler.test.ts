@@ -295,4 +295,73 @@ describe("McqAssembler", () => {
             expect(unique.size).toBe(q.choices?.length);
         });
     });
+    describe("correct_choice_index tracking after seeded shuffle (task 5.8)", () => {
+        it("correct_choice_index always points to the answer across 100 seeds", () => {
+            const assembler = new McqAssembler();
+            const context = buildContext({answer: "5"});
+            const base = buildBaseQuestion({answer: "5"});
+            for (let seed = 1; seed <= 100; seed++) {
+                const q = assembler.assemble(base, context, new UniformRandomGenerator(), 4, seed);
+                const idx = q.correct_choice_index ?? -1;
+                expect(idx).toBeGreaterThanOrEqual(0);
+                expect(q.choices?.[idx]).toBe("5");
+            }
+        });
+        it("same seed produces the same correct_choice_index (determinism)", () => {
+            const assembler = new McqAssembler();
+            const context = buildContext({answer: "5"});
+            const base = buildBaseQuestion({answer: "5"});
+            const ref = assembler.assemble(base, context, new UniformRandomGenerator(), 4, 7777);
+            for (let i = 0; i < 10; i++) {
+                const q = assembler.assemble(base, context, new UniformRandomGenerator(), 4, 7777);
+                expect(q.correct_choice_index).toBe(ref.correct_choice_index);
+                expect(q.choices).toEqual(ref.choices);
+            }
+        });
+        it("correct_choice_index is never -1 (answer always found in choices)", () => {
+            const assembler = new McqAssembler();
+            const context = buildContext({answer: "42"});
+            const base = buildBaseQuestion({answer: "42"});
+            for (let seed = 0; seed < 200; seed++) {
+                const q = assembler.assemble(base, context, new UniformRandomGenerator(), 4, seed);
+                expect(q.correct_choice_index).not.toBe(-1);
+                expect(q.correct_choice_index).not.toBeUndefined();
+            }
+        });
+        it("different seeds produce at least two distinct choice orderings", () => {
+            const assembler = new McqAssembler();
+            const context = buildContext({answer: "5"});
+            const base = buildBaseQuestion({answer: "5"});
+            const orderings = new Set<string>();
+            for (let seed = 1; seed <= 50; seed++) {
+                const q = assembler.assemble(base, context, new UniformRandomGenerator(), 4, seed);
+                orderings.add(JSON.stringify(q.choices));
+            }
+            expect(orderings.size).toBeGreaterThan(1);
+        });
+        it("correct_choice_index tracks the answer after None-of-the-above padding", () => {
+            const shortStrategy: ResponseFormatStrategy = {
+                questionType: "PadTrack",
+                generateDistractors: (_ctx, count) => ["99"].slice(0, Math.min(count, 1)),
+            };
+            const generator = UniversalDistractorGenerator.createDefault();
+            generator.register(shortStrategy);
+            const assembler = new McqAssembler(generator);
+            const context: DistractorContext = {
+                answer: "42",
+                answerValue: 42,
+                template: buildTemplate({question_type: "PadTrack"}),
+                variables: {},
+                evaluator: new ExpressionEvaluator(),
+            };
+            const base = buildBaseQuestion({question_type: "PadTrack", answer: "42"});
+            for (let seed = 1; seed <= 30; seed++) {
+                const q = assembler.assemble(base, context, new SeededRandomGenerator(seed), 4);
+                const idx = q.correct_choice_index ?? -1;
+                expect(idx).toBeGreaterThanOrEqual(0);
+                expect(q.choices?.[idx]).toBe("42");
+                expect(q.choices?.[idx]).not.toBe("None of the above");
+            }
+        });
+    });
 });

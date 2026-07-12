@@ -4,6 +4,7 @@ import {MultipleResponseAssembler} from "../generator/MultipleResponseAssembler"
 import {QuestionTypeRegistry} from "../generator/QuestionTypeRegistry";
 import {QuestionGenerator} from "../generator/QuestionGenerator";
 import {AnswerGrader} from "../grader/AnswerGrader";
+import {SeededRandomGenerator} from "../random/SeededRandomGenerator";
 import type {RandomGenerator} from "../contracts";
 import type {GeneratedQuestion, QuestionTemplate} from "../types";
 class StubRandom implements RandomGenerator {
@@ -102,6 +103,22 @@ describe("MultipleResponseAssembler", () => {
 		const mcq = new MultipleResponseAssembler().assemble(base, tpl, new StubRandom());
 		expect(mcq.response_mode).toBe("frq");
 		expect(mcq.grader_hint).toBe("mcq-unavailable-fallback");
+	});
+	it("tracks correct_choice_indices after a real seeded shuffle (task 5.8)", () => {
+		const handler = new MultipleResponseHandler();
+		const template = multiResponseTemplate();
+		const base = handler.handle(template, {}, stubEvaluator(), new StubRandom());
+		const assembler = new MultipleResponseAssembler();
+		for (let seed = 1; seed <= 30; seed++) {
+			const rng = new SeededRandomGenerator(seed);
+			const mcq = assembler.assemble(base, template, rng);
+			expect(mcq.response_mode).toBe("mcq");
+			const indices = mcq.correct_choice_indices ?? [];
+			expect(indices).toHaveLength(2);
+			const correctLabels = indices.map(i => mcq.choices?.[i] ?? "");
+			expect(correctLabels).toContain("Force");
+			expect(correctLabels).toContain("Momentum");
+		}
 	});
 });
 describe("MultipleResponse registration", () => {
