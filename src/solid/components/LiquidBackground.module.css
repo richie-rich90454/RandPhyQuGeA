@@ -11,8 +11,9 @@
 	position: absolute;
 	inset: 0;
 	background:
-		radial-gradient(ellipse at 28% 18%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
-		radial-gradient(ellipse at 78% 82%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 55%);
+		radial-gradient(ellipse at 28% 18%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 55%),
+		radial-gradient(ellipse at 78% 82%, color-mix(in srgb, var(--primary) 12%, transparent), transparent 55%),
+		radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--accent-hover) 6%, transparent), transparent 70%);
 	pointer-events: none;
 	z-index: 0;
 }
@@ -25,41 +26,41 @@
 	z-index: 1;
 }
 .blob1 {
-	top: -10%;
-	left: -10%;
-	width: 45vmax;
-	height: 45vmax;
-	background: var(--liquid-color-1);
-	animation: liquidFloat1 var(--liquid-duration-slow) var(--ease-emphasized) infinite alternate, blobMorph1 18s var(--ease-in-out) infinite alternate;
+	top: -12%;
+	left: -8%;
+	width: 48vmax;
+	height: 48vmax;
+	background: radial-gradient(circle at 30% 30%, var(--liquid-color-1), color-mix(in srgb, var(--liquid-color-1) 60%, transparent));
+	animation: liquidFloat1 var(--liquid-duration-slow) var(--ease-emphasized) infinite alternate, blobMorph1 15s var(--ease-in-out) infinite alternate;
 }
 .blob2 {
-	top: 20%;
-	right: -15%;
-	width: 40vmax;
-	height: 40vmax;
-	background: var(--liquid-color-2);
-	animation: liquidFloat2 var(--liquid-duration) var(--ease-decelerated) infinite alternate, blobMorph2 22s var(--ease-in-out) infinite alternate;
+	top: 15%;
+	right: -12%;
+	width: 42vmax;
+	height: 42vmax;
+	background: radial-gradient(circle at 40% 40%, var(--liquid-color-2), color-mix(in srgb, var(--liquid-color-2) 55%, transparent));
+	animation: liquidFloat2 var(--liquid-duration) var(--ease-decelerated) infinite alternate, blobMorph2 19s var(--ease-in-out) infinite alternate;
 }
 .blob3 {
-	bottom: -15%;
-	left: 10%;
-	width: 50vmax;
-	height: 50vmax;
-	background: var(--liquid-color-3);
-	animation: liquidFloat3 var(--liquid-duration-slow) var(--ease-accelerated) infinite alternate, blobMorph3 26s var(--ease-in-out) infinite alternate;
+	bottom: -18%;
+	left: 8%;
+	width: 52vmax;
+	height: 52vmax;
+	background: radial-gradient(circle at 50% 50%, var(--liquid-color-3), color-mix(in srgb, var(--liquid-color-3) 50%, transparent));
+	animation: liquidFloat3 var(--liquid-duration-slow) var(--ease-accelerated) infinite alternate, blobMorph3 24s var(--ease-in-out) infinite alternate;
 }
 .blob4 {
-	bottom: 10%;
-	right: 5%;
-	width: 35vmax;
-	height: 35vmax;
-	background: var(--liquid-color-4);
-	animation: liquidFloat4 var(--liquid-duration) var(--ease-standard) infinite alternate, blobMorph4 20s var(--ease-in-out) infinite alternate;
+	bottom: 8%;
+	right: 8%;
+	width: 38vmax;
+	height: 38vmax;
+	background: radial-gradient(circle at 35% 35%, var(--liquid-color-4), color-mix(in srgb, var(--liquid-color-4) 65%, transparent));
+	animation: liquidFloat4 var(--liquid-duration) var(--ease-standard) infinite alternate, blobMorph4 30s var(--ease-in-out) infinite alternate;
 }
 .veil {
 	position: absolute;
 	inset: 0;
-	background: radial-gradient(circle at 50% 50%, transparent 0%, color-mix(in srgb, var(--bg) 35%, transparent) 100%);
+	background: radial-gradient(circle at 50% 50%, transparent 0%, color-mix(in srgb, var(--bg) 45%, transparent) 100%);
 	z-index: 2;
 }
 @keyframes liquidFloat1 {
