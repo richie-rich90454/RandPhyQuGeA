@@ -1,4 +1,5 @@
 import type {DistractorContext, RandomGenerator, ResponseFormatStrategy, UniversalDistractorGeneratorLike} from "../contracts";
+import {QUESTION_TYPES} from "../types";
 import {NumericDistractorStrategy} from "./strategies/NumericDistractorStrategy";
 import {BooleanDistractorStrategy} from "./strategies/BooleanDistractorStrategy";
 import {BlankTokenDistractorStrategy} from "./strategies/BlankTokenDistractorStrategy";
@@ -54,11 +55,11 @@ export class UniversalDistractorGenerator implements UniversalDistractorGenerato
     /** Register the built-in strategies: NE/MC numeric, TF boolean, FB blank-token, SA short-answer-neighbor. */
     private registerDefaults(): void {
         const numeric = new NumericDistractorStrategy();
-        this.strategies.set("NE", numeric);
-        this.strategies.set("MC", numeric);
-        this.strategies.set("TF", new BooleanDistractorStrategy());
-        this.strategies.set("FB", new BlankTokenDistractorStrategy());
-        this.strategies.set("SA", new ShortAnswerNeighborStrategy());
+        this.strategies.set(QUESTION_TYPES.NE, numeric);
+        this.strategies.set(QUESTION_TYPES.MC, numeric);
+        this.strategies.set(QUESTION_TYPES.TF, new BooleanDistractorStrategy());
+        this.strategies.set(QUESTION_TYPES.FB, new BlankTokenDistractorStrategy());
+        this.strategies.set(QUESTION_TYPES.SA, new ShortAnswerNeighborStrategy());
         this.strategies.set("MATCHING", new MatchingDistractorStrategy());
         this.strategies.set("ORDERING", new OrderingDistractorStrategy());
     }

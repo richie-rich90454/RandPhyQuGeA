@@ -1,5 +1,5 @@
 import type {Specification, Unit, Topic, Skill, QuestionTemplate, VariableDefinition, Diagram, Hint, UnitConversion, ParseError} from "./types";
-import {ParseException} from "./types";
+import {ParseException, normalizeQuestionType} from "./types";
 /** Stateless parser for the part_one.txt specification format. */
 export class SpecificationParser {
     /** Parse a spec text string into a Specification, throwing ParseException on errors. */
@@ -213,22 +213,7 @@ export class SpecificationParser {
             return undefined;
         }
         const trimmedType: string = questionTypeRaw.trim();
-        let questionType: string = trimmedType;
-        if (trimmedType === "MultipleChoice" || trimmedType === "MC") {
-            questionType = "MC";
-        }
-        if (trimmedType === "ShortAnswer" || trimmedType === "SA") {
-            questionType = "SA";
-        }
-        if (trimmedType === "TrueFalse" || trimmedType === "TF") {
-            questionType = "TF";
-        }
-        if (trimmedType === "FillInBlank" || trimmedType === "FB") {
-            questionType = "FB";
-        }
-        if (trimmedType === "NumericEntry" || trimmedType === "NE") {
-            questionType = "NE";
-        }
+        const questionType: string = normalizeQuestionType(trimmedType);
         const difficultyStr: string | undefined = this.getSingle(block, "Difficulty");
         if (difficultyStr === undefined) {
             return undefined;

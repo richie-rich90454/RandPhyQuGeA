@@ -1,5 +1,6 @@
 import type {AnswerGraderLike, ExpressionNormalizerLike, GradeResult} from "../contracts";
 import type {GeneratedQuestion} from "../types";
+import {QUESTION_TYPES} from "../types";
 import {ExpressionNormalizer} from "./ExpressionNormalizer";
 /** Default absolute tolerance for numeric-tolerance grading (e.g. 9.8 vs 9.799 passes; 9.8 vs 9.82 fails). */
 const DEFAULT_NUMERIC_TOLERANCE = 0.01;
@@ -69,13 +70,13 @@ export class AnswerGrader implements AnswerGraderLike {
     /** FRQ grading dispatch by question type: TF→boolean, NE/MC→numeric-tolerance, SA→expression-equivalence, else exact-or-numeric. */
     private gradeFrq(question: GeneratedQuestion, response: string): GradeResult {
         const type = question.question_type;
-        if (type === "TF") {
+        if (type === QUESTION_TYPES.TF) {
             return this.gradeBoolean(response, question.answer);
         }
-        if (type === "NE" || type === "MC") {
+        if (type === QUESTION_TYPES.NE || type === QUESTION_TYPES.MC) {
             return this.gradeNumeric(response, question.answer);
         }
-        if (type === "SA") {
+        if (type === QUESTION_TYPES.SA) {
             return this.gradeExpression(response, question.answer);
         }
         return this.gradeExactOrNumeric(response, question.answer);

@@ -1,7 +1,8 @@
 import type {DistractorContext, RandomGenerator, ResponseFormatStrategy} from "../../contracts";
+import {QUESTION_TYPES} from "../../types";
 /** Blank-token distractor strategy for FB question types: evaluates template distractor expressions, then perturbs the numeric answer (off-by-one, doubling, halving) to fill in alternate blank tokens. */
 export class BlankTokenDistractorStrategy implements ResponseFormatStrategy {
-    public readonly questionType = "FB";
+    public readonly questionType = QUESTION_TYPES.FB;
     /** Generate up to `count` blank-token distractors: first evaluates `template.distractor_expressions`, then falls back to numeric perturbations of the answer (off-by-one, doubling, halving, ±2), shuffled by `random`. Distractors equal to the correct answer or already collected are skipped. */
     public generateDistractors(context: DistractorContext, count: number, random: RandomGenerator): string[] {
         const {answer, answerValue, template, variables, evaluator} = context;

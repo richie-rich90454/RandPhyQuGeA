@@ -17,6 +17,24 @@ export const QUESTION_TYPES = {
     FB: "FB" as const,
     NE: "NE" as const,
 } satisfies Record<string, QuestionType>;
+/** Canonical aliases mapping full spec names (e.g. "MultipleChoice") and short codes (e.g. "MC") to the canonical {@link QuestionType} code. Single source of truth for parser normalization so 'MultipleChoice' vs 'MC' string drift cannot cause a missed grading branch. */
+export const QUESTION_TYPE_ALIASES: Record<string, QuestionType> = {
+    MultipleChoice: QUESTION_TYPES.MC,
+    ShortAnswer: QUESTION_TYPES.SA,
+    TrueFalse: QUESTION_TYPES.TF,
+    FillInBlank: QUESTION_TYPES.FB,
+    NumericEntry: QUESTION_TYPES.NE,
+    MC: QUESTION_TYPES.MC,
+    SA: QUESTION_TYPES.SA,
+    TF: QUESTION_TYPES.TF,
+    FB: QUESTION_TYPES.FB,
+    NE: QUESTION_TYPES.NE,
+};
+/** Normalize a raw question-type string to its canonical {@link QuestionType} code; unknown values pass through unchanged so custom handlers still resolve via the registry. */
+export function normalizeQuestionType(raw: string): string {
+    const canonical = QUESTION_TYPE_ALIASES[raw];
+    return canonical !== undefined ? canonical : raw;
+}
 /** Supported export formats for the question exporters. */
 export type ExportFormat = "html" | "pdf" | "markdown" | "text" | "json" | "csv" | "latex" | "anki" | "quizlet";
 /** A top-level organizational unit (e.g. "Mechanics"). */
