@@ -86,6 +86,12 @@ describe("MatchingHandler.handle", () => {
 		expect(q.answer).toBe("");
 		expect(q.text).toContain("?");
 	});
+	it("sets solution_latex to empty string when no latex template exists", () => {
+		const handler = new MatchingHandler();
+		const q = handler.handle(matchingTemplate(), {}, stubEvaluator(), new StubRandom(0));
+		expect(q.solution_latex).toBe("");
+		expect(q.solution_text).toBe("The unit for Force is Newton.");
+	});
 });
 describe("MatchingDistractorStrategy", () => {
 	it("returns the other right items excluding the answer", () => {

@@ -76,7 +76,7 @@ export class ExportService implements IExportService {
 				parts.push("</div>");
 			}
 			if (includeAnswerKey) {
-				parts.push(`<div class="answer">Answer: ${this.escapeHtml(q.answer)}</div>`);
+				parts.push(`<div class="answer">Answer: ${this.escapeAnswer(q.answer)}</div>`);
 				if (q.solution_text) {
 					parts.push(`<div class="solution">Solution: ${this.escapeHtml(q.solution_text)}</div>`);
 				}
@@ -102,5 +102,8 @@ export class ExportService implements IExportService {
 	}
 	private escapeHtml(text: string): string {
 		return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+	}
+	private escapeAnswer(text: string): string {
+		return this.escapeHtml(text).replace(/\$/g, "\\$");
 	}
 }

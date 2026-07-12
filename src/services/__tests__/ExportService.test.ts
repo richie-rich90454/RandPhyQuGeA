@@ -130,6 +130,15 @@ describe("ExportService", () => {
 			expect(html).toContain("&lt;script&gt;");
 			expect(html).toContain("Answer: &amp;");
 		});
+		it("escapes dollar signs in answer text to prevent KaTeX auto-render treating them as math delimiters", () => {
+			let service = new ExportService();
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is the cost?", answer: "$5 and $10", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
+			];
+			let html = service.buildWorksheetHtml(questions, true);
+			expect(html).toContain("Answer: \\$5 and \\$10");
+			expect(html).not.toContain("Answer: $5 and $10");
+		});
 	});
 	describe("printWorksheet", () => {
 		it("opens a print window, writes worksheet HTML, and calls print", () => {

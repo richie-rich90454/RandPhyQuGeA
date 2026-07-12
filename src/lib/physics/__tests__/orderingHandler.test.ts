@@ -78,6 +78,12 @@ describe("OrderingHandler.handle", () => {
 		expect(q.answer).toBe("");
 		expect(q.text).toContain("Arrange");
 	});
+	it("sets solution_latex to empty string when no latex template exists", () => {
+		const handler = new OrderingHandler();
+		const q = handler.handle(orderingTemplate(), {}, stubEvaluator(), new StubRandom());
+		expect(q.solution_latex).toBe("");
+		expect(q.solution_text).toBe("The correct order is: Solid, Liquid, Gas.");
+	});
 });
 describe("OrderingDistractorStrategy", () => {
 	it("returns alternative orderings excluding the correct order", () => {

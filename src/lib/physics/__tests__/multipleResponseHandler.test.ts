@@ -77,6 +77,12 @@ describe("MultipleResponseHandler.handle", () => {
 		const q = handler.handle(tpl, {}, stubEvaluator(), new StubRandom());
 		expect(q.answer).toBe("");
 	});
+	it("sets solution_latex to empty string when no latex template exists", () => {
+		const handler = new MultipleResponseHandler();
+		const q = handler.handle(multiResponseTemplate(), {}, stubEvaluator(), new StubRandom());
+		expect(q.solution_latex).toBe("");
+		expect(q.solution_text).toBe("The vectors are: Force, Momentum.");
+	});
 });
 describe("MultipleResponseAssembler", () => {
 	it("builds choices from all options and records correct indices", () => {

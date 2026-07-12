@@ -235,4 +235,23 @@ describe("Exporter edge cases", () => {
             expect(out.length).toBeGreaterThan(0);
         }
     });
+    it("HtmlExporter does not wrap plain text solution in $$ when solution_latex is empty", () => {
+        const exporter = new HtmlExporter();
+        const out = exporter.export([{...noChoices, solution_latex: ""}]);
+        expect(out).toContain('<div class="solution">Solution: v=d/t</div>');
+        expect(out).not.toContain("$$v=d/t$$");
+    });
+    it("PdfExporter does not wrap plain text solution in $$ when solution_latex is empty", () => {
+        const exporter = new PdfExporter();
+        const out = exporter.export([{...noChoices, solution_latex: ""}]);
+        expect(out).toContain('<div class="solution">Solution: v=d/t</div>');
+        expect(out).not.toContain("$$v=d/t$$");
+    });
+    it("LatexExporter falls back to escaped solution_text when solution_latex is empty", () => {
+        const exporter = new LatexExporter();
+        const out = exporter.export([{...noChoices, solution_latex: ""}]);
+        expect(out).toContain("\\begin{solution}");
+        expect(out).toContain("v=d/t");
+        expect(out).not.toContain("$$v=d/t$$");
+    });
 });

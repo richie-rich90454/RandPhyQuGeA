@@ -38,7 +38,7 @@ export class OrderingHandler implements QuestionTypeHandler {
 		const text = baseText.replaceAll("{prompt}", promptValue);
 		const solutionText = this.substituter.substitute(template.solution_template, variables).replaceAll("{prompt}", promptValue).replaceAll("{answer}", correct);
 		const solutionLatex =
-			template.solution_latex_template.trim().length > 0 ? this.substituter.substitute(template.solution_latex_template, variables).replaceAll("{prompt}", promptValue).replaceAll("{answer}", correct) : solutionText;
+			template.solution_latex_template.trim().length > 0 ? this.substituter.substitute(template.solution_latex_template, variables).replaceAll("{prompt}", promptValue).replaceAll("{answer}", correct) : "";
 		const diagramSvg = template.diagram_svg !== undefined ? this.substituter.substituteDiagram(template.diagram_svg, variables, correct) : undefined;
 		return {
 			id: generateId(),
