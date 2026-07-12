@@ -6,6 +6,7 @@ import {CommandPalette} from "./components/CommandPalette";
 import {createHashRouter} from "./primitives/createHashRouter";
 import {Playground} from "./pages/Playground";
 import {SpecEditor} from "./pages/SpecEditor";
+import {Wizard} from "./pages/Wizard";
 import styles from "./App.module.css";
 function App(): JSX.Element {
 	let [paletteOpen, setPaletteOpen]=createSignal(false);
@@ -20,6 +21,9 @@ function App(): JSX.Element {
 					</Match>
 					<Match when={router.route() === "/spec-editor"}>
 						<SpecEditor />
+					</Match>
+					<Match when={router.route() === "/wizard"}>
+						<Wizard />
 					</Match>
 					<Match when={true}>
 						<div class={styles.shell}>
