@@ -165,15 +165,15 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 4.21: Responsive rules (<1024, <768, <480) matching RandMatQuGeA breakpoints. (commit 14cba87)
 - [x] Task 4.22: Touch-target sizing (≥24px, ≥44px where space allows). (commit 2f6fa59)
 - [x] Task 4.23: `prefers-contrast-more` / `forced-colors` / 100% root font-size. (commit a013335)
-- [ ] Task 4.24: Command palette (Ctrl+K) — RandMatQuGeA-DX-inspired quick actions.
-- [ ] Task 4.25: DX: VSCode-recommended extensions + `.vscode/settings.json` for Solid.
-- [ ] Task 4.26: DX: `README.md` rewrite for SolidJS + CSS Modules architecture (no offline-exclusive claims).
-- [ ] Task 4.27: DX: `ARCHITECTURE.md` rewrite (Solid + pure-TS OOP core + MCQ/FRQ decoupling diagram).
-- [ ] Task 4.28: DX: `CONTRIBUTING.md` rewrite (Solid conventions, CSS Modules, AGENTS.md formatting, commit conventions).
-- [ ] Task 4.29: DX: Component playground route (`/playground`) for isolated component dev.
-- [ ] Task 4.30: DX: Live spec editor route (`/spec-editor`) with preview.
-- [ ] Task 4.31: DX: Template-authoring wizard route (`/wizard`).
-- [ ] Task 4.32: DX: Coverage/perf dashboard route (`/dx`).
+- [x] Task 4.24: Command palette (Ctrl+K) — RandMatQuGeA-DX-inspired quick actions. (commit bc425f1)
+- [x] Task 4.25: DX: VSCode-recommended extensions + `.vscode/settings.json` for Solid. (commit 809573c)
+- [x] Task 4.26: DX: `README.md` rewrite for SolidJS + CSS Modules architecture (no offline-exclusive claims). (commit 68ef628)
+- [x] Task 4.27: DX: `ARCHITECTURE.md` rewrite (Solid + pure-TS OOP core + MCQ/FRQ decoupling diagram). (commit 388ae11)
+- [x] Task 4.28: DX: `CONTRIBUTING.md` rewrite (Solid conventions, CSS Modules, AGENTS.md formatting, commit conventions). (commit 47fd029)
+- [x] Task 4.29: DX: Component playground route (`/playground`) for isolated component dev. (commit a0b881a)
+- [x] Task 4.30: DX: Live spec editor route (`/spec-editor`) with preview. (commit a44b3d8)
+- [x] Task 4.31: DX: Template-authoring wizard route (`/wizard`). (commit 387a940)
+- [x] Task 4.32: DX: Coverage/perf dashboard route (`/dx`). (commit c1440b5)
 - [ ] Task 4.33–4.55 (23 commits): Pixel/interaction polish iteratively comparing against RandMatQuGeA screenshots (each commit narrows one visual/UX gap: spacing, motion timing, focus ring, pill overflow, modal transition, choice-button states, toolbar wrapping, etc.).
 
 ## Phase 5 — Bug Fixes Batch (200 bugs, ≈80 commits; \~2–3 bugs per commit)
