@@ -11,6 +11,10 @@ import {useSpecStore} from "../stores/specStore";
 import {useUiStore} from "../stores/uiStore";
 import type {Session} from "../../services/contracts";
 import type {GeneratedQuestion, Specification} from "../../types/models";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+let globalsCss=readFileSync(join(process.cwd(), "src", "solid", "styles", "globals.css"), "utf-8");
+let glassCss=readFileSync(join(process.cwd(), "src", "solid", "styles", "glass.css"), "utf-8");
 function makeSpec(): Specification {
 	return {
 		units: [{id: "u1", name: "Mechanics", description: ""}],
@@ -179,5 +183,34 @@ describe("accessibility", () => {
 		expect(radios[0]).toHaveAttribute("aria-checked", "false");
 		fireEvent.click(radios[1]!);
 		expect(radios[1]).toHaveAttribute("aria-checked", "true");
+	});
+});
+describe("accessibility CSS", () => {
+	it("globals.css sets root font-size to 100% for browser font scaling", () => {
+		expect(globalsCss).toContain("font-size: 100%");
+	});
+	it("globals.css defines prefers-contrast-more media query", () => {
+		expect(globalsCss).toContain("@media (prefers-contrast-more: more)");
+	});
+	it("globals.css strengthens border-subtle and text under prefers-contrast-more", () => {
+		expect(globalsCss).toContain("--border-subtle: var(--border-strong)");
+		expect(globalsCss).toContain("--text-muted: var(--text)");
+	});
+	it("globals.css defines forced-colors media query", () => {
+		expect(globalsCss).toContain("@media (forced-colors: active)");
+	});
+	it("globals.css maps focus indicator to Highlight under forced-colors", () => {
+		expect(globalsCss).toContain("Highlight");
+	});
+	it("globals.css forces visible borders on form controls under forced-colors", () => {
+		expect(globalsCss).toContain("border: 1px solid CanvasText");
+	});
+	it("glass.css disables backdrop blur under prefers-contrast-more", () => {
+		expect(glassCss).toContain("@media (prefers-contrast-more: more)");
+		expect(glassCss).toContain("backdrop-filter: none");
+	});
+	it("glass.css adapts borders under forced-colors", () => {
+		expect(glassCss).toContain("@media (forced-colors: active)");
+		expect(glassCss).toContain("CanvasText");
 	});
 });

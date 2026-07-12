@@ -458,10 +458,20 @@ table {
 @media (prefers-contrast-more: more) {
 	:root {
 		--border: var(--border-strong);
+		--border-subtle: var(--border-strong);
 		--surface-glass: var(--surface);
 		--surface-glass-strong: var(--surface);
 		--glass-blur: 0px;
+		--glass-opacity: 1;
+		--glass-opacity-strong: 1;
+		--text-muted: var(--text);
+		--text-subtle: var(--text);
 	}
+	:focus-visible {
+		outline-width: 3px;
+		outline-offset: 3px;
+	}
+	a { text-decoration: underline; }
 }
 @media (forced-colors: active) {
 	:root {
@@ -472,5 +482,14 @@ table {
 		--shadow-md: none;
 		--shadow-lg: none;
 		--shadow-xl: none;
+		--shadow-focus: 0 0 0 2px Highlight;
+		--border-focus: Highlight;
+	}
+	button, input, select, textarea {
+		border: 1px solid CanvasText;
+	}
+	:focus-visible {
+		outline: 2px solid Highlight;
+		outline-offset: 2px;
 	}
 }

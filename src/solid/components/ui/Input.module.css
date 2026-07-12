@@ -41,3 +41,7 @@
 	font-size: var(--font-size-sm);
 	color: var(--text-muted);
 }
+@media (forced-colors: active) {
+	.input { border: 1px solid CanvasText; }
+	.input:focus { border-color: Highlight; }
+}
