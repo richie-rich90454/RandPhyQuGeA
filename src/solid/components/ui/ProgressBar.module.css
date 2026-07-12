@@ -1,5 +1,5 @@
 .track {
-	height: 4px;
+	height: 6px;
 	width: 100%;
 	overflow: hidden;
 	border-radius: var(--radius-full);
@@ -21,5 +21,13 @@
 	}
 	100% {
 		transform: translateX(350%);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.indeterminate {
+		animation: none;
+	}
+	.fill {
+		transition: none;
 	}
 }

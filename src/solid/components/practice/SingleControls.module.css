@@ -17,7 +17,7 @@
 	flex-wrap: wrap;
 }
 .shortcut {
-	font-family: var(--font-mono, monospace);
+	font-family: var(--font-mono);
 	font-size: var(--font-size-xs);
 	padding: 0 var(--space-1);
 	border-radius: var(--radius-sm);

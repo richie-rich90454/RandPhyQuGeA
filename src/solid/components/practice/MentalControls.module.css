@@ -76,10 +76,14 @@
 	background: var(--accent);
 	border-color: var(--accent-active);
 	font-weight: var(--font-weight-semibold);
+	box-shadow: var(--shadow-xs);
 }
 .difficultyPillActive:hover:not(:disabled) {
 	color: var(--accent-contrast);
 	background: var(--accent-hover);
+}
+.difficultyPill:active:not(:disabled) {
+	transform: translateY(1px);
 }
 .startWrapper {
 	display: inline-flex;
@@ -97,22 +101,26 @@
 	font-weight: var(--font-weight-bold);
 }
 .timerBadge {
+	font-family: var(--font-mono);
 	font-variant-numeric: tabular-nums;
 	font-weight: var(--font-weight-semibold);
+	font-size: var(--font-size-sm);
 	color: var(--text);
 	transition: color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
 }
 .timerUrgent {
-	color: var(--color-error);
+	color: var(--error);
 	background: var(--error-surface);
 	animation: pulseUrgent 1s var(--ease-standard) infinite;
 }
 .scoreBadge {
+	font-family: var(--font-mono);
 	font-variant-numeric: tabular-nums;
 	font-weight: var(--font-weight-semibold);
+	font-size: var(--font-size-sm);
 }
 .scoreLive {
-	color: var(--color-success);
+	color: var(--success);
 }
 @keyframes pulseUrgent {
 	0%, 100% { opacity: 1; }
