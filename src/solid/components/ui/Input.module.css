@@ -17,6 +17,9 @@
 	transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 .input::placeholder { color: var(--text-subtle); }
+.input:hover:not(:disabled) {
+	border-color: var(--border-strong);
+}
 .input:focus {
 	outline: none;
 	border-color: var(--border-focus);
@@ -27,9 +30,12 @@
 	opacity: 0.5;
 }
 .errorInput { border-color: var(--danger); }
+.errorInput:hover:not(:disabled) {
+	border-color: var(--danger);
+}
 .errorInput:focus {
 	border-color: var(--danger);
-	box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.35);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 35%, transparent);
 }
 .error {
 	margin-top: var(--space-1);
@@ -44,4 +50,9 @@
 @media (forced-colors: active) {
 	.input { border: 1px solid CanvasText; }
 	.input:focus { border-color: Highlight; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.input {
+		transition: border-color var(--duration-fast) var(--ease-out);
+	}
 }

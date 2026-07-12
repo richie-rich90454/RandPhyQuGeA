@@ -19,6 +19,9 @@
 	color: var(--text);
 	transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
+.select:hover:not(:disabled) {
+	border-color: var(--border-strong);
+}
 .select:focus {
 	outline: none;
 	border-color: var(--border-focus);
@@ -31,9 +34,12 @@
 .scope { border-radius: var(--radius-full); }
 .difficulty { border-radius: var(--radius-full); }
 .errorSelect { border-color: var(--danger); }
+.errorSelect:hover:not(:disabled) {
+	border-color: var(--danger);
+}
 .errorSelect:focus {
 	border-color: var(--danger);
-	box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.35);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 35%, transparent);
 }
 .chevron {
 	position: absolute;
@@ -54,4 +60,9 @@
 	margin-top: var(--space-1);
 	font-size: var(--font-size-sm);
 	color: var(--text-muted);
+}
+@media (prefers-reduced-motion: reduce) {
+	.select {
+		transition: border-color var(--duration-fast) var(--ease-out);
+	}
 }
