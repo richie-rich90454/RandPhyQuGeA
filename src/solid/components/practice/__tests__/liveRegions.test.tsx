@@ -3,6 +3,7 @@ import {describe, it, expect, beforeEach} from "vitest";
 import {MentalControls} from "../MentalControls";
 import {QuestionCard} from "../QuestionCard";
 import {ResultsCard} from "../ResultsCard";
+import {ToastProvider} from "../../ui/ToastProvider";
 import {usePracticeStore} from "../../../stores/practiceStore";
 import {useSettingsStore} from "../../../stores/settingsStore";
 import {useSpecStore} from "../../../stores/specStore";
@@ -13,20 +14,36 @@ beforeEach(() => {
 });
 describe("live regions (task 5.23)", () => {
 	it("timer badge exposes role=timer for screen readers", () => {
-		render(() => <MentalControls />);
+		render(() => (
+			<ToastProvider>
+				<MentalControls />
+			</ToastProvider>
+		));
 		expect(screen.getByRole("timer")).toBeInTheDocument();
 	});
 	it("timer badge retains its accessible name", () => {
-		render(() => <MentalControls />);
+		render(() => (
+			<ToastProvider>
+				<MentalControls />
+			</ToastProvider>
+		));
 		expect(screen.getByRole("timer")).toHaveAttribute("aria-label", "Time remaining");
 	});
 	it("score badge has aria-live=polite for change announcements", () => {
-		render(() => <MentalControls />);
+		render(() => (
+			<ToastProvider>
+				<MentalControls />
+			</ToastProvider>
+		));
 		let score=screen.getByLabelText("Current score");
 		expect(score).toHaveAttribute("aria-live", "polite");
 	});
 	it("score badge has aria-atomic=true for full-content announcement", () => {
-		render(() => <MentalControls />);
+		render(() => (
+			<ToastProvider>
+				<MentalControls />
+			</ToastProvider>
+		));
 		let score=screen.getByLabelText("Current score");
 		expect(score).toHaveAttribute("aria-atomic", "true");
 	});

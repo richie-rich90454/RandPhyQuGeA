@@ -1,7 +1,7 @@
 import {describe, it, expect, afterEach} from "vitest";
-import {configureCore, generateQuestion, parseSpecification} from "../physicsCore";
-import {QuestionTypeRegistry} from "../../lib/physics";
-import type {QuestionTypeHandler, QuestionTemplate, GeneratedQuestion} from "../../lib/physics";
+import {configureCore, generateQuestion, parseSpecification, exportQuestions} from "../physicsCore";
+import {QuestionTypeRegistry, ExporterRegistry, SeededRandomGenerator} from "../../lib/physics";
+import type {QuestionTypeHandler, QuestionTemplate, GeneratedQuestion, Exporter, ExportFormat} from "../../lib/physics";
 class CustomHandler implements QuestionTypeHandler {
     public readonly type = "CustomType";
     public handle(template: QuestionTemplate, variables: Record<string, unknown>): GeneratedQuestion {
@@ -18,6 +18,12 @@ class CustomHandler implements QuestionTypeHandler {
             solution_latex: "",
             variables,
         };
+    };
+}
+class CustomFacadeExporter implements Exporter {
+    public readonly format: ExportFormat = "html";
+    public export(): string {
+        return "CUSTOM FACADE EXPORT";
     }
 }
 const SPEC = [
@@ -65,5 +71,23 @@ describe("configureCore", () => {
         expect(q.question_type).toBe("CustomType");
         expect(q.answer).toBe("1");
         expect(q.text).not.toContain("configureCore");
+    });
+    it("routes exportQuestions through an injected custom exporter registry via configureCore (OCP via facade) (task 5.40)", async () => {
+        const registry = new ExporterRegistry();
+        registry.register(new CustomFacadeExporter());
+        configureCore({exporters: registry});
+        const result = await exportQuestions([], "html");
+        expect(result).toBe("CUSTOM FACADE EXPORT");
+    });
+    it("configureCore accepts all standard collaborator types (preventive fix) (task 5.40)", () => {
+        const exporters = new ExporterRegistry();
+        const questionTypes = QuestionTypeRegistry.createDefault();
+        const random = new SeededRandomGenerator(42);
+        configureCore({
+            exporters,
+            questionTypes,
+            random,
+        });
+        configureCore({});
     });
 });

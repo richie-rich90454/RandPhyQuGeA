@@ -21,12 +21,20 @@ beforeEach(() => {
 });
 describe("controls smoke", () => {
 	it("MentalControls renders the difficulty pills and start button", () => {
-		render(() => <MentalControls />);
+		render(() => (
+			<ToastProvider>
+				<MentalControls />
+			</ToastProvider>
+		));
 		expect(screen.getByRole("radiogroup", {name: "Difficulty"})).toBeInTheDocument();
 		expect(screen.getByRole("button", {name: /Start Session/i})).toBeInTheDocument();
 	});
 	it("MentalControls renders the time and score badges in idle state", () => {
-		render(() => <MentalControls />);
+		render(() => (
+			<ToastProvider>
+				<MentalControls />
+			</ToastProvider>
+		));
 		expect(screen.getByText("01:00")).toBeInTheDocument();
 		expect(screen.getByText("0 / 0")).toBeInTheDocument();
 	});
