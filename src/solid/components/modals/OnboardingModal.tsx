@@ -223,7 +223,7 @@ export function OnboardingModal(): JSX.Element {
 								role="tab"
 								aria-selected={index()===stepIndex()}
 								aria-label={`Step ${index()+1}`}
-								class={`${styles.dot} ${index()===stepIndex() ? styles.dotActive : ""}`}
+								class={`${styles.dot} ${index()===stepIndex() ? styles.dotActive : ""} ${index()<stepIndex() ? styles.dotCompleted : ""}`}
 								onClick={() => goToStep(index())}
 							/>
 						)}</For>
