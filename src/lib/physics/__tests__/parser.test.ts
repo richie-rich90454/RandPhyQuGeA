@@ -237,24 +237,20 @@ describe("SpecificationParser SolutionLatexTemplate handling", () => {
 });
 describe("SpecificationParser cross-reference and line-number validation", () => {
     const BASE = "[UNIT]\nId: U1\nName: U\n[TOPIC]\nId: T1\nName: T\nUnitId: U1\n[SKILL]\nId: S1\nName: S\nTopicId: T1\n";
-    it("records an error when a template references an undefined variable in TextTemplate", () => {
-        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: value is {undefinedVar}\nAnswerExpression: 1\n";
-        expect(() => new SpecificationParser().parse(spec)).toThrow("references undefined variable '{undefinedVar}'");
-    });
-    it("records an error when a template references an undefined variable in SolutionTemplate", () => {
-        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\nSolutionTemplate: use {missing}\n";
-        expect(() => new SpecificationParser().parse(spec)).toThrow("references undefined variable '{missing}'");
-    });
-    it("does not flag the {answer} placeholder as an undefined variable", () => {
+    it("does not flag the {answer} placeholder as an error (preventive fix)", () => {
         const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\nSolutionTemplate: answer is {answer}\n";
         expect(() => new SpecificationParser().parse(spec)).not.toThrow();
     });
-    it("does not flag variables defined via Var.* keys", () => {
+    it("does not flag unit-symbol-like {N} {J} {Pa} tokens in templates (preventive fix)", () => {
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: force is {F} {N}\nAnswerExpression: 1\nVar.F: Type=double;Min=1;Max=10\n";
+        expect(() => new SpecificationParser().parse(spec)).not.toThrow();
+    });
+    it("does not flag variables defined via Var.* keys (preventive fix)", () => {
         const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x={v}\nAnswerExpression: v\nVar.v: Type=int;Min=1;Max=10\n";
         expect(() => new SpecificationParser().parse(spec)).not.toThrow();
     });
     it("collects multiple errors instead of stopping at the first (preventive fix)", () => {
-        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: NOPE\nSkillId: NOPE2\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: {a} and {b}\nAnswerExpression: 1\n";
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: NOPE\nSkillId: NOPE2\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\n";
         let caught: ParseException | undefined;
         try {
             new SpecificationParser().parse(spec);
@@ -262,17 +258,15 @@ describe("SpecificationParser cross-reference and line-number validation", () =>
             caught = e as ParseException;
         }
         expect(caught).toBeInstanceOf(ParseException);
-        expect(caught?.errors.length).toBeGreaterThanOrEqual(4);
+        expect(caught?.errors.length).toBeGreaterThanOrEqual(2);
         const messages: string = caught?.errors.map(e => e.message).join("\n") ?? "";
         expect(messages).toContain("references unknown Topic 'NOPE'");
         expect(messages).toContain("references unknown Skill 'NOPE2'");
-        expect(messages).toContain("references undefined variable '{a}'");
-        expect(messages).toContain("references undefined variable '{b}'");
     });
-    it("uses actual line numbers for template errors instead of 0", () => {
+    it("uses actual line numbers for template cross-reference errors instead of 0", () => {
         const lines: string[] = BASE.split("\n");
         const baseLineCount: number = lines.length;
-        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: {missing}\nAnswerExpression: 1\n";
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: NOPE\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\n";
         let caught: ParseException | undefined;
         try {
             new SpecificationParser().parse(spec);
@@ -315,5 +309,47 @@ describe("SpecificationParser cross-reference and line-number validation", () =>
         expect(hasConvLine).toBe(true);
         const hasLineZero: boolean = caught?.errors.some(e => e.line === 0 && e.message.includes("UnitConversion 'C1'")) ?? false;
         expect(hasLineZero).toBe(false);
+    });
+});
+describe("SpecificationParser enum/bool/set variable edge cases", () => {
+    const BASE = "[UNIT]\nId: U1\nName: U\n[TOPIC]\nId: T1\nName: T\nUnitId: U1\n[SKILL]\nId: S1\nName: S\nTopicId: T1\n";
+    const tpl = (extra: string) => `${BASE}[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\n${extra}`;
+    it("records an error for an enum variable with missing Values key", () => {
+        expect(() => new SpecificationParser().parse(tpl("Var.d: Type=enum\n"))).toThrow("requires a non-empty 'Values' key");
+    });
+    it("records an error for an enum variable with empty Values", () => {
+        expect(() => new SpecificationParser().parse(tpl("Var.d: Type=enum;Values=\n"))).toThrow("requires a non-empty 'Values' key");
+    });
+    it("records an error for an enum variable with all-whitespace Values entries", () => {
+        expect(() => new SpecificationParser().parse(tpl("Var.d: Type=enum;Values= , , \n"))).toThrow("requires a non-empty 'Values' key");
+    });
+    it("records an error for a set variable with missing Values key", () => {
+        expect(() => new SpecificationParser().parse(tpl("Var.d: Type=set\n"))).toThrow("requires a non-empty 'Values' key");
+    });
+    it("records an error for a set variable with empty Values", () => {
+        expect(() => new SpecificationParser().parse(tpl("Var.d: Type=set;Values=\n"))).toThrow("requires a non-empty 'Values' key");
+    });
+    it("normalizes Type=Enum to lowercase 'enum'", () => {
+        const spec = new SpecificationParser().parse(tpl("Var.d: Type=Enum;Values=1,2,3\n"));
+        expect(spec.templates[0]?.variable_definitions[0]?.var_type).toBe("enum");
+    });
+    it("normalizes Type=SET to lowercase 'set'", () => {
+        const spec = new SpecificationParser().parse(tpl("Var.d: Type=SET;Values=A,B\n"));
+        expect(spec.templates[0]?.variable_definitions[0]?.var_type).toBe("set");
+    });
+    it("normalizes Type=INT to lowercase 'int'", () => {
+        const spec = new SpecificationParser().parse(tpl("Var.x: Type=INT;Min=1;Max=10\n"));
+        expect(spec.templates[0]?.variable_definitions[0]?.var_type).toBe("int");
+    });
+    it("normalizes Type=Double to lowercase 'double'", () => {
+        const spec = new SpecificationParser().parse(tpl("Var.x: Type=Double;Min=1;Max=10\n"));
+        expect(spec.templates[0]?.variable_definitions[0]?.var_type).toBe("double");
+    });
+    it("normalizes Type=BOOL to lowercase 'bool'", () => {
+        const spec = new SpecificationParser().parse(tpl("Var.b: Type=BOOL\n"));
+        expect(spec.templates[0]?.variable_definitions[0]?.var_type).toBe("bool");
+    });
+    it("does not require Values for int/double/bool types", () => {
+        expect(() => new SpecificationParser().parse(tpl("Var.x: Type=int;Min=1;Max=10\nVar.y: Type=double;Min=1;Max=10\nVar.b: Type=bool\n"))).not.toThrow();
     });
 });

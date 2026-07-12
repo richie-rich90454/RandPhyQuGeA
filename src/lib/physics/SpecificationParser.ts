@@ -356,6 +356,7 @@ export class SpecificationParser {
             errors.push({line: lineNumber, message: `Variable '${name}' is missing required 'Type' key.`});
             return undefined;
         }
+        const normalizedType: string = typeValue.toLowerCase();
         const min: number | undefined = this.parseOptionalNumber(dict.get("Min"));
         const max: number | undefined = this.parseOptionalNumber(dict.get("Max"));
         const step: number | undefined = this.parseOptionalNumber(dict.get("Step"));
@@ -367,7 +368,12 @@ export class SpecificationParser {
                 .map(s => s.trim())
                 .filter(s => s.length > 0);
         }
-        return {name, var_type: typeValue, min, max, step, enum_values: enumValues};
+        if (normalizedType === "enum" || normalizedType === "set") {
+            if (enumValues === undefined || enumValues.length === 0) {
+                errors.push({line: lineNumber, message: `Variable '${name}' of type '${normalizedType}' requires a non-empty 'Values' key.`});
+            }
+        }
+        return {name, var_type: normalizedType, min, max, step, enum_values: enumValues};
     }
     /** Parse an optional numeric field; returns undefined when missing or non-finite. */
     private parseOptionalNumber(raw: string | undefined): number | undefined {
@@ -380,7 +386,7 @@ export class SpecificationParser {
         }
         return parsed;
     }
-    /** Validate Topic->Unit, Skill->Topic, Template->Topic/Skill, Diagram->Template, Hint->Template, and template variable references; pushes errors for dangling refs. Uses actual line numbers for templates when available. */
+    /** Validate Topic->Unit, Skill->Topic, Template->Topic/Skill, Diagram->Template, and Hint->Template references; pushes errors for dangling refs. Uses actual line numbers for templates when available. */
     private validateCrossReferences(units: Unit[], topics: Topic[], skills: Skill[], templates: QuestionTemplate[], diagrams: Diagram[], hints: Hint[], errors: ParseError[], templateLines: Map<string, number>): void {
         const unitIds: Set<string> = new Set(units.map(u => u.id));
         const topicIds: Set<string> = new Set(topics.map(t => t.id));
@@ -404,16 +410,6 @@ export class SpecificationParser {
             if (!skillIds.has(template.skill_id)) {
                 errors.push({line: tplLine, message: `Template '${template.id}' references unknown Skill '${template.skill_id}'.`});
             }
-            const definedVars: Set<string> = new Set(template.variable_definitions.map(v => v.name));
-            const refs: Set<string> = this.extractVariableReferences(template);
-            for (const ref of refs) {
-                if (ref === "answer") {
-                    continue;
-                }
-                if (!definedVars.has(ref)) {
-                    errors.push({line: tplLine, message: `Template '${template.id}' references undefined variable '{${ref}}' in a template string.`});
-                }
-            }
         }
         for (const diagram of diagrams) {
             if (!templateIds.has(diagram.template_id)) {
@@ -425,21 +421,5 @@ export class SpecificationParser {
                 errors.push({line: 0, message: `Hint '${hint.id}' references unknown Template '${hint.template_id}'.`});
             }
         }
-    }
-    /** Extract {var} references from a template's text/solution/solution_latex strings. Excludes the {answer} placeholder (handled separately). */
-    private extractVariableReferences(template: QuestionTemplate): Set<string> {
-        const refs: Set<string> = new Set();
-        const regex: RegExp = /\{(\w+)\}/g;
-        const texts: string[] = [template.text_template, template.solution_template, template.solution_latex_template];
-        for (const text of texts) {
-            let match: RegExpExecArray | null;
-            while ((match = regex.exec(text)) !== null) {
-                const ref: string | undefined = match[1];
-                if (ref !== undefined) {
-                    refs.add(ref);
-                }
-            }
-        }
-        return refs;
     }
 }
