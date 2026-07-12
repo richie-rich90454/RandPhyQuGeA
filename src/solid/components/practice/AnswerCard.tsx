@@ -111,6 +111,7 @@ export function AnswerCard(): JSX.Element {
 					<MathToolbar onInsert={handleInsertSymbol} disabled={inputDisabled() || isMcq()} />
 					<Show when={isMcq()} fallback={
 						<div class={styles.answerInputWrapper}>
+							<label for="answer-box" class={styles.answerLabel}>Answer</label>
 							<textarea
 								ref={(el: HTMLTextAreaElement) => { textareaEl=el; }}
 								id="answer-box"
@@ -119,7 +120,6 @@ export function AnswerCard(): JSX.Element {
 								value={userAnswer()}
 								onInput={handleAnswerInput}
 								disabled={inputDisabled()}
-								aria-label="Answer"
 								aria-describedby="expected-format"
 							/>
 							<Show when={previewHasContent()}>

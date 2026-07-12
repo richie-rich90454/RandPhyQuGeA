@@ -126,4 +126,12 @@ describe("AnswerCard", () => {
 		expect(screen.getByRole("alert")).toBeInTheDocument();
 		expect(document.getElementById("preview")?.textContent).toContain("$\\sqrt{$");
 	});
+	it("associates a label element with the answer textarea via for/id (task 5.48)", () => {
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion())});
+		render(() => <AnswerCard />);
+		let label=document.querySelector('label[for="answer-box"]');
+		expect(label).not.toBeNull();
+		expect(label?.textContent).toBe("Answer");
+		expect(screen.getByLabelText("Answer")).toBeInTheDocument();
+	});
 });
