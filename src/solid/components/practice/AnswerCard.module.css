@@ -15,21 +15,25 @@
 }
 .answerInput {
 	width: 100%;
-	min-height: 80px;
-	padding: var(--space-2) var(--space-3);
-	font-family: var(--font-mono, monospace);
+	min-height: 96px;
+	padding: var(--space-3) var(--space-4);
+	font-family: var(--font-mono);
 	font-size: var(--font-size-md);
-	line-height: 1.5;
-	color: var(--text-primary);
-	background: var(--surface-input);
+	line-height: var(--line-height-normal);
+	color: var(--text);
+	background: var(--surface);
 	border: 1px solid var(--border);
 	border-radius: var(--radius-md);
 	resize: vertical;
+	transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+}
+.answerInput::placeholder {
+	color: var(--text-subtle);
 }
 .answerInput:focus {
 	outline: none;
-	border-color: var(--accent);
-	box-shadow: 0 0 0 2px var(--accent-soft);
+	border-color: var(--border-focus);
+	box-shadow: var(--shadow-focus);
 }
 .answerInput:disabled {
 	opacity: 0.6;
@@ -40,10 +44,11 @@
 	align-items: center;
 	gap: var(--space-2);
 	min-height: 44px;
-	font-family: var(--font-body, inherit);
+	padding: var(--space-2) var(--space-3);
+	font-family: var(--font-sans);
 }
 .hasContent {
-	background: var(--surface-selected, var(--surface-input));
+	background: var(--surface-muted);
 }
 .answerPlaceholder {
 	color: var(--text-muted);
@@ -53,13 +58,14 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 1.5em;
-	height: 1.5em;
-	font-weight: 700;
+	width: 28px;
+	height: 28px;
+	font-weight: var(--font-weight-bold);
 	font-size: var(--font-size-sm);
 	color: var(--accent-contrast);
 	background: var(--accent);
 	border-radius: var(--radius-sm);
+	flex-shrink: 0;
 }
 .clearAnswerBtn {
 	display: inline-flex;
@@ -68,53 +74,63 @@
 	width: 32px;
 	height: 32px;
 	padding: 0;
-	color: var(--text-secondary);
+	color: var(--text-muted);
 	background: transparent;
 	border: 1px solid var(--border);
 	border-radius: var(--radius-sm);
 	cursor: pointer;
-	transition: color 0.15s, background 0.15s;
+	align-self: stretch;
+	transition: color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
 }
 .clearAnswerBtn:hover {
-	color: var(--text-primary);
-	background: var(--surface-hover);
+	color: var(--text);
+	background: var(--surface-muted);
+	border-color: var(--border-strong);
+}
+.clearAnswerBtn:focus-visible {
+	outline: 2px solid var(--border-focus);
+	outline-offset: 2px;
 }
 .mathPreview {
-	min-height: 40px;
-	padding: var(--space-2) var(--space-3);
-	color: var(--text-secondary);
+	min-height: 48px;
+	padding: var(--space-3) var(--space-4);
+	color: var(--text-muted);
 	background: var(--surface-muted);
 	border: 1px dashed var(--border);
 	border-radius: var(--radius-md);
 	font-size: var(--font-size-md);
+	line-height: var(--line-height-normal);
+	transition: color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
 }
 .mathPreview.hasContent {
-	color: var(--text-primary);
+	color: var(--text);
 	border-style: solid;
+	border-color: var(--border);
 }
 .previewPlaceholder {
-	color: var(--text-muted);
+	color: var(--text-subtle);
 	font-style: italic;
 }
 .mathPreview.previewError {
-	color: var(--color-error, rgb(220, 38, 38));
-	border-color: var(--border-error, rgba(239, 68, 68, 0.4));
-	background: var(--surface-error, rgba(239, 68, 68, 0.06));
+	color: var(--error);
+	border-color: var(--error);
+	background: var(--error-surface);
 }
 .previewErrorContent {
 	display: inline-flex;
 	align-items: center;
-	gap: var(--space-1);
+	gap: var(--space-2);
 }
 .previewRawText {
-	font-family: var(--font-mono, monospace);
+	font-family: var(--font-mono);
 	font-size: var(--font-size-sm);
-	color: var(--color-error, rgb(220, 38, 38));
-	opacity: 0.85;
+	color: var(--error);
+	opacity: 0.9;
 }
 .expectedFormat {
 	font-size: var(--font-size-sm);
 	color: var(--text-muted);
+	line-height: var(--line-height-normal);
 }
 .shake {
 	animation: shake 0.4s ease-in-out;
@@ -139,7 +155,7 @@
 @media (max-width: 768px) {
 	.answerInput {
 		font-size: var(--font-size-sm);
-		min-height: 64px;
+		min-height: 72px;
 	}
 	.mathPreview {
 		font-size: var(--font-size-sm);
@@ -153,8 +169,8 @@
 		gap: var(--space-1);
 	}
 	.answerInput {
-		min-height: 56px;
-		padding: var(--space-1) var(--space-2);
+		min-height: 64px;
+		padding: var(--space-2) var(--space-3);
 	}
 	.clearAnswerBtn {
 		width: 28px;
