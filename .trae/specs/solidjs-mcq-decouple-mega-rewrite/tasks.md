@@ -222,16 +222,16 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 5.28: Theming — `system` mode + persisted theme application on load (2 bugs).
 - [x] Task 5.29: Session resume — snapshot serialization + restore correctness (2 bugs).
 - [x] Task 5.30: Print worksheet — N-question generation + answer-key toggle + `@media print` (2 bugs).
-- [ ] Task 5.31: Resilience — no-template / evaluation-failure user-facing messages + toasts (3 bugs).
-- [ ] Task 5.32: Resilience — loading skeletons + `aria-busy` on async buttons (2 bugs).
-- [ ] Task 5.33: Resilience — in-app confirm dialogs replace `window.confirm` (1 bug).
-- [ ] Task 5.34: Dead code — remove unused exports, unreachable branches, `console.log`, swallowed errors (3 bugs).
-- [ ] Task 5.35: Repo — `.gitignore` overhaul + `Cargo.lock` committed + no stale `target/` (2 bugs).
-- [ ] Task 5.36: Repo — broken `@font-face`/`<link rel="preload">`/favicon refs fixed (2 bugs).
-- [ ] Task 5.37: Repo — license consistency (Apache 2.0 everywhere) (1 bug).
-- [ ] Task 5.38: Docs — README/ARCHITECTURE/CONTRIBUTING/CHANGELOG describe SolidJS stack (2 bugs).
-- [ ] Task 5.39: CI — build + coverage gates on PR; npm caching; `version-bump` regenerates lockfile (3 bugs).
-- [ ] Task 5.40: Core — `PhysicsCore` registries injectable; OCP test via facade (2 bugs).
+- [x] Task 5.31: Resilience — no-template / evaluation-failure user-facing messages + toasts (3 bugs). (commit f6934fd)
+- [x] Task 5.32: Resilience — loading skeletons + `aria-busy` on async buttons (2 bugs). (commit 5495236)
+- [x] Task 5.33: Resilience — in-app confirm dialogs replace `window.confirm` (1 bug). (commit e895537)
+- [x] Task 5.34: Dead code — remove unused exports, unreachable branches, `console.log`, swallowed errors (3 bugs). (commit 7998668)
+- [x] Task 5.35: Repo — `.gitignore` overhaul + `Cargo.lock` committed + no stale `target/` (2 bugs). (commit 89ad216)
+- [x] Task 5.36: Repo — broken `@font-face`/`<link rel="preload">`/favicon refs fixed (2 bugs). (commit a6c0e9b)
+- [x] Task 5.37: Repo — license consistency (Apache 2.0 everywhere) (1 bug). (commit 897f6c1)
+- [x] Task 5.38: Docs — README/ARCHITECTURE/CONTRIBUTING/CHANGELOG describe SolidJS stack (2 bugs). (commit 61ddb69)
+- [x] Task 5.39: CI — build + coverage gates on PR; npm caching; `version-bump` regenerates lockfile (3 bugs). (commit 5563d70)
+- [x] Task 5.40: Core — `PhysicsCore` registries injectable; OCP test via facade (2 bugs). (commit 1c08d84)
 - [ ] Task 5.41: Core — `configureCore` extension without editing core (1 bug).
 - [ ] Task 5.42: Core — single source of truth for question types (`QUESTION_TYPES` const) (1 bug).
 - [ ] Task 5.43: Core — barrels for `stores/`, `hooks/`, `components/ui/` (1 bug).
