@@ -60,6 +60,7 @@
 	--accent-hover: var(--teal-600);
 	--accent-active: var(--teal-800);
 	--accent-contrast: #ffffff;
+	--accent-surface: var(--teal-50);
 	/* Semantic — status */
 	--success: #15803d;
 	--success-surface: #dcfce7;
@@ -214,6 +215,7 @@
 	--accent-hover: var(--teal-300);
 	--accent-active: var(--teal-200);
 	--accent-contrast: var(--blue-900);
+	--accent-surface: rgba(14, 116, 144, 0.30);
 	/* Semantic — status (brighter for dark bg) */
 	--success: #4ade80;
 	--success-surface: rgba(22, 101, 52, 0.30);
@@ -275,6 +277,7 @@
 	--accent-hover: #06b6d4;
 	--accent-active: #22d3ee;
 	--accent-contrast: #1a2744;
+	--accent-surface: rgba(14, 116, 144, 0.25);
 	/* Semantic — status (muted for dim) */
 	--success: #86efac;
 	--success-surface: rgba(22, 101, 52, 0.25);
@@ -334,6 +337,7 @@
 		--accent-hover: var(--teal-300);
 		--accent-active: var(--teal-200);
 		--accent-contrast: var(--blue-900);
+		--accent-surface: rgba(14, 116, 144, 0.30);
 		--success: #4ade80;
 		--warning: #fbbf24;
 		--error: #f87171;

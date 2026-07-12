@@ -173,7 +173,7 @@
 	transition: background-color var(--duration-fast) var(--ease-standard);
 }
 .benchTable tbody tr:hover {
-	background: var(--accent-surface, var(--surface));
+	background: var(--accent-surface);
 }
 .benchTable tbody tr:last-child td {
 	border-bottom: none;
