@@ -137,6 +137,65 @@ const defaultState= {
 	fontSize: "medium" as FontSize,
 	reducedMotion: false,
 } as Omit<SettingsState, "appVersion">;
+/** Current persisted-store schema version. Bump when adding/removing/renaming fields so {@link migrateSettingsState} can apply incremental migrations. */
+export const SETTINGS_SCHEMA_VERSION=2;
+const VALID_RESPONSE_MODES: ReadonlySet<string>=new Set(["mcq", "frq"]);
+/**
+ * Migrate a persisted settings payload to the current schema.
+ *
+ * Starting from {@link defaultState}, known keys from the persisted payload are
+ * overlaid one by one. Values that are `null`/`undefined`, or that fail a
+ * per-field validity check (e.g. `defaultResponseMode` not in `mcq|frq`,
+ * `sigFigs` not a positive finite integer), are skipped so the corresponding
+ * default survives. Unknown keys are dropped. The `version` argument is
+ * accepted for incremental migrations (v0 had no `responseMode`/`sigFigs`;
+ * v1 added them; v2 added validation of those fields' values).
+ */
+export function migrateSettingsState(persistedState: unknown, version: number): Omit<SettingsState, "appVersion"> {
+	const merged: Omit<SettingsState, "appVersion">={...defaultState};
+	if (!persistedState || typeof persistedState !== "object" || Array.isArray(persistedState)) {
+		return merged;
+	}
+	const state=persistedState as Record<string, unknown>;
+	const knownKeys=new Set(Object.keys(defaultState));
+	for (const [key, value] of Object.entries(state)) {
+		if (!knownKeys.has(key)) continue;
+		if (value === null || value === undefined) continue;
+		if (key === "defaultResponseMode") {
+			if (typeof value === "string" && VALID_RESPONSE_MODES.has(value)) {
+				(merged as Record<string, unknown>)[key]=value;
+			}
+			continue;
+		}
+		if (key === "sigFigs") {
+			if (typeof value === "number" && Number.isFinite(value) && value>0 && Number.isInteger(value)) {
+				(merged as Record<string, unknown>)[key]=value;
+			}
+			continue;
+		}
+		if (key === "mcqChoices" || key === "defaultQuestionCount" || key === "mentalMaxQuestions" || key === "mentalDurationSec" || key === "autoCheckDelay" || key === "decimalPlaces" || key === "fpsCap" || key === "accentHue") {
+			if (typeof value === "number" && Number.isFinite(value)) {
+				(merged as Record<string, unknown>)[key]=value;
+			}
+			continue;
+		}
+		if (key === "defaultDifficulties") {
+			if (Array.isArray(value) && value.every(v => typeof v === "number")) {
+				(merged as Record<string, unknown>)[key]=value;
+			}
+			continue;
+		}
+		if (key === "customShortcuts") {
+			if (value && typeof value === "object" && !Array.isArray(value)) {
+				(merged as Record<string, unknown>)[key]=value;
+			}
+			continue;
+		}
+		(merged as Record<string, unknown>)[key]=value;
+	}
+	void version;
+	return merged;
+}
 const settingsStore=createStore<SettingsState>()(
 	persist(
 		(set, get) => ({
@@ -192,17 +251,10 @@ const settingsStore=createStore<SettingsState>()(
 		}),
 		{
 			name: "physics-quest-settings",
-			version: 1,
-			migrate: (persistedState, _version) => {
-				if (!persistedState || typeof persistedState !== "object") {
-					return {...defaultState, appVersion: pkg.version};
-				}
-				const state=persistedState as Record<string, unknown>;
-				const merged: SettingsState={...defaultState, appVersion: pkg.version};
-				const knownKeys=new Set(Object.keys(defaultState));
-				const picked=Object.fromEntries(Object.entries(state).filter(([key]) => knownKeys.has(key)));
-				Object.assign(merged, picked);
-				return merged;
+			version: SETTINGS_SCHEMA_VERSION,
+			migrate: (persistedState, version) => {
+				const migrated=migrateSettingsState(persistedState, version);
+				return {...migrated, appVersion: pkg.version} as SettingsState;
 			},
 			partialize: state => {
 				const {appVersion:_appVersion, ...rest}=state;

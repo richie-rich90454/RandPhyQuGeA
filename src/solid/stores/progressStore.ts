@@ -45,17 +45,20 @@ const progressStore = createStore<ProgressState>()(
 			name: "physics-quest-progress",
 			version: 1,
 			migrate: (persistedState, version) => {
+				if (!persistedState || typeof persistedState !== "object" || Array.isArray(persistedState)) {
+					return {results: []} as unknown as ProgressState;
+				}
 				const state=persistedState as Record<string, unknown>;
 				if (version === 0) {
 					if ("history" in state && Array.isArray(state.history)) {
 						state.results=state.history;
 						delete state.history;
 					}
-					if (!state.results || !Array.isArray(state.results)) {
-						state.results=[];
-					}
 				}
-				return state as unknown as ProgressState;
+				if (!state.results || !Array.isArray(state.results)) {
+					state.results=[];
+				}
+				return {results: state.results as PracticeResult[]} as unknown as ProgressState;
 			},
 			storage: createJSONStorage(() => localStorage, {
 				reviver: (key, value) => {
