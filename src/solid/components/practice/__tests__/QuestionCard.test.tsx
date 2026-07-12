@@ -114,4 +114,112 @@ describe("QuestionCard", () => {
 		render(() => <QuestionCard />);
 		expect(screen.queryByRole("radiogroup")).not.toBeInTheDocument();
 	});
+	it("has role=radiogroup on the choices container (task 5.14 bug 1)", () => {
+		let mcq=makeQuestion({
+			question_type: "MC",
+			choices: ["2 N", "4 N", "6 N"],
+			correct_choice_index: 1,
+			response_mode: "mcq",
+		});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq)});
+		render(() => <QuestionCard />);
+		expect(screen.getByRole("radiogroup")).toBeInTheDocument();
+		expect(screen.getByRole("radiogroup")).toHaveAttribute("aria-label", "Answer choices");
+	});
+	it("has role=radio on each choice button (task 5.14 bug 1)", () => {
+		let mcq=makeQuestion({
+			question_type: "MC",
+			choices: ["2 N", "4 N", "6 N"],
+			correct_choice_index: 1,
+			response_mode: "mcq",
+		});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq)});
+		render(() => <QuestionCard />);
+		expect(screen.getAllByRole("radio")).toHaveLength(3);
+	});
+	it("sets aria-checked=false on all choices when none is selected (task 5.14 bug 2)", () => {
+		let mcq=makeQuestion({
+			question_type: "MC",
+			choices: ["2 N", "4 N"],
+			correct_choice_index: 1,
+			response_mode: "mcq",
+		});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq), selectedChoiceIndex: -1});
+		render(() => <QuestionCard />);
+		let radios=screen.getAllByRole("radio");
+		expect(radios[0]).toHaveAttribute("aria-checked", "false");
+		expect(radios[1]).toHaveAttribute("aria-checked", "false");
+	});
+	it("sets aria-checked=true only on the selected choice (task 5.14 bug 2)", () => {
+		let mcq=makeQuestion({
+			question_type: "MC",
+			choices: ["2 N", "4 N", "6 N"],
+			correct_choice_index: 1,
+			response_mode: "mcq",
+		});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq), selectedChoiceIndex: 1});
+		render(() => <QuestionCard />);
+		let radios=screen.getAllByRole("radio");
+		expect(radios[0]).toHaveAttribute("aria-checked", "false");
+		expect(radios[1]).toHaveAttribute("aria-checked", "true");
+		expect(radios[2]).toHaveAttribute("aria-checked", "false");
+	});
+	it("updates aria-checked when a different choice is selected (task 5.14 bug 2)", () => {
+		let mcq=makeQuestion({
+			question_type: "MC",
+			choices: ["2 N", "4 N", "6 N"],
+			correct_choice_index: 1,
+			response_mode: "mcq",
+		});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq), selectedChoiceIndex: 0});
+		render(() => <QuestionCard />);
+		let radios=screen.getAllByRole("radio");
+		expect(radios[0]).toHaveAttribute("aria-checked", "true");
+		fireEvent.click(radios[2]!);
+		expect(radios[0]).toHaveAttribute("aria-checked", "false");
+		expect(radios[2]).toHaveAttribute("aria-checked", "true");
+	});
+	it("selected choice has tabindex=0 and unselected have tabindex=-1 (task 5.14 bug 1)", () => {
+		let mcq=makeQuestion({
+			question_type: "MC",
+			choices: ["2 N", "4 N"],
+			correct_choice_index: 1,
+			response_mode: "mcq",
+		});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq), selectedChoiceIndex: 1});
+		render(() => <QuestionCard />);
+		let radios=screen.getAllByRole("radio");
+		expect(radios[0]).toHaveAttribute("tabindex", "-1");
+		expect(radios[1]).toHaveAttribute("tabindex", "0");
+	});
+	it("ArrowDown moves selection to the next choice (task 5.14 bug 1)", () => {
+		let mcq=makeQuestion({
+			question_type: "MC",
+			choices: ["2 N", "4 N", "6 N"],
+			correct_choice_index: 1,
+			response_mode: "mcq",
+		});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq), selectedChoiceIndex: 0});
+		render(() => <QuestionCard />);
+		let radios=screen.getAllByRole("radio");
+		radios[0]!.focus();
+		fireEvent.keyDown(screen.getByRole("radiogroup"), {key: "ArrowDown"});
+		expect(usePracticeStore.getState().selectedChoiceIndex).toBe(1);
+		expect(radios[1]).toHaveAttribute("aria-checked", "true");
+	});
+	it("ArrowUp wraps from first to last (task 5.14 bug 1)", () => {
+		let mcq=makeQuestion({
+			question_type: "MC",
+			choices: ["2 N", "4 N", "6 N"],
+			correct_choice_index: 1,
+			response_mode: "mcq",
+		});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq), selectedChoiceIndex: 0});
+		render(() => <QuestionCard />);
+		let radios=screen.getAllByRole("radio");
+		radios[0]!.focus();
+		fireEvent.keyDown(screen.getByRole("radiogroup"), {key: "ArrowUp"});
+		expect(usePracticeStore.getState().selectedChoiceIndex).toBe(2);
+		expect(radios[2]).toHaveAttribute("aria-checked", "true");
+	});
 });
