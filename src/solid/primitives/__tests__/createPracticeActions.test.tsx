@@ -386,4 +386,62 @@ describe("createPracticeActions", () => {
 		await flush();
 		expect(mock.submitAnswerCalls.length).toBe(0);
 	});
+	it("check routes submitAnswer errors through onError and resets the submitting guard (task 5.34)", async () => {
+		let errors: string[]=[];
+		let callCount=0;
+		let mock=createMockSessionService({
+			submitImpl: () => {
+				callCount++;
+				if (callCount===1) {
+					throw new Error("network down");
+				}
+				return Promise.resolve(makeResult());
+			},
+		});
+		usePracticeStore.setState({
+			session: makeSession(),
+			userAnswer: "4",
+			selectedChoiceIndex: -1,
+			showFeedback: false,
+			lastResult: null,
+		});
+		render(makeRoot({
+			practiceStore: usePracticeStore,
+			progressStore: useProgressStore,
+			uiStore: useUiStore,
+			sessionService: mock,
+			shortcutEnabled: false,
+			onError: (message) => errors.push(message),
+		}));
+		await result!.check();
+		expect(errors).toEqual(["network down"]);
+		expect(usePracticeStore.getState().showFeedback).toBe(false);
+		await result!.check();
+		expect(callCount).toBe(2);
+		expect(usePracticeStore.getState().showFeedback).toBe(true);
+	});
+	it("check re-throws submitAnswer errors when no onError is provided (task 5.34)", async () => {
+		let mock=createMockSessionService({
+			submitImpl: () => {
+				throw new Error("boom");
+			},
+		});
+		usePracticeStore.setState({
+			session: makeSession(),
+			userAnswer: "4",
+			selectedChoiceIndex: -1,
+			showFeedback: false,
+			lastResult: null,
+		});
+		render(makeRoot({
+			practiceStore: usePracticeStore,
+			progressStore: useProgressStore,
+			uiStore: useUiStore,
+			sessionService: mock,
+			shortcutEnabled: false,
+		}));
+		await expect(result!.check()).rejects.toThrow("boom");
+		expect(mock.submitAnswerCalls.length).toBe(1);
+		expect(usePracticeStore.getState().showFeedback).toBe(false);
+	});
 });

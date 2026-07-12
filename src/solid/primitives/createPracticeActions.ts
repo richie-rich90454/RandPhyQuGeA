@@ -21,6 +21,8 @@ export interface CreatePracticeActionsOptions {
 	progressStore?: SolidStore<ProgressState>;
 	uiStore?: SolidStore<UiState>;
 	sessionService?: ISessionService;
+	/** Error sink invoked when `submitAnswer` rejects. When omitted the error re-throws. */
+	onError?: (message: string) => void;
 }
 export interface CreatePracticeActionsReturn {
 	/** Evaluate the current answer, persist the result, and reveal feedback. */
@@ -47,6 +49,7 @@ export function createPracticeActions(options: CreatePracticeActionsOptions = {}
 	let ui=options.uiStore ?? useUiStore;
 	let mode=options.mode;
 	let shortcutEnabled=options.shortcutEnabled !== false;
+	let onError=options.onError;
 	let cachedSessionService: ISessionService | null=null;
 	let resolveSessionService=(): ISessionService => {
 		if (options.sessionService) {
@@ -84,6 +87,12 @@ export function createPracticeActions(options: CreatePracticeActionsOptions = {}
 				showFeedback: true,
 				lastResult: {isCorrect: result.is_correct, correctAnswer: currentQuestion.answer, userAnswer: result.user_answer},
 			});
+		} catch (err) {
+			if (onError) {
+				onError(err instanceof Error ? err.message : String(err));
+			} else {
+				throw err;
+			}
 		} finally {
 			isSubmitting=false;
 		}

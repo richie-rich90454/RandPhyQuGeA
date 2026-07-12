@@ -1,9 +1,12 @@
-import {render, screen} from "@solidjs/testing-library";
+import {render, screen, fireEvent} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach} from "vitest";
 import {AnswerSection} from "../AnswerSection";
 import {usePracticeStore} from "../../../stores/practiceStore";
 import type {Session} from "../../../../services/contracts";
 import type {GeneratedQuestion} from "../../../../types/models";
+function flush(): Promise<void> {
+	return new Promise(resolve => setTimeout(resolve, 0));
+}
 function makeQuestion(overrides?: Partial<GeneratedQuestion>): GeneratedQuestion {
 	return {
 		id: "q1",
@@ -118,5 +121,41 @@ describe("AnswerSection", () => {
 		ta.dispatchEvent(event);
 		expect(usePracticeStore.getState().selectedChoiceIndex).toBe(-1);
 		document.body.removeChild(ta);
+	});
+	it("submit routes resolveSession errors through onError and resets the submitting flag (task 5.34)", async () => {
+		let errors: string[]=[];
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "force"});
+		render(() => <AnswerSection onError={(message) => errors.push(message)} />);
+		let button=screen.getByRole("button", {name: /Check/i});
+		await fireEvent.click(button);
+		await flush();
+		expect(errors.length).toBe(1);
+		expect(errors[0]).toContain("ServiceProvider");
+		expect(button).not.toBeDisabled();
+	});
+	it("advance routes resolveSession errors through onError (task 5.34)", async () => {
+		let errors: string[]=[];
+		let q1=makeQuestion({id: "q1"});
+		let q2=makeQuestion({id: "q2"});
+		let now=Date.now();
+		let session: Session={
+			id: "sess1",
+			specification: {units: [], topics: [], skills: [], templates: []},
+			questions: [q1, q2],
+			mode: "Single",
+			currentIndex: 0,
+			results: [],
+			isActive: true,
+			isFinished: false,
+			questionStartTime: now,
+			sessionStartTime: now,
+		};
+		usePracticeStore.setState({...usePracticeStore.getState(), session, showFeedback: true});
+		render(() => <AnswerSection onError={(message) => errors.push(message)} />);
+		let button=screen.getByRole("button", {name: /Next/i});
+		await fireEvent.click(button);
+		await flush();
+		expect(errors.length).toBe(1);
+		expect(errors[0]).toContain("ServiceProvider");
 	});
 });

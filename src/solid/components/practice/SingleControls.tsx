@@ -116,7 +116,7 @@ export function SingleControls(): JSX.Element {
 			setIsGenerating(false);
 		}
 	};
-	let {check}=createPracticeActions({mode: "Single"});
+	let {check}=createPracticeActions({mode: "Single", onError: (message) => toast({variant: "error", message: "Failed to check answer: " + message})});
 	createEffect(() => {
 		if (!showFeedback() || !autoEnabled()) return;
 		let id=window.setTimeout(() => {

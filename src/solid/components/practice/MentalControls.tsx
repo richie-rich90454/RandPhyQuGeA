@@ -242,7 +242,7 @@ export function MentalControls(): JSX.Element {
 		usePracticeStore.getState().setSession(session.getSession());
 		await advance();
 	};
-	createPracticeActions({mode: "Mental"});
+	createPracticeActions({mode: "Mental", onError: (message) => toast({variant: "error", message: "Failed to check answer: " + message})});
 	createEffect(() => {
 		if (!isSessionActive() || isFinished()) return;
 		if (timer.timeRemaining()===0 && !timer.isRunning() && mentalDurationSec()>0) {

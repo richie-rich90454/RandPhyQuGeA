@@ -32,6 +32,8 @@ export interface AnswerSectionProps {
 	resultsCard?: JSXElement;
 	/** Extra class for the answer section wrapper. */
 	class?: string;
+	/** Error sink invoked when `submit` or `advance` reject. When omitted the error re-throws. */
+	onError?: (message: string) => void;
 }
 /**
  * Answer section grid mapped to `.answer-section`.
@@ -89,6 +91,12 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 				showFeedback: true,
 				lastResult: {isCorrect: result.is_correct, correctAnswer: q.answer},
 			});
+		} catch (err) {
+			if (props.onError) {
+				props.onError(err instanceof Error ? err.message : String(err));
+			} else {
+				throw err;
+			}
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -96,21 +104,29 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 	let advance=async () => {
 		let store=usePracticeStore.getState();
 		if (!store.session || !store.showFeedback) return;
-		let sessionService=resolveSession();
-		let advanced=await sessionService.advanceQuestion();
-		if (advanced) {
-			usePracticeStore.setState({
-				session: sessionService.getSession(),
-				userAnswer: "",
-				selectedChoiceIndex: -1,
-				showFeedback: false,
-				lastResult: null,
-			});
-		} else {
-			await sessionService.finishSession();
-			usePracticeStore.setState({
-				session: sessionService.getSession(),
-			});
+		try {
+			let sessionService=resolveSession();
+			let advanced=await sessionService.advanceQuestion();
+			if (advanced) {
+				usePracticeStore.setState({
+					session: sessionService.getSession(),
+					userAnswer: "",
+					selectedChoiceIndex: -1,
+					showFeedback: false,
+					lastResult: null,
+				});
+			} else {
+				await sessionService.finishSession();
+				usePracticeStore.setState({
+					session: sessionService.getSession(),
+				});
+			}
+		} catch (err) {
+			if (props.onError) {
+				props.onError(err instanceof Error ? err.message : String(err));
+			} else {
+				throw err;
+			}
 		}
 	};
 	let handleKeyDown=(event: KeyboardEvent) => {
