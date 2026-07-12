@@ -50,6 +50,38 @@ describe("MathRenderer", () => {
 		expect(spy).toHaveBeenCalledTimes(2);
 		spy.mockRestore();
 	});
+	it("does not produce katex-error spans on invalid TeX (regression 5.5)", () => {
+		clearMathCache();
+		let {container}=render(() => <MathRenderer tex="\\invalidcmd{" />);
+		expect(container.innerHTML).not.toContain("katex-error");
+	});
+	it("falls back to escaped text on invalid TeX (regression 5.5)", () => {
+		clearMathCache();
+		let {container}=render(() => <MathRenderer tex="\\invalidcmd{" />);
+		expect(container.textContent).toContain("\\invalidcmd");
+	});
+	it("still renders valid TeX without error fallback (regression 5.5)", () => {
+		clearMathCache();
+		let {container}=render(() => <MathRenderer tex="\\frac{a}{b}" />);
+		expect(container.innerHTML).toContain("katex");
+		expect(container.innerHTML).not.toContain("katex-error");
+	});
+	it("renders standard physics formulas without error spans (regression 5.5)", () => {
+		clearMathCache();
+		let formulas=[
+			"v=d/t",
+			"F=ma",
+			"E=mc^2",
+			"\\frac{1}{2}mv^2",
+			"\\vec{F}=m\\vec{a}",
+			"\\Delta x=v_0t+\\frac{1}{2}at^2",
+		];
+		for (let tex of formulas) {
+			let {container}=render(() => <MathRenderer tex={tex} />);
+			expect(container.innerHTML).not.toContain("katex-error");
+			clearMathCache();
+		}
+	});
 });
 describe("MathText", () => {
 	it("renders plain text without math delimiters", () => {

@@ -28,6 +28,11 @@ export function MathRenderer(props: MathRendererProps): JSX.Element {
 			displayMode: local.display ?? false,
 			throwOnError: false,
 		});
+		if (rendered.includes("katex-error")) {
+			let escaped=local.tex.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			mathCache.set(key, escaped);
+			return escaped;
+		}
 		mathCache.set(key, rendered);
 		return rendered;
 	});
