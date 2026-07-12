@@ -82,6 +82,63 @@ describe("PrintModal", () => {
 		await waitFor(() => expect(physics.generateBatch).toHaveBeenCalledTimes(1));
 		expect(screen.getByText("Preview (1 questions)")).toBeInTheDocument();
 	});
+	it("passes topicId when exactly one topic is selected", async () => {
+		useSpecStore.setState({specification: makeSpecification()});
+		useUiStore.getState().openModal("print");
+		let physics=new FakePhysicsService();
+		renderWithServices(physics);
+		let topicPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		fireEvent.click(topicPills[0]!);
+		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
+		await waitFor(() => expect(physics.generateBatch).toHaveBeenCalledTimes(1));
+		expect(physics.generateBatch).toHaveBeenCalledWith(expect.any(Object), 10, {minDifficulty: 3, maxDifficulty: 5, topicId: "t1"});
+	});
+	it("generates from each selected topic when multiple topics are selected", async () => {
+		useSpecStore.setState({specification: makeSpecification()});
+		useUiStore.getState().openModal("print");
+		let physics=new FakePhysicsService();
+		physics.generateBatch=vi.fn<(spec: Specification, count: number, options?: GenerateOptions) => Promise<GeneratedQuestion[]>>().mockImplementation(async (_spec, count, options) => {
+			let topicId=options?.topicId ?? "none";
+			let questions: GeneratedQuestion[]=[];
+			for (let i=0; i<count; i++) {
+				questions.push(makeQuestion({id: `${topicId}-q${i}`, topic_id: topicId}));
+			}
+			return questions;
+		});
+		renderWithServices(physics);
+		let topicPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		fireEvent.click(topicPills[0]!);
+		fireEvent.click(topicPills[1]!);
+		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
+		await waitFor(() => expect(physics.generateBatch).toHaveBeenCalledTimes(2));
+		expect(physics.generateBatch).toHaveBeenNthCalledWith(1, expect.any(Object), 5, {minDifficulty: 3, maxDifficulty: 5, topicId: "t1"});
+		expect(physics.generateBatch).toHaveBeenNthCalledWith(2, expect.any(Object), 5, {minDifficulty: 3, maxDifficulty: 5, topicId: "t2"});
+		expect(screen.getByText("Preview (10 questions)")).toBeInTheDocument();
+	});
+	it("truncates combined batch to requested count when topics over-deliver", async () => {
+		useSpecStore.setState({specification: makeSpecification()});
+		useUiStore.getState().openModal("print");
+		let physics=new FakePhysicsService();
+		physics.generateBatch=vi.fn<(spec: Specification, count: number, options?: GenerateOptions) => Promise<GeneratedQuestion[]>>().mockImplementation(async (_spec, count, options) => {
+			let topicId=options?.topicId ?? "none";
+			let questions: GeneratedQuestion[]=[];
+			for (let i=0; i<count; i++) {
+				questions.push(makeQuestion({id: `${topicId}-q${i}`, topic_id: topicId}));
+			}
+			return questions;
+		});
+		renderWithServices(physics);
+		let numberInput=screen.getByRole("spinbutton", {name: "Number of questions"}) as HTMLInputElement;
+		fireEvent.input(numberInput, {target: {value: "5"}});
+		let topicPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		fireEvent.click(topicPills[0]!);
+		fireEvent.click(topicPills[1]!);
+		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
+		await waitFor(() => expect(physics.generateBatch).toHaveBeenCalledTimes(2));
+		expect(physics.generateBatch).toHaveBeenNthCalledWith(1, expect.any(Object), 3, {minDifficulty: 3, maxDifficulty: 5, topicId: "t1"});
+		expect(physics.generateBatch).toHaveBeenNthCalledWith(2, expect.any(Object), 3, {minDifficulty: 3, maxDifficulty: 5, topicId: "t2"});
+		expect(screen.getByText("Preview (5 questions)")).toBeInTheDocument();
+	});
 	it("prints the worksheet through the export service", async () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");

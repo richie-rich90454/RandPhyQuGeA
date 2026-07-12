@@ -526,3 +526,11 @@ html {
 		outline-offset: 2px;
 	}
 }
+@media print {
+	body {
+		background: #fff !important;
+	}
+	header, nav, footer {
+		display: none !important;
+	}
+}

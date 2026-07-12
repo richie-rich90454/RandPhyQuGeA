@@ -133,14 +133,29 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 		try {
 			let d=difficulty();
 			let selected=selectedTopicIds();
-			let options: GenerateOptions;
-			let topicId: string | undefined=selected.length===1 ? selected[0] : undefined;
+			let count=questionCount();
+			let baseOptions: GenerateOptions;
 			if (d==="mixed") {
-				options={topicId};
+				baseOptions={};
 			} else {
-				options={topicId, ...DIFFICULTY_RANGES[d]};
+				baseOptions={...DIFFICULTY_RANGES[d]};
 			}
-			let batch=await resolvePhysics().generateBatch(spec, questionCount(), options);
+			let batch: GeneratedQuestion[];
+			if (selected.length>1) {
+				let perTopic=Math.ceil(count/selected.length);
+				let combined: GeneratedQuestion[]=[];
+				for (let topicId of selected) {
+					let topicBatch=await resolvePhysics().generateBatch(spec, perTopic, {...baseOptions, topicId});
+					combined.push(...topicBatch);
+				}
+				batch=combined.slice(0, count);
+			} else {
+				let options: GenerateOptions={...baseOptions};
+				if (selected.length===1) {
+					options.topicId=selected[0];
+				}
+				batch=await resolvePhysics().generateBatch(spec, count, options);
+			}
 			setQuestions(batch);
 		} catch (err) {
 			let message=err instanceof Error ? err.message : String(err);
