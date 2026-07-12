@@ -40,3 +40,25 @@ describe("Button", () => {
 		expect(screen.queryByTestId("left")).not.toBeInTheDocument();
 	});
 });
+describe("Button aria-busy (task 5.32)", () => {
+	it("sets aria-busy to true when loading is true", () => {
+		render(() => <Button loading={true}>Saving</Button>);
+		expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "true");
+	});
+	it("sets aria-busy to false when not loading", () => {
+		render(() => <Button loading={false}>Save</Button>);
+		expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "false");
+	});
+	it("sets aria-busy to true when deprecated isLoading is true", () => {
+		render(() => <Button isLoading={true}>Saving</Button>);
+		expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "true");
+	});
+	it("respects a consumer-passed aria-busy over the loading-derived value", () => {
+		render(() => <Button loading={true} aria-busy={false}>Custom</Button>);
+		expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "false");
+	});
+	it("does not set aria-busy when no loading state is provided", () => {
+		render(() => <Button>Idle</Button>);
+		expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "false");
+	});
+});

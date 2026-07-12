@@ -291,21 +291,19 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 					</Show>
 				</CardContent>
 			</Card>
-			<Show when={questions().length>0}>
+			<Show when={isGenerating() && questions().length===0}>
 				<Card variant="default" class={styles.previewCard}>
 					<CardHeader>
-						<CardTitle>Preview ({questions().length} questions)</CardTitle>
+						<CardTitle>Generating…</CardTitle>
 					</CardHeader>
-					<CardContent class={styles.previewContent}>
-						<ol class={styles.previewList}>
-							<For each={questions()}>{(question, index) => (
-								<li class={styles.previewItem} value={index()+1}>
-									<div class={styles.previewQuestion}><MathText text={question.text} /></div>
+					<CardContent class={styles.previewContent} aria-busy="true">
+						<span class={styles.srOnly}>Generating worksheet questions…</span>
+						<ol class={styles.previewList} aria-hidden="true">
+							<For each={Array.from({length: 3})}>{() => (
+								<li class={styles.previewItem}>
+									<span class={styles.skeletonLine} />
 									<Show when={includeAnswerKey()}>
-										<div class={styles.previewAnswer}>
-											<span class={styles.previewAnswerLabel}>Answer:</span>
-											<MathText text={question.answer} />
-										</div>
+										<span class={styles.skeletonAnswer} />
 									</Show>
 								</li>
 							)}</For>
@@ -313,6 +311,28 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 					</CardContent>
 				</Card>
 			</Show>
+		<Show when={questions().length>0}>
+			<Card variant="default" class={styles.previewCard}>
+				<CardHeader>
+					<CardTitle>Preview ({questions().length} questions)</CardTitle>
+				</CardHeader>
+				<CardContent class={styles.previewContent}>
+					<ol class={styles.previewList}>
+						<For each={questions()}>{(question, index) => (
+							<li class={styles.previewItem} value={index()+1}>
+								<div class={styles.previewQuestion}><MathText text={question.text} /></div>
+								<Show when={includeAnswerKey()}>
+									<div class={styles.previewAnswer}>
+										<span class={styles.previewAnswerLabel}>Answer:</span>
+										<MathText text={question.answer} />
+									</div>
+								</Show>
+							</li>
+						)}</For>
+					</ol>
+				</CardContent>
+			</Card>
+		</Show>
 		</Modal>
 	);
 }

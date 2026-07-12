@@ -179,3 +179,22 @@ describe("PrintModal", () => {
 		await waitFor(() => expect(useUiStore.getState().activeModal).toBe(null));
 	});
 });
+describe("PrintModal loading skeleton (task 5.32)", () => {
+	it("shows a loading skeleton with aria-busy while generating and no questions exist", async () => {
+		useSpecStore.setState({specification: makeSpecification()});
+		useUiStore.getState().openModal("print");
+		let physics=new FakePhysicsService();
+		let resolveGeneration: (value: GeneratedQuestion[]) => void=() => {};
+		physics.generateBatch=vi.fn(() => new Promise<GeneratedQuestion[]>(resolve => {
+			resolveGeneration=resolve;
+		}));
+		renderWithServices(physics);
+		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
+		await waitFor(() => expect(screen.getByText("Generating…")).toBeInTheDocument());
+		expect(screen.getByText("Generating worksheet questions…")).toBeInTheDocument();
+		let busyRegion=screen.getByText("Generating worksheet questions…").closest("[aria-busy='true']");
+		expect(busyRegion).toBeInTheDocument();
+		resolveGeneration([makeQuestion()]);
+		await waitFor(() => expect(screen.getByText("Preview (1 questions)")).toBeInTheDocument());
+	});
+});

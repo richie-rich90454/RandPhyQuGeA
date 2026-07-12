@@ -45,7 +45,7 @@ let iconSizeClass: Record<ButtonSize, string | undefined>={
  * children in the document flow and overlaying the spinner absolutely.
  */
 export function Button(props: ButtonProps): JSX.Element {
-	let [local, others]=splitProps(props, ["variant", "size", "isLoading", "loading", "leftIcon", "rightIcon", "class", "children", "disabled", "type"]);
+	let [local, others]=splitProps(props, ["variant", "size", "isLoading", "loading", "leftIcon", "rightIcon", "class", "children", "disabled", "type", "aria-busy"]);
 	let variant=local.variant ?? "primary";
 	let size=local.size ?? "md";
 	let isIcon=variant === "icon";
@@ -56,6 +56,7 @@ export function Button(props: ButtonProps): JSX.Element {
 			type={local.type ?? "button"}
 			class={`${styles.base} ${variantClass[variant] ?? ""} ${sizeC} ${local.class ?? ""}`}
 			disabled={local.disabled ?? busy()}
+			aria-busy={local["aria-busy"] ?? busy()}
 			{...others}
 		>
 			<Show when={busy()}>
