@@ -120,4 +120,36 @@ describe("MathToolbar", () => {
 		fireEvent.click(screen.getByText("Hz"));
 		expect(handler).toHaveBeenCalledWith("\\text{Hz}");
 	});
+	it("renders the toolbar root element visible in the DOM (preventive fix)", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		expect(document.getElementById("math-toolbar")).not.toBeNull();
+	});
+	it("does not carry a data-symbol attribute on the dropdown trigger", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		let trigger=screen.getByRole("button", {name: "More symbols"});
+		expect(trigger.hasAttribute("data-symbol")).toBe(false);
+	});
+	it("ensures every data-symbol button carries a real LaTeX value, not the dropdown marker", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		let toolbar=document.getElementById("math-toolbar")!;
+		let symbolButtons=toolbar.querySelectorAll("[data-symbol]");
+		expect(symbolButtons.length).toBeGreaterThan(0);
+		symbolButtons.forEach(btn => {
+			let val=btn.getAttribute("data-symbol");
+			expect(val).not.toBe("dropdown");
+			expect(val).toBeTruthy();
+		});
+	});
+	it("toggles the show class on the dropdown element when opened and closed (preventive fix)", () => {
+		render(() => <MathToolbar onInsert={() => {}} />);
+		let dropdown=document.getElementById("math-dropdown")!;
+		let closedClass=dropdown.className;
+		let trigger=screen.getByRole("button", {name: "More symbols"});
+		fireEvent.click(trigger);
+		let openClass=dropdown.className;
+		expect(openClass).not.toBe(closedClass);
+		expect(openClass.length).toBeGreaterThan(closedClass.length);
+		fireEvent.click(trigger);
+		expect(dropdown.className).toBe(closedClass);
+	});
 });

@@ -328,18 +328,17 @@ export function MathToolbar(props: MathToolbarProps): JSX.Element {
 				)}</For>
 				<div class={`${styles.section} ${styles.dropdownTrigger}`} ref={(el: HTMLDivElement) => { dropdownEl=el; }}>
 					<button
-						type="button"
-						class={`${styles.btn} ${styles.dropdownBtn}`}
-						id="math-dropdown-btn"
-						data-symbol="dropdown"
-						title="More symbols"
-						aria-label="More symbols"
-						aria-haspopup="true"
-						aria-expanded={dropdownOpen() ? "true" : "false"}
-						aria-controls="math-dropdown"
-						disabled={local.disabled}
-						onClick={toggleDropdown}
-					>
+					type="button"
+					class={`${styles.btn} ${styles.dropdownBtn}`}
+					id="math-dropdown-btn"
+					title="More symbols"
+					aria-label="More symbols"
+					aria-haspopup="true"
+					aria-expanded={dropdownOpen() ? "true" : "false"}
+					aria-controls="math-dropdown"
+					disabled={local.disabled}
+					onClick={toggleDropdown}
+				>
 						{"\u22ef"}
 					</button>
 					<div class={`${styles.dropdown} ${dropdownOpen() ? styles.show : ""}`} id="math-dropdown">
