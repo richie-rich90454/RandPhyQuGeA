@@ -9,15 +9,18 @@
 	line-height: 1;
 	border: 1px solid transparent;
 	cursor: pointer;
+	user-select: none;
 	transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 .base:disabled {
 	cursor: not-allowed;
 	opacity: 0.5;
+	transform: none;
+	box-shadow: none;
 }
 .base:focus-visible {
-	outline: 2px solid var(--border-focus);
-	outline-offset: 2px;
+	outline: none;
+	box-shadow: var(--shadow-focus);
 }
 .primary {
 	background: var(--primary);
@@ -26,11 +29,14 @@
 }
 .primary:hover:not(:disabled) {
 	background: var(--primary-hover);
-	transform: scale(1.02);
+	border-color: var(--primary-hover);
+	transform: scale(var(--micro-scale-hover));
 	box-shadow: var(--micro-shadow-hover);
 }
 .primary:active:not(:disabled) {
-	transform: scale(0.98);
+	background: var(--primary-active);
+	border-color: var(--primary-active);
+	transform: scale(var(--micro-scale-active));
 	box-shadow: var(--micro-shadow-active);
 }
 .secondary {
@@ -41,11 +47,11 @@
 .secondary:hover:not(:disabled) {
 	background: var(--surface-muted);
 	border-color: var(--micro-border-hover);
-	transform: scale(1.02);
+	transform: scale(var(--micro-scale-hover));
 	box-shadow: var(--micro-shadow-hover);
 }
 .secondary:active:not(:disabled) {
-	transform: scale(0.98);
+	transform: scale(var(--micro-scale-active));
 	box-shadow: var(--micro-shadow-active);
 }
 .ghost {
@@ -56,10 +62,10 @@
 .ghost:hover:not(:disabled) {
 	background: var(--surface-muted);
 	color: var(--text);
-	transform: scale(1.02);
+	transform: scale(var(--micro-scale-hover));
 }
 .ghost:active:not(:disabled) {
-	transform: scale(0.98);
+	transform: scale(var(--micro-scale-active));
 }
 .danger {
 	background: var(--danger);
@@ -68,11 +74,12 @@
 }
 .danger:hover:not(:disabled) {
 	background: var(--error);
-	transform: scale(1.02);
+	border-color: var(--error);
+	transform: scale(var(--micro-scale-hover));
 	box-shadow: var(--micro-shadow-hover);
 }
 .danger:active:not(:disabled) {
-	transform: scale(0.98);
+	transform: scale(var(--micro-scale-active));
 	box-shadow: var(--micro-shadow-active);
 }
 .iconVariant {
@@ -81,13 +88,14 @@
 	border-color: var(--border);
 }
 .iconVariant:hover:not(:disabled) {
+	background: var(--surface);
 	color: var(--primary);
 	border-color: var(--micro-border-hover);
-	transform: scale(1.02);
+	transform: scale(var(--micro-scale-hover));
 	box-shadow: var(--micro-shadow-hover);
 }
 .iconVariant:active:not(:disabled) {
-	transform: scale(0.98);
+	transform: scale(var(--micro-scale-active));
 	box-shadow: var(--micro-shadow-active);
 }
 .xs { height: 28px; padding: 0 var(--space-2); font-size: var(--font-size-xs); gap: var(--space-1); }
@@ -125,4 +133,18 @@
 }
 @media (forced-colors: active) {
 	.base { border: 1px solid CanvasText; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.base {
+		transition: background var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+	}
+	.base:hover:not(:disabled) {
+		transform: none;
+	}
+	.base:active:not(:disabled) {
+		transform: none;
+	}
+	.spinner {
+		animation-duration: 1.5s;
+	}
 }
