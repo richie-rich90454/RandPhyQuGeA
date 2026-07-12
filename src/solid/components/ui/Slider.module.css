@@ -80,6 +80,14 @@
 	transform: scale(1.15);
 	box-shadow: var(--micro-shadow-active);
 }
+.thumb:focus-visible::-webkit-slider-thumb {
+	border-color: var(--border-focus);
+	box-shadow: var(--shadow-focus);
+}
+.thumb:focus-visible::-moz-range-thumb {
+	border-color: var(--border-focus);
+	box-shadow: var(--shadow-focus);
+}
 .error {
 	margin-top: var(--space-1);
 	font-size: var(--font-size-sm);

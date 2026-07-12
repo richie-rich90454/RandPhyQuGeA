@@ -22,7 +22,7 @@
 .select:hover:not(:disabled) {
 	border-color: var(--border-strong);
 }
-.select:focus {
+.select:focus-visible {
 	outline: none;
 	border-color: var(--border-focus);
 	box-shadow: var(--micro-focus-ring);
@@ -37,7 +37,7 @@
 .errorSelect:hover:not(:disabled) {
 	border-color: var(--danger);
 }
-.errorSelect:focus {
+.errorSelect:focus-visible {
 	border-color: var(--danger);
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--error) 35%, transparent);
 }
