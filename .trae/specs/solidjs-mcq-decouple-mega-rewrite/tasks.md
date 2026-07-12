@@ -160,11 +160,11 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 4.16: Keyboard shortcuts modal (`<thead>`/`<th scope>`).
 - [x] Task 4.17: Resume-session modal.
 - [x] Task 4.18: Theme toggle honoring `system` + `dim` (utility button, settings, `Ctrl+Shift+T`).
-- [ ] Task 4.19: Footer matching RandMatQuGeA.
-- [ ] Task 4.20: Micro-interactions + hover/focus states per RandMatQuGeA.
-- [ ] Task 4.21: Responsive rules (<1024, <768, <480) matching RandMatQuGeA breakpoints.
-- [ ] Task 4.22: Touch-target sizing (≥24px, ≥44px where space allows).
-- [ ] Task 4.23: `prefers-contrast-more` / `forced-colors` / 100% root font-size.
+- [x] Task 4.19: Footer matching RandMatQuGeA. (commit 1f75b0b)
+- [x] Task 4.20: Micro-interactions + hover/focus states per RandMatQuGeA. (commit 956c2a2)
+- [x] Task 4.21: Responsive rules (<1024, <768, <480) matching RandMatQuGeA breakpoints. (commit 14cba87)
+- [x] Task 4.22: Touch-target sizing (≥24px, ≥44px where space allows). (commit 2f6fa59)
+- [x] Task 4.23: `prefers-contrast-more` / `forced-colors` / 100% root font-size. (commit a013335)
 - [ ] Task 4.24: Command palette (Ctrl+K) — RandMatQuGeA-DX-inspired quick actions.
 - [ ] Task 4.25: DX: VSCode-recommended extensions + `.vscode/settings.json` for Solid.
 - [ ] Task 4.26: DX: `README.md` rewrite for SolidJS + CSS Modules architecture (no offline-exclusive claims).
