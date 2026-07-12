@@ -10,6 +10,12 @@ describe("EmptyState", () => {
 		render(() => <EmptyState title="No results" />);
 		expect(screen.getByText("No results").tagName).toBe("H3");
 	});
+	it("renders the title as an accessible heading with the correct level (task 5.49, preventive fix)", () => {
+		render(() => <EmptyState title="No results" description="Try again" />);
+		let heading=screen.getByRole("heading", {name: "No results", level: 3});
+		expect(heading).toBeInTheDocument();
+		expect(heading.tagName).toBe("H3");
+	});
 	it("renders description when provided", () => {
 		render(() => <EmptyState title="No results" description="Try adjusting filters" />);
 		expect(screen.getByText("Try adjusting filters")).toBeInTheDocument();
