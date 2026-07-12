@@ -25,6 +25,22 @@ function findInlineClose(text: string, start: number): number {
 	}
 	return -1;
 }
+function findDelimiterClose(text: string, start: number, close: string): number {
+	let j=start;
+	let n=text.length;
+	let closeLen=close.length;
+	while (j<n) {
+		if (text[j] === "\\" && j+1<n && text[j+1] === "\\") {
+			j=j+2;
+			continue;
+		}
+		if (text.slice(j, j+closeLen) === close) {
+			return j;
+		}
+		j=j+1;
+	}
+	return -1;
+}
 function tokenizeMathText(text: string): MathSegment[] {
 	let segments: MathSegment[]=[];
 	let n=text.length;
@@ -38,45 +54,50 @@ function tokenizeMathText(text: string): MathSegment[] {
 	};
 	while (i<n) {
 		let ch=text[i];
+		if (ch === "\\" && i+1<n && text[i+1] === "\\") {
+			buffer=buffer+"\\";
+			i=i+2;
+			continue;
+		}
 		if (ch === "\\" && i+1<n && text[i+1] === "$") {
 			buffer=buffer+"$";
 			i=i+2;
 			continue;
 		}
 		if (ch === "$" && i+1<n && text[i+1] === "$") {
-			let close=text.indexOf("$$", i+2);
+			let close=findDelimiterClose(text, i+2, "$$");
 			if (close !== -1) {
 				flush();
 				segments.push({type: "display-math", value: text.slice(i+2, close)});
 				i=close+2;
 				continue;
 			}
-			buffer=buffer+(ch ?? "");
-			i=i+1;
+			buffer=buffer+"$$";
+			i=i+2;
 			continue;
 		}
 		if (ch === "\\" && i+1<n && text[i+1] === "[") {
-			let close=text.indexOf("\\]", i+2);
+			let close=findDelimiterClose(text, i+2, "\\]");
 			if (close !== -1) {
 				flush();
 				segments.push({type: "display-math", value: text.slice(i+2, close)});
 				i=close+2;
 				continue;
 			}
-			buffer=buffer+(ch ?? "");
-			i=i+1;
+			buffer=buffer+"\\[";
+			i=i+2;
 			continue;
 		}
 		if (ch === "\\" && i+1<n && text[i+1] === "(") {
-			let close=text.indexOf("\\)", i+2);
+			let close=findDelimiterClose(text, i+2, "\\)");
 			if (close !== -1) {
 				flush();
 				segments.push({type: "inline-math", value: text.slice(i+2, close)});
 				i=close+2;
 				continue;
 			}
-			buffer=buffer+(ch ?? "");
-			i=i+1;
+			buffer=buffer+"\\(";
+			i=i+2;
 			continue;
 		}
 		if (ch === "$") {

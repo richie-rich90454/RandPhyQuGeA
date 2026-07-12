@@ -65,4 +65,35 @@ describe("MathText", () => {
 		expect(container.innerHTML).toContain("and");
 		expect(container.innerHTML).toContain("then");
 	});
+	it("escaped backslash before dollar does not consume math open (regression 5.1)", () => {
+		let {container}=render(() => <MathText text={"\\\\$x$"} />);
+		expect(container.innerHTML).toContain("katex");
+		expect(container.textContent).toContain("\\");
+		expect(container.textContent).toContain("x");
+	});
+	it("escaped backslash inside bracket display math does not close early (regression 5.1)", () => {
+		let {container}=render(() => <MathText text={"\\[a \\\\] b\\]"} />);
+		let divs=container.querySelectorAll("div");
+		expect(divs.length).toBe(1);
+		expect(container.innerHTML).toContain("katex");
+		expect(container.textContent).toContain("b");
+	});
+	it("unbalanced double-dollar renders as text not broken math (regression 5.1)", () => {
+		let {container}=render(() => <MathText text="$$x$y" />);
+		expect(container.textContent).toContain("$$");
+		expect(container.textContent).toContain("x");
+		expect(container.textContent).toContain("y");
+		let divs=container.querySelectorAll("div");
+		expect(divs.length).toBe(0);
+	});
+	it("escaped backslash inside paren inline math does not close early (regression 5.1)", () => {
+		let {container}=render(() => <MathText text={"\\(a \\\\) b\\)"} />);
+		expect(container.innerHTML).toContain("katex");
+		expect(container.textContent).toContain("b");
+	});
+	it("single trailing dollar renders as text (regression 5.1)", () => {
+		let {container}=render(() => <MathText text="cost $5" />);
+		expect(container.textContent).toContain("$5");
+		expect(container.innerHTML).not.toContain("katex");
+	});
 });
