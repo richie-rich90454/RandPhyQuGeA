@@ -7,6 +7,7 @@ import {createHashRouter} from "./primitives/createHashRouter";
 import {Playground} from "./pages/Playground";
 import {SpecEditor} from "./pages/SpecEditor";
 import {Wizard} from "./pages/Wizard";
+import {DxDashboard} from "./pages/DxDashboard";
 import styles from "./App.module.css";
 function App(): JSX.Element {
 	let [paletteOpen, setPaletteOpen]=createSignal(false);
@@ -24,6 +25,9 @@ function App(): JSX.Element {
 					</Match>
 					<Match when={router.route() === "/wizard"}>
 						<Wizard />
+					</Match>
+					<Match when={router.route() === "/dx"}>
+						<DxDashboard />
 					</Match>
 					<Match when={true}>
 						<div class={styles.shell}>

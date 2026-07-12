@@ -1,0 +1,186 @@
+import type {JSX} from "solid-js";
+import {createSignal, Show, For} from "solid-js";
+import {Button, Card, CardHeader, CardTitle, CardSubtitle, CardContent, Badge, EmptyState, Spinner} from "../components/ui";
+import {parseSpecification, generateQuestion, generateBatch, exportQuestions, loadDefaultSpec} from "../../services/physicsCore";
+import styles from "./DxDashboard.module.css";
+interface EnvInfo {
+	userAgent: string;
+	viewport: string;
+	devicePixelRatio: number;
+	hardwareConcurrency: number;
+}
+interface BenchmarkResult {
+	operation: string;
+	iterations: number;
+	timeMs: number;
+}
+interface DxMetric {
+	label: string;
+	value: string;
+}
+const DX_METRICS: DxMetric[]=[
+	{label: "Solid Routes", value: "4"},
+	{label: "Question Types", value: "5"},
+	{label: "UI Components", value: "18"},
+	{label: "Coverage Target", value: "90%"},
+];
+function getEnvInfo(): EnvInfo {
+	return {
+		userAgent: navigator.userAgent,
+		viewport: `${window.innerWidth}x${window.innerHeight}`,
+		devicePixelRatio: window.devicePixelRatio,
+		hardwareConcurrency: navigator.hardwareConcurrency,
+	};
+}
+function formatMs(ms: number): string {
+	if (ms<1) return `${ms.toFixed(2)} ms`;
+	return `${ms.toFixed(1)} ms`;
+}
+export function DxDashboard(): JSX.Element {
+	let [envInfo]=createSignal<EnvInfo>(getEnvInfo());
+	let [results, setResults]=createSignal<BenchmarkResult[]>([]);
+	let [running, setRunning]=createSignal(false);
+	let [error, setError]=createSignal<string | null>(null);
+	let handleRunBenchmark=async () => {
+		setRunning(true);
+		setError(null);
+		setResults([]);
+		try {
+			let newResults: BenchmarkResult[]=[];
+			let specText=await loadDefaultSpec();
+			let start=performance.now();
+			let spec=await parseSpecification(specText);
+			newResults.push({operation: "Parse default spec", iterations: 1, timeMs: performance.now()-start});
+			start=performance.now();
+			await generateQuestion(spec);
+			newResults.push({operation: "Generate 1 question", iterations: 1, timeMs: performance.now()-start});
+			start=performance.now();
+			await generateBatch(spec, 10);
+			newResults.push({operation: "Generate batch (10)", iterations: 10, timeMs: performance.now()-start});
+			start=performance.now();
+			let qs100=await generateBatch(spec, 100);
+			newResults.push({operation: "Generate batch (100)", iterations: 100, timeMs: performance.now()-start});
+			start=performance.now();
+			await exportQuestions(qs100, "json");
+			newResults.push({operation: "Export 100 questions (JSON)", iterations: 100, timeMs: performance.now()-start});
+			setResults(newResults);
+		} catch (err: unknown) {
+			let message=err instanceof Error ? err.message : String(err);
+			setError(message);
+		} finally {
+			setRunning(false);
+		}
+	};
+	let handleBack=() => {
+		window.location.hash="";
+	};
+	return (
+		<div class={styles.root}>
+			<header class={styles.header}>
+				<button type="button" class={styles.backLink} onClick={handleBack} aria-label="Back to app">
+					<svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true">
+						<path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+					</svg>
+					Back to app
+				</button>
+				<h1 class={styles.title}>DX Dashboard</h1>
+				<p class={styles.subtitle}>Coverage targets, environment info, and live performance benchmarks for the physics core.</p>
+			</header>
+			<div class={styles.grid}>
+				<Card class={styles.card} padding="md">
+					<CardHeader>
+						<CardTitle>Environment</CardTitle>
+						<CardSubtitle>Runtime context for this session.</CardSubtitle>
+					</CardHeader>
+					<CardContent>
+						<dl class={styles.envList}>
+							<div class={styles.envRow}>
+								<dt class={styles.envLabel}>User Agent</dt>
+								<dd class={styles.envValue}>{envInfo().userAgent}</dd>
+							</div>
+							<div class={styles.envRow}>
+								<dt class={styles.envLabel}>Viewport</dt>
+								<dd class={styles.envValue}>{envInfo().viewport}</dd>
+							</div>
+							<div class={styles.envRow}>
+								<dt class={styles.envLabel}>Device Pixel Ratio</dt>
+								<dd class={styles.envValue}>{envInfo().devicePixelRatio}</dd>
+							</div>
+							<div class={styles.envRow}>
+								<dt class={styles.envLabel}>Hardware Concurrency</dt>
+								<dd class={styles.envValue}>{envInfo().hardwareConcurrency}</dd>
+							</div>
+						</dl>
+					</CardContent>
+				</Card>
+				<Card class={styles.card} padding="md">
+					<CardHeader>
+						<CardTitle>DX Metrics</CardTitle>
+						<CardSubtitle>Reference values for the SolidJS surface.</CardSubtitle>
+					</CardHeader>
+					<CardContent>
+						<div class={styles.metricsGrid}>
+							<For each={DX_METRICS}>{(metric) => (
+								<div class={styles.metricCell}>
+									<span class={styles.metricValue}>{metric.value}</span>
+									<span class={styles.metricLabel}>{metric.label}</span>
+								</div>
+							)}</For>
+						</div>
+					</CardContent>
+				</Card>
+				<Card class={styles.card} padding="md">
+					<CardHeader>
+						<CardTitle>Performance Benchmark</CardTitle>
+						<CardSubtitle>Times the core pipeline against the bundled default spec.</CardSubtitle>
+					</CardHeader>
+					<CardContent>
+						<div class={styles.benchActions}>
+							<Button variant="primary" size="sm" onClick={handleRunBenchmark} loading={running()} disabled={running()}>Run benchmark</Button>
+							<Show when={running()}>
+								<div class={styles.benchStatus}>
+									<Spinner size="sm" />
+									<span>Running…</span>
+								</div>
+							</Show>
+						</div>
+						<Show when={error()}>
+							<div class={styles.errorBlock}>
+								<Badge variant="error">Error</Badge>
+								<pre class={styles.errorText}>{error()}</pre>
+							</div>
+						</Show>
+						<Show
+							when={results().length>0}
+							fallback={
+								<Show when={!running()}>
+									<EmptyState title="No results yet" description="Click Run benchmark to measure parse, generation, and export timings." />
+								</Show>
+							}
+						>
+							<table class={styles.benchTable}>
+								<thead>
+									<tr>
+										<th scope="col">Operation</th>
+										<th scope="col">Iterations</th>
+										<th scope="col">Time</th>
+									</tr>
+								</thead>
+								<tbody>
+									<For each={results()}>{(result) => (
+										<tr>
+											<td>{result.operation}</td>
+											<td class={styles.cellNum}>{result.iterations}</td>
+											<td class={styles.cellNum}>{formatMs(result.timeMs)}</td>
+										</tr>
+									)}</For>
+								</tbody>
+							</table>
+						</Show>
+					</CardContent>
+				</Card>
+			</div>
+		</div>
+	);
+}
+export default DxDashboard;
