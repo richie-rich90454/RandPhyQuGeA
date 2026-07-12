@@ -12,6 +12,8 @@
 import partOneSpec from "../assets/part_one.txt?raw";
 import {PhysicsCore, ExpressionEvaluator, VariableGenerator, McqAssembler, UniversalDistractorGenerator, AnswerGrader} from "../lib/physics";
 import type {QuestionFilter, RandomGenerator, ExporterRegistry, FunctionRegistry, QuestionTypeRegistry, VariableTypeRegistry, ResponseFormatStrategy, McqAssemblerLike, UniversalDistractorGeneratorLike, AnswerGraderLike} from "../lib/physics";
+import type {SpecificationParser} from "../lib/physics/SpecificationParser";
+import type {FormulaLibrary} from "../lib/physics/FormulaLibrary";
 import type {Specification, GeneratedQuestion, FormulaEntry, ExportFormat, ResponseMode} from "../types/models";
 /** Optional filters applied to question generation. */
 export interface GenerateOptions {
@@ -41,6 +43,10 @@ function toFilter(options?: GenerateOptions): QuestionFilter | undefined {
 }
 /** Collaborators that can be injected when (re)building the shared core via {@link configureCore}. Any omitted field keeps its default implementation. */
 export interface ConfigureCoreOptions {
+    /** Custom specification parser (e.g. a subclass with extended section handling). Injecting here avoids editing the core parser. */
+    parser?: SpecificationParser;
+    /** Custom formula library (e.g. with additional reference entries). Injecting here avoids editing the core library. */
+    formulaLibrary?: FormulaLibrary;
     /** Custom exporter registry (e.g. with additional output formats). */
     exporters?: ExporterRegistry;
     /** Custom function registry for the expression evaluator (e.g. domain-specific math functions). */
@@ -82,7 +88,7 @@ export function configureCore(options: ConfigureCoreOptions): void {
     const variableGenerator = options.variableTypes !== undefined ? new VariableGenerator(options.variableTypes) : undefined;
     const distractorGenerator = options.distractorGenerator ?? (options.responseFormatStrategies !== undefined ? new UniversalDistractorGenerator(options.responseFormatStrategies) : undefined);
     const mcqAssembler = options.mcqAssembler ?? (distractorGenerator !== undefined ? new McqAssembler(distractorGenerator instanceof UniversalDistractorGenerator ? distractorGenerator : undefined) : undefined);
-    core = new PhysicsCore(undefined, evaluator, options.exporters, undefined, options.random, options.questionTypes, variableGenerator, mcqAssembler, distractorGenerator, options.grader);
+    core = new PhysicsCore(options.parser, evaluator, options.exporters, options.formulaLibrary, options.random, options.questionTypes, variableGenerator, mcqAssembler, distractorGenerator, options.grader);
 }
 /** Parse a spec text file into a {@link Specification}. */
 export async function parseSpecification(input: string): Promise<Specification> {

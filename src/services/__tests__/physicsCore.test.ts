@@ -1,7 +1,8 @@
 import {describe, it, expect, afterEach} from "vitest";
-import {configureCore, generateQuestion, parseSpecification, exportQuestions} from "../physicsCore";
-import {QuestionTypeRegistry, ExporterRegistry, SeededRandomGenerator} from "../../lib/physics";
-import type {QuestionTypeHandler, QuestionTemplate, GeneratedQuestion, Exporter, ExportFormat} from "../../lib/physics";
+import {configureCore, generateQuestion, parseSpecification, exportQuestions, getFormulaLibrary} from "../physicsCore";
+import {QuestionTypeRegistry, ExporterRegistry, SeededRandomGenerator, FormulaLibrary} from "../../lib/physics";
+import {SpecificationParser} from "../../lib/physics/SpecificationParser";
+import type {QuestionTypeHandler, QuestionTemplate, GeneratedQuestion, Exporter, ExportFormat, Specification} from "../../lib/physics";
 class CustomHandler implements QuestionTypeHandler {
     public readonly type = "CustomType";
     public handle(template: QuestionTemplate, variables: Record<string, unknown>): GeneratedQuestion {
@@ -24,6 +25,12 @@ class CustomFacadeExporter implements Exporter {
     public readonly format: ExportFormat = "html";
     public export(): string {
         return "CUSTOM FACADE EXPORT";
+    }
+}
+class CustomParser extends SpecificationParser {
+    public parse(input: string): Specification {
+        const spec = super.parse(input);
+        return {...spec, templates: spec.templates.map(t => ({...t, text_template: "[custom-parser] " + t.text_template}))};
     }
 }
 const SPEC = [
@@ -89,5 +96,26 @@ describe("configureCore", () => {
             random,
         });
         configureCore({});
+    });
+    it("configureCore injects a custom FormulaLibrary without editing core (regression 5.41)", async () => {
+        const customLibrary = new FormulaLibrary([{name: "Custom Formula", latex: "E = mc^2", description: "custom", variables: ["E", "m", "c"], topic_id: "custom"}]);
+        configureCore({formulaLibrary: customLibrary});
+        const formulas = await getFormulaLibrary();
+        expect(formulas).toHaveLength(1);
+        expect(formulas[0]?.name).toBe("Custom Formula");
+        expect(formulas[0]?.topic_id).toBe("custom");
+    });
+    it("configureCore injects a custom SpecificationParser without editing core (regression 5.41)", async () => {
+        configureCore({parser: new CustomParser()});
+        const spec = await parseSpecification(SPEC);
+        expect(spec.templates[0]?.text_template).toContain("[custom-parser]");
+    });
+    it("configureCore({}) restores the default formula library after a custom injection (regression 5.41)", async () => {
+        const customLibrary = new FormulaLibrary([{name: "Custom Formula", latex: "E = mc^2", description: "custom", variables: ["E"], topic_id: "custom"}]);
+        configureCore({formulaLibrary: customLibrary});
+        configureCore({});
+        const formulas = await getFormulaLibrary();
+        expect(formulas.length).toBeGreaterThan(1);
+        expect(formulas.some(f => f.name === "Custom Formula")).toBe(false);
     });
 });
