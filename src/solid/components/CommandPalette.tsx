@@ -219,7 +219,15 @@ export function CommandPalette(props: CommandPaletteProps): JSX.Element {
 							<kbd class={styles.escHint} aria-hidden="true">Esc</kbd>
 						</div>
 						<div ref={setListRef} id="command-palette-list" class={styles.list} role="listbox" aria-label="Commands">
-							<Show when={filtered().length>0} fallback={<div class={styles.empty}>No matching commands.</div>}>
+							<Show when={filtered().length>0} fallback={
+							<div class={styles.empty}>
+								<svg class={styles.emptyIcon} viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+									<circle cx="11" cy="11" r="7" />
+									<path d="M21 21l-4.3-4.3" stroke-linecap="round" />
+								</svg>
+								<span>No matching commands.</span>
+							</div>
+						}>
 								<For each={groups()}>{([section, items]) => (
 									<div class={styles.section} role="group" aria-label={section}>
 										<div class={styles.sectionLabel} aria-hidden="true">{section}</div>
