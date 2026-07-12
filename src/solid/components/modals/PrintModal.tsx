@@ -285,9 +285,12 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 						<ol class={styles.previewList}>
 							<For each={questions()}>{(question, index) => (
 								<li class={styles.previewItem} value={index()+1}>
-									<MathText text={question.text} />
+									<div class={styles.previewQuestion}><MathText text={question.text} /></div>
 									<Show when={includeAnswerKey()}>
-										<span class={styles.previewAnswer}> - <MathText text={question.answer} /></span>
+										<div class={styles.previewAnswer}>
+											<span class={styles.previewAnswerLabel}>Answer:</span>
+											<MathText text={question.answer} />
+										</div>
 									</Show>
 								</li>
 							)}</For>
