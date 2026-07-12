@@ -1,9 +1,15 @@
 import type {RandomGenerator} from "../contracts";
-/** Seeded random generator using xorshift32 for reproducible distractor ordering. Distinct from {@link SeededRandomGenerator} (mulberry32); both satisfy {@link RandomGenerator}. */
+/** Seeded random generator using xorshift32 for reproducible distractor ordering. Distinct from {@link SeededRandomGenerator} (mulberry32); both satisfy {@link RandomGenerator}. The seed is passed through a 32-bit splitmix finalizer (a bijection on uint32) before seeding the xorshift state, so distinct seeds — including 0 — produce distinct streams rather than colliding on the magic fallback constant. */
 export class SeededRandom implements RandomGenerator {
     private state: number;
     public constructor(seed: number) {
-        this.state = (seed >>> 0) || 0x9e3779b9;
+        let s = seed >>> 0;
+        s ^= s >>> 16;
+        s = Math.imul(s, 0x21f0aaad) >>> 0;
+        s ^= s >>> 15;
+        s = Math.imul(s, 0x735a2d97) >>> 0;
+        s ^= s >>> 15;
+        this.state = s || 0x9e3779b9;
     }
     /** Advances the xorshift32 state and returns a float in [0, 1). */
     public next(): number {
