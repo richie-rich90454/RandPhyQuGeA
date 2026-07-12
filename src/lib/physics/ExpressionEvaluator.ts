@@ -23,9 +23,40 @@ export class FunctionRegistry {
         const registry = new FunctionRegistry();
         registry.register({name: "sin", arity: 1, invoke: args => Math.sin((FunctionRegistry.first(args) * Math.PI) / 180)});
         registry.register({name: "cos", arity: 1, invoke: args => Math.cos((FunctionRegistry.first(args) * Math.PI) / 180)});
-        registry.register({name: "tan", arity: 1, invoke: args => Math.tan((FunctionRegistry.first(args) * Math.PI) / 180)});
-        registry.register({name: "asin", arity: 1, invoke: args => (Math.asin(FunctionRegistry.first(args)) * 180) / Math.PI});
-        registry.register({name: "acos", arity: 1, invoke: args => (Math.acos(FunctionRegistry.first(args)) * 180) / Math.PI});
+        registry.register({
+            name: "tan",
+            arity: 1,
+            invoke: args => {
+                const a = FunctionRegistry.first(args);
+                const c = Math.cos((a * Math.PI) / 180);
+                if (Math.abs(c) < 1e-12) {
+                    throw new Error("tan undefined at this angle");
+                }
+                return Math.tan((a * Math.PI) / 180);
+            },
+        });
+        registry.register({
+            name: "asin",
+            arity: 1,
+            invoke: args => {
+                const a = FunctionRegistry.first(args);
+                if (a < -1 || a > 1) {
+                    throw new Error("asin requires argument in [-1, 1]");
+                }
+                return (Math.asin(a) * 180) / Math.PI;
+            },
+        });
+        registry.register({
+            name: "acos",
+            arity: 1,
+            invoke: args => {
+                const a = FunctionRegistry.first(args);
+                if (a < -1 || a > 1) {
+                    throw new Error("acos requires argument in [-1, 1]");
+                }
+                return (Math.acos(a) * 180) / Math.PI;
+            },
+        });
         registry.register({name: "atan", arity: 1, invoke: args => (Math.atan(FunctionRegistry.first(args)) * 180) / Math.PI});
         registry.register({
             name: "sqrt",

@@ -205,3 +205,64 @@ describe("ExpressionEvaluator existing error handling regression (task 5.19 prev
         expect(() => evaluator.evaluate("root(-4,2)", {})).toThrow("even root of a negative number");
     });
 });
+describe("ExpressionEvaluator trig degree/radian consistency (task 5.20)", () => {
+    const evaluator = new ExpressionEvaluator();
+    it("throws on tan(90) (undefined angle, consistent with cot/sec/csc)", () => {
+        expect(() => evaluator.evaluate("tan(90)", {})).toThrow("tan undefined at this angle");
+    });
+    it("throws on tan(270) (undefined angle)", () => {
+        expect(() => evaluator.evaluate("tan(270)", {})).toThrow("tan undefined at this angle");
+    });
+    it("evaluates tan(0)=0, tan(45)~=1, tan(60)~=sqrt(3)", () => {
+        expect(evaluator.evaluate("tan(0)", {})).toBeCloseTo(0, 10);
+        expect(evaluator.evaluate("tan(45)", {})).toBeCloseTo(1, 10);
+        expect(evaluator.evaluate("tan(60)", {})).toBeCloseTo(Math.sqrt(3), 10);
+    });
+    it("throws on asin(2) and asin(-1.5) (out of domain [-1, 1])", () => {
+        expect(() => evaluator.evaluate("asin(2)", {})).toThrow("asin requires argument in [-1, 1]");
+        expect(() => evaluator.evaluate("asin(-1.5)", {})).toThrow("asin requires argument in [-1, 1]");
+    });
+    it("throws on acos(2) and acos(-2) (out of domain [-1, 1])", () => {
+        expect(() => evaluator.evaluate("acos(2)", {})).toThrow("acos requires argument in [-1, 1]");
+        expect(() => evaluator.evaluate("acos(-2)", {})).toThrow("acos requires argument in [-1, 1]");
+    });
+    it("evaluates asin(1)=90, asin(0)=0, asin(-1)=-90 (degrees, in-domain)", () => {
+        expect(evaluator.evaluate("asin(1)", {})).toBeCloseTo(90, 10);
+        expect(evaluator.evaluate("asin(0)", {})).toBeCloseTo(0, 10);
+        expect(evaluator.evaluate("asin(-1)", {})).toBeCloseTo(-90, 10);
+    });
+    it("evaluates acos(1)=0, acos(0)=90, acos(-1)=180 (degrees, in-domain)", () => {
+        expect(evaluator.evaluate("acos(1)", {})).toBeCloseTo(0, 10);
+        expect(evaluator.evaluate("acos(0)", {})).toBeCloseTo(90, 10);
+        expect(evaluator.evaluate("acos(-1)", {})).toBeCloseTo(180, 10);
+    });
+    it("round-trips sin/asin: asin(sin(30))~=30 (degree consistency)", () => {
+        expect(evaluator.evaluate("asin(sin(30))", {})).toBeCloseTo(30, 10);
+    });
+    it("round-trips cos/acos: acos(cos(60))~=60 (degree consistency)", () => {
+        expect(evaluator.evaluate("acos(cos(60))", {})).toBeCloseTo(60, 10);
+    });
+});
+describe("ExpressionEvaluator trig consistency preventive fixes (task 5.20)", () => {
+    const evaluator = new ExpressionEvaluator();
+    it("sin and cos use degrees: sin(90)~=1, cos(90)~=0 (preventive fix)", () => {
+        expect(evaluator.evaluate("sin(90)", {})).toBeCloseTo(1, 10);
+        expect(evaluator.evaluate("cos(90)", {})).toBeCloseTo(0, 10);
+    });
+    it("atan returns degrees: atan(1)~=45 (preventive fix)", () => {
+        expect(evaluator.evaluate("atan(1)", {})).toBeCloseTo(45, 10);
+    });
+    it("sec throws on undefined angle sec(90) (preventive fix)", () => {
+        expect(() => evaluator.evaluate("sec(90)", {})).toThrow("sec undefined at this angle");
+    });
+    it("csc throws on undefined angle csc(0) (preventive fix)", () => {
+        expect(() => evaluator.evaluate("csc(0)", {})).toThrow("csc undefined at this angle");
+    });
+    it("cot throws on undefined angle cot(0) (preventive fix)", () => {
+        expect(() => evaluator.evaluate("cot(0)", {})).toThrow("cot undefined at this angle");
+    });
+    it("deg/rad conversion: deg(pi)~=180, rad(180)~=pi (preventive fix)", () => {
+        expect(evaluator.evaluate("deg(pi)", {})).toBeCloseTo(180, 10);
+        expect(evaluator.evaluate("rad(180)", {})).toBeCloseTo(Math.PI, 10);
+    });
+});
