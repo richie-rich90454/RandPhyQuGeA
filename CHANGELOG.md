@@ -48,7 +48,7 @@ The following anchors enumerate every React component/hook/store file scheduled 
 
 #### Prior polish pass
 
-The application is now a pure-TypeScript physics practice question generator. There is no WASM and no Rust domain logic — all question generation, evaluation, and export happens in TypeScript. The React 19 + Vite 8 + KaTeX + Zustand 5 + Tauri shell stack is in place, and this entry documents the SaaS-quality polish pass (Waves 1–6 complete, Wave 7 in progress).
+The application is now a pure-TypeScript physics practice question generator. There is no WASM and no Rust domain logic — all question generation, evaluation, and export happens in TypeScript. The SolidJS + Vite 8 + KaTeX + Zustand 5 + Tauri shell stack is in place (this section was originally written for the React 19 stack, since migrated to SolidJS — see the megatask entry above), and this entry documents the SaaS-quality polish pass (Waves 1–6 complete, Wave 7 in progress).
 
 ### Added
 
@@ -64,7 +64,7 @@ The application is now a pure-TypeScript physics practice question generator. Th
 - **Mental config consolidation**: `mentalDifficulty`, `mentalScope`, `mentalShuffle`, and `mentalUnlimited` moved from `practiceStore` into the persisted `settingsStore`; `practiceStore` now holds only live session state. The duplicated `mentalDifficulty` was consolidated to a single source.
 - **`QUESTION_TYPES` SSOT**: a canonical `QUESTION_TYPES` const object (`MC`, `SA`, `TF`, `FB`, `NE`) and corrected `QuestionType` union in `src/types/models.ts` replace the stale 2-value union; every `'MultipleChoice'` literal now references `QUESTION_TYPES.MC`.
 - **ESLint**: migrated from the legacy `.eslintrc.cjs` to the flat `eslint.config.mjs`, preserving `eslint:recommended` + `@typescript-eslint/recommended` + `react-hooks/recommended` + Prettier compatibility and enforcing `no-multiple-empty-lines` (AGENTS.md "no blank lines" rule).
-- **Documentation**: `README.md`, `CONTRIBUTING.md`, and `ARCHITECTURE.md` rewritten to describe the pure-TypeScript stack (React 19, Vite 8, KaTeX, Zustand 5, Tauri shell) and the actual setup/test commands.
+- **Documentation**: `README.md`, `CONTRIBUTING.md`, and `ARCHITECTURE.md` rewritten to describe the pure-TypeScript stack (SolidJS, Vite 8, KaTeX, Zustand 5, Tauri shell) and the actual setup/test commands.
 
 ### Fixed
 

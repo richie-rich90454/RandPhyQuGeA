@@ -49,7 +49,7 @@ A pure-TypeScript physics practice question generator with a SolidJS + CSS Modul
 
 ```bash
 npm install
-npm run dev          # Start the Vite dev server (React root entry)
+npm run dev          # Start the Vite dev server (Solid root entry)
 npm run dev:solid    # Start the Solid preview at /src/solid/index.html
 ```
 
@@ -64,7 +64,7 @@ npm run preview      # Preview the production build locally
 ### Quality Checks
 
 ```bash
-npm run typecheck        # tsc --noEmit (React tsconfig)
+npm run typecheck        # tsc --noEmit (base tsconfig)
 npm run typecheck:solid  # tsc --noEmit -p tsconfig.solid.json (Solid tsconfig)
 npm run lint             # oxlint src
 npm run lint:fix         # oxlint src --fix
