@@ -46,7 +46,7 @@ export function Modal(props: ModalProps): JSX.Element {
 		let previousOverflow=document.body.style.overflow;
 		document.body.style.overflow="hidden";
 		let focusables=Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
-		let closeButton=container.querySelector<HTMLButtonElement>("."+styles.close);
+		let closeButton=container.querySelector<HTMLButtonElement>('[data-modal-close="true"]');
 		let target=closeButton ?? focusables[0] ?? container;
 		target.focus();
 		let handleKeyDown=(event: KeyboardEvent) => {
@@ -79,9 +79,24 @@ export function Modal(props: ModalProps): JSX.Element {
 				}
 			}
 		};
+		let handleFocusIn=(event: FocusEvent) => {
+			let node=containerEl();
+			if (!node) return;
+			let target=event.target instanceof HTMLElement ? event.target : null;
+			if (target && !node.contains(target)) {
+				let items=Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+				if (items.length>0) {
+					items[0]!.focus();
+				} else {
+					node.focus();
+				}
+			}
+		};
 		document.addEventListener("keydown", handleKeyDown);
+		document.addEventListener("focusin", handleFocusIn);
 		onCleanup(() => {
 			document.removeEventListener("keydown", handleKeyDown);
+			document.removeEventListener("focusin", handleFocusIn);
 			document.body.style.overflow=previousOverflow;
 			if (previousFocus) previousFocus.focus();
 		});
@@ -99,7 +114,7 @@ export function Modal(props: ModalProps): JSX.Element {
 							<Show when={local.title}>
 								<h2 id={labelledBy() ?? undefined} class={styles.title}>{local.title}</h2>
 							</Show>
-							<button type="button" class={`${styles.iconButton} ${styles.close}`} aria-label="Close dialog" onClick={local.onClose}>
+							<button type="button" data-modal-close="true" class={styles.iconButton} aria-label="Close dialog" onClick={local.onClose}>
 								<span aria-hidden="true">×</span>
 							</button>
 						</div>

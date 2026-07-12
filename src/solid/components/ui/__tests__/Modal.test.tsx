@@ -63,4 +63,74 @@ describe("Modal", () => {
 		await flush();
 		expect(document.body.style.overflow).not.toBe("hidden");
 	});
+	it("traps Tab focus inside the modal (wraps from last to first) (task 5.12 bug 1)", async () => {
+		render(() => <Modal open={true} onClose={() => {}}><button>First</button><button>Second</button></Modal>);
+		await flush();
+		let buttons=screen.getAllByRole("button");
+		let contentBtns=buttons.filter(b => b.textContent === "First" || b.textContent === "Second");
+		let lastBtn=contentBtns[contentBtns.length-1]!;
+		lastBtn.focus();
+		expect(document.activeElement).toBe(lastBtn);
+		fireEvent.keyDown(document, {key: "Tab"});
+		expect(document.activeElement).not.toBe(lastBtn);
+		let firstBtn=contentBtns[0]!;
+		expect(document.activeElement === firstBtn || document.activeElement === screen.getByRole("button", {name: /close dialog/i})).toBe(true);
+	});
+	it("traps Shift+Tab focus inside the modal (wraps from first to last) (task 5.12 bug 1)", async () => {
+		render(() => <Modal open={true} onClose={() => {}}><button>First</button><button>Second</button></Modal>);
+		await flush();
+		let closeBtn=screen.getByRole("button", {name: /close dialog/i});
+		closeBtn.focus();
+		expect(document.activeElement).toBe(closeBtn);
+		fireEvent.keyDown(document, {key: "Tab", shiftKey: true});
+		let buttons=screen.getAllByRole("button");
+		let contentBtns=buttons.filter(b => b.textContent === "First" || b.textContent === "Second");
+		let lastBtn=contentBtns[contentBtns.length-1]!;
+		expect(document.activeElement).toBe(lastBtn);
+	});
+	it("moves focus into the modal when it opens (task 5.12 bug 1)", async () => {
+		render(() => <Modal open={true} onClose={() => {}} title="Test">Body</Modal>);
+		await flush();
+		let closeBtn=screen.getByRole("button", {name: /close dialog/i});
+		expect(document.activeElement).toBe(closeBtn);
+	});
+	it("restores focus to the trigger element when the modal closes (task 5.12 bug 2)", async () => {
+		let [open, setOpen]=createSignal(false);
+		render(() => (
+			<>
+				<button data-testid="trigger" onClick={() => setOpen(true)}>Open</button>
+				<Modal open={open()} onClose={() => setOpen(false)}>Body</Modal>
+			</>
+		));
+		let trigger=screen.getByTestId("trigger");
+		trigger.focus();
+		expect(document.activeElement).toBe(trigger);
+		setOpen(true);
+		await flush();
+		expect(document.activeElement).not.toBe(trigger);
+		setOpen(false);
+		await flush();
+		expect(document.activeElement).toBe(trigger);
+	});
+	it("brings focus back into the modal when it escapes via focusin (task 5.12 bug 1)", async () => {
+		let [open, setOpen]=createSignal(true);
+		render(() => (
+			<>
+				<button data-testid="outside">Outside</button>
+				<Modal open={open()} onClose={() => setOpen(false)}><button>Inside</button></Modal>
+			</>
+		));
+		await flush();
+		let outsideBtn=screen.getByTestId("outside") as HTMLButtonElement;
+		outsideBtn.focus();
+		expect(document.activeElement).not.toBe(outsideBtn);
+		let dialog=screen.getByRole("dialog");
+		expect(dialog.contains(document.activeElement)).toBe(true);
+	});
+	it("locks body scroll with overflow hidden (task 5.12 bug 3)", async () => {
+		document.body.style.overflow="";
+		render(() => <Modal open={true} onClose={() => {}}>Body</Modal>);
+		await flush();
+		expect(document.body.style.overflow).toBe("hidden");
+	});
 });
