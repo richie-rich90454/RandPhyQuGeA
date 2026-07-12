@@ -436,8 +436,34 @@ table {
 	outline: none;
 }
 ::selection {
-	background-color: var(--accent);
+	background-color: color-mix(in srgb, var(--accent) 80%, transparent);
 	color: var(--accent-contrast);
+}
+/* Custom scrollbar — thin track, rounded themed thumb (Firefox + WebKit) */
+html {
+	scrollbar-width: thin;
+	scrollbar-color: color-mix(in srgb, var(--accent) 35%, transparent) transparent;
+}
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+::-webkit-scrollbar-thumb {
+	background: color-mix(in srgb, var(--accent) 35%, transparent);
+	border-radius: var(--radius-full);
+	border: 2px solid transparent;
+	background-clip: padding-box;
+	transition: background-color var(--duration-fast) var(--ease-standard);
+}
+::-webkit-scrollbar-thumb:hover {
+	background: color-mix(in srgb, var(--accent) 55%, transparent);
+	background-clip: padding-box;
+}
+::-webkit-scrollbar-corner {
+	background: transparent;
 }
 #root {
 	isolation: isolate;
