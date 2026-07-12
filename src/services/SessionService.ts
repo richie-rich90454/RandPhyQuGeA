@@ -1,22 +1,9 @@
 /** Stateful service that manages a practice session lifecycle and persistence snapshots. */
 import type {IAnalyticsService, IPhysicsService, ISessionService, Session, SessionConfig, SessionSnapshot} from "./contracts";
 import type {GeneratedQuestion, PracticeResult, QuestionType, Specification} from "../types/models";
-import {QUESTION_TYPES} from "../types/models";
+import type {AnswerGraderLike} from "../lib/physics/contracts";
+import {AnswerGrader} from "../lib/physics/grader/AnswerGrader";
 const DEFAULT_SNAPSHOT_KEY="physics-session-snapshot";
-const NUMERIC_TOLERANCE=0.01;
-/** Compare a user answer to the correct answer using numeric tolerance or a normalized text match. */
-function compareAnswer(userAnswer: string, correctAnswer: string): boolean {
-	let trimmedUser=userAnswer.trim();
-	let trimmedCorrect=correctAnswer.trim();
-	if (trimmedUser!=="" && trimmedCorrect!=="") {
-		let userNum=Number(trimmedUser);
-		let correctNum=Number(trimmedCorrect);
-		if (!Number.isNaN(userNum) && !Number.isNaN(correctNum)) {
-			return Math.abs(userNum-correctNum)<NUMERIC_TOLERANCE;
-		}
-	}
-	return trimmedUser.toLowerCase()===trimmedCorrect.toLowerCase();
-}
 /** Shuffle an array in place using the Fisher-Yates algorithm. */
 function shuffleArray<T>(array: T[]): T[] {
 	for (let i=array.length-1; i>0; i--) {
@@ -57,10 +44,12 @@ function createResult(question: GeneratedQuestion, userAnswer: string, isCorrect
 export class SessionService implements ISessionService {
 	private readonly physicsService: IPhysicsService;
 	private readonly analyticsService: IAnalyticsService;
+	private readonly grader: AnswerGraderLike;
 	private session: Session|null=null;
-	public constructor(physicsService: IPhysicsService, analyticsService: IAnalyticsService) {
+	public constructor(physicsService: IPhysicsService, analyticsService: IAnalyticsService, grader?: AnswerGraderLike) {
 		this.physicsService=physicsService;
 		this.analyticsService=analyticsService;
+		this.grader=grader ?? new AnswerGrader();
 	}
 	public async startSession(spec: Specification, config: SessionConfig): Promise<Session> {
 		let questions: GeneratedQuestion[]=[];
@@ -98,20 +87,9 @@ export class SessionService implements ISessionService {
 			throw new Error("No current question.");
 		}
 		let timeTakenMs=Date.now()-this.session.questionStartTime;
-		let userAnswerValue: string;
-		let isCorrect: boolean;
 		let choices=question.choices;
-		if (choices && choiceIndex!==undefined) {
-			userAnswerValue=choices[choiceIndex] ?? "";
-			isCorrect=compareAnswer(userAnswerValue, question.answer);
-		} else if (question.question_type===QUESTION_TYPES.MC && choices) {
-			userAnswerValue=answer;
-			let selectedIndex=choices.findIndex(choice => compareAnswer(choice, answer));
-			isCorrect=selectedIndex>=0 && compareAnswer(choices[selectedIndex] ?? "", question.answer);
-		} else {
-			userAnswerValue=answer;
-			isCorrect=compareAnswer(answer, question.answer);
-		}
+		let userAnswerValue=(choiceIndex!==undefined && choices) ? (choices[choiceIndex] ?? answer) : answer;
+		let isCorrect=this.grader.grade(question, answer, choiceIndex).is_correct;
 		let result=createResult(question, userAnswerValue, isCorrect, timeTakenMs, this.session.mode);
 		this.session.results.push(result);
 		return result;

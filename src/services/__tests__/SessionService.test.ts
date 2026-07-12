@@ -2,7 +2,7 @@ import {describe, it, expect, beforeEach, afterEach, vi} from "vitest";
 import {SessionService} from "../SessionService";
 import type {IAnalyticsService, IPhysicsService, GenerateOptions, SessionConfig, SessionSnapshot} from "../contracts";
 import type {SessionSummary, WeakTopic} from "../contracts";
-import type {ExportFormat, FormulaEntry, GeneratedQuestion, PracticeResult, Specification} from "../../types/models";
+import type {ExportFormat, FormulaEntry, GeneratedQuestion, PracticeResult, QuestionType, Specification} from "../../types/models";
 import type {StreakData} from "../streakService";
 class MockPhysicsService implements IPhysicsService {
 	public parseSpecification=vi.fn<(input: string) => Promise<Specification>>();
@@ -26,7 +26,7 @@ function makeQuestion(overrides: Partial<GeneratedQuestion>={}): GeneratedQuesti
 	return {id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", difficulty: 1, text: "text", answer: "42", response_mode: "frq", solution_text: "", solution_latex: "", variables: {}, ...overrides};
 }
 function makeMcQuestion(overrides: Partial<GeneratedQuestion>={}): GeneratedQuestion {
-	return makeQuestion({id: "mc1", question_type: "MC", answer: "B", choices: ["A", "B", "C"], ...overrides});
+	return makeQuestion({id: "mc1", question_type: "MC", answer: "B", choices: ["A", "B", "C"], response_mode: "mcq", correct_choice_index: 1, ...overrides});
 }
 function makeConfig(overrides: Partial<SessionConfig>={}): SessionConfig {
 	return {mode: "Single", questionCount: 1, ...overrides};
@@ -172,6 +172,37 @@ describe("SessionService", () => {
 			await service.startSession(emptySpec(), makeConfig({questionCount: 0}));
 			await expect(service.submitAnswer("x")).rejects.toThrow("No current question.");
 		});
+	});
+	describe("MCQ grading reachability across types and modes (task 5.7)", () => {
+		function makeMcqForType(type: QuestionType, overrides: Partial<GeneratedQuestion>={}): GeneratedQuestion {
+			return makeQuestion({id: "mcq-"+type, question_type: type, answer: "correct", choices: ["wrong1", "correct", "wrong2"], response_mode: "mcq", correct_choice_index: 1, ...overrides});
+		}
+		for (const type of ["MC", "SA", "TF", "FB", "NE"] as QuestionType[]) {
+			it(`grades ${type} in Single mode by choice index when response_mode is mcq`, async () => {
+				let physics=new MockPhysicsService();
+				let analytics=new MockAnalyticsService();
+				let service=new SessionService(physics, analytics);
+				physics.generateBatch.mockResolvedValue([makeMcqForType(type)]);
+				await service.startSession(emptySpec(), makeConfig({mode: "Single"}));
+				let correct=await service.submitAnswer("", 1);
+				expect(correct.is_correct).toBe(true);
+				expect(correct.user_answer).toBe("correct");
+				let wrong=await service.submitAnswer("", 0);
+				expect(wrong.is_correct).toBe(false);
+				expect(wrong.user_answer).toBe("wrong1");
+			});
+			it(`grades ${type} in Mental mode by choice index when response_mode is mcq`, async () => {
+				let physics=new MockPhysicsService();
+				let analytics=new MockAnalyticsService();
+				let service=new SessionService(physics, analytics);
+				physics.generateBatch.mockResolvedValue([makeMcqForType(type)]);
+				await service.startSession(emptySpec(), makeConfig({mode: "Mental"}));
+				let correct=await service.submitAnswer("", 1);
+				expect(correct.is_correct).toBe(true);
+				let wrong=await service.submitAnswer("", 0);
+				expect(wrong.is_correct).toBe(false);
+			});
+		}
 	});
 	describe("advanceQuestion", () => {
 		it("moves to the next question and resets the question timer", async () => {
