@@ -6,8 +6,18 @@
 	justify-content: center;
 	background: rgba(11, 37, 64, 0.55);
 	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
 	z-index: var(--z-modal);
 	padding: var(--space-4);
+	animation: backdrop-in var(--duration-normal) var(--ease-out);
+}
+@keyframes backdrop-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 .show { opacity: 1; }
 .content {
@@ -20,16 +30,16 @@
 	flex-direction: column;
 	overflow: hidden;
 	outline: none;
-	animation: modal-in var(--duration-normal) var(--ease-out);
+	animation: modal-in var(--duration-slow) var(--ease-decelerated);
 }
 @keyframes modal-in {
 	from {
 		opacity: 0;
-		transform: scale(0.96);
+		transform: scale(0.96) translateY(8px);
 	}
 	to {
 		opacity: 1;
-		transform: scale(1);
+		transform: scale(1) translateY(0);
 	}
 }
 .iconButton {
@@ -48,6 +58,10 @@
 	background: var(--surface-muted);
 	color: var(--text);
 }
+.iconButton:focus-visible {
+	outline: none;
+	box-shadow: var(--shadow-focus);
+}
 .iconButton:active {
 	transform: scale(0.96);
 }
@@ -62,21 +76,6 @@
 .title {
 	font-size: var(--font-size-lg);
 	font-weight: var(--font-weight-semibold);
-	color: var(--text);
-}
-.iconButton {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
-	border-radius: var(--radius-md);
-	color: var(--text-muted);
-	font-size: 20px;
-	line-height: 1;
-}
-.iconButton:hover {
-	background: var(--surface-muted);
 	color: var(--text);
 }
 .body {
@@ -96,5 +95,16 @@
 	.iconButton {
 		width: 44px;
 		height: 44px;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.modal {
+		animation: none;
+	}
+	.content {
+		animation: none;
+	}
+	.iconButton:active {
+		transform: none;
 	}
 }
