@@ -38,7 +38,21 @@ export class FunctionRegistry {
                 return Math.sqrt(a);
             },
         });
-        registry.register({name: "pow", arity: 2, invoke: args => Math.pow(FunctionRegistry.first(args), FunctionRegistry.second(args, "pow"))});
+        registry.register({
+            name: "pow",
+            arity: 2,
+            invoke: args => {
+                const b = FunctionRegistry.first(args);
+                const e = FunctionRegistry.second(args, "pow");
+                if (b === 0 && e < 0) {
+                    throw new Error("Division by zero: zero raised to a negative power");
+                }
+                if (b < 0 && !Number.isInteger(e)) {
+                    throw new Error("Negative base with fractional exponent");
+                }
+                return Math.pow(b, e);
+            },
+        });
         registry.register({name: "cbrt", arity: 1, invoke: args => Math.cbrt(FunctionRegistry.first(args))});
         registry.register({name: "hypot", arity: 2, invoke: args => Math.hypot(FunctionRegistry.first(args), FunctionRegistry.second(args, "hypot"))});
         registry.register({name: "abs", arity: 1, invoke: args => Math.abs(FunctionRegistry.first(args))});
@@ -474,6 +488,12 @@ export class ExpressionEvaluator implements ExpressionEvaluatorLike {
         const currentPos = base.position;
         if (currentPos < tokens.length && tokens[currentPos] === "^") {
             const exp = this.parsePower(tokens, currentPos + 1, variables);
+            if (base.value === 0 && exp.value < 0) {
+                throw new Error("Division by zero: zero raised to a negative power");
+            }
+            if (base.value < 0 && !Number.isInteger(exp.value)) {
+                throw new Error("Negative base with fractional exponent");
+            }
             return {value: Math.pow(base.value, exp.value), position: exp.position};
         }
         return {value: base.value, position: currentPos};

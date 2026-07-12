@@ -144,3 +144,64 @@ describe("ExpressionEvaluator", () => {
         expect(() => evaluator.evaluate("2+@", {})).toThrow("Unexpected end of expression");
     });
 });
+describe("ExpressionEvaluator power-operator error handling (task 5.19)", () => {
+    const evaluator = new ExpressionEvaluator();
+    it("throws on 0^(-1) via ^ operator (division by zero via power)", () => {
+        expect(() => evaluator.evaluate("0^-1", {})).toThrow("Division by zero: zero raised to a negative power");
+    });
+    it("throws on 0^(-2) via ^ operator (division by zero via power)", () => {
+        expect(() => evaluator.evaluate("0^-2", {})).toThrow("Division by zero: zero raised to a negative power");
+    });
+    it("throws on (-1)^(0.5) via ^ operator (sqrt of negative via power)", () => {
+        expect(() => evaluator.evaluate("(-1)^0.5", {})).toThrow("Negative base with fractional exponent");
+    });
+    it("throws on (-2)^(1.5) via ^ operator (sqrt of negative via power)", () => {
+        expect(() => evaluator.evaluate("(-2)^1.5", {})).toThrow("Negative base with fractional exponent");
+    });
+    it("allows 0^0, 0^2, 2^(-1) and (-2)^3 via ^ operator", () => {
+        expect(evaluator.evaluate("0^0", {})).toBe(1);
+        expect(evaluator.evaluate("0^2", {})).toBe(0);
+        expect(evaluator.evaluate("2^-1", {})).toBe(0.5);
+        expect(evaluator.evaluate("(-2)^3", {})).toBe(-8);
+    });
+    it("throws on pow(0,-1) via pow function (division by zero via power)", () => {
+        expect(() => evaluator.evaluate("pow(0,-1)", {})).toThrow("Division by zero: zero raised to a negative power");
+    });
+    it("throws on pow(-1,0.5) via pow function (sqrt of negative via power)", () => {
+        expect(() => evaluator.evaluate("pow(-1,0.5)", {})).toThrow("Negative base with fractional exponent");
+    });
+    it("allows pow(2,3)=8 and pow(5,0)=1 and pow(-2,3)=-8 (preventive fix)", () => {
+        expect(evaluator.evaluate("pow(2,3)", {})).toBe(8);
+        expect(evaluator.evaluate("pow(5,0)", {})).toBe(1);
+        expect(evaluator.evaluate("pow(-2,3)", {})).toBe(-8);
+    });
+});
+describe("ExpressionEvaluator existing error handling regression (task 5.19 preventive fix)", () => {
+    const evaluator = new ExpressionEvaluator();
+    it("still throws on division by zero via / operator (preventive fix)", () => {
+        expect(() => evaluator.evaluate("5/0", {})).toThrow("Division by zero");
+    });
+    it("still throws on sqrt of a negative number (preventive fix)", () => {
+        expect(() => evaluator.evaluate("sqrt(-4)", {})).toThrow("sqrt of negative number");
+    });
+    it("still throws on ln of non-positive number (preventive fix)", () => {
+        expect(() => evaluator.evaluate("ln(-1)", {})).toThrow("ln of non-positive number");
+        expect(() => evaluator.evaluate("ln(0)", {})).toThrow("ln of non-positive number");
+    });
+    it("still throws on log of non-positive number (preventive fix)", () => {
+        expect(() => evaluator.evaluate("log(-1)", {})).toThrow("log of non-positive number");
+        expect(() => evaluator.evaluate("log(0)", {})).toThrow("log of non-positive number");
+    });
+    it("still throws on log2 of non-positive number (preventive fix)", () => {
+        expect(() => evaluator.evaluate("log2(0)", {})).toThrow("log2 of non-positive number");
+    });
+    it("still throws on log10 of non-positive number (preventive fix)", () => {
+        expect(() => evaluator.evaluate("log10(-2)", {})).toThrow("log of non-positive number");
+    });
+    it("still throws on mod by zero (preventive fix)", () => {
+        expect(() => evaluator.evaluate("mod(5,0)", {})).toThrow("mod by zero");
+    });
+    it("still throws on even root of a negative number (preventive fix)", () => {
+        expect(() => evaluator.evaluate("root(-4,2)", {})).toThrow("even root of a negative number");
+    });
+});
