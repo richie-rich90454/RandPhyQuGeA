@@ -1,6 +1,7 @@
 import type {JSX} from "solid-js";
 import {createEffect, createSignal, onCleanup, Show, For} from "solid-js";
 import {Button, Card, CardHeader, CardTitle, CardSubtitle, CardContent, Badge, EmptyState, Spinner} from "../components/ui";
+import {useToast} from "../components/ui/Toast";
 import {parseSpecification, generateQuestion, loadDefaultSpec} from "../../services/physicsCore";
 import type {Specification, GeneratedQuestion} from "../../types/models";
 import styles from "./SpecEditor.module.css";
@@ -45,6 +46,7 @@ export function SpecEditor(): JSX.Element {
 	let [previewError, setPreviewError]=createSignal<string | null>(null);
 	let [loadingDefault, setLoadingDefault]=createSignal(false);
 	let [saved, setSaved]=createSignal(false);
+	let {toast}=useToast();
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let runPreview=(text: string) => {
 		if (text.trim() === "") {
@@ -85,6 +87,9 @@ export function SpecEditor(): JSX.Element {
 		setLoadingDefault(true);
 		loadDefaultSpec().then((text) => {
 			setSpecText(text);
+		}).catch((err: unknown) => {
+			let message=err instanceof Error ? err.message : String(err);
+			toast({variant: "error", message: "Failed to load default spec: " + message});
 		}).finally(() => {
 			setLoadingDefault(false);
 		});
