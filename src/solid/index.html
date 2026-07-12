@@ -9,12 +9,27 @@
         <script>
 			(function(){
 				try{
-					var raw=localStorage.getItem("solid-theme");
-					var mode=raw ? JSON.parse(raw) : "system";
-					var isDark=mode === "dark" || (mode === "dim") || (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-					document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+					var raw=localStorage.getItem("physics-quest-settings");
+					var mode="system";
+					if (raw) {
+						var parsed=JSON.parse(raw);
+						if (parsed && parsed.state && typeof parsed.state.themeMode === "string") {
+							mode=parsed.state.themeMode;
+						}
+					}
+					var attr;
+					if (mode === "light") {
+						attr="light";
+					} else if (mode === "dark") {
+						attr="dark";
+					} else if (mode === "dim") {
+						attr="dim";
+					} else {
+						attr="system";
+					}
+					document.documentElement.setAttribute("data-theme", attr);
 				}catch(e){
-					document.documentElement.setAttribute("data-theme", window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+					document.documentElement.setAttribute("data-theme", "system");
 				}
 			})();
         </script>

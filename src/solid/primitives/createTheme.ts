@@ -50,7 +50,8 @@ export function createTheme(options: CreateThemeOptions = {}): void {
 			root.setAttribute("data-theme", "dim");
 			updateMetaThemeColor("#1a2744");
 		} else {
-			applyTheme(colorSchemeMql.matches);
+			root.setAttribute("data-theme", "system");
+			updateMetaThemeColor(colorSchemeMql.matches ? "#1a1f2e" : "#F8FAFC");
 		}
 	});
 	createEffect(() => {
@@ -58,7 +59,7 @@ export function createTheme(options: CreateThemeOptions = {}): void {
 	});
 	let onColorSchemeChange=(event: MediaQueryListEvent) => {
 		if (themeMode() === "system") {
-			applyTheme(event.matches);
+			updateMetaThemeColor(event.matches ? "#1a1f2e" : "#F8FAFC");
 		}
 	};
 	let onReducedMotionChange=() => {

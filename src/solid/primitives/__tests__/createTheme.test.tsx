@@ -76,6 +76,14 @@ function resetSettings(overrides: {themeMode?: "light" | "dark" | "dim" | "syste
 beforeEach(() => {
 	document.documentElement.removeAttribute("data-theme");
 	document.documentElement.removeAttribute("data-reduce-motion");
+	let existingMeta=document.querySelector('meta[name="theme-color"]');
+	if (existingMeta) {
+		existingMeta.remove();
+	}
+	let meta=document.createElement("meta");
+	meta.setAttribute("name", "theme-color");
+	meta.setAttribute("content", "#0b2540");
+	document.head.appendChild(meta);
 	matchMediaMock=createMatchMediaMock();
 	Object.defineProperty(window, "matchMedia", {writable: true, value: matchMediaMock});
 	resetSettings();
@@ -99,22 +107,24 @@ describe("createTheme", () => {
 		await flush();
 		expect(document.documentElement.getAttribute("data-theme")).toBe("dim");
 	});
-	it("follows system preference when themeMode is system", async () => {
+	it("sets data-theme system when themeMode is system", async () => {
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", true);
 		resetSettings({themeMode: "system"});
 		render(() => <ThemeRoot />);
 		await flush();
-		expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+		expect(document.documentElement.getAttribute("data-theme")).toBe("system");
 	});
-	it("updates data-theme when the system preference changes", async () => {
+	it("keeps data-theme system and updates meta theme-color when the system preference changes", async () => {
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", false);
 		resetSettings({themeMode: "system"});
 		render(() => <ThemeRoot />);
 		await flush();
-		expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+		expect(document.documentElement.getAttribute("data-theme")).toBe("system");
+		expect(document.querySelector('meta[name="theme-color"]')?.getAttribute("content")).toBe("#F8FAFC");
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", true);
 		await flush();
-		expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+		expect(document.documentElement.getAttribute("data-theme")).toBe("system");
+		expect(document.querySelector('meta[name="theme-color"]')?.getAttribute("content")).toBe("#1a1f2e");
 	});
 	it("reacts to themeMode changes from the store", async () => {
 		resetSettings({themeMode: "light"});
@@ -145,11 +155,13 @@ describe("createTheme", () => {
 		await flush();
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", true);
 		await flush();
-		expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+		expect(document.querySelector('meta[name="theme-color"]')?.getAttribute("content")).toBe("#1a1f2e");
 		result.unmount();
 		document.documentElement.removeAttribute("data-theme");
+		let meta=document.querySelector('meta[name="theme-color"]');
+		let contentBefore=meta?.getAttribute("content") ?? "";
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", false);
 		await flush();
-		expect(document.documentElement.getAttribute("data-theme")).toBeNull();
+		expect(meta?.getAttribute("content")).toBe(contentBefore);
 	});
 });
