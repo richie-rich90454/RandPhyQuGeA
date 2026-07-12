@@ -52,3 +52,7 @@ export function useServiceProvider(): SolidServiceContextValue {
 	}
 	return value;
 }
+/** Non-throwing variant of {@link useServiceProvider} for components that render their idle state without a provider. */
+export function useServiceProviderOptional(): SolidServiceContextValue | null {
+	return useContext(ServiceContext);
+}

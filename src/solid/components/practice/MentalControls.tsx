@@ -7,12 +7,13 @@ import {Select} from "../ui/Select";
 import {Switch} from "../ui/Switch";
 import {ProgressBar} from "../ui/ProgressBar";
 import {Tooltip, TooltipContent, TooltipTrigger} from "../ui/Tooltip";
+import {useToast} from "../ui/Toast";
 import {useSpecStore} from "../../stores/specStore";
 import {useSettingsStore} from "../../stores/settingsStore";
 import {usePracticeStore, selectIsActive, selectIsFinished, selectMode, selectResults} from "../../stores/practiceStore";
 import {createCountdownTimer} from "../../primitives/createCountdownTimer";
 import {createPracticeActions} from "../../primitives/createPracticeActions";
-import {useServiceProvider} from "../../providers/ServiceProvider";
+import {useServiceProviderOptional} from "../../providers/ServiceProvider";
 import {PhysicsService} from "../../../services/PhysicsService";
 import {SessionService} from "../../../services/SessionService";
 import {AnalyticsService} from "../../../services/AnalyticsService";
@@ -109,6 +110,8 @@ export function MentalControls(): JSX.Element {
 	let mode=usePracticeStore(selectMode);
 	let results=usePracticeStore(selectResults);
 	let showFeedback=usePracticeStore(s => s.showFeedback);
+	let {toast}=useToast();
+	let serviceContext=useServiceProviderOptional();
 	let timer=createCountdownTimer();
 	let [isStarting, setIsStarting]=createSignal(false);
 	let isSessionActive=createMemo(() => isActive() && mode()==="Mental");
@@ -141,7 +144,10 @@ export function MentalControls(): JSX.Element {
 	let cachedSession: ISessionService | null=null;
 	let resolveServices=(): {physics: IPhysicsService; session: ISessionService} => {
 		if (!cachedSession) {
-			let {core}=useServiceProvider();
+			if (!serviceContext) {
+				throw new Error("ServiceProvider is required to start a session.");
+			}
+			let {core}=serviceContext;
 			cachedPhysics=new PhysicsService(core);
 			cachedSession=new SessionService(cachedPhysics, new AnalyticsService());
 		}
@@ -187,6 +193,9 @@ export function MentalControls(): JSX.Element {
 				usePracticeStore.getState().resetAnswerUi();
 			}
 			timer.start(mentalDurationSec());
+		} catch (err) {
+			let message=err instanceof Error ? err.message : String(err);
+			toast({variant: "error", message: "Failed to start session: " + message});
 		} finally {
 			setIsStarting(false);
 		}
@@ -201,7 +210,9 @@ export function MentalControls(): JSX.Element {
 			try {
 				let question=await physics.generateQuestion(specification()!, buildOptions());
 				session.questions.push(question);
-			} catch {
+			} catch (err) {
+				let message=err instanceof Error ? err.message : String(err);
+				toast({variant: "error", message: "Failed to load next question: " + message});
 				return;
 			}
 		}
@@ -223,7 +234,9 @@ export function MentalControls(): JSX.Element {
 		let {session}=resolveServices();
 		try {
 			await session.submitAnswer("", undefined);
-		} catch {
+		} catch (err) {
+			let message=err instanceof Error ? err.message : String(err);
+			toast({variant: "error", message: "Failed to skip question: " + message});
 			return;
 		}
 		usePracticeStore.getState().setSession(session.getSession());
