@@ -2,6 +2,11 @@ import type {JSX} from "solid-js";
 import {Show, createMemo, splitProps} from "solid-js";
 import katex from "katex";
 import styles from "./MathRenderer.module.css";
+const mathCache=new Map<string, string>();
+/** Clears the module-level KaTeX render cache. Intended for tests. */
+export function clearMathCache(): void {
+	mathCache.clear();
+}
 export interface MathRendererProps {
 	/** TeX source to render. */
 	tex: string;
@@ -14,10 +19,17 @@ export interface MathRendererProps {
 export function MathRenderer(props: MathRendererProps): JSX.Element {
 	let [local]=splitProps(props, ["tex", "display", "class"]);
 	let html=createMemo(() => {
-		return katex.renderToString(local.tex, {
+		let key=`${local.display ? "d" : "i"}:${local.tex}`;
+		let cached=mathCache.get(key);
+		if (cached !== undefined) {
+			return cached;
+		}
+		let rendered=katex.renderToString(local.tex, {
 			displayMode: local.display ?? false,
 			throwOnError: false,
 		});
+		mathCache.set(key, rendered);
+		return rendered;
 	});
 	return (
 		<Show

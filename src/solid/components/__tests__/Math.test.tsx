@@ -1,6 +1,7 @@
 import {render, screen} from "@solidjs/testing-library";
-import {describe, it, expect} from "vitest";
-import {MathRenderer} from "../MathRenderer";
+import {describe, it, expect, vi} from "vitest";
+import katex from "katex";
+import {MathRenderer, clearMathCache} from "../MathRenderer";
 import {MathText} from "../MathText";
 describe("MathRenderer", () => {
 	it("renders inline math as a span", () => {
@@ -23,6 +24,31 @@ describe("MathRenderer", () => {
 		let {container}=render(() => <MathRenderer tex="a+b" />);
 		expect(container.innerHTML).toContain("a");
 		expect(container.innerHTML).toContain("b");
+	});
+	it("caches KaTeX output for repeated TeX across renders (regression 5.4)", () => {
+		clearMathCache();
+		let spy=vi.spyOn(katex, "renderToString");
+		render(() => <MathRenderer tex="x^2" />);
+		expect(spy).toHaveBeenCalledTimes(1);
+		render(() => <MathRenderer tex="x^2" />);
+		expect(spy).toHaveBeenCalledTimes(1);
+		spy.mockRestore();
+	});
+	it("different display modes produce separate cache entries (regression 5.4)", () => {
+		clearMathCache();
+		let spy=vi.spyOn(katex, "renderToString");
+		render(() => <MathRenderer tex="x^2" />);
+		render(() => <MathRenderer tex="x^2" display={true} />);
+		expect(spy).toHaveBeenCalledTimes(2);
+		spy.mockRestore();
+	});
+	it("different TeX strings are cached separately (regression 5.4)", () => {
+		clearMathCache();
+		let spy=vi.spyOn(katex, "renderToString");
+		render(() => <MathRenderer tex="a+b" />);
+		render(() => <MathRenderer tex="c+d" />);
+		expect(spy).toHaveBeenCalledTimes(2);
+		spy.mockRestore();
 	});
 });
 describe("MathText", () => {

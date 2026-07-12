@@ -130,14 +130,55 @@ describe("ExportService", () => {
 			expect(html).toContain("&lt;script&gt;");
 			expect(html).toContain("Answer: &amp;");
 		});
-		it("escapes dollar signs in answer text to prevent KaTeX auto-render treating them as math delimiters", () => {
+		it("renders escaped dollar signs as literal text (regression 5.3, updated 5.4)", () => {
 			let service = new ExportService();
 			let questions: GeneratedQuestion[] = [
-				{id: "q1", text: "What is the cost?", answer: "$5 and $10", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
+				{id: "q1", text: "What is the cost?", answer: "\\$5 and \\$10", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
 			];
 			let html = service.buildWorksheetHtml(questions, true);
-			expect(html).toContain("Answer: \\$5 and \\$10");
-			expect(html).not.toContain("Answer: $5 and $10");
+			expect(html).toContain("Answer: $5 and $10");
+		});
+		it("does not include CDN KaTeX scripts (regression 5.4)", () => {
+			let service = new ExportService();
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
+			];
+			let html = service.buildWorksheetHtml(questions, true);
+			expect(html).not.toContain("cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.js");
+			expect(html).not.toContain("auto-render.min.js");
+			expect(html).not.toContain("renderMathInElement");
+		});
+		it("pre-renders inline math in question text using bundled KaTeX (regression 5.4)", () => {
+			let service = new ExportService();
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is $x^2$?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
+			];
+			let html = service.buildWorksheetHtml(questions, true);
+			expect(html).toContain("katex");
+		});
+		it("pre-renders display math in answer using bundled KaTeX (regression 5.4)", () => {
+			let service = new ExportService();
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is velocity?", answer: "$$v=d/t$$", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, response_mode: "frq"},
+			];
+			let html = service.buildWorksheetHtml(questions, true);
+			expect(html).toContain("katex");
+		});
+		it("pre-renders math in solution text using bundled KaTeX (regression 5.4)", () => {
+			let service = new ExportService();
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is 2+2?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "Use $a+b=c$.", solution_latex: "", variables: {}, response_mode: "frq"},
+			];
+			let html = service.buildWorksheetHtml(questions, true);
+			expect(html).toContain("katex");
+		});
+		it("pre-renders math in choices using bundled KaTeX (regression 5.4)", () => {
+			let service = new ExportService();
+			let questions: GeneratedQuestion[] = [
+				{id: "q1", text: "What is $x^2$?", answer: "4", topic_id: "t1", skill_id: "s1", difficulty: 1, question_type: "SA", solution_text: "", solution_latex: "", variables: {}, choices: ["$x$", "$2x$", "$x^2$", "$x^3$"], response_mode: "mcq"},
+			];
+			let html = service.buildWorksheetHtml(questions, true);
+			expect(html).toContain("katex");
 		});
 	});
 	describe("printWorksheet", () => {
