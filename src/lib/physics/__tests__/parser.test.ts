@@ -70,7 +70,7 @@ describe("SpecificationParser", () => {
     });
     it("parses an enum variable with Values=North,South,East,West", () => {
         const parser = new SpecificationParser();
-        const spec = parser.parse(BASIC_MC_SPEC.replace("Var.v0: Type=double;Min=0;Max=20;Step=1", "Var.direction: Type=enum;Values=North,South,East,West"));
+        const spec = parser.parse(BASIC_MC_SPEC.replace("Var.v0: Type=double;Min=0;Max=20;Step=1", "Var.direction: Type=enum;Values=North,South,East,West").replace("from {v0} m/s", "from {direction} m/s"));
         const vd = spec.templates[0]?.variable_definitions.find(v => v.name === "direction");
         expect(vd?.var_type).toBe("enum");
         expect(vd?.enum_values).toEqual(["North", "South", "East", "West"]);
@@ -102,7 +102,7 @@ describe("SpecificationParser", () => {
     });
     it("parses an int variable with Min=1, Max=100", () => {
         const parser = new SpecificationParser();
-        const spec = parser.parse(BASIC_MC_SPEC.replace("Var.v0: Type=double;Min=0;Max=20;Step=1", "Var.x: Type=int;Min=1;Max=100"));
+        const spec = parser.parse(BASIC_MC_SPEC.replace("Var.v0: Type=double;Min=0;Max=20;Step=1", "Var.x: Type=int;Min=1;Max=100").replace("from {v0} m/s", "from {x} m/s"));
         const vd = spec.templates[0]?.variable_definitions.find(v => v.name === "x");
         expect(vd?.var_type).toBe("int");
         expect(vd?.min).toBe(1);
@@ -214,7 +214,7 @@ describe("SpecificationParser SolutionLatexTemplate handling", () => {
     const BASE = "[UNIT]\nId: U1\nName: U\n[TOPIC]\nId: T1\nName: T\nUnitId: U1\n[SKILL]\nId: S1\nName: S\nTopicId: T1\n";
     const header = (extra: string) => `[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\n${extra}`;
     it("parses SolutionLatexTemplate when present", () => {
-        const spec = parser.parse(BASE + header("SolutionLatexTemplate: a = \\frac{{v} - {v0}}{{t}} = {answer}\n"));
+        const spec = parser.parse(BASE + header("SolutionLatexTemplate: a = \\frac{{v} - {v0}}{{t}} = {answer}\nVar.v: Type=double;Min=1;Max=10\nVar.v0: Type=double;Min=0;Max=5\nVar.t: Type=double;Min=1;Max=4\n"));
         expect(spec.templates[0]?.solution_latex_template).toBe("a = \\frac{{v} - {v0}}{{t}} = {answer}");
     });
     it("defaults SolutionLatexTemplate to empty string when absent", () => {
@@ -233,5 +233,87 @@ describe("SpecificationParser SolutionLatexTemplate handling", () => {
     it("parses SolutionLatexTemplate case-insensitively", () => {
         const spec = parser.parse(BASE + header("solutionlatexTEMPLATE: case-insensitive\n"));
         expect(spec.templates[0]?.solution_latex_template).toBe("case-insensitive");
+    });
+});
+describe("SpecificationParser cross-reference and line-number validation", () => {
+    const BASE = "[UNIT]\nId: U1\nName: U\n[TOPIC]\nId: T1\nName: T\nUnitId: U1\n[SKILL]\nId: S1\nName: S\nTopicId: T1\n";
+    it("records an error when a template references an undefined variable in TextTemplate", () => {
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: value is {undefinedVar}\nAnswerExpression: 1\n";
+        expect(() => new SpecificationParser().parse(spec)).toThrow("references undefined variable '{undefinedVar}'");
+    });
+    it("records an error when a template references an undefined variable in SolutionTemplate", () => {
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\nSolutionTemplate: use {missing}\n";
+        expect(() => new SpecificationParser().parse(spec)).toThrow("references undefined variable '{missing}'");
+    });
+    it("does not flag the {answer} placeholder as an undefined variable", () => {
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\nSolutionTemplate: answer is {answer}\n";
+        expect(() => new SpecificationParser().parse(spec)).not.toThrow();
+    });
+    it("does not flag variables defined via Var.* keys", () => {
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x={v}\nAnswerExpression: v\nVar.v: Type=int;Min=1;Max=10\n";
+        expect(() => new SpecificationParser().parse(spec)).not.toThrow();
+    });
+    it("collects multiple errors instead of stopping at the first (preventive fix)", () => {
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: NOPE\nSkillId: NOPE2\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: {a} and {b}\nAnswerExpression: 1\n";
+        let caught: ParseException | undefined;
+        try {
+            new SpecificationParser().parse(spec);
+        } catch (e) {
+            caught = e as ParseException;
+        }
+        expect(caught).toBeInstanceOf(ParseException);
+        expect(caught?.errors.length).toBeGreaterThanOrEqual(4);
+        const messages: string = caught?.errors.map(e => e.message).join("\n") ?? "";
+        expect(messages).toContain("references unknown Topic 'NOPE'");
+        expect(messages).toContain("references unknown Skill 'NOPE2'");
+        expect(messages).toContain("references undefined variable '{a}'");
+        expect(messages).toContain("references undefined variable '{b}'");
+    });
+    it("uses actual line numbers for template errors instead of 0", () => {
+        const lines: string[] = BASE.split("\n");
+        const baseLineCount: number = lines.length;
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: {missing}\nAnswerExpression: 1\n";
+        let caught: ParseException | undefined;
+        try {
+            new SpecificationParser().parse(spec);
+        } catch (e) {
+            caught = e as ParseException;
+        }
+        const templateLine: number = baseLineCount;
+        const hasTemplateLine: boolean = caught?.errors.some(e => e.line === templateLine) ?? false;
+        expect(hasTemplateLine).toBe(true);
+        const hasLineZero: boolean = caught?.errors.some(e => e.line === 0 && e.message.includes("Template 'Q1'")) ?? false;
+        expect(hasLineZero).toBe(false);
+    });
+    it("uses actual line numbers for variable Type-missing errors", () => {
+        const lines: string[] = BASE.split("\n");
+        const baseLineCount: number = lines.length;
+        const spec = BASE + "[TEMPLATE]\nId: Q1\nTopicId: T1\nSkillId: S1\nQuestionType: ShortAnswer\nDifficulty: 1\nTextTemplate: x\nAnswerExpression: 1\nVar.bad: Min=0;Max=10\n";
+        let caught: ParseException | undefined;
+        try {
+            new SpecificationParser().parse(spec);
+        } catch (e) {
+            caught = e as ParseException;
+        }
+        const templateHeaderLine: number = baseLineCount;
+        const hasVarLine: boolean = caught?.errors.some(e => e.line === templateHeaderLine && e.message.includes("Variable 'bad'")) ?? false;
+        expect(hasVarLine).toBe(true);
+        const hasLineZero: boolean = caught?.errors.some(e => e.line === 0 && e.message.includes("Variable 'bad'")) ?? false;
+        expect(hasLineZero).toBe(false);
+    });
+    it("uses actual line numbers for UnitConversion missing-key errors", () => {
+        const spec = BASE + "[UNIT_CONVERT]\nId: C1\nFrom: m\n";
+        let caught: ParseException | undefined;
+        try {
+            new SpecificationParser().parse(spec);
+        } catch (e) {
+            caught = e as ParseException;
+        }
+        const lines: string[] = BASE.split("\n");
+        const convLine: number = lines.length;
+        const hasConvLine: boolean = caught?.errors.some(e => e.line === convLine) ?? false;
+        expect(hasConvLine).toBe(true);
+        const hasLineZero: boolean = caught?.errors.some(e => e.line === 0 && e.message.includes("UnitConversion 'C1'")) ?? false;
+        expect(hasLineZero).toBe(false);
     });
 });

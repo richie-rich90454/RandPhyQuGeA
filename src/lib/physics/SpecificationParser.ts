@@ -13,7 +13,9 @@ export class SpecificationParser {
         const diagrams: Diagram[] = [];
         const hints: Hint[] = [];
         const unitConversions: UnitConversion[] = [];
+        const templateLines: Map<string, number> = new Map();
         let currentSection: string | null = null;
+        let currentSectionLine: number = 0;
         let currentBlock: Map<string, string[]> = new Map();
         for (let i = 0; i < lines.length; i++) {
             const rawLine: string = lines[i] ?? "";
@@ -29,9 +31,10 @@ export class SpecificationParser {
                     continue;
                 }
                 if (currentSection !== null && currentBlock.size > 0) {
-                    this.processBlock(currentSection, currentBlock, lineNumber, units, topics, skills, templates, diagrams, hints, unitConversions, errors);
+                    this.processBlock(currentSection, currentBlock, currentSectionLine, units, topics, skills, templates, diagrams, hints, unitConversions, errors, templateLines);
                 }
                 currentSection = sectionName.toUpperCase();
+                currentSectionLine = lineNumber;
                 currentBlock = new Map();
                 continue;
             }
@@ -54,9 +57,9 @@ export class SpecificationParser {
             existing.push(value);
         }
         if (currentSection !== null && currentBlock.size > 0) {
-            this.processBlock(currentSection, currentBlock, lines.length, units, topics, skills, templates, diagrams, hints, unitConversions, errors);
+            this.processBlock(currentSection, currentBlock, currentSectionLine, units, topics, skills, templates, diagrams, hints, unitConversions, errors, templateLines);
         }
-        this.validateCrossReferences(units, topics, skills, templates, diagrams, hints, errors);
+        this.validateCrossReferences(units, topics, skills, templates, diagrams, hints, errors, templateLines);
         if (errors.length > 0) {
             throw new ParseException(errors);
         }
@@ -75,6 +78,7 @@ export class SpecificationParser {
         hints: Hint[],
         unitConversions: UnitConversion[],
         errors: ParseError[],
+        templateLines: Map<string, number>,
     ): void {
         if (section === "UNIT") {
             const unit: Unit | undefined = this.parseUnit(block);
@@ -98,9 +102,10 @@ export class SpecificationParser {
             return;
         }
         if (section === "TEMPLATE") {
-            const template: QuestionTemplate | undefined = this.parseTemplate(block, errors);
+            const template: QuestionTemplate | undefined = this.parseTemplate(block, errors, lineNumber);
             if (template !== undefined) {
                 templates.push(template);
+                templateLines.set(template.id, lineNumber);
             }
             return;
         }
@@ -119,7 +124,7 @@ export class SpecificationParser {
             return;
         }
         if (section === "UNIT_CONVERT") {
-            const conversion: UnitConversion | undefined = this.parseUnitConversion(block, errors);
+            const conversion: UnitConversion | undefined = this.parseUnitConversion(block, errors, lineNumber);
             if (conversion !== undefined) {
                 unitConversions.push(conversion);
             }
@@ -195,7 +200,7 @@ export class SpecificationParser {
         return {id, name, topic_id: topicId, description};
     }
     /** Parse a TEMPLATE block; returns undefined when a required key is missing or difficulty is non-finite. */
-    private parseTemplate(block: Map<string, string[]>, errors: ParseError[]): QuestionTemplate | undefined {
+    private parseTemplate(block: Map<string, string[]>, errors: ParseError[], lineNumber: number): QuestionTemplate | undefined {
         const id: string | undefined = this.getSingle(block, "Id");
         if (id === undefined) {
             return undefined;
@@ -232,7 +237,7 @@ export class SpecificationParser {
         }
         const solutionTemplate: string = this.getSingle(block, "SolutionTemplate") ?? "";
         const solutionLatexTemplate: string = this.getSingle(block, "SolutionLatexTemplate") ?? "";
-        const variableDefinitions: VariableDefinition[] = this.parseVariableDefinitions(block, errors);
+        const variableDefinitions: VariableDefinition[] = this.parseVariableDefinitions(block, errors, lineNumber);
         const distractorExpressions: string[] = this.getMultiple(block, "Distractor");
         return {
             id,
@@ -277,36 +282,36 @@ export class SpecificationParser {
         return {id, template_id: templateId, text, difficulty};
     }
     /** Parse a UNIT_CONVERT block (Id, From, To, Factor required; Offset optional). Reports errors for missing or non-numeric required keys once the Id is known. */
-    private parseUnitConversion(block: Map<string, string[]>, errors: ParseError[]): UnitConversion | undefined {
+    private parseUnitConversion(block: Map<string, string[]>, errors: ParseError[], lineNumber: number): UnitConversion | undefined {
         const id: string | undefined = this.getSingle(block, "Id");
         if (id === undefined) {
             return undefined;
         }
         const fromUnit: string | undefined = this.getSingle(block, "From");
         if (fromUnit === undefined) {
-            errors.push({line: 0, message: `UnitConversion '${id}' is missing required 'From' key.`});
+            errors.push({line: lineNumber, message: `UnitConversion '${id}' is missing required 'From' key.`});
             return undefined;
         }
         const toUnit: string | undefined = this.getSingle(block, "To");
         if (toUnit === undefined) {
-            errors.push({line: 0, message: `UnitConversion '${id}' is missing required 'To' key.`});
+            errors.push({line: lineNumber, message: `UnitConversion '${id}' is missing required 'To' key.`});
             return undefined;
         }
         const factorStr: string | undefined = this.getSingle(block, "Factor");
         if (factorStr === undefined) {
-            errors.push({line: 0, message: `UnitConversion '${id}' is missing required 'Factor' key.`});
+            errors.push({line: lineNumber, message: `UnitConversion '${id}' is missing required 'Factor' key.`});
             return undefined;
         }
         const factor: number = Number(factorStr);
         if (!Number.isFinite(factor)) {
-            errors.push({line: 0, message: `UnitConversion '${id}' has a non-numeric Factor '${factorStr}'.`});
+            errors.push({line: lineNumber, message: `UnitConversion '${id}' has a non-numeric Factor '${factorStr}'.`});
             return undefined;
         }
         const offset: number | undefined = this.parseOptionalNumber(this.getSingle(block, "Offset"));
         return {id, from_unit: fromUnit, to_unit: toUnit, factor, offset};
     }
     /** Collect VariableDefinitions from all Var.* keys (case-insensitive prefix). */
-    private parseVariableDefinitions(block: Map<string, string[]>, errors: ParseError[]): VariableDefinition[] {
+    private parseVariableDefinitions(block: Map<string, string[]>, errors: ParseError[], lineNumber: number): VariableDefinition[] {
         const result: VariableDefinition[] = [];
         const varKeys: string[] = [];
         for (const [k] of block) {
@@ -321,7 +326,7 @@ export class SpecificationParser {
                 continue;
             }
             for (const value of values) {
-                const vd: VariableDefinition | undefined = this.parseSingleVariable(name, value, errors);
+                const vd: VariableDefinition | undefined = this.parseSingleVariable(name, value, errors, lineNumber);
                 if (vd !== undefined) {
                     result.push(vd);
                 }
@@ -330,7 +335,7 @@ export class SpecificationParser {
         return result;
     }
     /** Parse one variable definition value of the form "Type=...;Min=...;Max=...;Step=...;Values=...". */
-    private parseSingleVariable(name: string, value: string, errors: ParseError[]): VariableDefinition | undefined {
+    private parseSingleVariable(name: string, value: string, errors: ParseError[], lineNumber: number): VariableDefinition | undefined {
         const dict: Map<string, string> = new Map();
         const segments: string[] = value.split(";");
         for (const segment of segments) {
@@ -348,7 +353,7 @@ export class SpecificationParser {
         }
         const typeValue: string | undefined = dict.get("Type");
         if (typeValue === undefined) {
-            errors.push({line: 0, message: `Variable '${name}' is missing required 'Type' key.`});
+            errors.push({line: lineNumber, message: `Variable '${name}' is missing required 'Type' key.`});
             return undefined;
         }
         const min: number | undefined = this.parseOptionalNumber(dict.get("Min"));
@@ -375,8 +380,8 @@ export class SpecificationParser {
         }
         return parsed;
     }
-    /** Validate Topic->Unit, Skill->Topic, Template->Topic/Skill, Diagram->Template, and Hint->Template references; pushes errors for dangling refs. */
-    private validateCrossReferences(units: Unit[], topics: Topic[], skills: Skill[], templates: QuestionTemplate[], diagrams: Diagram[], hints: Hint[], errors: ParseError[]): void {
+    /** Validate Topic->Unit, Skill->Topic, Template->Topic/Skill, Diagram->Template, Hint->Template, and template variable references; pushes errors for dangling refs. Uses actual line numbers for templates when available. */
+    private validateCrossReferences(units: Unit[], topics: Topic[], skills: Skill[], templates: QuestionTemplate[], diagrams: Diagram[], hints: Hint[], errors: ParseError[], templateLines: Map<string, number>): void {
         const unitIds: Set<string> = new Set(units.map(u => u.id));
         const topicIds: Set<string> = new Set(topics.map(t => t.id));
         const skillIds: Set<string> = new Set(skills.map(s => s.id));
@@ -392,11 +397,22 @@ export class SpecificationParser {
             }
         }
         for (const template of templates) {
+            const tplLine: number = templateLines.get(template.id) ?? 0;
             if (!topicIds.has(template.topic_id)) {
-                errors.push({line: 0, message: `Template '${template.id}' references unknown Topic '${template.topic_id}'.`});
+                errors.push({line: tplLine, message: `Template '${template.id}' references unknown Topic '${template.topic_id}'.`});
             }
             if (!skillIds.has(template.skill_id)) {
-                errors.push({line: 0, message: `Template '${template.id}' references unknown Skill '${template.skill_id}'.`});
+                errors.push({line: tplLine, message: `Template '${template.id}' references unknown Skill '${template.skill_id}'.`});
+            }
+            const definedVars: Set<string> = new Set(template.variable_definitions.map(v => v.name));
+            const refs: Set<string> = this.extractVariableReferences(template);
+            for (const ref of refs) {
+                if (ref === "answer") {
+                    continue;
+                }
+                if (!definedVars.has(ref)) {
+                    errors.push({line: tplLine, message: `Template '${template.id}' references undefined variable '{${ref}}' in a template string.`});
+                }
             }
         }
         for (const diagram of diagrams) {
@@ -409,5 +425,21 @@ export class SpecificationParser {
                 errors.push({line: 0, message: `Hint '${hint.id}' references unknown Template '${hint.template_id}'.`});
             }
         }
+    }
+    /** Extract {var} references from a template's text/solution/solution_latex strings. Excludes the {answer} placeholder (handled separately). */
+    private extractVariableReferences(template: QuestionTemplate): Set<string> {
+        const refs: Set<string> = new Set();
+        const regex: RegExp = /\{(\w+)\}/g;
+        const texts: string[] = [template.text_template, template.solution_template, template.solution_latex_template];
+        for (const text of texts) {
+            let match: RegExpExecArray | null;
+            while ((match = regex.exec(text)) !== null) {
+                const ref: string | undefined = match[1];
+                if (ref !== undefined) {
+                    refs.add(ref);
+                }
+            }
+        }
+        return refs;
     }
 }
