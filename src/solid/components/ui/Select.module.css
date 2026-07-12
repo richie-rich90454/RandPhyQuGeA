@@ -48,7 +48,7 @@
 	transform: translateY(-50%);
 	pointer-events: none;
 	color: var(--text-muted);
-	font-size: 12px;
+	font-size: var(--font-size-xs);
 	line-height: 1;
 }
 .error {
