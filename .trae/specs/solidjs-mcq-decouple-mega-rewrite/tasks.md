@@ -212,16 +212,16 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 5.18: Parser — enum/bool/set variable edge cases (2 bugs).
 - [x] Task 5.19: Evaluator — division by zero / sqrt-of-negative / log-of-invalid error handling (3 bugs).
 - [x] Task 5.20: Evaluator — degree/radian consistency for trig + inverse trig (2 bugs).
-- [ ] Task 5.21: RNG — `nextInt`/`nextDouble` range inclusivity + seeding determinism (2 bugs).
-- [ ] Task 5.22: A11y — focus-visible on all primary controls (2 bugs).
-- [ ] Task 5.23: A11y — live regions for question/results/timer/score/theme/errors (3 bugs).
-- [ ] Task 5.24: A11y — skip-link + landmarks + single `<h1>` (2 bugs).
-- [ ] Task 5.25: A11y — `prefers-reduced-motion`/`prefers-contrast-more`/`forced-colors` honored (2 bugs).
-- [ ] Task 5.26: A11y — 100% root font-size + browser font scaling (1 bug).
-- [ ] Task 5.27: Responsiveness — stacked answer section + horizontal pills + font sizes at breakpoints (3 bugs).
-- [ ] Task 5.28: Theming — `system` mode + persisted theme application on load (2 bugs).
-- [ ] Task 5.29: Session resume — snapshot serialization + restore correctness (2 bugs).
-- [ ] Task 5.30: Print worksheet — N-question generation + answer-key toggle + `@media print` (2 bugs).
+- [x] Task 5.21: RNG — `nextInt`/`nextDouble` range inclusivity + seeding determinism (2 bugs).
+- [x] Task 5.22: A11y — focus-visible on all primary controls (2 bugs).
+- [x] Task 5.23: A11y — live regions for question/results/timer/score/theme/errors (3 bugs).
+- [x] Task 5.24: A11y — skip-link + landmarks + single `<h1>` (2 bugs).
+- [x] Task 5.25: A11y — `prefers-reduced-motion`/`prefers-contrast-more`/`forced-colors` honored (2 bugs).
+- [x] Task 5.26: A11y — 100% root font-size + browser font scaling (1 bug).
+- [x] Task 5.27: Responsiveness — stacked answer section + horizontal pills + font sizes at breakpoints (3 bugs).
+- [x] Task 5.28: Theming — `system` mode + persisted theme application on load (2 bugs).
+- [x] Task 5.29: Session resume — snapshot serialization + restore correctness (2 bugs).
+- [x] Task 5.30: Print worksheet — N-question generation + answer-key toggle + `@media print` (2 bugs).
 - [ ] Task 5.31: Resilience — no-template / evaluation-failure user-facing messages + toasts (3 bugs).
 - [ ] Task 5.32: Resilience — loading skeletons + `aria-busy` on async buttons (2 bugs).
 - [ ] Task 5.33: Resilience — in-app confirm dialogs replace `window.confirm` (1 bug).
