@@ -175,18 +175,22 @@ export function Wizard(): JSX.Element {
 							<label class={styles.field}>
 								<span class={styles.fieldLabel}>Template Id</span>
 								<input class={styles.input} type="text" value={state().templateId} onInput={(e) => update({templateId: e.currentTarget.value})} aria-label="Template id" />
+								<span class={styles.fieldHint}>Unique identifier for this template (e.g. Q1, proj-motion-1).</span>
 							</label>
 							<label class={styles.field}>
 								<span class={styles.fieldLabel}>Topic Id</span>
 								<input class={styles.input} type="text" value={state().topicId} onInput={(e) => update({topicId: e.currentTarget.value})} aria-label="Topic id" />
+								<span class={styles.fieldHint}>Must match a Topic Id defined in the spec.</span>
 							</label>
 							<label class={styles.field}>
 								<span class={styles.fieldLabel}>Skill Id</span>
 								<input class={styles.input} type="text" value={state().skillId} onInput={(e) => update({skillId: e.currentTarget.value})} aria-label="Skill id" />
+								<span class={styles.fieldHint}>Must match a Skill Id defined in the spec.</span>
 							</label>
 							<label class={styles.field}>
 								<span class={styles.fieldLabel}>Text Template</span>
 								<textarea class={styles.textarea} value={state().textTemplate} onInput={(e) => update({textTemplate: e.currentTarget.value})} spellcheck={false} aria-label="Text template" />
+								<span class={styles.fieldHint}>Use {"{variable}"} placeholders for substitution (e.g. {"{v0}"}, {"{t}"}).</span>
 							</label>
 						</div>
 					</Show>
@@ -195,6 +199,7 @@ export function Wizard(): JSX.Element {
 							<label class={styles.field}>
 								<span class={styles.fieldLabel}>Answer Expression</span>
 								<input class={styles.input} type="text" value={state().answerExpression} onInput={(e) => update({answerExpression: e.currentTarget.value})} aria-label="Answer expression" />
+								<span class={styles.fieldHint}>Mathematical expression using variable names (e.g. (v - v0) / t).</span>
 							</label>
 							<label class={styles.field}>
 								<span class={styles.fieldLabel}>Variables (one per line: name: Type=...;Min=...;Max=...;Step=...)</span>

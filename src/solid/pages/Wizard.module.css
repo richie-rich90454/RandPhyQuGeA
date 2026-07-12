@@ -42,7 +42,7 @@
 .stepper {
 	display: flex;
 	align-items: center;
-	gap: var(--space-2);
+	gap: var(--space-1);
 	flex-wrap: wrap;
 }
 .step, .stepActive, .stepDone {
@@ -53,11 +53,11 @@
 	border-radius: var(--radius-md);
 	border: 1px solid var(--border-subtle);
 	background: var(--surface);
-	transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+	transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
 }
 .stepActive {
-	border-color: var(--border-focus);
-	background: var(--surface-muted);
+	border-color: var(--accent);
+	background: var(--accent-surface);
 	box-shadow: var(--shadow-focus);
 }
 .stepDone {
@@ -70,19 +70,20 @@
 	justify-content: center;
 	width: 24px;
 	height: 24px;
-	border-radius: 50%;
+	border-radius: var(--radius-full);
 	background: var(--surface-muted);
 	color: var(--text-muted);
 	font-size: var(--font-size-xs);
 	font-weight: var(--font-weight-semibold);
+	flex-shrink: 0;
 }
 .stepActive .stepNumber {
 	background: var(--accent);
-	color: var(--text-on-accent);
+	color: var(--accent-contrast);
 }
 .stepDone .stepNumber {
 	background: var(--success);
-	color: var(--text-on-accent);
+	color: var(--accent-contrast);
 }
 .stepLabel {
 	font-size: var(--font-size-sm);
@@ -91,6 +92,9 @@
 .stepActive .stepLabel {
 	color: var(--text);
 	font-weight: var(--font-weight-semibold);
+}
+.stepDone .stepLabel {
+	color: var(--success);
 }
 .form {
 	display: flex;
@@ -106,6 +110,11 @@
 	font-size: var(--font-size-sm);
 	color: var(--text-muted);
 	font-weight: var(--font-weight-medium);
+}
+.fieldHint {
+	font-size: var(--font-size-xs);
+	color: var(--text-subtle);
+	line-height: var(--line-height-normal);
 }
 .input, .select, .textarea {
 	width: 100%;
@@ -142,10 +151,10 @@
 }
 .specPreview {
 	margin: 0;
-	padding: var(--space-3);
-	background: var(--surface-muted);
-	color: var(--text);
-	border: 1px solid var(--border-subtle);
+	padding: var(--space-4);
+	background: var(--slate-900);
+	color: var(--slate-100);
+	border: 1px solid var(--slate-800);
 	border-radius: var(--radius-md);
 	font-family: var(--font-mono);
 	font-size: var(--font-size-xs);
@@ -155,6 +164,7 @@
 	overflow-x: auto;
 	max-height: 400px;
 	overflow-y: auto;
+	tab-size: 2;
 }
 .loadingRow {
 	display: flex;
@@ -181,6 +191,10 @@
 	font-size: var(--font-size-md);
 	line-height: var(--line-height-relaxed);
 	color: var(--text);
+	padding: var(--space-3);
+	background: var(--surface);
+	border-radius: var(--radius-md);
+	border-left: 3px solid var(--accent);
 }
 .choices {
 	list-style: none;
@@ -191,32 +205,40 @@
 	padding: 0;
 }
 .choice {
-	padding: var(--space-1) var(--space-2);
+	padding: var(--space-2) var(--space-3);
 	border-radius: var(--radius-sm);
 	color: var(--text-muted);
+	border: 1px solid var(--border-subtle);
 }
 .correctChoice {
-	padding: var(--space-1) var(--space-2);
+	padding: var(--space-2) var(--space-3);
 	border-radius: var(--radius-sm);
 	background: var(--success-surface);
 	color: var(--success);
 	font-weight: var(--font-weight-semibold);
+	border: 1px solid var(--success);
 }
 .answerBlock {
 	display: flex;
 	gap: var(--space-2);
 	align-items: baseline;
+	padding: var(--space-2) var(--space-3);
+	background: var(--surface);
+	border-radius: var(--radius-sm);
 }
 .answerLabel {
-	font-size: var(--font-size-sm);
+	font-size: var(--font-size-xs);
 	color: var(--text-subtle);
 	text-transform: uppercase;
 	letter-spacing: var(--letter-spacing-wide);
+	font-weight: var(--font-weight-semibold);
+	flex-shrink: 0;
 }
 .answerValue {
 	font-family: var(--font-mono);
 	font-size: var(--font-size-sm);
 	color: var(--text);
+	font-weight: var(--font-weight-medium);
 }
 .footerActions {
 	display: flex;
@@ -236,5 +258,10 @@
 	}
 	.step, .stepActive, .stepDone {
 		padding: var(--space-1) var(--space-2);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.step, .stepActive, .stepDone {
+		transition: none;
 	}
 }
