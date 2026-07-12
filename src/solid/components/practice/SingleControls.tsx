@@ -7,6 +7,7 @@ import {Switch} from "../ui/Switch";
 import {Tooltip, TooltipContent, TooltipTrigger} from "../ui/Tooltip";
 import {useToast} from "../ui/Toast";
 import {usePracticeStore, selectIsActive} from "../../stores/practiceStore";
+import {useSettingsStore} from "../../stores/settingsStore";
 import {useSpecStore} from "../../stores/specStore";
 import {createPracticeActions} from "../../primitives/createPracticeActions";
 import {useServiceProvider} from "../../providers/ServiceProvider";
@@ -57,11 +58,11 @@ function CheckIcon(): JSX.Element {
  * inline SVG.
  */
 export function SingleControls(): JSX.Element {
-	let autoEnabled=usePracticeStore(s => s.autoEnabled);
-	let scope=usePracticeStore(s => s.scope);
-	let shuffle=usePracticeStore(s => s.shuffle);
 	let selectedTopicId=usePracticeStore(s => s.selectedTopicId);
-	let mcqEnabled=usePracticeStore(s => s.mcqEnabled);
+	let autoEnabled=useSettingsStore(s => s.autoContinueEnabled);
+	let scope=useSettingsStore(s => s.defaultScope);
+	let shuffle=useSettingsStore(s => s.shuffleByDefault);
+	let responseMode=useSettingsStore(s => s.defaultResponseMode);
 	let isActive=usePracticeStore(selectIsActive);
 	let showFeedback=usePracticeStore(s => s.showFeedback);
 	let userAnswer=usePracticeStore(s => s.userAnswer);
@@ -87,7 +88,7 @@ export function SingleControls(): JSX.Element {
 		if (!spec) return;
 		setIsGenerating(true);
 		let topicId=resolveTopicId(spec, scope(), shuffle(), selectedTopicId());
-		let questionType=mcqEnabled() ? QUESTION_TYPES.MC : undefined;
+		let questionType=responseMode() === "mcq" ? QUESTION_TYPES.MC : undefined;
 		try {
 			let {physics, session}=resolveServices();
 			let question=await physics.generateQuestion(spec, {topicId, questionType});
@@ -137,7 +138,7 @@ export function SingleControls(): JSX.Element {
 	});
 	let handleScope=(e: Event) => {
 		let target=e.target as HTMLSelectElement;
-		usePracticeStore.getState().setScope(target.value);
+		useSettingsStore.getState().setDefaultScope(target.value);
 	};
 	return (
 		<div id="single-controls" class={styles.wrapper}>
@@ -166,14 +167,14 @@ export function SingleControls(): JSX.Element {
 			<ToolbarGroup label="Options" class={styles.options}>
 				<Tooltip delay={300}>
 					<TooltipTrigger>
-						<Switch label="Auto" checked={autoEnabled()} onCheckedChange={(checked) => usePracticeStore.getState().setAutoEnabled(checked)} />
+						<Switch label="Auto" checked={autoEnabled()} onCheckedChange={(checked) => useSettingsStore.getState().setAutoContinueEnabled(checked)} />
 					</TooltipTrigger>
 					<TooltipContent side="bottom">Auto-generate next question after 3 seconds</TooltipContent>
 				</Tooltip>
 				<Select id="scope-select" variant="scope" aria-label="Scope" options={scopeOptions()} value={scope()} onInput={handleScope} />
 				<Tooltip delay={300}>
 					<TooltipTrigger>
-						<Switch label="Shuffle" checked={shuffle()} onCheckedChange={(checked) => usePracticeStore.getState().setShuffle(checked)} />
+						<Switch label="Shuffle" checked={shuffle()} onCheckedChange={(checked) => useSettingsStore.getState().setShuffleByDefault(checked)} />
 					</TooltipTrigger>
 					<TooltipContent side="bottom">Randomly pick topics</TooltipContent>
 				</Tooltip>

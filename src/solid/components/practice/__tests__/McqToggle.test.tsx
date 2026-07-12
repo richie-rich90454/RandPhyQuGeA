@@ -1,9 +1,10 @@
 import {render, screen, fireEvent} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach} from "vitest";
 import {McqToggle} from "../McqToggle";
-import {usePracticeStore} from "../../../stores/practiceStore";
+import {useSettingsStore} from "../../../stores/settingsStore";
 beforeEach(() => {
-	usePracticeStore.setState(usePracticeStore.getInitialState());
+	localStorage.clear();
+	useSettingsStore.setState(useSettingsStore.getInitialState());
 });
 describe("McqToggle", () => {
 	it("renders the MCQ switch unchecked by default", () => {
@@ -11,14 +12,20 @@ describe("McqToggle", () => {
 		let sw=screen.getByRole("switch");
 		expect(sw).not.toBeChecked();
 	});
-	it("reflects the practice store mcqEnabled state", () => {
-		usePracticeStore.setState({...usePracticeStore.getState(), mcqEnabled: true});
+	it("reflects the settings store defaultResponseMode state", () => {
+		useSettingsStore.setState({...useSettingsStore.getState(), defaultResponseMode: "mcq"});
 		render(() => <McqToggle />);
 		expect(screen.getByRole("switch")).toBeChecked();
 	});
-	it("toggles mcqEnabled when clicked", () => {
+	it("toggles defaultResponseMode to mcq when clicked", () => {
 		render(() => <McqToggle />);
 		fireEvent.click(screen.getByRole("switch"));
-		expect(usePracticeStore.getState().mcqEnabled).toBe(true);
+		expect(useSettingsStore.getState().defaultResponseMode).toBe("mcq");
+	});
+	it("toggles defaultResponseMode back to frq when clicked again (task 5.9)", () => {
+		useSettingsStore.setState({...useSettingsStore.getState(), defaultResponseMode: "mcq"});
+		render(() => <McqToggle />);
+		fireEvent.click(screen.getByRole("switch"));
+		expect(useSettingsStore.getState().defaultResponseMode).toBe("frq");
 	});
 });

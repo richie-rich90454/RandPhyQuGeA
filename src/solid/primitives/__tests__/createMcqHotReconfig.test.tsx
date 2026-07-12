@@ -4,6 +4,7 @@ import type {JSX} from "solid-js";
 import {createMcqHotReconfig} from "../createMcqHotReconfig";
 import type {CreateMcqHotReconfigOptions} from "../createMcqHotReconfig";
 import {usePracticeStore} from "../../stores/practiceStore";
+import {useSettingsStore} from "../../stores/settingsStore";
 import type {ISessionService, Session} from "../../../services/contracts";
 import type {GeneratedQuestion, PracticeResult, QuestionType, Specification} from "../../../types/models";
 import {QUESTION_TYPES} from "../../../types/models";
@@ -102,7 +103,6 @@ function seedSession(session: Session): void {
 		selectedChoiceIndex: 2,
 		showFeedback: true,
 		lastResult: {isCorrect: false, correctAnswer: "x"},
-		mcqEnabled: false,
 	});
 }
 function makeRoot(opts: CreateMcqHotReconfigOptions): () => JSX.Element {
@@ -112,7 +112,9 @@ function makeRoot(opts: CreateMcqHotReconfigOptions): () => JSX.Element {
 	};
 }
 beforeEach(() => {
+	localStorage.clear();
 	usePracticeStore.setState(usePracticeStore.getInitialState());
+	useSettingsStore.setState(useSettingsStore.getInitialState());
 });
 describe("createMcqHotReconfig", () => {
 	it("regenerates the current question as MC when mcqEnabled toggles on", async () => {
@@ -121,7 +123,7 @@ describe("createMcqHotReconfig", () => {
 		seedSession(makeSession({questions: [makeQuestion({question_type: "SA"})]}));
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
-		usePracticeStore.getState().setMcqEnabled(true);
+		useSettingsStore.getState().setDefaultResponseMode("mcq");
 		await flush();
 		expect(mock.regenerateCalls).toEqual([QUESTION_TYPES.MC]);
 		expect(mock.getSessionCalls).toBe(1);
@@ -135,10 +137,10 @@ describe("createMcqHotReconfig", () => {
 		let updatedSession=makeSession({questions: [makeQuestion({id: "q2", question_type: "SA"})]});
 		let mock=createMockSessionService({regeneratedQuestion: makeQuestion({question_type: "SA"}), session: updatedSession});
 		seedSession(makeSession({questions: [makeQuestion({question_type: "MC", choices: ["2", "4"], correct_choice_index: 1})]}));
-		usePracticeStore.getState().setMcqEnabled(true);
+		useSettingsStore.getState().setDefaultResponseMode("mcq");
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
-		usePracticeStore.getState().setMcqEnabled(false);
+		useSettingsStore.getState().setDefaultResponseMode("frq");
 		await flush();
 		expect(mock.regenerateCalls).toEqual([QUESTION_TYPES.SA]);
 		expect(mock.getSessionCalls).toBe(1);
@@ -146,10 +148,10 @@ describe("createMcqHotReconfig", () => {
 	});
 	it("does nothing when there is no session", async () => {
 		let mock=createMockSessionService({regeneratedQuestion: makeQuestion()});
-		usePracticeStore.setState({session: null, mcqEnabled: false, userAnswer: "", selectedChoiceIndex: -1, showFeedback: false, lastResult: null});
+		usePracticeStore.setState({session: null, userAnswer: "", selectedChoiceIndex: -1, showFeedback: false, lastResult: null});
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
-		usePracticeStore.getState().setMcqEnabled(true);
+		useSettingsStore.getState().setDefaultResponseMode("mcq");
 		await flush();
 		expect(mock.regenerateCalls.length).toBe(0);
 	});
@@ -158,7 +160,7 @@ describe("createMcqHotReconfig", () => {
 		seedSession(makeSession({isFinished: true, isActive: false, questions: [makeQuestion({question_type: "SA"})]}));
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
-		usePracticeStore.getState().setMcqEnabled(true);
+		useSettingsStore.getState().setDefaultResponseMode("mcq");
 		await flush();
 		expect(mock.regenerateCalls.length).toBe(0);
 	});
@@ -167,7 +169,7 @@ describe("createMcqHotReconfig", () => {
 		seedSession(makeSession({questions: [makeQuestion({question_type: "MC", choices: ["2", "4"], correct_choice_index: 1})]}));
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
-		usePracticeStore.getState().setMcqEnabled(true);
+		useSettingsStore.getState().setDefaultResponseMode("mcq");
 		await flush();
 		expect(mock.regenerateCalls.length).toBe(0);
 	});
@@ -178,7 +180,7 @@ describe("createMcqHotReconfig", () => {
 		seedSession(makeSession({questions: [makeQuestion({question_type: "TF"})]}));
 		let rendered=render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
-		usePracticeStore.getState().setMcqEnabled(true);
+		useSettingsStore.getState().setDefaultResponseMode("mcq");
 		await flush();
 		expect(mock.regenerateCalls).toEqual([QUESTION_TYPES.MC]);
 		rendered.unmount();
@@ -194,9 +196,9 @@ describe("createMcqHotReconfig", () => {
 		seedSession(makeSession({questions: [makeQuestion({question_type: "TF"})]}));
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
-		usePracticeStore.getState().setMcqEnabled(true);
+		useSettingsStore.getState().setDefaultResponseMode("mcq");
 		await flush();
-		usePracticeStore.getState().setMcqEnabled(false);
+		useSettingsStore.getState().setDefaultResponseMode("frq");
 		await flush();
 		expect(mock.regenerateCalls).toEqual([QUESTION_TYPES.MC, QUESTION_TYPES.SA]);
 		d.resolve(makeQuestion());

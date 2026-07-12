@@ -24,20 +24,12 @@ export interface PracticeState {
 	showFeedback: boolean;
 	lastResult: AnswerFeedback | null;
 	selectedTopicId: string | null;
-	mcqEnabled: boolean;
-	autoEnabled: boolean;
-	scope: string;
-	shuffle: boolean;
 	setSession: (session: Session | null) => void;
 	setUserAnswer: (answer: string) => void;
 	selectChoice: (index: number) => void;
 	setShowFeedback: (show: boolean) => void;
 	setLastResult: (result: AnswerFeedback | null) => void;
 	setSelectedTopicId: (topicId: string | null) => void;
-	setMcqEnabled: (enabled: boolean) => void;
-	setAutoEnabled: (enabled: boolean) => void;
-	setScope: (scope: string) => void;
-	setShuffle: (enabled: boolean) => void;
 	resetSession: () => void;
 	resetAnswerUi: () => void;
 }
@@ -50,10 +42,6 @@ const initialSessionState = {
 };
 const initialConfigState = {
 	selectedTopicId: null as string | null,
-	mcqEnabled: false,
-	autoEnabled: false,
-	scope: "all",
-	shuffle: false,
 };
 const practiceStore = createStore<PracticeState>()((set) => ({
 	...initialSessionState,
@@ -64,10 +52,6 @@ const practiceStore = createStore<PracticeState>()((set) => ({
 	setShowFeedback: show => set({showFeedback: show}),
 	setLastResult: result => set({lastResult: result}),
 	setSelectedTopicId: topicId => set({selectedTopicId: topicId}),
-	setMcqEnabled: enabled => set({mcqEnabled: enabled}),
-	setAutoEnabled: enabled => set({autoEnabled: enabled}),
-	setScope: scope => set({scope}),
-	setShuffle: enabled => set({shuffle: enabled}),
 	resetSession: () => set({...initialSessionState}),
 	resetAnswerUi: () => set({userAnswer: "", selectedChoiceIndex: -1, showFeedback: false, lastResult: null}),
 }));

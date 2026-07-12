@@ -57,10 +57,6 @@ describe("solid practiceStore", () => {
 		it("has default config values", () => {
 			const state = usePracticeStore.getState();
 			expect(state.selectedTopicId).toBeNull();
-			expect(state.mcqEnabled).toBe(false);
-			expect(state.autoEnabled).toBe(false);
-			expect(state.scope).toBe("all");
-			expect(state.shuffle).toBe(false);
 		});
 		it("selectors return safe defaults with no session", () => {
 			const state = usePracticeStore.getState();
@@ -119,28 +115,16 @@ describe("solid practiceStore", () => {
 			expect(state.showFeedback).toBe(false);
 			expect(state.lastResult).toBeNull();
 			expect(state.selectedTopicId).toBeNull();
-			expect(state.mcqEnabled).toBe(false);
-			expect(state.autoEnabled).toBe(false);
-			expect(state.scope).toBe("all");
-			expect(state.shuffle).toBe(false);
 		});
 	});
 	describe("config setters", () => {
 		it("persist selectedTopicId across session resets", () => {
 			const store = usePracticeStore.getState();
 			store.setSelectedTopicId("topic-a");
-			store.setMcqEnabled(true);
-			store.setAutoEnabled(true);
-			store.setScope("unit-1");
-			store.setShuffle(true);
 			store.setSession(makeSession());
 			store.resetSession();
 			const state = usePracticeStore.getState();
 			expect(state.selectedTopicId).toBe("topic-a");
-			expect(state.mcqEnabled).toBe(true);
-			expect(state.autoEnabled).toBe(true);
-			expect(state.scope).toBe("unit-1");
-			expect(state.shuffle).toBe(true);
 		});
 	});
 	describe("resetAnswerUi", () => {
@@ -170,18 +154,43 @@ describe("solid practiceStore", () => {
 		});
 		it("does not notify subscribers when an unrelated slice changes", () => {
 			let renderCount = 0;
-			function ScopeView(): JSX.Element {
-				const scope = usePracticeStore(s => s.scope);
+			function TopicView(): JSX.Element {
+				const topicId = usePracticeStore(s => s.selectedTopicId);
 				renderCount++;
-				return <div data-testid="scope">{scope()}</div>;
+				return <div data-testid="topic">{topicId() ?? ""}</div>;
 			}
-			render(() => <ScopeView />);
+			render(() => <TopicView />);
 			const before = renderCount;
 			usePracticeStore.getState().setUserAnswer("unrelated");
-			expect(screen.getByTestId("scope").textContent).toBe("all");
+			expect(screen.getByTestId("topic").textContent).toBe("");
 			expect(renderCount).toBe(before);
-			usePracticeStore.getState().setScope("unit-1");
-			expect(screen.getByTestId("scope").textContent).toBe("unit-1");
+			usePracticeStore.getState().setSelectedTopicId("topic-a");
+			expect(screen.getByTestId("topic").textContent).toBe("topic-a");
+		});
+	});
+	describe("mode config moved to settingsStore (task 5.9)", () => {
+		it("does not expose mcqEnabled/autoEnabled/scope/shuffle on practice state", () => {
+			const state = usePracticeStore.getState();
+			expect("mcqEnabled" in state).toBe(false);
+			expect("autoEnabled" in state).toBe(false);
+			expect("scope" in state).toBe(false);
+			expect("shuffle" in state).toBe(false);
+			expect("setMcqEnabled" in state).toBe(false);
+			expect("setAutoEnabled" in state).toBe(false);
+			expect("setScope" in state).toBe(false);
+			expect("setShuffle" in state).toBe(false);
+		});
+		it("keeps selectedTopicId as the only retained config field", () => {
+			const state = usePracticeStore.getState();
+			expect(state.selectedTopicId).toBeNull();
+			expect(typeof state.setSelectedTopicId).toBe("function");
+		});
+		it("resetSession keeps selectedTopicId intact", () => {
+			const store = usePracticeStore.getState();
+			store.setSelectedTopicId("topic-x");
+			store.setSession(makeSession());
+			store.resetSession();
+			expect(usePracticeStore.getState().selectedTopicId).toBe("topic-x");
 		});
 	});
 });

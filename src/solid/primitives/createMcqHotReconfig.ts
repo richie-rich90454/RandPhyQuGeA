@@ -1,6 +1,8 @@
 import {createEffect, onCleanup} from "solid-js";
 import {usePracticeStore, selectCurrentQuestion} from "../stores/practiceStore";
 import type {PracticeState} from "../stores/practiceStore";
+import {useSettingsStore} from "../stores/settingsStore";
+import type {SettingsState} from "../stores/settingsStore";
 import type {SolidStore} from "../stores/createSolidStore";
 import type {ISessionService} from "../../services/contracts";
 import {SessionService} from "../../services/SessionService";
@@ -11,6 +13,7 @@ import {QUESTION_TYPES} from "../../types/models";
 import type {QuestionType} from "../../types/models";
 export interface CreateMcqHotReconfigOptions {
 	practiceStore?: SolidStore<PracticeState>;
+	settingsStore?: SolidStore<SettingsState>;
 	sessionService?: ISessionService;
 }
 /**
@@ -30,7 +33,9 @@ export interface CreateMcqHotReconfigOptions {
  */
 export function createMcqHotReconfig(options: CreateMcqHotReconfigOptions = {}): void {
 	let practice=options.practiceStore ?? usePracticeStore;
-	let mcqEnabled=practice(s => s.mcqEnabled);
+	let settings=options.settingsStore ?? useSettingsStore;
+	let responseMode=settings(s => s.defaultResponseMode);
+	let mcqEnabled=() => responseMode() === "mcq";
 	let cachedSessionService: ISessionService | null=null;
 	let resolveSessionService=(): ISessionService => {
 		if (options.sessionService) {
