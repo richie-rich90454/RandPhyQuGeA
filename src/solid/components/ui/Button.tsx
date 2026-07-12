@@ -55,7 +55,7 @@ export function Button(props: ButtonProps): JSX.Element {
 		<button
 			type={local.type ?? "button"}
 			class={`${styles.base} ${variantClass[variant] ?? ""} ${sizeC} ${local.class ?? ""}`}
-			disabled={local.disabled ?? busy()}
+			disabled={local.disabled || busy()}
 			aria-busy={local["aria-busy"] ?? busy()}
 			{...others}
 		>

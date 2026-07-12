@@ -61,4 +61,16 @@ describe("Button aria-busy (task 5.32)", () => {
 		render(() => <Button>Idle</Button>);
 		expect(screen.getByRole("button")).toHaveAttribute("aria-busy", "false");
 	});
+	it("remains disabled when loading is true even if disabled prop is explicitly false (task 5.47)", () => {
+		render(() => <Button loading={true} disabled={false}>Generate</Button>);
+		expect(screen.getByRole("button")).toBeDisabled();
+	});
+	it("remains disabled when isLoading is true even if disabled prop is explicitly false (task 5.47)", () => {
+		render(() => <Button isLoading={true} disabled={false}>Generate</Button>);
+		expect(screen.getByRole("button")).toBeDisabled();
+	});
+	it("is not disabled when neither disabled nor loading is true (task 5.47)", () => {
+		render(() => <Button disabled={false} loading={false}>Generate</Button>);
+		expect(screen.getByRole("button")).not.toBeDisabled();
+	});
 });
