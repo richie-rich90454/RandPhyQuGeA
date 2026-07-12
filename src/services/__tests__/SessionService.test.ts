@@ -337,6 +337,19 @@ describe("SessionService", () => {
 			let resumed=await service.resumeSession(snapshot);
 			expect(resumed).toBe(session);
 		});
+		it("resets questionStartTime on resume to avoid inflated time", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			physics.generateBatch.mockResolvedValue([makeQuestion()]);
+			let session=await service.startSession(emptySpec(), makeConfig());
+			let originalStartTime=session.questionStartTime;
+			vi.setSystemTime(new Date("2024-06-15T13:00:00.000Z"));
+			let snapshot: SessionSnapshot={session, createdAt: "2024-06-15T12:00:00.000Z"};
+			let resumed=await service.resumeSession(snapshot);
+			expect(resumed.questionStartTime).toBe(Date.now());
+			expect(resumed.questionStartTime).not.toBe(originalStartTime);
+		});
 	});
 	describe("saveSessionSnapshot", () => {
 		it("persists the current session to localStorage", async () => {
@@ -420,6 +433,50 @@ describe("SessionService", () => {
 			let analytics=new MockAnalyticsService();
 			let service=new SessionService(physics, analytics);
 			localStorage.setItem("physics-session-snapshot", JSON.stringify({session: null, createdAt: "x"}));
+			let loaded=await service.loadSessionSnapshot();
+			expect(loaded).toBeNull();
+		});
+		it("returns null when session is missing required id field", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			physics.generateBatch.mockResolvedValue([makeQuestion()]);
+			let session=await service.startSession(emptySpec(), makeConfig());
+			let badSession={...session, id: undefined};
+			localStorage.setItem("physics-session-snapshot", JSON.stringify({session: badSession, createdAt: "x"}));
+			let loaded=await service.loadSessionSnapshot();
+			expect(loaded).toBeNull();
+		});
+		it("returns null when session questions is not an array", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			physics.generateBatch.mockResolvedValue([makeQuestion()]);
+			let session=await service.startSession(emptySpec(), makeConfig());
+			let badSession={...session, questions: "not-array"};
+			localStorage.setItem("physics-session-snapshot", JSON.stringify({session: badSession, createdAt: "x"}));
+			let loaded=await service.loadSessionSnapshot();
+			expect(loaded).toBeNull();
+		});
+		it("returns null when session currentIndex is not a number", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			physics.generateBatch.mockResolvedValue([makeQuestion()]);
+			let session=await service.startSession(emptySpec(), makeConfig());
+			let badSession={...session, currentIndex: "zero"};
+			localStorage.setItem("physics-session-snapshot", JSON.stringify({session: badSession, createdAt: "x"}));
+			let loaded=await service.loadSessionSnapshot();
+			expect(loaded).toBeNull();
+		});
+		it("returns null when session isActive is not a boolean", async () => {
+			let physics=new MockPhysicsService();
+			let analytics=new MockAnalyticsService();
+			let service=new SessionService(physics, analytics);
+			physics.generateBatch.mockResolvedValue([makeQuestion()]);
+			let session=await service.startSession(emptySpec(), makeConfig());
+			let badSession={...session, isActive: "yes"};
+			localStorage.setItem("physics-session-snapshot", JSON.stringify({session: badSession, createdAt: "x"}));
 			let loaded=await service.loadSessionSnapshot();
 			expect(loaded).toBeNull();
 		});

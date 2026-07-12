@@ -18,6 +18,22 @@ function shuffleArray<T>(array: T[]): T[] {
 	}
 	return array;
 }
+function isSession(value: unknown): value is Session {
+	if (typeof value!=="object" || value===null) {
+		return false;
+	}
+	let v=value as Record<string, unknown>;
+	return typeof v.id==="string" &&
+		typeof v.specification==="object" && v.specification!==null &&
+		Array.isArray(v.questions) &&
+		typeof v.mode==="string" &&
+		typeof v.currentIndex==="number" &&
+		Array.isArray(v.results) &&
+		typeof v.isActive==="boolean" &&
+		typeof v.isFinished==="boolean" &&
+		typeof v.questionStartTime==="number" &&
+		typeof v.sessionStartTime==="number";
+}
 function isSessionSnapshot(value: unknown): value is SessionSnapshot {
 	if (typeof value!=="object" || value===null) {
 		return false;
@@ -25,7 +41,8 @@ function isSessionSnapshot(value: unknown): value is SessionSnapshot {
 	if (!("session" in value) || !("createdAt" in value)) {
 		return false;
 	}
-	return typeof value.session==="object" && value.session!==null && typeof value.createdAt==="string";
+	let v=value as Record<string, unknown>;
+	return isSession(v.session) && typeof v.createdAt==="string";
 }
 function createResult(question: GeneratedQuestion, userAnswer: string, isCorrect: boolean, timeTakenMs: number, mode: Session["mode"]): PracticeResult {
 	return {
@@ -138,6 +155,7 @@ export class SessionService implements ISessionService {
 		return this.session;
 	}
 	public async resumeSession(snapshot: SessionSnapshot): Promise<Session> {
+		snapshot.session.questionStartTime=Date.now();
 		this.session=snapshot.session;
 		return snapshot.session;
 	}
