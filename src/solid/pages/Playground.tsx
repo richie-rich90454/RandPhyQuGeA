@@ -25,7 +25,7 @@ function CopyButton(props: {title: string; code: string}): JSX.Element {
 		}
 	};
 	return (
-		<Button variant="ghost" size="sm" onClick={handleCopy} aria-label={`Copy code for ${props.title}`} leftIcon={
+		<Button variant="ghost" size="sm" onClick={handleCopy} aria-label={`Copy code for ${props.title}`} class={`${styles.copyButton} ${copied() ? styles.copyButtonCopied : ""}`} leftIcon={
 			<Show when={copied()} fallback={
 				<svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
 					<rect x="5" y="5" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5" />

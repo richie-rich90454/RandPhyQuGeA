@@ -43,6 +43,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-3);
+	scroll-margin-top: var(--space-6);
 }
 .sectionHeading {
 	display: flex;
@@ -110,18 +111,32 @@
 }
 .code {
 	margin: 0;
-	padding: var(--space-3) var(--space-4);
+	padding: var(--space-4);
 	background: var(--slate-900);
 	color: var(--slate-100);
+	border: 1px solid var(--slate-800);
 	border-radius: var(--radius-md);
 	font-family: var(--font-mono);
 	font-size: var(--font-size-xs);
 	line-height: var(--line-height-relaxed);
 	overflow-x: auto;
 	white-space: pre;
+	tab-size: 2;
 }
 .code code {
 	font-family: inherit;
+}
+.copyButton {
+	transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+}
+.copyButtonCopied {
+	color: var(--success);
+}
+@media (max-width: 768px) {
+	.cardSample {
+		max-width: 100%;
+		flex-basis: 100%;
+	}
 }
 @media (max-width: 640px) {
 	.root {
@@ -133,5 +148,8 @@
 	}
 	.cardSample {
 		max-width: 100%;
+	}
+	.code {
+		font-size: 0.7rem;
 	}
 }
