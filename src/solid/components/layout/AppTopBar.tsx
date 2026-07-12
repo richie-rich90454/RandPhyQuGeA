@@ -32,7 +32,7 @@ export function AppTopBar(props: AppTopBarProps): JSX.Element {
 						<ellipse cx="12" cy="12" rx="10" ry="4.2" stroke="currentColor" stroke-width="1.4" transform="rotate(60 12 12)" />
 						<ellipse cx="12" cy="12" rx="10" ry="4.2" stroke="currentColor" stroke-width="1.4" transform="rotate(120 12 12)" />
 					</svg>
-					<span class={styles.text}>{label}</span>
+					<h1 class={styles.text}>{label}</h1>
 				</a>
 				<Show when={local.actions}>
 					<nav class={styles.actions} aria-label="Primary actions">{local.actions}</nav>

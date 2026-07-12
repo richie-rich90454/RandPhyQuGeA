@@ -44,7 +44,7 @@ export function AppShell(props: AppShellProps): JSX.Element {
 					<Show when={props.toolbar}>
 						{props.toolbar}
 					</Show>
-					<main id="main-content" class={styles.main} tabindex={-1} aria-label="Main content">
+					<main id="main-content" class={styles.main} tabindex={-1}>
 						{props.children}
 					</main>
 				</div>
