@@ -1,6 +1,8 @@
-# Rust
+# Rust / Tauri
+# Cargo.lock IS committed: src-tauri is a binary application crate, and the
+# lockfile must be checked in per the Cargo convention for binaries.
 target/
-Cargo.lock
+src-tauri/gen/
 
 # WASM
 *.wasm
@@ -15,8 +17,6 @@ node_modules/
 dist/
 build/
 src/solid/dist/
-src-tauri/target
-src-tauri/gen/
 
 # Test coverage
 coverage/
