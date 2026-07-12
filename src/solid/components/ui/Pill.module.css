@@ -1,6 +1,7 @@
 .pill {
 	display: inline-flex;
 	align-items: center;
+	flex-shrink: 0;
 	border-radius: var(--radius-full);
 	border: 1px solid var(--border);
 	cursor: pointer;
@@ -70,4 +71,9 @@
 }
 .name {
 	white-space: nowrap;
+}
+@media (max-width: 480px) {
+	.lg {
+		padding: var(--space-1) var(--space-2);
+	}
 }

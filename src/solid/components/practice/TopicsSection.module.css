@@ -45,6 +45,11 @@
 	}
 }
 @media (max-width: 768px) {
+	.pills {
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		scrollbar-width: thin;
+	}
 	.search {
 		min-width: 6rem;
 	}
