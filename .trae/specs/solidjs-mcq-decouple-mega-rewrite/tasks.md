@@ -202,16 +202,16 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 5.8: MCQ grading — `correct_choice_index` correct after shuffle (deterministic with seed) (2 bugs).
 - [x] Task 5.9: Stores — `practiceStore` slimmed; mode config moved to `settingsStore`; no duplication (3 bugs).
 - [x] Task 5.10: Stores — `progressStore.getStats()` memoized (stable reference) (2 bugs).
-- [ ] Task 5.11: Stores — persistence migration for schema changes (response mode, sig figs) (2 bugs).
-- [ ] Task 5.12: Modals — focus trap + return focus + scroll lock across all modals (3 bugs).
-- [ ] Task 5.13: Modals — Settings tabs `role="tablist"` + arrow keys + `aria-selected`/`aria-controls` (2 bugs).
-- [ ] Task 5.14: Modals — MCQ choices `role="radiogroup"`/`role="radio"` + `aria-checked` (2 bugs).
-- [ ] Task 5.15: Shortcuts — Ctrl+G/Shift+Enter/Ctrl+1·2/Ctrl+,/Ctrl+Shift+T scope + conflict fixes (3 bugs).
-- [ ] Task 5.16: Exporters — CSV/JSON/LaTeX field correctness + `response_mode` emission (3 bugs).
-- [ ] Task 5.17: Parser — cross-reference validation + multi-error reporting (3 bugs).
-- [ ] Task 5.18: Parser — enum/bool/set variable edge cases (2 bugs).
-- [ ] Task 5.19: Evaluator — division by zero / sqrt-of-negative / log-of-invalid error handling (3 bugs).
-- [ ] Task 5.20: Evaluator — degree/radian consistency for trig + inverse trig (2 bugs).
+- [x] Task 5.11: Stores — persistence migration for schema changes (response mode, sig figs) (2 bugs).
+- [x] Task 5.12: Modals — focus trap + return focus + scroll lock across all modals (3 bugs).
+- [x] Task 5.13: Modals — Settings tabs `role="tablist"` + arrow keys + `aria-selected`/`aria-controls` (2 bugs).
+- [x] Task 5.14: Modals — MCQ choices `role="radiogroup"`/`role="radio"` + `aria-checked` (2 bugs).
+- [x] Task 5.15: Shortcuts — Ctrl+G/Shift+Enter/Ctrl+1·2/Ctrl+,/Ctrl+Shift+T scope + conflict fixes (3 bugs).
+- [x] Task 5.16: Exporters — CSV/JSON/LaTeX field correctness + `response_mode` emission (3 bugs).
+- [x] Task 5.17: Parser — cross-reference validation + multi-error reporting (3 bugs).
+- [x] Task 5.18: Parser — enum/bool/set variable edge cases (2 bugs).
+- [x] Task 5.19: Evaluator — division by zero / sqrt-of-negative / log-of-invalid error handling (3 bugs).
+- [x] Task 5.20: Evaluator — degree/radian consistency for trig + inverse trig (2 bugs).
 - [ ] Task 5.21: RNG — `nextInt`/`nextDouble` range inclusivity + seeding determinism (2 bugs).
 - [ ] Task 5.22: A11y — focus-visible on all primary controls (2 bugs).
 - [ ] Task 5.23: A11y — live regions for question/results/timer/score/theme/errors (3 bugs).
