@@ -1,5 +1,5 @@
 import type {JSX} from "solid-js";
-import {createSignal, Show, For} from "solid-js";
+import {createSignal, createMemo, Show, For} from "solid-js";
 import {Button, Card, CardHeader, CardTitle, CardSubtitle, CardContent, Badge, EmptyState, Spinner} from "../components/ui";
 import {parseSpecification, generateQuestion, generateBatch, exportQuestions, loadDefaultSpec} from "../../services/physicsCore";
 import styles from "./DxDashboard.module.css";
@@ -41,6 +41,15 @@ export function DxDashboard(): JSX.Element {
 	let [results, setResults]=createSignal<BenchmarkResult[]>([]);
 	let [running, setRunning]=createSignal(false);
 	let [error, setError]=createSignal<string | null>(null);
+	let maxTime=createMemo(() => {
+		let rows=results();
+		if (rows.length===0) return 0;
+		let peak=0;
+		for (let row of rows) {
+			if (row.timeMs>peak) peak=row.timeMs;
+		}
+		return peak;
+	});
 	let handleRunBenchmark=async () => {
 		setRunning(true);
 		setError(null);
@@ -167,13 +176,19 @@ export function DxDashboard(): JSX.Element {
 									</tr>
 								</thead>
 								<tbody>
-									<For each={results()}>{(result) => (
-										<tr>
-											<td>{result.operation}</td>
-											<td class={styles.cellNum}>{result.iterations}</td>
-											<td class={styles.cellNum}>{formatMs(result.timeMs)}</td>
-										</tr>
-									)}</For>
+									<For each={results()}>{(result) => {
+										let pct=maxTime()>0 ? Math.max(4, Math.round((result.timeMs/maxTime())*100)) : 0;
+										return (
+											<tr>
+												<td>{result.operation}</td>
+												<td class={styles.cellNum}>{result.iterations}</td>
+												<td class={styles.cellTime}>
+													<span class={styles.cellTimeValue}>{formatMs(result.timeMs)}</span>
+													<span class={styles.cellTimeBar} style={{"width": `${pct}%`}} aria-hidden="true" />
+												</td>
+											</tr>
+										);
+									}}</For>
 								</tbody>
 							</table>
 						</Show>

@@ -59,9 +59,15 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-1);
-	padding: var(--space-2);
+	padding: var(--space-2) var(--space-3);
 	background: var(--surface-muted);
 	border-radius: var(--radius-sm);
+	border-left: 3px solid var(--border-subtle);
+	transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+}
+.envRow:hover {
+	border-left-color: var(--accent);
+	background: var(--surface);
 }
 .envLabel {
 	font-size: var(--font-size-xs);
@@ -89,11 +95,18 @@
 	padding: var(--space-3);
 	background: var(--surface-muted);
 	border-radius: var(--radius-md);
+	border: 1px solid var(--border-subtle);
+	transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+}
+.metricCell:hover {
+	border-color: var(--accent);
+	background: var(--surface);
+	transform: translateY(-2px);
 }
 .metricValue {
 	font-size: var(--font-size-2xl);
 	font-weight: var(--font-weight-semibold);
-	color: var(--text);
+	color: var(--accent);
 }
 .metricLabel {
 	font-size: var(--font-size-xs);
@@ -113,6 +126,10 @@
 	gap: var(--space-2);
 	color: var(--text-muted);
 	font-size: var(--font-size-sm);
+	padding: var(--space-1) var(--space-3);
+	background: var(--surface-muted);
+	border-radius: var(--radius-full);
+	border: 1px solid var(--border-subtle);
 }
 .errorBlock {
 	display: flex;
@@ -149,6 +166,15 @@
 	letter-spacing: var(--letter-spacing-wide);
 	font-weight: var(--font-weight-medium);
 }
+.benchTable tbody tr:nth-child(even) {
+	background: var(--surface-muted);
+}
+.benchTable tbody tr {
+	transition: background-color var(--duration-fast) var(--ease-standard);
+}
+.benchTable tbody tr:hover {
+	background: var(--accent-surface, var(--surface));
+}
 .benchTable tbody tr:last-child td {
 	border-bottom: none;
 }
@@ -156,6 +182,28 @@
 	font-family: var(--font-mono);
 	text-align: right;
 	white-space: nowrap;
+}
+.cellTime {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-1);
+	align-items: stretch;
+	min-width: 140px;
+}
+.cellTimeValue {
+	font-family: var(--font-mono);
+	text-align: right;
+	white-space: nowrap;
+	color: var(--text);
+	font-weight: var(--font-weight-medium);
+}
+.cellTimeBar {
+	display: block;
+	height: 4px;
+	border-radius: var(--radius-full);
+	background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+	min-width: 4px;
+	transition: width var(--duration-slow) var(--ease-standard);
 }
 @media (max-width: 900px) {
 	.grid {
@@ -168,5 +216,16 @@
 	}
 	.metricsGrid {
 		grid-template-columns: 1fr;
+	}
+	.cellTime {
+		min-width: 100px;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.envRow, .metricCell, .benchTable tbody tr, .cellTimeBar {
+		transition: none;
+	}
+	.metricCell:hover {
+		transform: none;
 	}
 }
