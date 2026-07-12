@@ -113,6 +113,56 @@ describe("solid progressStore", () => {
 			expect(first).toBe(second);
 		});
 	});
+	describe("selectStats memoization (task 5.10)", () => {
+		it("returns a new reference after addResults invalidates the cache", () => {
+			const store=useProgressStore.getState();
+			store.addResults([makeResult({id: "r1"})]);
+			const before=selectStats(useProgressStore.getState());
+			store.addResults([makeResult({id: "r2"})]);
+			const after=selectStats(useProgressStore.getState());
+			expect(after).not.toBe(before);
+			expect(after.totalCount).toBe(2);
+		});
+		it("returns a new reference after deleteResult invalidates the cache", () => {
+			const store=useProgressStore.getState();
+			store.addResults([makeResult({id: "r1"}), makeResult({id: "r2"})]);
+			const before=selectStats(useProgressStore.getState());
+			store.deleteResult("r1");
+			const after=selectStats(useProgressStore.getState());
+			expect(after).not.toBe(before);
+			expect(after.totalCount).toBe(1);
+		});
+		it("returns a new reference after clearResults invalidates the cache", () => {
+			const store=useProgressStore.getState();
+			store.addResults([makeResult({id: "r1"})]);
+			const before=selectStats(useProgressStore.getState());
+			store.clearResults();
+			const after=selectStats(useProgressStore.getState());
+			expect(after).not.toBe(before);
+			expect(after.totalCount).toBe(0);
+		});
+		it("never serves stale values after cache invalidation", () => {
+			const store=useProgressStore.getState();
+			store.addResults([makeResult({id: "r1", is_correct: true, time_taken_ms: 500})]);
+			const first=selectStats(useProgressStore.getState());
+			expect(first.correctCount).toBe(1);
+			store.addResults([makeResult({id: "r2", is_correct: false, time_taken_ms: 1500})]);
+			const second=selectStats(useProgressStore.getState());
+			expect(second.correctCount).toBe(1);
+			expect(second.totalCount).toBe(2);
+			expect(second.totalTimeMs).toBe(2000);
+		});
+		it("keeps a stable reference across repeated reads with no mutation", () => {
+			const store=useProgressStore.getState();
+			store.addResults([makeResult({id: "r1"}), makeResult({id: "r2"})]);
+			const state=useProgressStore.getState();
+			const a=selectStats(state);
+			const b=selectStats(state);
+			const c=selectStats(state);
+			expect(a).toBe(b);
+			expect(b).toBe(c);
+		});
+	});
 	describe("migration", () => {
 		it("migrates old history shape to results shape", async () => {
 			const oldResult=makeResult({id: "old1"});
