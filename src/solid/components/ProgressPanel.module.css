@@ -27,6 +27,10 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: var(--radius-full);
+	background: var(--info-surface);
 	color: var(--accent);
 	flex-shrink: 0;
 }
@@ -40,10 +44,11 @@
 	gap: var(--space-2);
 }
 .statValue {
-	font-size: 2rem;
-	font-weight: var(--font-weight-bold, 700);
+	font-size: var(--font-size-2xl);
+	font-weight: var(--font-weight-bold);
 	color: var(--text);
 	line-height: 1.1;
+	font-variant-numeric: tabular-nums;
 }
 .statLabel {
 	font-size: var(--font-size-xs);
@@ -52,6 +57,7 @@
 .statMeta {
 	font-size: var(--font-size-xs);
 	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
 }
 .statSubgrid {
 	display: flex;
@@ -60,6 +66,7 @@
 .statSubvalue {
 	font-size: var(--font-size-xs);
 	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
 }
 .weakCard {
 	margin: 0;
@@ -100,6 +107,12 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-1);
+	padding: var(--space-1) var(--space-2);
+	border-radius: var(--radius-sm);
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+.weakItem:hover {
+	background: var(--surface-muted);
 }
 .weakInfo {
 	display: flex;
@@ -115,6 +128,7 @@
 .weakMeta {
 	font-size: var(--font-size-xs);
 	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
 }
 .historyCard {
 	margin: 0;
@@ -147,9 +161,14 @@
 	display: flex;
 	align-items: center;
 	gap: var(--space-2);
-	padding: var(--space-2) 0;
+	padding: var(--space-2) var(--space-1);
 	border-bottom: 1px solid var(--border-subtle);
+	border-radius: var(--radius-sm);
 	flex-wrap: wrap;
+	transition: background-color var(--duration-fast) var(--ease-out);
+}
+.historyItem:hover {
+	background: var(--surface-muted);
 }
 .historyItem:last-child {
 	border-bottom: none;
@@ -158,16 +177,18 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 24px;
-	height: 24px;
+	width: 28px;
+	height: 28px;
 	border-radius: var(--radius-full);
 	flex-shrink: 0;
 }
 .correct {
 	color: var(--success);
+	background: var(--success-surface);
 }
 .incorrect {
 	color: var(--danger);
+	background: var(--error-surface);
 }
 .historyTopic {
 	font-size: var(--font-size-sm);
@@ -179,11 +200,13 @@
 .historyMeta {
 	font-size: var(--font-size-xs);
 	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
 }
 .historyTime {
 	font-size: var(--font-size-xs);
 	color: var(--text-muted);
 	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
 }
 .pagination {
 	display: flex;
@@ -194,6 +217,7 @@
 .paginationInfo {
 	font-size: var(--font-size-sm);
 	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
 }
 @media (max-width: 1024px) {
 	.statSubgrid {
@@ -211,7 +235,7 @@
 }
 @media (max-width: 480px) {
 	.statValue {
-		font-size: 1.5rem;
+		font-size: var(--font-size-xl);
 	}
 	.weakHeader, .historyHeader {
 		flex-direction: column;
@@ -220,5 +244,13 @@
 	}
 	.pagination {
 		gap: var(--space-2);
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.weakItem {
+		transition: none;
+	}
+	.historyItem {
+		transition: none;
 	}
 }
