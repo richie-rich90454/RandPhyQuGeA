@@ -73,7 +73,7 @@ export class QuestionSetIo {
 		}
 		return {version, exportedAt, sets: validated};
 	}
-	/** Validate a single question set object. */
+	/** Validate a single question set object. `templateIds` and `tags` are deduplicated (preserving first-occurrence order) so the returned set honors the {@link QuestionSet} no-duplicates invariant. */
 	private validateSet(s: unknown): QuestionSet {
 		if (typeof s !== "object" || s === null) {
 			throw new Error("Invalid question set: not an object");
@@ -92,14 +92,19 @@ export class QuestionSetIo {
 			throw new Error("Invalid question set: templateIds must be a string array");
 		}
 		const validTids: string[] = [];
+		const seenTids: Set<string> = new Set();
 		for (const t of templateIds as unknown[]) {
 			if (typeof t !== "string") {
 				throw new Error("Invalid question set: templateIds must be a string array");
 			}
-			validTids.push(t);
+			if (!seenTids.has(t)) {
+				seenTids.add(t);
+				validTids.push(t);
+			}
 		}
 		const tags: unknown = obj["tags"];
 		const validTags: string[] = [];
+		const seenTags: Set<string> = new Set();
 		if (tags !== undefined) {
 			if (!Array.isArray(tags)) {
 				throw new Error("Invalid question set: tags must be a string array");
@@ -108,7 +113,10 @@ export class QuestionSetIo {
 				if (typeof t !== "string") {
 					throw new Error("Invalid question set: tags must be a string array");
 				}
-				validTags.push(t);
+				if (!seenTags.has(t)) {
+					seenTags.add(t);
+					validTags.push(t);
+				}
 			}
 		}
 		const createdAt: unknown = obj["createdAt"];

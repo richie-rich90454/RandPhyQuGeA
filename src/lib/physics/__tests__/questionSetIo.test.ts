@@ -164,3 +164,63 @@ describe("QuestionSetIo.importSets errors", () => {
         expect(imported[0]?.tags).toEqual([]);
     });
 });
+describe("QuestionSetIo no-duplicates invariant (task 5.58)", () => {
+    it("deduplicates templateIds preserving first-occurrence order", () => {
+        const io = new QuestionSetIo();
+        const json = JSON.stringify({version: 1, exportedAt: 1, sets: [{id: "x", name: "A", templateIds: ["T1", "T1", "T2", "T1", "T3", "T2"], tags: [], createdAt: 1, updatedAt: 1}]});
+        const imported = io.importSets(json);
+        expect(imported[0]?.templateIds).toEqual(["T1", "T2", "T3"]);
+    });
+    it("deduplicates tags preserving first-occurrence order", () => {
+        const io = new QuestionSetIo();
+        const json = JSON.stringify({version: 1, exportedAt: 1, sets: [{id: "x", name: "A", templateIds: [], tags: ["easy", "easy", "exam", "easy", "hard", "exam"], createdAt: 1, updatedAt: 1}]});
+        const imported = io.importSets(json);
+        expect(imported[0]?.tags).toEqual(["easy", "exam", "hard"]);
+    });
+    it("deduplicates both templateIds and tags in the same set", () => {
+        const io = new QuestionSetIo();
+        const json = JSON.stringify({version: 1, exportedAt: 1, sets: [{id: "x", name: "A", templateIds: ["T1", "T2", "T1"], tags: ["a", "b", "a"], createdAt: 1, updatedAt: 1}]});
+        const imported = io.importSets(json);
+        expect(imported[0]?.templateIds).toEqual(["T1", "T2"]);
+        expect(imported[0]?.tags).toEqual(["a", "b"]);
+    });
+    it("preserves order when there are no duplicates", () => {
+        const io = new QuestionSetIo();
+        const json = JSON.stringify({version: 1, exportedAt: 1, sets: [{id: "x", name: "A", templateIds: ["T3", "T1", "T2"], tags: ["z", "m", "a"], createdAt: 1, updatedAt: 1}]});
+        const imported = io.importSets(json);
+        expect(imported[0]?.templateIds).toEqual(["T3", "T1", "T2"]);
+        expect(imported[0]?.tags).toEqual(["z", "m", "a"]);
+    });
+    it("leaves empty arrays empty (no duplicates possible)", () => {
+        const io = new QuestionSetIo();
+        const json = JSON.stringify({version: 1, exportedAt: 1, sets: [{id: "x", name: "A", templateIds: [], tags: [], createdAt: 1, updatedAt: 1}]});
+        const imported = io.importSets(json);
+        expect(imported[0]?.templateIds).toEqual([]);
+        expect(imported[0]?.tags).toEqual([]);
+    });
+    it("handles a single duplicated element collapsing to one entry", () => {
+        const io = new QuestionSetIo();
+        const json = JSON.stringify({version: 1, exportedAt: 1, sets: [{id: "x", name: "A", templateIds: ["T1", "T1", "T1"], tags: ["only", "only", "only"], createdAt: 1, updatedAt: 1}]});
+        const imported = io.importSets(json);
+        expect(imported[0]?.templateIds).toEqual(["T1"]);
+        expect(imported[0]?.tags).toEqual(["only"]);
+    });
+    it("importInto produces store sets that match the deduped import (no double-dedup needed)", () => {
+        const io = new QuestionSetIo();
+        const store = new QuestionSetStore();
+        const json = JSON.stringify({version: 1, exportedAt: 1, sets: [{id: "x", name: "A", templateIds: ["T1", "T1", "T2"], tags: ["easy", "easy", "exam"], createdAt: 1, updatedAt: 1}]});
+        const created = io.importInto(store, json, 5000);
+        expect(created[0]?.templateIds).toEqual(["T1", "T2"]);
+        expect(created[0]?.tags).toEqual(["easy", "exam"]);
+    });
+    it("export -> import round-trip is idempotent for sets with duplicates in the raw input", () => {
+        const io = new QuestionSetIo();
+        const json = JSON.stringify({version: 1, exportedAt: 1, sets: [{id: "x", name: "A", templateIds: ["T1", "T1", "T2"], tags: ["a", "a", "b"], createdAt: 1, updatedAt: 1}]});
+        const first = io.importSets(json);
+        const exported = io.exportSets(first, 1);
+        const second = io.importSets(exported);
+        expect(second).toEqual(first);
+        expect(second[0]?.templateIds).toEqual(["T1", "T2"]);
+        expect(second[0]?.tags).toEqual(["a", "b"]);
+    });
+});
