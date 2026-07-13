@@ -38,4 +38,22 @@ describe("ProgressBar", () => {
 		render(() => <ProgressBar value={50} />);
 		expect(screen.getByRole("progressbar")).toHaveAttribute("aria-label", "Progress");
 	});
+	it("has aria-valuemin=0 and aria-valuemax=100 (task 5.50)", () => {
+		render(() => <ProgressBar value={50} />);
+		let bar=screen.getByRole("progressbar");
+		expect(bar).toHaveAttribute("aria-valuemin", "0");
+		expect(bar).toHaveAttribute("aria-valuemax", "100");
+	});
+	it("defaults value to 0 when undefined with aria-valuenow=0 and aria-valuetext=0% (task 5.50)", () => {
+		render(() => <ProgressBar />);
+		let bar=screen.getByRole("progressbar");
+		expect(bar).toHaveAttribute("aria-valuenow", "0");
+		expect(bar).toHaveAttribute("aria-valuetext", "0%");
+	});
+	it("rounds fractional value for aria-valuenow and aria-valuetext (task 5.50)", () => {
+		render(() => <ProgressBar value={33.7} />);
+		let bar=screen.getByRole("progressbar");
+		expect(bar).toHaveAttribute("aria-valuenow", "34");
+		expect(bar).toHaveAttribute("aria-valuetext", "34%");
+	});
 });
