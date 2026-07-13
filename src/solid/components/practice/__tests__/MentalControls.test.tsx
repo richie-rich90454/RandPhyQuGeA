@@ -1,5 +1,7 @@
 import {render, screen, fireEvent, waitFor} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach, vi} from "vitest";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
 import {MentalControls} from "../MentalControls";
 import {ToastProvider} from "../../ui/Toast";
 import {ServiceProvider} from "../../../providers/ServiceProvider";
@@ -181,4 +183,16 @@ describe("MentalControls resilience (task 5.31)", () => {
 		}, {timeout: 5000});
 		expect(screen.getByRole("status")).toHaveTextContent(/Failed to load next question/);
 	}, 10000);
+});
+describe("MentalControls focus preservation on pause/resume (task 5.51)", () => {
+	it("pauseSession calls timer.pause and uses requestAnimationFrame to focus the Resume button", () => {
+		let src=readFileSync(join(process.cwd(), "src", "solid", "components", "practice", "MentalControls.tsx"), "utf-8");
+		expect(src).toContain("timer.pause()");
+		expect(src).toMatch(/requestAnimationFrame\(\(\)\s*=>\s*\{[^}]*Resume session/s);
+	});
+	it("resumeSession calls timer.resume and uses requestAnimationFrame to focus the Pause button", () => {
+		let src=readFileSync(join(process.cwd(), "src", "solid", "components", "practice", "MentalControls.tsx"), "utf-8");
+		expect(src).toContain("timer.resume()");
+		expect(src).toMatch(/requestAnimationFrame\(\(\)\s*=>\s*\{[^}]*Pause session/s);
+	});
 });

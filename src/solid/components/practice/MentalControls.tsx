@@ -226,8 +226,20 @@ export function MentalControls(): JSX.Element {
 			timer.reset();
 		}
 	};
-	let pauseSession=() => timer.pause();
-	let resumeSession=() => timer.resume();
+	let pauseSession=() => {
+		timer.pause();
+		requestAnimationFrame(() => {
+			let btn=document.querySelector('#mental-controls button[aria-label="Resume session"]') as HTMLButtonElement | null;
+			if (btn) btn.focus();
+		});
+	};
+	let resumeSession=() => {
+		timer.resume();
+		requestAnimationFrame(() => {
+			let btn=document.querySelector('#mental-controls button[aria-label="Pause session"]') as HTMLButtonElement | null;
+			if (btn) btn.focus();
+		});
+	};
 	let skipQuestion=async () => {
 		let store=usePracticeStore.getState();
 		if (!store.session || !store.session.isActive || store.session.mode!=="Mental") return;
