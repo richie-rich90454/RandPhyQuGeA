@@ -1,18 +1,18 @@
 import {describe, it, expect} from "vitest";
 import {ShareLinkCodec, SHARE_LINK_VERSION} from "../share/ShareLinkCodec";
 describe("ShareLinkCodec.encode", () => {
-    it("produces a string with the pq: prefix", () => {
+    it("produces a string with the pq. prefix", () => {
         const codec = new ShareLinkCodec();
         const link = codec.encode({templateId: "T1", variables: {x: 3}});
-        expect(link.startsWith("pq:")).toBe(true);
+        expect(link.startsWith("pq.")).toBe(true);
     });
-    it("produces URL-safe base64 (no +, /, or =)", () => {
+    it("produces a fully URL-safe link (no :, +, /, or =)", () => {
         const codec = new ShareLinkCodec();
         const link = codec.encode({templateId: "T1", variables: {x: 3}});
-        const body = link.slice(3);
-        expect(body).not.toContain("+");
-        expect(body).not.toContain("/");
-        expect(body).not.toContain("=");
+        expect(link).not.toContain("+");
+        expect(link).not.toContain("/");
+        expect(link).not.toContain("=");
+        expect(link).not.toContain(":");
     });
     it("includes schema version 1 in the payload", () => {
         const codec = new ShareLinkCodec();
@@ -101,9 +101,17 @@ describe("ShareLinkCodec.decode errors", () => {
     });
 });
 describe("ShareLinkCodec.looksLike", () => {
-    it("returns true for a string with the pq: prefix", () => {
+    it("returns true for a string with the pq. prefix", () => {
+        const codec = new ShareLinkCodec();
+        expect(codec.looksLike("pq.abc")).toBe(true);
+    });
+    it("returns true for a string with the legacy pq: prefix", () => {
         const codec = new ShareLinkCodec();
         expect(codec.looksLike("pq:abc")).toBe(true);
+    });
+    it("returns true for a URL-encoded legacy pq%3A prefix", () => {
+        const codec = new ShareLinkCodec();
+        expect(codec.looksLike("pq%3Aabc")).toBe(true);
     });
     it("returns false for a string without the prefix", () => {
         const codec = new ShareLinkCodec();
@@ -113,5 +121,62 @@ describe("ShareLinkCodec.looksLike", () => {
         const codec = new ShareLinkCodec();
         const link = codec.encode({templateId: "Q1", variables: {}});
         expect(codec.looksLike(link)).toBe(true);
+    });
+});
+describe("ShareLinkCodec URL-safety and backward compatibility (task 5.57)", () => {
+    it("encoded link survives encodeURIComponent/decodeURIComponent round-trip", () => {
+        const codec = new ShareLinkCodec();
+        const link = codec.encode({templateId: "T1", variables: {x: 3}});
+        const encoded = encodeURIComponent(link);
+        const decoded = decodeURIComponent(encoded);
+        expect(decoded).toBe(link);
+        expect(codec.decode(decoded)).toEqual({v: 1, templateId: "T1", variables: {x: 3}});
+    });
+    it("decode accepts a URL-encoded legacy pq%3A prefix", () => {
+        const codec = new ShareLinkCodec();
+        const link = codec.encode({templateId: "T1", variables: {x: 3}});
+        const legacyLink = "pq:" + link.slice(3);
+        const encodedLegacy = "pq%3A" + legacyLink.slice(3);
+        const decoded = codec.decode(encodedLegacy);
+        expect(decoded.templateId).toBe("T1");
+        expect(decoded.variables).toEqual({x: 3});
+    });
+    it("decode accepts a legacy pq: prefix", () => {
+        const codec = new ShareLinkCodec();
+        const link = codec.encode({templateId: "T1", variables: {x: 3}});
+        const legacyLink = "pq:" + link.slice(3);
+        const decoded = codec.decode(legacyLink);
+        expect(decoded.templateId).toBe("T1");
+        expect(decoded.variables).toEqual({x: 3});
+    });
+    it("encoded link contains no URL-unsafe characters across many inputs", () => {
+        const codec = new ShareLinkCodec();
+        const inputs = [
+            {templateId: "", variables: {}},
+            {templateId: "a+b/c=d", variables: {x: "a+b/c=d"}},
+            {templateId: "T", variables: {s: "line\nbreak\ttab"}},
+            {templateId: "T", variables: {s: "quote\"and\\backslash"}},
+            {templateId: "🌍", variables: {emoji: "🌍"}},
+            {templateId: "T".repeat(100), variables: {x: "v".repeat(1000)}},
+        ];
+        for (const input of inputs) {
+            const link = codec.encode(input);
+            expect(link).not.toContain(":");
+            expect(link).not.toContain("+");
+            expect(link).not.toContain("/");
+            expect(link).not.toContain("=");
+            expect(link).not.toContain("&");
+            expect(link).not.toContain("#");
+            expect(link).not.toContain("?");
+        }
+    });
+    it("round-trips correctly when the link is placed in a URL query parameter", () => {
+        const codec = new ShareLinkCodec();
+        const link = codec.encode({templateId: "T1", variables: {x: 42}});
+        const url = "https://example.com/share?q=" + encodeURIComponent(link);
+        const extracted = decodeURIComponent(url.split("q=")[1]);
+        const decoded = codec.decode(extracted);
+        expect(decoded.templateId).toBe("T1");
+        expect(decoded.variables).toEqual({x: 42});
     });
 });

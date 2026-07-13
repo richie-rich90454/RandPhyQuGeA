@@ -26,27 +26,41 @@ export interface ShareableQuestionState {
 	/** Epoch milliseconds when the link was generated. */
 	timestamp?: number;
 }
-/** Encodes/decodes question state to/from a URL-safe base64 share link. */
+/** Encodes/decodes question state to/from a URL-safe base64 share link. The `pq.` prefix is used for new links because `.` is an unreserved character in RFC 3986 (fully URL-safe) and is not part of the base64url alphabet, making it an unambiguous delimiter. The legacy `pq:` prefix and its URL-encoded `pq%3A` form are accepted on decode for backward compatibility. */
 export class ShareLinkCodec {
-	private static readonly PREFIX: string = "pq:";
-	/** Encode a shareable state into a URL-safe base64 share-link string. */
+	private static readonly PREFIX: string = "pq.";
+	private static readonly LEGACY_PREFIX: string = "pq:";
+	private static readonly ENCODED_LEGACY_PREFIX: string = "pq%3A";
+	/** Encode a shareable state into a URL-safe base64 share-link string with the `pq.` prefix. */
 	public encode(state: Omit<ShareableQuestionState, "v">): string {
 		const full: ShareableQuestionState = {v: SHARE_LINK_VERSION, ...state};
 		return ShareLinkCodec.PREFIX + this.toBase64Url(JSON.stringify(full));
 	}
-	/** Decode a share-link string back into the shareable state. Throws on malformed input. */
+	/** Decode a share-link string back into the shareable state. Throws on malformed input. Accepts the current `pq.` prefix, the legacy `pq:` prefix, and the URL-encoded `pq%3A` form. */
 	public decode(payload: string): ShareableQuestionState {
-		if (!payload.startsWith(ShareLinkCodec.PREFIX)) {
+		const prefix: string | null = this.matchPrefix(payload);
+		if (prefix === null) {
 			throw new Error("Invalid share link: missing prefix");
 		}
-		const body: string = payload.slice(ShareLinkCodec.PREFIX.length);
+		const body: string = payload.slice(prefix.length);
 		const json: string = this.fromBase64Url(body);
 		const parsed: unknown = JSON.parse(json);
 		return this.validate(parsed);
 	}
-	/** Return true when `payload` looks like a share link (has the prefix). */
+	/** Return true when `payload` looks like a share link (has a recognized prefix). */
 	public looksLike(payload: string): boolean {
-		return payload.startsWith(ShareLinkCodec.PREFIX);
+		return this.matchPrefix(payload) !== null;
+	}
+	/** Return the matching prefix string (current `pq.`, legacy `pq:`, or URL-encoded legacy `pq%3A`), or null when no prefix matches. */
+	private matchPrefix(payload: string): string | null {
+		if (payload.startsWith(ShareLinkCodec.PREFIX)) {
+			return ShareLinkCodec.PREFIX;
+		} else if (payload.startsWith(ShareLinkCodec.LEGACY_PREFIX)) {
+			return ShareLinkCodec.LEGACY_PREFIX;
+		} else if (payload.startsWith(ShareLinkCodec.ENCODED_LEGACY_PREFIX)) {
+			return ShareLinkCodec.ENCODED_LEGACY_PREFIX;
+		}
+		return null;
 	}
 	/** Encode a UTF-8 source string as URL-safe base64. */
 	private toBase64Url(value: string): string {
