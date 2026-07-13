@@ -126,6 +126,31 @@ describe("AnswerGrader", () => {
             expect(looseGrader.grade(q, "6.5").is_correct).toBe(false);
         });
     });
+    describe("FRQ NE numeric-tolerance floating-point boundary", () => {
+        it("accepts a response at the exact tolerance boundary where IEEE-754 rounding pushes |diff| slightly above tol (96.01 vs 96 with tol 0.01)", () => {
+            const q = buildQuestion({question_type: "NE", answer: "96"});
+            expect(Math.abs(96.01 - 96)).toBeGreaterThan(0.01);
+            expect(grader.grade(q, "96.01").is_correct).toBe(true);
+        });
+        it("accepts a response at the exact tolerance boundary on the low side (95.99 vs 96 with tol 0.01)", () => {
+            const q = buildQuestion({question_type: "NE", answer: "96"});
+            expect(grader.grade(q, "95.99").is_correct).toBe(true);
+        });
+        it("still rejects a response clearly outside the tolerance (96.02 vs 96 with tol 0.01)", () => {
+            const q = buildQuestion({question_type: "NE", answer: "96"});
+            expect(grader.grade(q, "96.02").is_correct).toBe(false);
+        });
+        it("accepts the boundary for a larger-magnitude answer (100.01 vs 100 with tol 0.01)", () => {
+            const q = buildQuestion({question_type: "NE", answer: "100"});
+            expect(Math.abs(100.01 - 100)).toBeGreaterThan(0.01);
+            expect(grader.grade(q, "100.01").is_correct).toBe(true);
+        });
+        it("accepts the boundary with a custom tolerance of 1 (97 vs 96)", () => {
+            const looseGrader = new AnswerGrader(undefined, 1);
+            const q = buildQuestion({question_type: "NE", answer: "96"});
+            expect(looseGrader.grade(q, "97").is_correct).toBe(true);
+        });
+    });
     describe("GradeResult shape", () => {
         it("returns normalized_response and normalized_answer strings", () => {
             const q = buildQuestion({question_type: "NE", answer: "5"});

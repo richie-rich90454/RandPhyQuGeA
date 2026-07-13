@@ -98,12 +98,15 @@ export class AnswerGrader implements AnswerGraderLike {
         }
         return lower;
     }
-    /** Numeric grading: correct when |response − answer| ≤ numericTolerance; falls back to exact string match when either side is non-numeric. */
+    /** Numeric grading: correct when |response − answer| ≤ numericTolerance (with a relative epsilon to absorb floating-point rounding at the exact boundary, e.g. |96.01 − 96| = 0.010000000000005116 in IEEE-754); falls back to exact string match when either side is non-numeric. */
     private gradeNumeric(response: string, answer: string): GradeResult {
         const responseNum = Number(response.trim());
         const answerNum = Number(answer.trim());
         if (Number.isFinite(responseNum) && Number.isFinite(answerNum)) {
-            const isCorrect = Math.abs(responseNum - answerNum) <= this.numericTolerance;
+            const diff = Math.abs(responseNum - answerNum);
+            const magnitude = Math.max(1, Math.abs(responseNum), Math.abs(answerNum));
+            const epsilon = magnitude * 1e-12;
+            const isCorrect = diff <= this.numericTolerance + epsilon;
             return {is_correct: isCorrect, normalized_response: String(responseNum), normalized_answer: String(answerNum)};
         }
         const normalizedResponse = response.trim().toLowerCase();
