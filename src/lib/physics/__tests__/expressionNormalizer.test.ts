@@ -67,9 +67,22 @@ describe("ExpressionNormalizer", () => {
             expect(normalizer.isEquivalent("\\(x+1\\)", "x+1")).toBe(true);
             expect(normalizer.isEquivalent("\\[x+1\\]", "x+1")).toBe(true);
         });
-        it("strips LaTeX \\frac delimiters into a parenthesized fraction form", () => {
-            expect(normalizer.normalize("\\frac{1}{2}")).toBe("(1)/(2)");
+        it("strips LaTeX \\frac delimiters and converts pure-number fractions to decimals", () => {
+            expect(normalizer.normalize("\\frac{1}{2}")).toBe("0.5");
             expect(normalizer.isEquivalent("\\frac{1}{2}", "(1)/(2)")).toBe(true);
+            expect(normalizer.isEquivalent("\\frac{1}{2}", "0.5")).toBe(true);
+        });
+        it("strips LaTeX \\left and \\right delimiters so \\left(x+1\\right) is equivalent to (x+1)", () => {
+            expect(normalizer.normalize("\\left(x+1\\right)")).toBe(normalizer.normalize("(x+1)"));
+            expect(normalizer.isEquivalent("\\left(x+1\\right)", "(x+1)")).toBe(true);
+            expect(normalizer.isEquivalent("\\left( a + b \\right)", "(a+b)")).toBe(true);
+            expect(normalizer.isEquivalent("\\left(2x\\right)", "(2*x)")).toBe(true);
+        });
+        it("treats parenthesized numeric fractions as equivalent to decimals (e.g. (1)/(2) ≡ 0.5)", () => {
+            expect(normalizer.normalize("(1)/(2)")).toBe("0.5");
+            expect(normalizer.isEquivalent("(1)/(2)", "0.5")).toBe(true);
+            expect(normalizer.isEquivalent("(3)/(4)", "0.75")).toBe(true);
+            expect(normalizer.isEquivalent("(2)/(4)", "0.5")).toBe(true);
         });
         it("treats LaTeX \\cdot and explicit multiplication as equivalent", () => {
             expect(normalizer.isEquivalent("a\\cdot b", "a*b")).toBe(true);

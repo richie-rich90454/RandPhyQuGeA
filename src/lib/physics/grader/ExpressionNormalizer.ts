@@ -17,7 +17,7 @@ export class ExpressionNormalizer implements ExpressionNormalizerLike {
     public isEquivalent(a: string, b: string): boolean {
         return this.normalize(a) === this.normalize(b);
     }
-    /** Strip `$$`, `$`, `\(...)`, `\[...\]`, `\text{...}`, `\,`, and rewrite `\cdot`/`\times`→`*`, `\div`→`/`, `\frac{a}{b}`→`(a)/(b)`. */
+    /** Strip `$$`, `$`, `\(...)`, `\[...\]`, `\text{...}`, `\,`, `\left`/`\right`, and rewrite `\cdot`/`\times`→`*`, `\div`→`/`, `\frac{a}{b}`→`(a)/(b)`. */
     private stripLatexDelimiters(s: string): string {
         return s
             .replace(/\$\$/g, "")
@@ -28,6 +28,8 @@ export class ExpressionNormalizer implements ExpressionNormalizerLike {
             .replace(/\\\]/g, "")
             .replace(/\\text\{([^}]*)\}/g, "$1")
             .replace(/\\,/g, "")
+            .replace(/\\left/g, "")
+            .replace(/\\right/g, "")
             .replace(/\\cdot/g, "*")
             .replace(/\\times/g, "*")
             .replace(/\\div/g, "/")
@@ -42,11 +44,11 @@ export class ExpressionNormalizer implements ExpressionNormalizerLike {
         return out;
     }
     private normalizeNumericFractions(s: string): string {
-        return s.replace(/(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)/g, (_match, numStr, denStr) => {
+        return s.replace(/\(?(\d+(?:\.\d+)?)\)?\/\(?(\d+(?:\.\d+)?)\)?/g, (match, numStr, denStr) => {
             const num = Number(numStr);
             const den = Number(denStr);
             if (den === 0 || !Number.isFinite(num) || !Number.isFinite(den)) {
-                return `${numStr}/${denStr}`;
+                return match;
             }
             const result = num / den;
             return this.formatNumber(result);
