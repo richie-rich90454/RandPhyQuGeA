@@ -150,3 +150,50 @@ describe("SpacedRepetitionQueue.stats", () => {
         expect(stats.due).toBe(3);
     });
 });
+describe("SpacedRepetitionQueue.interval monotonicity (preventive fix)", () => {
+    it("never decays the interval across many successful reviews even when ease is driven to its 1.3 floor", () => {
+        const q = new SpacedRepetitionQueue(1000);
+        q.review("t1", 5, 100);
+        q.review("t1", 5, 200);
+        let prev = q.get("t1")?.interval ?? 1;
+        for (let i = 0; i < 30; i++) {
+            const result = q.review("t1", 3, 300 + i);
+            expect(result.interval).toBeGreaterThanOrEqual(prev);
+            prev = result.interval;
+        }
+        expect(q.get("t1")?.ease).toBeGreaterThanOrEqual(1.3);
+        expect(q.get("t1")?.ease).toBeCloseTo(1.3, 5);
+    });
+    it("grows the interval on every successful review once reps >= 2 (guard does not cap growth)", () => {
+        const q = new SpacedRepetitionQueue(1000);
+        q.review("t1", 5, 100);
+        q.review("t1", 5, 200);
+        for (let i = 0; i < 10; i++) {
+            const before = q.get("t1")?.interval ?? 1;
+            const result = q.review("t1", 5, 300 + i);
+            expect(result.interval).toBeGreaterThan(before);
+        }
+    });
+    it("resets the interval to 1 on a failed review after a long success streak", () => {
+        const q = new SpacedRepetitionQueue(1000);
+        q.review("t1", 5, 100);
+        q.review("t1", 5, 200);
+        q.review("t1", 5, 300);
+        q.review("t1", 5, 400);
+        expect(q.get("t1")?.interval).toBeGreaterThan(1);
+        const result = q.review("t1", 2, 500);
+        expect(result.success).toBe(false);
+        expect(result.interval).toBe(1);
+        expect(result.item.repetitions).toBe(0);
+    });
+    it("new interval equals Math.max(prevInterval, Math.round(prevInterval * ease)) on the third successful review", () => {
+        const q = new SpacedRepetitionQueue(1000);
+        q.review("t1", 5, 100);
+        q.review("t1", 5, 200);
+        const before = q.get("t1");
+        const beforeInterval = before?.interval ?? 1;
+        const beforeEase = before?.ease ?? 2.5;
+        const result = q.review("t1", 5, 300);
+        expect(result.interval).toBe(Math.max(beforeInterval, Math.round(beforeInterval * beforeEase)));
+    });
+});

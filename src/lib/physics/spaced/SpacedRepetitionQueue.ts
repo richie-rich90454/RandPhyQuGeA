@@ -70,7 +70,7 @@ export class SpacedRepetitionQueue {
 		due.sort((a, b) => a.due - b.due);
 		return due;
 	}
-	/** Apply a review of quality (0-5) to `key`, updating interval/ease/reps/due. Registers the item first if unknown. */
+	/** Apply a review of quality (0-5) to `key`, updating interval/ease/reps/due. Registers the item first if unknown. On success with reps >= 2, the new interval is `Math.max(prevInterval, Math.round(prevInterval * ease))` so the interval never decays even if a future ease change were to drop below 1.0. */
 	public review(key: string, quality: number, now: number = Date.now()): ReviewResult {
 		const existing = this.items.get(key);
 		const item = existing ?? this.register(key, now);
@@ -86,7 +86,7 @@ export class SpacedRepetitionQueue {
 			} else if (item.repetitions === 1) {
 				interval = 6;
 			} else {
-				interval = Math.round(item.interval * ease);
+				interval = Math.max(item.interval, Math.round(item.interval * ease));
 			}
 		} else {
 			reps = 0;
