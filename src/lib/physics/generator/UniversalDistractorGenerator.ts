@@ -30,14 +30,28 @@ export class UniversalDistractorGenerator implements UniversalDistractorGenerato
     public get(questionType: string): ResponseFormatStrategy | undefined {
         return this.strategies.get(questionType);
     }
-    /** Generate up to `count` unique distractor strings for `context.template.question_type`, excluding `context.answer`. Selects the registered strategy (or the fallback), then dedupes raw output against the correct answer and itself, stopping once `count` unique items are collected. The returned array may be shorter than `count` when the strategy cannot produce enough unique distractors. */
+    /** Generate up to `count` unique distractor strings for `context.template.question_type`, excluding `context.answer`. Selects the registered strategy (or the fallback), then dedupes raw output against the correct answer and itself, stopping once `count` unique items are collected. Distractors that are numerically equal to the canonical answer (but formatted differently, e.g. "5.0" vs "5") are also excluded when `context.answerValue` is a finite number. The returned array may be shorter than `count` when the strategy cannot produce enough unique distractors. */
     public generate(context: DistractorContext, count: number, random: RandomGenerator): string[] {
         const strategy = this.strategies.get(context.template.question_type) ?? this.fallback;
         const raw = strategy.generateDistractors(context, count, random);
         const seen: Set<string> = new Set([context.answer]);
+        const answerValue: number = context.answerValue;
+        const hasAnswerValue: boolean = Number.isFinite(answerValue);
+        const matchesAnswer = (d: string): boolean => {
+            if (seen.has(d)) {
+                return true;
+            }
+            if (hasAnswerValue) {
+                const parsed: number = Number(d);
+                if (Number.isFinite(parsed) && parsed === answerValue) {
+                    return true;
+                }
+            }
+            return false;
+        };
         const deduped: string[] = [];
         for (const d of raw) {
-            if (seen.has(d)) {
+            if (matchesAnswer(d)) {
                 continue;
             }
             seen.add(d);

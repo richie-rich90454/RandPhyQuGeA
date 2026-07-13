@@ -86,6 +86,60 @@ describe("UniversalDistractorGenerator", () => {
             expect(distractors.length).toBeLessThan(3);
         });
     });
+    describe("dedup against numerically-equal formatted variants", () => {
+        it("excludes distractors that are numerically equal to the answer but formatted differently (e.g. 5.0 vs 5)", () => {
+            const gen = new UniversalDistractorGenerator();
+            const custom: ResponseFormatStrategy = {
+                questionType: "MC",
+                generateDistractors: () => ["5.0", "5.00", "6", "7", "8"],
+            };
+            gen.register(custom);
+            const context = buildContext({
+                answer: "5",
+                answerValue: 5,
+                template: buildTemplate({question_type: "MC"}),
+            });
+            const distractors = gen.generate(context, 3, new SeededRandomGenerator(1));
+            expect(distractors).not.toContain("5");
+            expect(distractors).not.toContain("5.0");
+            expect(distractors).not.toContain("5.00");
+            expect(distractors).toEqual(["6", "7", "8"]);
+        });
+        it("excludes a numerically-equal distractor when answer has a decimal point (e.g. 5 vs 5.0)", () => {
+            const gen = new UniversalDistractorGenerator();
+            const custom: ResponseFormatStrategy = {
+                questionType: "NE",
+                generateDistractors: () => ["5", "6", "7"],
+            };
+            gen.register(custom);
+            const context = buildContext({
+                answer: "5.0",
+                answerValue: 5,
+                template: buildTemplate({question_type: "NE"}),
+            });
+            const distractors = gen.generate(context, 2, new SeededRandomGenerator(1));
+            expect(distractors).not.toContain("5");
+            expect(distractors).not.toContain("5.0");
+            expect(distractors).toEqual(["6", "7"]);
+        });
+        it("does not treat non-numeric distractors as matching a numeric answer", () => {
+            const gen = new UniversalDistractorGenerator();
+            const custom: ResponseFormatStrategy = {
+                questionType: "MC",
+                generateDistractors: () => ["five", "6", "7"],
+            };
+            gen.register(custom);
+            const context = buildContext({
+                answer: "5",
+                answerValue: 5,
+                template: buildTemplate({question_type: "MC"}),
+            });
+            const distractors = gen.generate(context, 3, new SeededRandomGenerator(1));
+            expect(distractors).toContain("five");
+            expect(distractors).toContain("6");
+            expect(distractors).toContain("7");
+        });
+    });
     describe("no-correct-answer-duplicated invariant", () => {
         it("never includes the correct answer in the generated distractors across many seeds", () => {
             const gen = new UniversalDistractorGenerator();
