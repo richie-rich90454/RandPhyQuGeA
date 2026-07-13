@@ -31,13 +31,13 @@ export class AdaptiveDifficulty {
 		this.results = [];
 		this.difficulty = this.clamp(initial);
 	}
-	/** Record a result and return the (possibly updated) current difficulty. */
+	/** Record a result and return the (possibly updated) current difficulty. Adjustment fires once at least `windowSize` results have been collected (using `>=` rather than `===` so the trigger is robust against future trimming changes and clearly expresses "a full window of data is available"). */
 	public record(correct: boolean): number {
 		this.results.push(correct);
 		while (this.results.length > this.config.windowSize) {
 			this.results.shift();
 		}
-		if (this.results.length === this.config.windowSize) {
+		if (this.results.length >= this.config.windowSize && this.config.windowSize > 0) {
 			const acc = this.accuracy();
 			if (acc >= this.config.upThreshold) {
 				this.difficulty = this.clamp(this.difficulty + this.config.step);

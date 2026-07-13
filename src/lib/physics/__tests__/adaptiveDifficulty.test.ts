@@ -103,3 +103,43 @@ describe("AdaptiveDifficulty.reset", () => {
         expect(a.current()).toBe(1);
     });
 });
+describe("AdaptiveDifficulty.monotonic adjustment (preventive fix)", () => {
+    it("monotonically increases difficulty while high accuracy is sustained across overlapping windows", () => {
+        const a = new AdaptiveDifficulty(1, {windowSize: 3, upThreshold: 0.8, downThreshold: 0.5, step: 1, min: 1, max: 5});
+        a.record(true);
+        a.record(true);
+        a.record(true);
+        expect(a.current()).toBe(2);
+        a.record(true);
+        expect(a.current()).toBe(3);
+        a.record(true);
+        expect(a.current()).toBe(4);
+    });
+    it("monotonically decreases difficulty while low accuracy is sustained across overlapping windows", () => {
+        const a = new AdaptiveDifficulty(5, {windowSize: 3, upThreshold: 0.8, downThreshold: 0.5, step: 1, min: 1, max: 5});
+        a.record(false);
+        a.record(false);
+        a.record(false);
+        expect(a.current()).toBe(4);
+        a.record(false);
+        expect(a.current()).toBe(3);
+        a.record(false);
+        expect(a.current()).toBe(2);
+    });
+    it("does not adjust when windowSize is 0 (degenerate config guard)", () => {
+        const a = new AdaptiveDifficulty(3, {windowSize: 0, upThreshold: 0.8, downThreshold: 0.5, step: 1, min: 1, max: 5});
+        a.record(true);
+        a.record(true);
+        a.record(true);
+        expect(a.current()).toBe(3);
+    });
+    it("fires adjustment the moment the window fills (>= rather than strict ===)", () => {
+        const a = new AdaptiveDifficulty(2, {windowSize: 4, upThreshold: 1, downThreshold: 0, step: 1, min: 1, max: 5});
+        a.record(true);
+        a.record(true);
+        a.record(true);
+        expect(a.current()).toBe(2);
+        a.record(true);
+        expect(a.current()).toBe(3);
+    });
+});
