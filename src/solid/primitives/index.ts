@@ -5,6 +5,8 @@
  * consumers import from "../primitives" instead of reaching into individual
  * files. Mirrors the barrels in ../stores and ../components/ui.
  */
+export {createAchievements} from "./createAchievements";
+export type {CreateAchievementsOptions, AchievementsState} from "./createAchievements";
 export {createCountUp} from "./createCountUp";
 export type {CreateCountUpOptions} from "./createCountUp";
 export {createCountdownTimer} from "./createCountdownTimer";

@@ -1,5 +1,6 @@
 import {describe, it, expect} from "vitest";
 import {
+	createAchievements,
 	createCountUp,
 	createCountdownTimer,
 	createGlobalShortcuts,
@@ -19,6 +20,7 @@ import {
 } from "../index";
 describe("primitives barrel (regression 5.43)", () => {
 	it("re-exports every primitive as a callable function", () => {
+		expect(typeof createAchievements).toBe("function");
 		expect(typeof createCountUp).toBe("function");
 		expect(typeof createCountdownTimer).toBe("function");
 		expect(typeof createGlobalShortcuts).toBe("function");
