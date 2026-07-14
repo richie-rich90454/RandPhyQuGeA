@@ -41,6 +41,29 @@ describe("CommandPalette", () => {
 		expect(screen.getByText("Go to Playground")).toBeInTheDocument();
 		expect(screen.queryByText("Start Practice")).toBeNull();
 	});
+	it("fuzzy matches by keyword subsequence (regression for action correctness)", () => {
+		render(() => <CommandPalette open={true} onOpenChange={() => {}} commands={sampleCommands()} />);
+		let input=screen.getByPlaceholderText(/type a command/i);
+		fireEvent.input(input, {target: {value: "pcmp"}});
+		expect(screen.getByText("Go to Playground")).toBeInTheDocument();
+		expect(screen.queryByText("Start Practice")).toBeNull();
+		expect(screen.queryByText("Toggle Theme")).toBeNull();
+	});
+	it("keyword substring matching still works", () => {
+		render(() => <CommandPalette open={true} onOpenChange={() => {}} commands={sampleCommands()} />);
+		let input=screen.getByPlaceholderText(/type a command/i);
+		fireEvent.input(input, {target: {value: "components"}});
+		expect(screen.getByText("Go to Playground")).toBeInTheDocument();
+		expect(screen.queryByText("Start Practice")).toBeNull();
+	});
+	it("label subsequence matching still works (regression)", () => {
+		render(() => <CommandPalette open={true} onOpenChange={() => {}} commands={sampleCommands()} />);
+		let input=screen.getByPlaceholderText(/type a command/i);
+		fireEvent.input(input, {target: {value: "tth"}});
+		expect(screen.getByText("Toggle Theme")).toBeInTheDocument();
+		expect(screen.queryByText("Start Practice")).toBeNull();
+		expect(screen.queryByText("Go to Playground")).toBeNull();
+	});
 	it("shows an empty state when no commands match", () => {
 		render(() => <CommandPalette open={true} onOpenChange={() => {}} commands={sampleCommands()} />);
 		let input=screen.getByPlaceholderText(/type a command/i);

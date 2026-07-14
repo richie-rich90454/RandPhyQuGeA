@@ -56,16 +56,21 @@ export function createDefaultCommands(actions: CommandPaletteActions): Command[]
 		{id: "go-dx-dashboard", label: "Go to DX Dashboard", section: "Navigation", keywords: "dx dashboard coverage perf", perform: () => navigate("/dx")},
 	];
 }
+function isSubsequence(haystack: string, query: string): boolean {
+	let i=0;
+	for (let ch of haystack) {
+		if (ch === query[i]) i=i+1;
+		if (i === query.length) return true;
+	}
+	return false;
+}
 function fuzzyMatch(command: Command, query: string): boolean {
 	let label=command.label.toLowerCase();
 	if (label.includes(query)) return true;
 	let keywords=command.keywords?.toLowerCase() ?? "";
 	if (keywords.includes(query)) return true;
-	let i=0;
-	for (let ch of label) {
-		if (ch === query[i]) i=i+1;
-		if (i === query.length) return true;
-	}
+	if (isSubsequence(label, query)) return true;
+	if (isSubsequence(keywords, query)) return true;
 	return false;
 }
 export interface CommandPaletteProps {
