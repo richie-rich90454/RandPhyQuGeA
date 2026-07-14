@@ -80,6 +80,12 @@ export function QuestionCard(): JSX.Element {
 	});
 	let hasQuestion=createMemo(() => currentQuestion() !== null);
 	let choicesDisabled=createMemo(() => !hasQuestion() || showFeedback());
+	let diagramSvg=createMemo(() => {
+		let q=currentQuestion();
+		let svg=q?.diagram_svg;
+		if (!svg || svg.trim()==="") return "";
+		return svg;
+	});
 	let handleSelectChoice=(index: number) => {
 		usePracticeStore.getState().selectChoice(index);
 	};
@@ -133,9 +139,12 @@ export function QuestionCard(): JSX.Element {
 						<EmptyState illustration={<QuestionIcon />} title="Pick a topic and click Generate to start" />
 					}>
 						<div class={styles.questionText}>
-							<MathText text={currentQuestion()!.text} />
-						</div>
-						<Show when={isMcq() && currentQuestion()!.choices}>
+						<MathText text={currentQuestion()!.text} />
+					</div>
+					<Show when={diagramSvg()}>
+						<div class={styles.diagram} role="img" aria-label="Question diagram" innerHTML={diagramSvg()} />
+					</Show>
+					<Show when={isMcq() && currentQuestion()!.choices}>
 							<Show when={isMultiSelect()} fallback={
 								<div
 									ref={(el: HTMLDivElement) => { choicesContainerEl=el; }}

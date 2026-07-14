@@ -29,6 +29,22 @@
 	overflow-y: hidden;
 	padding: var(--space-1) 0;
 }
+.diagram {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: var(--space-2);
+	padding: var(--space-3);
+	background: var(--surface-muted);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-md);
+	overflow: auto;
+	max-width: 100%;
+}
+.diagram :global(svg) {
+	max-width: 100%;
+	height: auto;
+}
 .choicesContainer {
 	display: flex;
 	flex-direction: column;
