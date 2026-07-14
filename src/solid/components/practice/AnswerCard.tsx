@@ -89,9 +89,21 @@ export function AnswerCard(): JSX.Element {
 		if (!textarea || inputDisabled() || isMcq()) return;
 		let start=textarea.selectionStart;
 		let end=textarea.selectionEnd;
-		let current=userAnswer();
-		let next=current.slice(0, start) + latex + current.slice(end);
-		usePracticeStore.getState().setUserAnswer(next);
+		textarea.focus();
+		textarea.setSelectionRange(start, end);
+		let inserted=false;
+		try {
+			if (typeof document.execCommand === "function") {
+				inserted=document.execCommand("insertText", false, latex);
+			}
+		} catch {
+			inserted=false;
+		}
+		if (!inserted) {
+			let current=userAnswer();
+			let next=current.slice(0, start) + latex + current.slice(end);
+			usePracticeStore.getState().setUserAnswer(next);
+		}
 		requestAnimationFrame(() => {
 			let pos=start + latex.length;
 			textarea.focus();

@@ -1,5 +1,5 @@
 import {render, screen, fireEvent} from "@solidjs/testing-library";
-import {describe, it, expect, beforeEach} from "vitest";
+import {describe, it, expect, beforeEach, vi, afterEach} from "vitest";
 import {AnswerCard} from "../AnswerCard";
 import {usePracticeStore} from "../../../stores/practiceStore";
 import {useSpecStore} from "../../../stores/specStore";
@@ -39,6 +39,10 @@ function makeSession(question: GeneratedQuestion): Session {
 beforeEach(() => {
 	usePracticeStore.setState(usePracticeStore.getInitialState());
 	useSpecStore.setState(useSpecStore.getInitialState());
+});
+afterEach(() => {
+	vi.restoreAllMocks();
+	Reflect.deleteProperty(document, "execCommand");
 });
 describe("AnswerCard", () => {
 	it("renders the answer textarea for a free-response question", () => {
@@ -133,5 +137,37 @@ describe("AnswerCard", () => {
 		expect(label).not.toBeNull();
 		expect(label?.textContent).toBe("Answer");
 		expect(screen.getByLabelText("Answer")).toBeInTheDocument();
+	});
+	it("inserts a math symbol at the cursor via the fallback path (undo/redo regression)", () => {
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "abc"});
+		render(() => <AnswerCard />);
+		let textarea=screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+		textarea.focus();
+		textarea.setSelectionRange(1, 1);
+		fireEvent.click(screen.getByText("\u221a"));
+		expect(usePracticeStore.getState().userAnswer).toBe("a\\sqrt{}bc");
+	});
+	it("uses execCommand insertText for undoable symbol insertion when available (undo/redo regression)", () => {
+		let execSpy=vi.fn().mockReturnValue(true);
+		Object.defineProperty(document, "execCommand", {value: execSpy, configurable: true, writable: true});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "abc"});
+		render(() => <AnswerCard />);
+		let textarea=screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+		textarea.focus();
+		textarea.setSelectionRange(1, 1);
+		fireEvent.click(screen.getByText("\u221a"));
+		expect(execSpy).toHaveBeenCalledWith("insertText", false, "\\sqrt{}");
+	});
+	it("falls back to manual insertion when execCommand returns false (undo/redo regression)", () => {
+		let execSpy=vi.fn().mockReturnValue(false);
+		Object.defineProperty(document, "execCommand", {value: execSpy, configurable: true, writable: true});
+		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "abc"});
+		render(() => <AnswerCard />);
+		let textarea=screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+		textarea.focus();
+		textarea.setSelectionRange(2, 2);
+		fireEvent.click(screen.getByText("\u221a"));
+		expect(usePracticeStore.getState().userAnswer).toBe("ab\\sqrt{}c");
+		expect(execSpy).toHaveBeenCalledWith("insertText", false, "\\sqrt{}");
 	});
 });
