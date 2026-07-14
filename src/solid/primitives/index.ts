@@ -7,6 +7,8 @@
  */
 export {createAchievements} from "./createAchievements";
 export type {CreateAchievementsOptions, AchievementsState} from "./createAchievements";
+export {createBookmarks} from "./createBookmarks";
+export type {CreateBookmarksOptions, BookmarksState} from "./createBookmarks";
 export {createCountUp} from "./createCountUp";
 export type {CreateCountUpOptions} from "./createCountUp";
 export {createCountdownTimer} from "./createCountdownTimer";
