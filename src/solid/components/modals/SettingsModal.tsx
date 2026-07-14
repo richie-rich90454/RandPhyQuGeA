@@ -258,7 +258,7 @@ export function SettingsModal(): JSX.Element {
 					<SettingsSection title="Keyboard Shortcuts">
 						<For each={SHORTCUT_ITEMS}>{(item) => (
 							<SettingsRow label={item.label} hint={`Default: ${item.default}`} controlId={`settings-shortcut-${item.action}`}>
-								<Input id={`settings-shortcut-${item.action}`} type="text" value={getShortcut(item.action, item.default)} onChange={handleShortcutChange(item.action)} />
+								<Input id={`settings-shortcut-${item.action}`} type="text" value={getShortcut(item.action, item.default)} onInput={handleShortcutChange(item.action)} />
 							</SettingsRow>
 						)}</For>
 					</SettingsSection>

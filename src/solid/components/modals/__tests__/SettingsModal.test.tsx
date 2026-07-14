@@ -90,4 +90,31 @@ describe("SettingsModal", () => {
 		fireEvent.click(screen.getByRole("button", {name: /save & close/i}));
 		await waitFor(() => expect(useUiStore.getState().activeModal).toBe(null));
 	});
+	it("shows the default shortcut value when no customization is set", async () => {
+		useUiStore.getState().openModal("settings");
+		render(() => <SettingsModal />);
+		fireEvent.click(screen.getByRole("tab", {name: /advanced/i}));
+		await waitFor(() => expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument());
+		let input=screen.getByLabelText("Generate question") as HTMLInputElement;
+		expect(input.value).toBe("Ctrl+G");
+	});
+	it("persists shortcut customization on input without requiring blur (regression)", async () => {
+		useUiStore.getState().openModal("settings");
+		render(() => <SettingsModal />);
+		fireEvent.click(screen.getByRole("tab", {name: /advanced/i}));
+		await waitFor(() => expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument());
+		let input=screen.getByLabelText("Generate question");
+		fireEvent.input(input, {target: {value: "Ctrl+H"}});
+		await waitFor(() => expect(useSettingsStore.getState().customShortcuts.generate).toBe("Ctrl+H"));
+	});
+	it("does not lose shortcut customization when no change event fires (regression)", async () => {
+		useUiStore.getState().openModal("settings");
+		render(() => <SettingsModal />);
+		fireEvent.click(screen.getByRole("tab", {name: /advanced/i}));
+		await waitFor(() => expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument());
+		let input=screen.getByLabelText("Toggle theme");
+		fireEvent.input(input, {target: {value: "Ctrl+J"}});
+		expect(useSettingsStore.getState().customShortcuts.toggleTheme).toBe("Ctrl+J");
+		expect(useSettingsStore.getState().customShortcuts.generate).toBeUndefined();
+	});
 });
