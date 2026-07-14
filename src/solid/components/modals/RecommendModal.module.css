@@ -92,6 +92,59 @@
 .topicAction {
 	align-self: flex-end;
 }
+.reviewSection {
+	margin-bottom: var(--space-4);
+}
+.reviewHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	margin-bottom: var(--space-3);
+}
+.reviewIcon {
+	display: inline-flex;
+	align-items: center;
+	color: var(--accent);
+}
+.reviewTitle {
+	font-size: var(--font-size-md);
+	font-weight: var(--font-weight-semibold);
+	color: var(--text);
+}
+.reviewCount {
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-bold);
+	color: var(--text-muted);
+}
+.reviewList {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2);
+}
+.reviewItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-3);
+	padding: var(--space-2) var(--space-3);
+	background: var(--surface);
+	border-radius: var(--radius-md);
+}
+.reviewKey {
+	font-size: var(--font-size-sm);
+	font-weight: var(--font-weight-medium);
+	color: var(--text);
+}
+.reviewMeta {
+	font-size: var(--font-size-xs);
+	color: var(--text-muted);
+}
+.reviewAction {
+	flex-shrink: 0;
+}
 @media (prefers-reduced-motion: reduce) {
 	.topicCard {
 		transition: none;

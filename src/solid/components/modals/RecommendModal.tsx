@@ -13,6 +13,7 @@ import {usePracticeStore} from "../../stores/practiceStore";
 import {useSettingsStore} from "../../stores/settingsStore";
 import {AnalyticsService} from "../../../services/AnalyticsService";
 import type {IAnalyticsService, WeakTopic} from "../../../services/contracts";
+import type {SpacedRepetitionQueue, SpacedRepetitionItem} from "../../../lib/physics/spaced/SpacedRepetitionQueue";
 import styles from "./RecommendModal.module.css";
 /** Maximum number of weak topics to display. */
 const MAX_RECOMMENDATIONS=8;
@@ -51,9 +52,19 @@ function LightbulbIcon(): JSX.Element {
 		</svg>
 	);
 }
+function ClockIcon(): JSX.Element {
+	return (
+		<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+			<circle cx="12" cy="12" r="9" />
+			<path d="M12 7v5l3 3" stroke-linecap="round" stroke-linejoin="round" />
+		</svg>
+	);
+}
 export interface RecommendModalProps {
 	/** Override the analytics service used for weak-topic computation. */
 	analytics?: IAnalyticsService;
+	/** Optional spaced-repetition queue whose due items are surfaced for review. */
+	spacedRepetition?: SpacedRepetitionQueue;
 }
 /**
  * Recommend overlay mapped to `#weak-topics-modal`.
@@ -77,6 +88,10 @@ export function RecommendModal(props: RecommendModalProps): JSX.Element {
 		let r=results();
 		if (r.length===0) return [];
 		return analytics.getWeakTopics(r, spec, WEAK_THRESHOLD).slice(0, MAX_RECOMMENDATIONS);
+	});
+	let dueItems=createMemo<SpacedRepetitionItem[]>(() => {
+		if (!props.spacedRepetition) return [];
+		return props.spacedRepetition.getDue();
 	});
 	let totalAttempts=() => results().length;
 	let handlePractice=(topicId: string) => {
@@ -108,7 +123,27 @@ export function RecommendModal(props: RecommendModalProps): JSX.Element {
 				</>
 			}
 		>
-			<Show when={weakTopics().length===0} fallback={
+			<Show when={dueItems().length>0}>
+				<section class={styles.reviewSection} aria-label="Spaced repetition reviews due">
+					<div class={styles.reviewHeader}>
+						<span class={styles.reviewIcon}><ClockIcon /></span>
+						<span class={styles.reviewTitle}>Due for Review</span>
+						<span class={styles.reviewCount}>{dueItems().length}</span>
+					</div>
+					<ul class={styles.reviewList}>
+						<For each={dueItems()}>{(item) => {
+							return (
+								<li class={styles.reviewItem}>
+									<span class={styles.reviewKey}>{item.key}</span>
+									<span class={styles.reviewMeta}>{item.interval}d interval · {item.repetitions} rep{item.repetitions===1 ? "" : "s"}</span>
+									<Button variant="secondary" size="sm" class={styles.reviewAction} onClick={() => handlePractice(item.key)}>Review</Button>
+								</li>
+							);
+						}}</For>
+					</ul>
+				</section>
+			</Show>
+			<Show when={weakTopics().length===0 && dueItems().length===0} fallback={
 				<>
 					<Card variant="filled" class={styles.summaryCard}>
 						<CardContent class={styles.summaryContent}>
