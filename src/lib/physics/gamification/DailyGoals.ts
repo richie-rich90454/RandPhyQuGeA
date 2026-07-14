@@ -49,8 +49,8 @@ export class DailyGoals {
 	private streak: number;
 	private bestStreakValue: number;
 	private lastCompletedDay: string | null;
-	/** Construct with the default goals, or a custom `goals` list. `today` is a YYYY-MM-DD day key (defaults to today UTC). */
-	public constructor(goals?: DailyGoalDefinition[], today: string = DailyGoals.utcDay(Date.now())) {
+	/** Construct with the default goals, or a custom `goals` list. `today` is a YYYY-MM-DD day key (defaults to today in the local timezone). */
+	public constructor(goals?: DailyGoalDefinition[], today: string = DailyGoals.localDay(Date.now())) {
 		this.goals = goals ?? DailyGoals.defaultGoals();
 		this.snapshot = {questionsAnswered: 0, correctAnswers: 0, topicsPracticed: 0, sessionMinutes: 0};
 		this.dayKey = today;
@@ -59,7 +59,7 @@ export class DailyGoals {
 		this.lastCompletedDay = null;
 	}
 	/** Record `snapshot` for `today`, rolling over the day (and updating the streak) when the day changes. Returns the goals that became complete with this update (excluding those already complete). */
-	public record(snapshot: DailyGoalSnapshot, today: string = DailyGoals.utcDay(Date.now())): DailyGoalDefinition[] {
+	public record(snapshot: DailyGoalSnapshot, today: string = DailyGoals.localDay(Date.now())): DailyGoalDefinition[] {
 		if (today !== this.dayKey) {
 			this.finalizeDay();
 			this.dayKey = today;
@@ -142,6 +142,14 @@ export class DailyGoals {
 		const y = d.getUTCFullYear();
 		const m = String(d.getUTCMonth() + 1).padStart(2, "0");
 		const day = String(d.getUTCDate()).padStart(2, "0");
+		return `${y}-${m}-${day}`;
+	}
+	/** Format an epoch millisecond timestamp as a local YYYY-MM-DD day key (respects the host timezone so goals roll over at local midnight, not UTC midnight). */
+	public static localDay(epochMs: number): string {
+		const d = new Date(epochMs);
+		const y = d.getFullYear();
+		const m = String(d.getMonth() + 1).padStart(2, "0");
+		const day = String(d.getDate()).padStart(2, "0");
 		return `${y}-${m}-${day}`;
 	}
 	/** Compute the current value of `metric` from the stored snapshot. */

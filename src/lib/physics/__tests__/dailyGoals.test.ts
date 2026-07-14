@@ -1,4 +1,4 @@
-import {describe, it, expect} from "vitest";
+import {describe, it, expect, vi, afterEach} from "vitest";
 import {DailyGoals} from "../gamification/DailyGoals";
 import type {DailyGoalSnapshot, DailyGoalDefinition} from "../gamification/DailyGoals";
 function snap(overrides: Partial<DailyGoalSnapshot> = {}): DailyGoalSnapshot {
@@ -125,5 +125,68 @@ describe("DailyGoals custom + helpers", () => {
 	it("utcDay formats an epoch as YYYY-MM-DD", () => {
 		const key = DailyGoals.utcDay(Date.UTC(2026, 0, 5, 12, 0, 0));
 		expect(key).toBe("2026-01-05");
+	});
+});
+describe("DailyGoals localDay + timezone defaults (task 5.70)", () => {
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+	it("localDay formats an epoch as a local YYYY-MM-DD string", () => {
+		const epoch=Date.UTC(2026, 0, 5, 12, 0, 0);
+		const result=DailyGoals.localDay(epoch);
+		expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+		const local=new Date(epoch);
+		const expected=`${local.getFullYear()}-${String(local.getMonth() + 1).padStart(2, "0")}-${String(local.getDate()).padStart(2, "0")}`;
+		expect(result).toBe(expected);
+	});
+	it("localDay uses local date components, not UTC", () => {
+		const epoch=Date.UTC(2026, 0, 5, 23, 0, 0);
+		const local=DailyGoals.localDay(epoch);
+		const utc=DailyGoals.utcDay(epoch);
+		const localDate=new Date(epoch);
+		const expected=`${localDate.getFullYear()}-${String(localDate.getMonth() + 1).padStart(2, "0")}-${String(localDate.getDate()).padStart(2, "0")}`;
+		expect(local).toBe(expected);
+		expect(utc).toBe("2026-01-05");
+		if (utc !== local) {
+			expect(local).toBe("2026-01-06");
+		}
+	});
+	it("constructor defaults to localDay(Date.now()) not utcDay", () => {
+		const fixedEpoch=Date.UTC(2026, 0, 5, 23, 0, 0);
+		const spy=vi.spyOn(Date, "now").mockReturnValue(fixedEpoch);
+		const g=new DailyGoals();
+		const localExpected=DailyGoals.localDay(fixedEpoch);
+		const utcExpected=DailyGoals.utcDay(fixedEpoch);
+		expect(g.currentDay()).toBe(localExpected);
+		if (utcExpected !== localExpected) {
+			expect(g.currentDay()).not.toBe(utcExpected);
+		}
+		spy.mockRestore();
+	});
+	it("record defaults to localDay(Date.now()) not utcDay", () => {
+		const fixedEpoch=Date.UTC(2026, 0, 5, 23, 0, 0);
+		const spy=vi.spyOn(Date, "now").mockReturnValue(fixedEpoch);
+		const g=new DailyGoals(undefined, "2025-12-31");
+		g.record(snap({questionsAnswered: 1}));
+		const localExpected=DailyGoals.localDay(fixedEpoch);
+		const utcExpected=DailyGoals.utcDay(fixedEpoch);
+		expect(g.currentDay()).toBe(localExpected);
+		if (utcExpected !== localExpected) {
+			expect(g.currentDay()).not.toBe(utcExpected);
+		}
+		spy.mockRestore();
+	});
+	it("goals roll over at local midnight, not UTC midnight", () => {
+		const g=new DailyGoals(undefined, "2026-01-05");
+		g.record(snap({questionsAnswered: 20}), "2026-01-05");
+		const spy=vi.spyOn(Date, "now").mockReturnValue(Date.UTC(2026, 0, 6, 0, 30, 0));
+		g.record(snap({questionsAnswered: 1}));
+		const localAtEpoch=DailyGoals.localDay(Date.UTC(2026, 0, 6, 0, 30, 0));
+		const utcAtEpoch=DailyGoals.utcDay(Date.UTC(2026, 0, 6, 0, 30, 0));
+		expect(g.currentDay()).toBe(localAtEpoch);
+		if (localAtEpoch !== utcAtEpoch) {
+			expect(g.currentDay()).not.toBe(utcAtEpoch);
+		}
+		spy.mockRestore();
 	});
 });
