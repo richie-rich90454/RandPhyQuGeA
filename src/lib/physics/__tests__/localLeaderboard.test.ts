@@ -129,3 +129,35 @@ describe("LocalLeaderboard.clear / count", () => {
 		expect(lb.all()).toEqual([]);
 	});
 });
+describe("LocalLeaderboard.add tie-break (task 5.71)", () => {
+	it("tied entries share the better rank", () => {
+		const lb = new LocalLeaderboard(10);
+		expect(lb.add(entry("a", 50, 1))).toBe(1);
+		expect(lb.add(entry("b", 50, 2))).toBe(1);
+	});
+	it("the entry after a tie gets the correct skipping rank", () => {
+		const lb = new LocalLeaderboard(10);
+		lb.add(entry("a", 50, 1));
+		lb.add(entry("b", 50, 2));
+		expect(lb.add(entry("c", 30, 3))).toBe(3);
+	});
+	it("three-way tie shares rank 1", () => {
+		const lb = new LocalLeaderboard(10);
+		expect(lb.add(entry("a", 50, 1))).toBe(1);
+		expect(lb.add(entry("b", 50, 2))).toBe(1);
+		expect(lb.add(entry("c", 50, 3))).toBe(1);
+	});
+	it("non-tied entries still get sequential ranks", () => {
+		const lb = new LocalLeaderboard(10);
+		expect(lb.add(entry("a", 50, 1))).toBe(1);
+		expect(lb.add(entry("b", 30, 2))).toBe(2);
+		expect(lb.add(entry("c", 10, 3))).toBe(3);
+	});
+	it("tie at a lower score shares the correct rank", () => {
+		const lb = new LocalLeaderboard(10);
+		lb.add(entry("a", 100, 1));
+		lb.add(entry("b", 50, 2));
+		expect(lb.add(entry("c", 50, 3))).toBe(2);
+		expect(lb.add(entry("d", 30, 4))).toBe(4);
+	});
+});

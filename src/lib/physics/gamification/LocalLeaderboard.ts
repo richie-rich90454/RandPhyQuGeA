@@ -32,7 +32,7 @@ export class LocalLeaderboard {
 		this.entries = [];
 		this.maxSize = Math.max(1, Math.floor(maxSize));
 	}
-	/** Add `entry` and re-sort. Returns the 1-based rank of the entry, or -1 when it did not make the cut (was dropped to enforce the cap). */
+	/** Add `entry` and re-sort. Returns the 1-based rank of the entry (ties share the better rank), or -1 when it did not make the cut (was dropped to enforce the cap). */
 	public add(entry: LeaderboardEntry): number {
 		this.entries.push(entry);
 		this.entries.sort(compareEntries);
@@ -43,7 +43,7 @@ export class LocalLeaderboard {
 				return -1;
 			}
 		}
-		return this.rankOfIndex(entry);
+		return this.rankOfScore(entry.score);
 	}
 	/** Return the top `n` entries (1-based ordering; fewer when the board is smaller). */
 	public top(n: number): LeaderboardEntry[] {
