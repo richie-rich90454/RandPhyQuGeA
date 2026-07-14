@@ -166,7 +166,7 @@ function FeedbackContent(props: FeedbackContentProps): JSX.Element {
 								</Show>
 								<Show when={step.substitution}>
 									<div class={styles.stepSubstitution}>
-										<MathText text={step.substitution!} />
+										<MathRenderer display={true} tex={step.substitution!} />
 									</div>
 								</Show>
 								<Show when={step.result}>

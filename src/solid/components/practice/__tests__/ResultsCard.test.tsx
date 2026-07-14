@@ -235,4 +235,53 @@ describe("ResultsCard", () => {
 		expect(screen.queryByRole("list")).not.toBeInTheDocument();
 		expect(screen.queryByText("Final answer:")).not.toBeInTheDocument();
 	});
+	it("renders step.substitution as LaTeX via MathRenderer (regression 5.76)", () => {
+		let workedSolution: WorkedSolution={
+			questionId: "q1",
+			title: "Solution",
+			steps: [
+				{
+					description: "Plug in numbers",
+					latex: "a = \\frac{v - v_0}{t}",
+					substitution: "a = \\frac{20 - 0}{4}",
+					result: "a = 5",
+				},
+			],
+		};
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion()),
+			showFeedback: true,
+			lastResult: {isCorrect: true, correctAnswer: "5"},
+		});
+		let {container}=render(() => <ResultsCard workedSolution={workedSolution} />);
+		let substitutionEl=container.querySelector('[class*="stepSubstitution"]');
+		expect(substitutionEl).not.toBeNull();
+		expect(substitutionEl?.querySelector(".katex")).not.toBeNull();
+		expect(substitutionEl?.querySelector("div[class*='display']")).not.toBeNull();
+		expect(substitutionEl?.querySelector("span.katex-html")).not.toBeNull();
+	});
+	it("renders step.latex as LaTeX via MathRenderer (regression 5.76)", () => {
+		let workedSolution: WorkedSolution={
+			questionId: "q1",
+			title: "Solution",
+			steps: [
+				{
+					description: "Formula",
+					latex: "a = \\frac{v - v_0}{t}",
+				},
+			],
+		};
+		usePracticeStore.setState({
+			...usePracticeStore.getState(),
+			session: makeSession(makeQuestion()),
+			showFeedback: true,
+			lastResult: {isCorrect: true, correctAnswer: "5"},
+		});
+		let {container}=render(() => <ResultsCard workedSolution={workedSolution} />);
+		let expressionEl=container.querySelector('[class*="stepExpression"]');
+		expect(expressionEl).not.toBeNull();
+		expect(expressionEl?.querySelector(".katex")).not.toBeNull();
+		expect(expressionEl?.querySelector("div[class*='display']")).not.toBeNull();
+	});
 });
