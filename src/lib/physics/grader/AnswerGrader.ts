@@ -2,16 +2,19 @@ import type {AnswerGraderLike, ExpressionNormalizerLike, GradeResult} from "../c
 import type {GeneratedQuestion} from "../types";
 import {QUESTION_TYPES} from "../types";
 import {ExpressionNormalizer} from "./ExpressionNormalizer";
+import {ScientificNotation} from "../format/ScientificNotation";
 /** Default absolute tolerance for numeric-tolerance grading (e.g. 9.8 vs 9.799 passes; 9.8 vs 9.82 fails). */
 const DEFAULT_NUMERIC_TOLERANCE = 0.01;
 /** Central answer grader: dispatches by response mode (mcq vs frq) and question type (TF boolean, NE/MC numeric-tolerance, SA expression-equivalence, FB exact/numeric). Shared between Single and Mental modes so no grading logic is duplicated. */
 export class AnswerGrader implements AnswerGraderLike {
     private readonly normalizer: ExpressionNormalizerLike;
     private readonly numericTolerance: number;
+    private readonly sciNotation: ScientificNotation;
     /** Construct the grader. `normalizer` defaults to a new {@link ExpressionNormalizer} (used for SA equivalence); `numericTolerance` defaults to 0.01 (absolute) for NE/MC numeric comparison. */
     public constructor(normalizer?: ExpressionNormalizerLike, numericTolerance?: number) {
         this.normalizer = normalizer ?? new ExpressionNormalizer();
         this.numericTolerance = numericTolerance ?? DEFAULT_NUMERIC_TOLERANCE;
+        this.sciNotation = new ScientificNotation();
     }
     /** Grade `response` against `question`. For `response_mode='mcq'`, `selectedIndex` (the chosen choice index) is matched against `correct_choice_index`; for `response_mode='frq'`, grading dispatches by question type (TF boolean, NE/MC numeric-tolerance, SA expression-equivalence, FB exact-or-numeric). */
     public grade(question: GeneratedQuestion, response: string, selectedIndex?: number): GradeResult {
@@ -98,10 +101,10 @@ export class AnswerGrader implements AnswerGraderLike {
         }
         return lower;
     }
-    /** Numeric grading: correct when |response − answer| ≤ numericTolerance (with a relative epsilon to absorb floating-point rounding at the exact boundary, e.g. |96.01 − 96| = 0.010000000000005116 in IEEE-754); falls back to exact string match when either side is non-numeric. */
+    /** Numeric grading: correct when |response − answer| ≤ numericTolerance (with a relative epsilon to absorb floating-point rounding at the exact boundary, e.g. |96.01 − 96| = 0.010000000000005116 in IEEE-754); falls back to exact string match when either side is non-numeric. Both plain `e` notation (e.g. "6.674e-11") and LaTeX `\times 10^{n}` notation (e.g. "6.674 \times 10^{-11}") are parsed via {@link ScientificNotation} so the user's input is accepted regardless of the form stored on the question. */
     private gradeNumeric(response: string, answer: string): GradeResult {
-        const responseNum = Number(response.trim());
-        const answerNum = Number(answer.trim());
+        const responseNum = this.parseNumeric(response);
+        const answerNum = this.parseNumeric(answer);
         if (Number.isFinite(responseNum) && Number.isFinite(answerNum)) {
             const diff = Math.abs(responseNum - answerNum);
             const magnitude = Math.max(1, Math.abs(responseNum), Math.abs(answerNum));
@@ -112,6 +115,19 @@ export class AnswerGrader implements AnswerGraderLike {
         const normalizedResponse = response.trim().toLowerCase();
         const normalizedAnswer = answer.trim().toLowerCase();
         return {is_correct: normalizedResponse === normalizedAnswer, normalized_response: normalizedResponse, normalized_answer: normalizedAnswer};
+    }
+    /** Parse a numeric string into a number, accepting plain decimals, `e` notation, and LaTeX `\times 10^{n}` notation. Returns `NaN` when the input is not recognized as a finite number. */
+    private parseNumeric(input: string): number {
+        const trimmed = input.trim();
+        const direct = Number(trimmed);
+        if (Number.isFinite(direct)) {
+            return direct;
+        }
+        const parsed = this.sciNotation.parse(trimmed);
+        if (parsed !== null) {
+            return parsed.value;
+        }
+        return Number.NaN;
     }
     /** Expression grading: correct when the normalizer equates response and answer; otherwise falls back to numeric-tolerance comparison. */
     private gradeExpression(response: string, answer: string): GradeResult {
