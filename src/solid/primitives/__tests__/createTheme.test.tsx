@@ -70,13 +70,14 @@ function ThemeRoot(): JSX.Element {
 	createTheme({settingsStore: useSettingsStore});
 	return <div>theme</div>;
 }
-function resetSettings(overrides: {themeMode?: "light" | "dark" | "dim" | "system", reducedMotion?: boolean, locale?: string}={}): void {
-	useSettingsStore.setState({themeMode: "light", reducedMotion: false, locale: "en", ...overrides});
+function resetSettings(overrides: {themeMode?: "light" | "dark" | "dim" | "system", reducedMotion?: boolean, locale?: string, fontSize?: "small" | "medium" | "large"}={}): void {
+	useSettingsStore.setState({themeMode: "light", reducedMotion: false, locale: "en", fontSize: "medium", ...overrides});
 }
 beforeEach(() => {
 	document.documentElement.removeAttribute("data-theme");
 	document.documentElement.removeAttribute("data-reduce-motion");
 	document.documentElement.removeAttribute("dir");
+	document.documentElement.removeAttribute("data-font-size");
 	let existingMeta=document.querySelector('meta[name="theme-color"]');
 	if (existingMeta) {
 		existingMeta.remove();
@@ -209,5 +210,44 @@ describe("createTheme", () => {
 		render(() => <ThemeRoot />);
 		await flush();
 		expect(document.documentElement.getAttribute("dir")).toBe("ltr");
+	});
+});
+describe("createTheme font-size application (task 5.67)", () => {
+	it("applies data-font-size medium by default", async () => {
+		resetSettings({fontSize: "medium"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("data-font-size")).toBe("medium");
+	});
+	it("applies data-font-size small when fontSize is small", async () => {
+		resetSettings({fontSize: "small"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("data-font-size")).toBe("small");
+	});
+	it("applies data-font-size large when fontSize is large", async () => {
+		resetSettings({fontSize: "large"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("data-font-size")).toBe("large");
+	});
+	it("reacts to fontSize changes from the store", async () => {
+		resetSettings({fontSize: "medium"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("data-font-size")).toBe("medium");
+		useSettingsStore.getState().setFontSize("large");
+		await flush();
+		expect(document.documentElement.getAttribute("data-font-size")).toBe("large");
+		useSettingsStore.getState().setFontSize("small");
+		await flush();
+		expect(document.documentElement.getAttribute("data-font-size")).toBe("small");
+	});
+	it("clears a stale data-font-size attribute before the first effect runs", async () => {
+		document.documentElement.setAttribute("data-font-size", "large");
+		resetSettings({fontSize: "small"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("data-font-size")).toBe("small");
 	});
 });

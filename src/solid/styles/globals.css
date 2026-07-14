@@ -378,6 +378,15 @@ html {
 html:focus-within {
 	scroll-behavior: smooth;
 }
+:root[data-font-size="small"] {
+	font-size: 93.75%;
+}
+:root[data-font-size="medium"] {
+	font-size: 100%;
+}
+:root[data-font-size="large"] {
+	font-size: 112.5%;
+}
 body {
 	min-height: 100vh;
 	min-height: 100dvh;
