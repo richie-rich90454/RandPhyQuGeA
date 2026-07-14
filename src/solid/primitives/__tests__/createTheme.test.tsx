@@ -70,12 +70,13 @@ function ThemeRoot(): JSX.Element {
 	createTheme({settingsStore: useSettingsStore});
 	return <div>theme</div>;
 }
-function resetSettings(overrides: {themeMode?: "light" | "dark" | "dim" | "system", reducedMotion?: boolean}={}): void {
-	useSettingsStore.setState({themeMode: "light", reducedMotion: false, ...overrides});
+function resetSettings(overrides: {themeMode?: "light" | "dark" | "dim" | "system", reducedMotion?: boolean, locale?: string}={}): void {
+	useSettingsStore.setState({themeMode: "light", reducedMotion: false, locale: "en", ...overrides});
 }
 beforeEach(() => {
 	document.documentElement.removeAttribute("data-theme");
 	document.documentElement.removeAttribute("data-reduce-motion");
+	document.documentElement.removeAttribute("dir");
 	let existingMeta=document.querySelector('meta[name="theme-color"]');
 	if (existingMeta) {
 		existingMeta.remove();
@@ -163,5 +164,50 @@ describe("createTheme", () => {
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", false);
 		await flush();
 		expect(meta?.getAttribute("content")).toBe(contentBefore);
+	});
+	it("sets dir=ltr for a default English locale (RTL mirroring regression)", async () => {
+		resetSettings({locale: "en"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("dir")).toBe("ltr");
+	});
+	it("sets dir=rtl when locale is Arabic (RTL mirroring regression)", async () => {
+		resetSettings({locale: "ar"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("dir")).toBe("rtl");
+	});
+	it("sets dir=rtl when locale is Hebrew with a region subtag (RTL mirroring regression)", async () => {
+		resetSettings({locale: "he-IL"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("dir")).toBe("rtl");
+	});
+	it("sets dir=rtl for Persian and Urdu locales (RTL mirroring regression)", async () => {
+		resetSettings({locale: "fa-IR"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("dir")).toBe("rtl");
+		useSettingsStore.getState().setLocale("ur-PK");
+		await flush();
+		expect(document.documentElement.getAttribute("dir")).toBe("rtl");
+	});
+	it("reacts to locale changes from the store and flips dir (RTL mirroring regression)", async () => {
+		resetSettings({locale: "en"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("dir")).toBe("ltr");
+		useSettingsStore.getState().setLocale("ar-SA");
+		await flush();
+		expect(document.documentElement.getAttribute("dir")).toBe("rtl");
+		useSettingsStore.getState().setLocale("en-US");
+		await flush();
+		expect(document.documentElement.getAttribute("dir")).toBe("ltr");
+	});
+	it("treats an unknown locale as LTR (RTL mirroring regression)", async () => {
+		resetSettings({locale: "xx-YY"});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.getAttribute("dir")).toBe("ltr");
 	});
 });

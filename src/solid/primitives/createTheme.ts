@@ -2,6 +2,19 @@ import {createEffect, onCleanup} from "solid-js";
 import {useSettingsStore} from "../stores/settingsStore";
 import type {SettingsState} from "../stores/settingsStore";
 import type {SolidStore} from "../stores/createSolidStore";
+/** BCP-47 primary language subtags whose default script is right-to-left. */
+const RTL_LANGS=new Set(["ar", "he", "fa", "ur", "ps", "sd", "yi", "ug"]);
+/**
+ * Resolve whether a BCP-47 locale tag should render right-to-left.
+ *
+ * Accepts both bare language (`"ar"`) and region-tagged (`"ar-SA"`,
+ * `"he-IL"`) forms by comparing only the primary subtag (case-insensitive).
+ * Unknown / empty locales fall back to LTR.
+ */
+let isRtlLocale=(locale: string): boolean => {
+	let lang=locale.split("-")[0]?.toLowerCase() ?? "";
+	return RTL_LANGS.has(lang);
+};
 export interface CreateThemeOptions {
 	settingsStore?: SolidStore<SettingsState>;
 }
@@ -14,12 +27,15 @@ export interface CreateThemeOptions {
  * `globals.css`). When the mode is `system`, the OS `prefers-color-scheme`
  * media query is followed live. The `<meta name="theme-color">` tag is kept in
  * sync and a `data-reduce-motion` attribute reflects the reduced-motion setting
- * or OS preference. Listeners are disposed via `onCleanup`.
+ * or OS preference. The `locale` setting is mirrored onto the document root's
+ * `dir` attribute so RTL languages (ar, he, fa, ur, ...) flip the layout.
+ * Listeners are disposed via `onCleanup`.
  */
 export function createTheme(options: CreateThemeOptions = {}): void {
 	let store=options.settingsStore ?? useSettingsStore;
 	let themeMode=store(s => s.themeMode);
 	let reducedMotion=store(s => s.reducedMotion);
+	let locale=store(s => s.locale);
 	let root=document.documentElement;
 	let colorSchemeMql=window.matchMedia("(prefers-color-scheme: dark)");
 	let reducedMotionMql=window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -56,6 +72,9 @@ export function createTheme(options: CreateThemeOptions = {}): void {
 	});
 	createEffect(() => {
 		applyReducedMotion(reducedMotion() || reducedMotionMql.matches);
+	});
+	createEffect(() => {
+		root.dir=isRtlLocale(locale()) ? "rtl" : "ltr";
 	});
 	let onColorSchemeChange=(event: MediaQueryListEvent) => {
 		if (themeMode() === "system") {
