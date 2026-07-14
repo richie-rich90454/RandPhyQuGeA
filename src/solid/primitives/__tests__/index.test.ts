@@ -15,6 +15,7 @@ import {
 	createShortcut,
 	createSpecLoader,
 	createTheme,
+	createVoiceInput,
 } from "../index";
 describe("primitives barrel (regression 5.43)", () => {
 	it("re-exports every primitive as a callable function", () => {
@@ -33,5 +34,6 @@ describe("primitives barrel (regression 5.43)", () => {
 		expect(typeof createShortcut).toBe("function");
 		expect(typeof createSpecLoader).toBe("function");
 		expect(typeof createTheme).toBe("function");
+		expect(typeof createVoiceInput).toBe("function");
 	});
 });

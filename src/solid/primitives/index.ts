@@ -34,3 +34,5 @@ export {createSpecLoader} from "./createSpecLoader";
 export type {CreateSpecLoaderOptions, CreateSpecLoaderReturn} from "./createSpecLoader";
 export {createTheme} from "./createTheme";
 export type {CreateThemeOptions} from "./createTheme";
+export {createVoiceInput} from "./createVoiceInput";
+export type {CreateVoiceInputOptions, VoiceInputState} from "./createVoiceInput";
