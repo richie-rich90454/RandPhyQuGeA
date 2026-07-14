@@ -77,10 +77,15 @@ export function createPracticeActions(options: CreatePracticeActionsOptions = {}
 		isSubmitting=true;
 		try {
 			let sessionService=resolveSessionService();
-			let result=await sessionService.submitAnswer(
-				store.userAnswer,
-				store.selectedChoiceIndex>=0 ? store.selectedChoiceIndex : undefined,
-			);
+			let answer=store.userAnswer;
+			let choiceIndex: number | undefined=undefined;
+			if (currentQuestion.correct_choice_indices !== undefined) {
+				let sorted=[...store.selectedChoiceIndices].sort((a, b) => a - b);
+				answer=sorted.join(",");
+			} else {
+				choiceIndex=store.selectedChoiceIndex>=0 ? store.selectedChoiceIndex : undefined;
+			}
+			let result=await sessionService.submitAnswer(answer, choiceIndex);
 			progress.getState().addResults([result]);
 			practice.setState({
 				session: sessionService.getSession(),

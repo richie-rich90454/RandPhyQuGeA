@@ -1,11 +1,10 @@
 import type {JSX} from "solid-js";
-import {Show, createMemo} from "solid-js";
+import {Show, createMemo, For} from "solid-js";
 import katex from "katex";
 import {Card, CardHeader, CardTitle, CardContent} from "../ui/Card";
 import {MathToolbar} from "./MathToolbar";
 import {MathText} from "../MathText";
 import {usePracticeStore, selectCurrentQuestion} from "../../stores/practiceStore";
-import {QUESTION_TYPES} from "../../../types/models";
 import {choiceLetter} from "../../../lib/utils";
 import styles from "./AnswerCard.module.css";
 const MATH_DELIMITER_PATTERN=/\$\$([\s\S]+?)\$\$|\$([^$]+?)\$|\\\(([\s\S]+?)\\\)|\\\[([\s\S]+?)\\\]/g;
@@ -54,12 +53,17 @@ export function AnswerCard(): JSX.Element {
 	let currentQuestion=usePracticeStore(selectCurrentQuestion);
 	let userAnswer=usePracticeStore(s => s.userAnswer);
 	let selectedChoiceIndex=usePracticeStore(s => s.selectedChoiceIndex);
+	let selectedChoiceIndices=usePracticeStore(s => s.selectedChoiceIndices);
 	let showFeedback=usePracticeStore(s => s.showFeedback);
 	let lastResult=usePracticeStore(s => s.lastResult);
 	let textareaEl: HTMLTextAreaElement | null=null;
 	let isMcq=createMemo(() => {
 		let q=currentQuestion();
-		return Boolean(q && q.question_type === QUESTION_TYPES.MC && q.choices && q.choices.length > 0);
+		return Boolean(q && q.response_mode === "mcq" && q.choices && q.choices.length > 0);
+	});
+	let isMultiSelect=createMemo(() => {
+		let q=currentQuestion();
+		return Boolean(q && q.correct_choice_indices !== undefined);
 	});
 	let hasQuestion=createMemo(() => currentQuestion() !== null);
 	let inputDisabled=createMemo(() => !hasQuestion() || showFeedback());
@@ -71,8 +75,14 @@ export function AnswerCard(): JSX.Element {
 	});
 	let selectedChoice=createMemo(() => {
 		let q=currentQuestion();
-		if (!isMcq() || !q?.choices || selectedChoiceIndex() < 0) return null;
+		if (!isMcq() || isMultiSelect() || !q?.choices || selectedChoiceIndex() < 0) return null;
 		return q.choices[selectedChoiceIndex()] ?? null;
+	});
+	let selectedChoices=createMemo(() => {
+		let q=currentQuestion();
+		if (!isMcq() || !isMultiSelect() || !q?.choices) return [];
+		let indices=selectedChoiceIndices();
+		return indices.map(i => q.choices![i]).filter((c): c is string => c !== undefined);
 	});
 	let handleInsertSymbol=(latex: string) => {
 		let textarea=textareaEl;
@@ -95,7 +105,11 @@ export function AnswerCard(): JSX.Element {
 		}
 	};
 	let handleClearChoice=() => {
-		usePracticeStore.getState().selectChoice(-1);
+		if (isMultiSelect()) {
+			usePracticeStore.getState().setSelectedChoiceIndices([]);
+		} else {
+			usePracticeStore.getState().selectChoice(-1);
+		}
 	};
 	let handleAnswerInput=(e: InputEvent) => {
 		let target=e.target as HTMLTextAreaElement;
@@ -131,18 +145,35 @@ export function AnswerCard(): JSX.Element {
 					}>
 						<div class={styles.answerInputWrapper}>
 							<div
-								class={`${styles.answerInput} ${styles.answerMcqSummary} ${selectedChoice() ? styles.hasContent : ""}`}
+								class={`${styles.answerInput} ${styles.answerMcqSummary} ${(selectedChoice() || selectedChoices().length > 0) ? styles.hasContent : ""}`}
 								aria-label="Selected answer"
 								role="status"
 							>
-								<Show when={selectedChoice()} fallback={
-									<span class={styles.answerPlaceholder}>Select an option in the question card</span>
+								<Show when={isMultiSelect()} fallback={
+									<Show when={selectedChoice()} fallback={
+										<span class={styles.answerPlaceholder}>Select an option in the question card</span>
+									}>
+										<span class={styles.choiceLetter} aria-hidden="true">{choiceLetter(selectedChoiceIndex())}</span>
+										<MathText text={selectedChoice()!} />
+									</Show>
 								}>
-									<span class={styles.choiceLetter} aria-hidden="true">{choiceLetter(selectedChoiceIndex())}</span>
-									<MathText text={selectedChoice()!} />
+									<Show when={selectedChoices().length > 0} fallback={
+										<span class={styles.answerPlaceholder}>Select options in the question card</span>
+									}>
+										<For each={selectedChoiceIndices()}>{(idx) => {
+											let q=currentQuestion();
+											let label=q?.choices?.[idx] ?? "";
+											return (
+												<span class={styles.multiSelectChoice}>
+													<span class={styles.choiceLetter} aria-hidden="true">{choiceLetter(idx)}</span>
+													<MathText text={label} />
+												</span>
+											);
+										}}</For>
+									</Show>
 								</Show>
 							</div>
-							<Show when={selectedChoice()}>
+							<Show when={selectedChoice() || selectedChoices().length > 0}>
 								<button type="button" id="clear-answer" class={styles.clearAnswerBtn} aria-label="Clear answer" title="Clear answer input" onClick={handleClearChoice}>
 									<XIcon />
 								</button>
@@ -168,7 +199,9 @@ export function AnswerCard(): JSX.Element {
 					<div id="expected-format" class={styles.expectedFormat}>
 						<Show when={hasQuestion()}>
 							<Show when={isMcq()} fallback="Enter a numeric value or expression. Use LaTeX for symbols.">
-								Select the option that best answers the question.
+								<Show when={isMultiSelect()} fallback="Select the option that best answers the question.">
+									Select all options that apply to the question.
+								</Show>
 							</Show>
 						</Show>
 					</div>

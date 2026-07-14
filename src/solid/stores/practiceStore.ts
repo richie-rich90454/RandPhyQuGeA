@@ -21,12 +21,15 @@ export interface PracticeState {
 	session: Session | null;
 	userAnswer: string;
 	selectedChoiceIndex: number;
+	selectedChoiceIndices: number[];
 	showFeedback: boolean;
 	lastResult: AnswerFeedback | null;
 	selectedTopicId: string | null;
 	setSession: (session: Session | null) => void;
 	setUserAnswer: (answer: string) => void;
 	selectChoice: (index: number) => void;
+	toggleChoice: (index: number) => void;
+	setSelectedChoiceIndices: (indices: number[]) => void;
 	setShowFeedback: (show: boolean) => void;
 	setLastResult: (result: AnswerFeedback | null) => void;
 	setSelectedTopicId: (topicId: string | null) => void;
@@ -37,6 +40,7 @@ const initialSessionState = {
 	session: null as Session | null,
 	userAnswer: "",
 	selectedChoiceIndex: -1,
+	selectedChoiceIndices: [] as number[],
 	showFeedback: false,
 	lastResult: null as AnswerFeedback | null,
 };
@@ -49,11 +53,19 @@ const practiceStore = createStore<PracticeState>()((set) => ({
 	setSession: session => set({session}),
 	setUserAnswer: answer => set({userAnswer: answer}),
 	selectChoice: index => set({selectedChoiceIndex: index}),
+	toggleChoice: index => set(state => {
+		let current=state.selectedChoiceIndices;
+		if (current.includes(index)) {
+			return {selectedChoiceIndices: current.filter(i => i !== index)};
+		}
+		return {selectedChoiceIndices: [...current, index]};
+	}),
+	setSelectedChoiceIndices: indices => set({selectedChoiceIndices: indices}),
 	setShowFeedback: show => set({showFeedback: show}),
 	setLastResult: result => set({lastResult: result}),
 	setSelectedTopicId: topicId => set({selectedTopicId: topicId}),
 	resetSession: () => set({...initialSessionState}),
-	resetAnswerUi: () => set({userAnswer: "", selectedChoiceIndex: -1, showFeedback: false, lastResult: null}),
+	resetAnswerUi: () => set({userAnswer: "", selectedChoiceIndex: -1, selectedChoiceIndices: [], showFeedback: false, lastResult: null}),
 }));
 export const usePracticeStore = createSolidStore<PracticeState>(practiceStore);
 /** Derive the current question from the active session. */

@@ -6,7 +6,7 @@ import {Select} from "../ui/Select";
 import {Switch} from "../ui/Switch";
 import {Tooltip, TooltipContent, TooltipTrigger} from "../ui/Tooltip";
 import {useToast} from "../ui/Toast";
-import {usePracticeStore, selectIsActive} from "../../stores/practiceStore";
+import {usePracticeStore, selectIsActive, selectCurrentQuestion} from "../../stores/practiceStore";
 import {useSettingsStore} from "../../stores/settingsStore";
 import {useSpecStore} from "../../stores/specStore";
 import {createPracticeActions} from "../../primitives/createPracticeActions";
@@ -67,10 +67,18 @@ export function SingleControls(): JSX.Element {
 	let showFeedback=usePracticeStore(s => s.showFeedback);
 	let userAnswer=usePracticeStore(s => s.userAnswer);
 	let selectedChoiceIndex=usePracticeStore(s => s.selectedChoiceIndex);
+	let selectedChoiceIndices=usePracticeStore(s => s.selectedChoiceIndices);
+	let currentQuestion=usePracticeStore(selectCurrentQuestion);
 	let specification=useSpecStore(s => s.specification);
 	let {toast}=useToast();
 	let [isGenerating, setIsGenerating]=createSignal(false);
-	let canCheck=createMemo(() => isActive() && !showFeedback() && (userAnswer().trim() !== "" || selectedChoiceIndex() >= 0));
+	let canCheck=createMemo(() => {
+		if (!isActive() || showFeedback()) return false;
+		if (currentQuestion()?.correct_choice_indices !== undefined) {
+			return selectedChoiceIndices().length > 0;
+		}
+		return userAnswer().trim() !== "" || selectedChoiceIndex() >= 0;
+	});
 	let scopeOptions=createMemo(() => buildScopeOptions(specification()));
 	let cachedPhysics: IPhysicsService | null=null;
 	let cachedSession: ISessionService | null=null;

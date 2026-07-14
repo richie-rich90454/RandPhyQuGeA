@@ -8,7 +8,6 @@ import {useServiceProvider} from "../../providers/ServiceProvider";
 import {SessionService} from "../../../services/SessionService";
 import {AnalyticsService} from "../../../services/AnalyticsService";
 import {PhysicsService} from "../../../services/PhysicsService";
-import {QUESTION_TYPES} from "../../../types/models";
 import type {ISessionService} from "../../../services/contracts";
 import styles from "./AnswerSection.module.css";
 function CheckIcon(): JSX.Element {
@@ -52,6 +51,7 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 	let showFeedback=usePracticeStore(s => s.showFeedback);
 	let userAnswer=usePracticeStore(s => s.userAnswer);
 	let selectedChoiceIndex=usePracticeStore(s => s.selectedChoiceIndex);
+	let selectedChoiceIndices=usePracticeStore(s => s.selectedChoiceIndices);
 	let session=usePracticeStore(s => s.session);
 	let currentQuestion=usePracticeStore(selectCurrentQuestion);
 	let [isSubmitting, setIsSubmitting]=createSignal(false);
@@ -64,8 +64,10 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 		}
 		return cachedSession!;
 	};
+	let isMultiSelect=createMemo(() => currentQuestion()?.correct_choice_indices !== undefined);
 	let canSubmit=createMemo(() => {
 		if (!session() || !currentQuestion() || showFeedback()) return false;
+		if (isMultiSelect()) return selectedChoiceIndices().length > 0;
 		return userAnswer().trim() !== "" || selectedChoiceIndex() >= 0;
 	});
 	let canAdvance=createMemo(() => {
@@ -81,10 +83,15 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 		setIsSubmitting(true);
 		try {
 			let sessionService=resolveSession();
-			let result=await sessionService.submitAnswer(
-				store.userAnswer,
-				store.selectedChoiceIndex >= 0 ? store.selectedChoiceIndex : undefined,
-			);
+			let answer=store.userAnswer;
+			let choiceIndex: number | undefined=undefined;
+			if (q.correct_choice_indices !== undefined) {
+				let sorted=[...store.selectedChoiceIndices].sort((a, b) => a - b);
+				answer=sorted.join(",");
+			} else {
+				choiceIndex=store.selectedChoiceIndex >= 0 ? store.selectedChoiceIndex : undefined;
+			}
+			let result=await sessionService.submitAnswer(answer, choiceIndex);
 			useProgressStore.getState().addResults([result]);
 			usePracticeStore.setState({
 				session: sessionService.getSession(),
@@ -112,6 +119,7 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 					session: sessionService.getSession(),
 					userAnswer: "",
 					selectedChoiceIndex: -1,
+					selectedChoiceIndices: [],
 					showFeedback: false,
 					lastResult: null,
 				});
@@ -136,8 +144,8 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 		let target=event.target as HTMLElement | null;
 		let isTyping=Boolean(target && (target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable));
 		let digit=event.key;
-		if (!isTyping && !store.showFeedback && q?.question_type === QUESTION_TYPES.MC && q.choices && q.choices.length > 0) {
-			if (digit >= "1" && digit <= "4") {
+		if (!isTyping && !store.showFeedback && q?.response_mode === "mcq" && q.choices && q.choices.length > 0 && q.correct_choice_indices === undefined) {
+			if (digit >= "1" && digit <= "9") {
 				let index=parseInt(digit, 10) - 1;
 				if (index < q.choices.length) {
 					event.preventDefault();
