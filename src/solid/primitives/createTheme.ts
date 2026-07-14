@@ -42,6 +42,7 @@ export function createTheme(options: CreateThemeOptions = {}): void {
 	let reducedMotion=store(s => s.reducedMotion);
 	let locale=store(s => s.locale);
 	let fontSize=store(s => s.fontSize);
+	let reducedDataMode=store(s => s.reducedDataMode);
 	let root=document.documentElement;
 	let colorSchemeMql=window.matchMedia("(prefers-color-scheme: dark)");
 	let reducedMotionMql=window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -69,6 +70,13 @@ export function createTheme(options: CreateThemeOptions = {}): void {
 			root.setAttribute("data-font-size", "medium");
 		}
 	};
+	let applyReducedData=(isReduced: boolean) => {
+		if (isReduced) {
+			root.setAttribute("data-reduced-data", "");
+		} else {
+			root.removeAttribute("data-reduced-data");
+		}
+	};
 	createEffect(() => {
 		let mode=themeMode();
 		if (mode === "dark") {
@@ -91,6 +99,9 @@ export function createTheme(options: CreateThemeOptions = {}): void {
 	});
 	createEffect(() => {
 		applyFontSize(fontSize());
+	});
+	createEffect(() => {
+		applyReducedData(reducedDataMode());
 	});
 	let onColorSchemeChange=(event: MediaQueryListEvent) => {
 		if (themeMode() === "system") {

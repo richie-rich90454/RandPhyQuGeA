@@ -70,14 +70,15 @@ function ThemeRoot(): JSX.Element {
 	createTheme({settingsStore: useSettingsStore});
 	return <div>theme</div>;
 }
-function resetSettings(overrides: {themeMode?: "light" | "dark" | "dim" | "system", reducedMotion?: boolean, locale?: string, fontSize?: "small" | "medium" | "large"}={}): void {
-	useSettingsStore.setState({themeMode: "light", reducedMotion: false, locale: "en", fontSize: "medium", ...overrides});
+function resetSettings(overrides: {themeMode?: "light" | "dark" | "dim" | "system", reducedMotion?: boolean, locale?: string, fontSize?: "small" | "medium" | "large", reducedDataMode?: boolean}={}): void {
+	useSettingsStore.setState({themeMode: "light", reducedMotion: false, locale: "en", fontSize: "medium", reducedDataMode: false, ...overrides});
 }
 beforeEach(() => {
 	document.documentElement.removeAttribute("data-theme");
 	document.documentElement.removeAttribute("data-reduce-motion");
 	document.documentElement.removeAttribute("dir");
 	document.documentElement.removeAttribute("data-font-size");
+	document.documentElement.removeAttribute("data-reduced-data");
 	let existingMeta=document.querySelector('meta[name="theme-color"]');
 	if (existingMeta) {
 		existingMeta.remove();
@@ -249,5 +250,38 @@ describe("createTheme font-size application (task 5.67)", () => {
 		render(() => <ThemeRoot />);
 		await flush();
 		expect(document.documentElement.getAttribute("data-font-size")).toBe("small");
+	});
+});
+describe("createTheme reduced-data application (task 5.68)", () => {
+	it("does not set data-reduced-data when reducedDataMode is off", async () => {
+		resetSettings({reducedDataMode: false});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.hasAttribute("data-reduced-data")).toBe(false);
+	});
+	it("sets data-reduced-data when reducedDataMode is on", async () => {
+		resetSettings({reducedDataMode: true});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.hasAttribute("data-reduced-data")).toBe(true);
+	});
+	it("reacts to reducedDataMode changes from the store", async () => {
+		resetSettings({reducedDataMode: false});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.hasAttribute("data-reduced-data")).toBe(false);
+		useSettingsStore.getState().setReducedDataMode(true);
+		await flush();
+		expect(document.documentElement.hasAttribute("data-reduced-data")).toBe(true);
+		useSettingsStore.getState().setReducedDataMode(false);
+		await flush();
+		expect(document.documentElement.hasAttribute("data-reduced-data")).toBe(false);
+	});
+	it("clears a stale data-reduced-data attribute before the first effect runs", async () => {
+		document.documentElement.setAttribute("data-reduced-data", "");
+		resetSettings({reducedDataMode: false});
+		render(() => <ThemeRoot />);
+		await flush();
+		expect(document.documentElement.hasAttribute("data-reduced-data")).toBe(false);
 	});
 });

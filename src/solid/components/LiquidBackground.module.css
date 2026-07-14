@@ -6,6 +6,9 @@
 	pointer-events: none;
 	background: var(--bg);
 }
+.reducedData {
+	background: var(--bg);
+}
 .root::before {
 	content: "";
 	position: absolute;
