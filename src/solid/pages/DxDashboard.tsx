@@ -1,8 +1,10 @@
 import type {JSX} from "solid-js";
 import {createSignal, createMemo, Show, For} from "solid-js";
 import {Button, Card, CardHeader, CardTitle, CardSubtitle, CardContent, Badge, EmptyState, Spinner, NetworkStatusIndicator} from "../components/ui";
+import {A11yInspectorOverlay} from "../components/dev/A11yInspectorOverlay";
 import {createPerfBudget} from "../primitives/createPerfBudget";
 import {createNetworkStatus} from "../primitives/createNetworkStatus";
+import {createA11yInspector} from "../primitives/createA11yInspector";
 import {PerfBudget} from "../../lib/perf/PerfBudget";
 import {parseSpecification, generateQuestion, generateBatch, exportQuestions, loadDefaultSpec} from "../../services/physicsCore";
 import styles from "./DxDashboard.module.css";
@@ -46,6 +48,7 @@ export function DxDashboard(): JSX.Element {
 	let [error, setError]=createSignal<string | null>(null);
 	let perfBudget=createPerfBudget({observe: true});
 	let network=createNetworkStatus({listen: true});
+	let a11y=createA11yInspector({initiallyOpen: false});
 	let maxTime=createMemo(() => {
 		let rows=results();
 		if (rows.length===0) return 0;
@@ -100,13 +103,21 @@ export function DxDashboard(): JSX.Element {
 				<h1 class={styles.title}>DX Dashboard</h1>
 				<p class={styles.subtitle}>Coverage targets, environment info, and live performance benchmarks for the physics core.</p>
 				<div class={styles.statusRow}>
-					<NetworkStatusIndicator
-						online={network.online}
-						forcedOffline={network.forcedOffline}
-						onToggle={network.toggleForcedOffline}
-					/>
-				</div>
-			</header>
+				<NetworkStatusIndicator
+					online={network.online}
+					forcedOffline={network.forcedOffline}
+					onToggle={network.toggleForcedOffline}
+				/>
+				<button
+					type="button"
+					class={styles.a11yToggle}
+					onClick={() => a11y.toggle()}
+					aria-pressed={a11y.isOpen()}
+				>
+					A11y Inspector ({a11y.errorCount()})
+				</button>
+			</div>
+		</header>
 			<div class={styles.grid}>
 				<Card class={styles.card} padding="md">
 					<CardHeader>
@@ -247,6 +258,14 @@ export function DxDashboard(): JSX.Element {
 					</CardContent>
 				</Card>
 			</div>
+			<A11yInspectorOverlay
+				isOpen={a11y.isOpen}
+				issues={a11y.issues}
+				errorCount={a11y.errorCount}
+				warningCount={a11y.warningCount}
+				onToggle={a11y.toggle}
+				onRefresh={a11y.refresh}
+			/>
 		</div>
 	);
 }

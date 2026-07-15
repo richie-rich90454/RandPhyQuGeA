@@ -66,6 +66,33 @@ describe("DxDashboard page", () => {
 		expect(window.location.hash).toBe("");
 	});
 });
+describe("DxDashboard a11y inspector (task 6.49)", () => {
+	it("renders the A11y Inspector toggle button", () => {
+		render(() => <DxDashboard />);
+		expect(screen.getByRole("button", {name: /a11y inspector/i})).toBeInTheDocument();
+	});
+	it("does not render the overlay panel before the toggle is clicked", () => {
+		render(() => <DxDashboard />);
+		expect(screen.queryByRole("dialog", {name: /accessibility inspector/i})).not.toBeInTheDocument();
+	});
+	it("opens the overlay when the toggle is clicked", () => {
+		render(() => <DxDashboard />);
+		fireEvent.click(screen.getByRole("button", {name: /a11y inspector/i}));
+		expect(screen.getByRole("dialog", {name: /accessibility inspector/i})).toBeInTheDocument();
+	});
+	it("closes the overlay when the Close button is clicked", () => {
+		render(() => <DxDashboard />);
+		fireEvent.click(screen.getByRole("button", {name: /a11y inspector/i}));
+		expect(screen.getByRole("dialog", {name: /accessibility inspector/i})).toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", {name: /close inspector/i}));
+		expect(screen.queryByRole("dialog", {name: /accessibility inspector/i})).not.toBeInTheDocument();
+	});
+	it("renders the Refresh button inside the overlay", () => {
+		render(() => <DxDashboard />);
+		fireEvent.click(screen.getByRole("button", {name: /a11y inspector/i}));
+		expect(screen.getByRole("button", {name: /re-run scan/i})).toBeInTheDocument();
+	});
+});
 describe("DxDashboard network status indicator (task 6.48)", () => {
 	it("renders the NetworkStatusIndicator in the header", () => {
 		render(() => <DxDashboard />);

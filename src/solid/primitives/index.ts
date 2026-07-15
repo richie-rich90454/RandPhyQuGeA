@@ -7,6 +7,8 @@
  */
 export {createAchievements} from "./createAchievements";
 export type {CreateAchievementsOptions, AchievementsState} from "./createAchievements";
+export {createA11yInspector} from "./createA11yInspector";
+export type {CreateA11yInspectorOptions, CreateA11yInspectorReturn} from "./createA11yInspector";
 export {createBookmarks} from "./createBookmarks";
 export type {CreateBookmarksOptions, BookmarksState} from "./createBookmarks";
 export {createHistory} from "./createHistory";
