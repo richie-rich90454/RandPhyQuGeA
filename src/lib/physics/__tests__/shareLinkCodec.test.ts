@@ -174,7 +174,8 @@ describe("ShareLinkCodec URL-safety and backward compatibility (task 5.57)", () 
         const codec = new ShareLinkCodec();
         const link = codec.encode({templateId: "T1", variables: {x: 42}});
         const url = "https://example.com/share?q=" + encodeURIComponent(link);
-        const extracted = decodeURIComponent(url.split("q=")[1]);
+        const parts = url.split("q=");
+        const extracted = decodeURIComponent(parts[1] ?? "");
         const decoded = codec.decode(extracted);
         expect(decoded.templateId).toBe("T1");
         expect(decoded.variables).toEqual({x: 42});
