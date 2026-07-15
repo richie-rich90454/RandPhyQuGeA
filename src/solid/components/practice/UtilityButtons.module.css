@@ -32,3 +32,11 @@
 	color: var(--accent-contrast);
 	border-color: var(--accent);
 }
+@media (prefers-reduced-motion: reduce) {
+	.iconButton {
+		transition: none;
+	}
+	.iconButton:active {
+		transform: none;
+	}
+}

@@ -58,3 +58,10 @@
 .contentBody {
 	padding: var(--space-3) 0;
 }
+@media (prefers-reduced-motion: reduce) {
+	.trigger,
+	.chevron,
+	.content {
+		transition: none;
+	}
+}

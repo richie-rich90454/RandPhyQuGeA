@@ -223,3 +223,8 @@
 		padding-left: var(--space-4);
 	}
 }
+@media (prefers-reduced-motion: reduce) {
+	.topicPill {
+		transition: none;
+	}
+}

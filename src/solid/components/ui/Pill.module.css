@@ -77,3 +77,12 @@
 		padding: var(--space-1) var(--space-2);
 	}
 }
+@media (prefers-reduced-motion: reduce) {
+	.pill {
+		transition: none;
+	}
+	.default:active,
+	.active:active {
+		transform: none;
+	}
+}

@@ -141,3 +141,8 @@
 		font-size: var(--font-size-xs);
 	}
 }
+@media (prefers-reduced-motion: reduce) {
+	.choiceButton {
+		transition: none;
+	}
+}

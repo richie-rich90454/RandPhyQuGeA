@@ -72,3 +72,11 @@
 	letter-spacing: 0.05em;
 	color: var(--text-muted);
 }
+@media (prefers-reduced-motion: reduce) {
+	.item {
+		transition: none;
+	}
+	.item:active {
+		transform: none;
+	}
+}

@@ -68,3 +68,9 @@
 		text-align: center;
 	}
 }
+@media (prefers-reduced-motion: reduce) {
+	.link,
+	.linkButton {
+		transition: none;
+	}
+}

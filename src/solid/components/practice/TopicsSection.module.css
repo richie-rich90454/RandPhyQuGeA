@@ -86,3 +86,8 @@
 	font-size: var(--font-size-sm);
 	color: var(--text-muted);
 }
+@media (prefers-reduced-motion: reduce) {
+	.search {
+		transition: none;
+	}
+}
