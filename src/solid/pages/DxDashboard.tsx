@@ -1,6 +1,8 @@
 import type {JSX} from "solid-js";
 import {createSignal, createMemo, Show, For} from "solid-js";
 import {Button, Card, CardHeader, CardTitle, CardSubtitle, CardContent, Badge, EmptyState, Spinner} from "../components/ui";
+import {createPerfBudget} from "../primitives/createPerfBudget";
+import {PerfBudget} from "../../lib/perf/PerfBudget";
 import {parseSpecification, generateQuestion, generateBatch, exportQuestions, loadDefaultSpec} from "../../services/physicsCore";
 import styles from "./DxDashboard.module.css";
 interface EnvInfo {
@@ -41,6 +43,7 @@ export function DxDashboard(): JSX.Element {
 	let [results, setResults]=createSignal<BenchmarkResult[]>([]);
 	let [running, setRunning]=createSignal(false);
 	let [error, setError]=createSignal<string | null>(null);
+	let perfBudget=createPerfBudget({observe: true});
 	let maxTime=createMemo(() => {
 		let rows=results();
 		if (rows.length===0) return 0;
@@ -192,6 +195,46 @@ export function DxDashboard(): JSX.Element {
 								</tbody>
 							</table>
 						</Show>
+					</CardContent>
+				</Card>
+				<Card class={styles.card} padding="md">
+					<CardHeader>
+						<CardTitle>Perf Budget</CardTitle>
+						<CardSubtitle>Live resource-size budget monitor for the loaded assets.</CardSubtitle>
+					</CardHeader>
+					<CardContent>
+						<div class={styles.budgetActions}>
+							<Button variant="primary" size="sm" onClick={() => perfBudget.refresh()}>Refresh budget</Button>
+							<Show when={perfBudget.allPassed()} fallback={<Badge variant="error">Over budget</Badge>}>
+								<Badge variant="success">Within budget</Badge>
+							</Show>
+						</div>
+						<table class={styles.benchTable}>
+							<thead>
+								<tr>
+									<th scope="col">Category</th>
+									<th scope="col">Assets</th>
+									<th scope="col">Actual</th>
+									<th scope="col">Limit</th>
+									<th scope="col">Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								<For each={perfBudget.results()}>{(row) => (
+									<tr>
+										<td>{row.category}</td>
+										<td class={styles.cellNum}>{row.count}</td>
+										<td class={styles.cellNum}>{PerfBudget.formatBytes(row.actualBytes)}</td>
+										<td class={styles.cellNum}>{PerfBudget.formatBytes(row.limitBytes)}</td>
+										<td>
+											<Show when={row.passed} fallback={<Badge variant="error">fail</Badge>}>
+												<Badge variant="success">pass</Badge>
+											</Show>
+										</td>
+									</tr>
+								)}</For>
+							</tbody>
+						</table>
 					</CardContent>
 				</Card>
 			</div>

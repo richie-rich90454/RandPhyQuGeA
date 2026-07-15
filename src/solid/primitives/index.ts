@@ -24,6 +24,8 @@ export type {HashRouter} from "./createHashRouter";
 export {createMcqHotReconfig} from "./createMcqHotReconfig";
 export type {CreateMcqHotReconfigOptions} from "./createMcqHotReconfig";
 export {createMediaQuery} from "./createMediaQuery";
+export {createPerfBudget} from "./createPerfBudget";
+export type {CreatePerfBudgetOptions, CreatePerfBudgetReturn} from "./createPerfBudget";
 export {createPersistedSignal} from "./createPersistedSignal";
 export type {CreatePersistedSignalOptions} from "./createPersistedSignal";
 export {createPersistedStore} from "./createPersistedStore";

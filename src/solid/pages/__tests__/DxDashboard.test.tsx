@@ -66,3 +66,45 @@ describe("DxDashboard page", () => {
 		expect(window.location.hash).toBe("");
 	});
 });
+describe("DxDashboard perf budget card (task 6.46)", () => {
+	it("renders the Perf Budget card heading", () => {
+		render(() => <DxDashboard />);
+		expect(screen.getByText("Perf Budget")).toBeInTheDocument();
+		expect(screen.getByText(/Live resource-size budget monitor/)).toBeInTheDocument();
+	});
+	it("renders the Refresh budget button", () => {
+		render(() => <DxDashboard />);
+		expect(screen.getByRole("button", {name: /refresh budget/i})).toBeInTheDocument();
+	});
+	it("renders the budget table headers", () => {
+		render(() => <DxDashboard />);
+		expect(screen.getByText("Category")).toBeInTheDocument();
+		expect(screen.getByText("Assets")).toBeInTheDocument();
+		expect(screen.getByText("Actual")).toBeInTheDocument();
+		expect(screen.getByText("Limit")).toBeInTheDocument();
+		expect(screen.getByText("Status")).toBeInTheDocument();
+	});
+	it("renders a row for every default budget category", () => {
+		render(() => <DxDashboard />);
+		expect(screen.getByText("script")).toBeInTheDocument();
+		expect(screen.getByText("style")).toBeInTheDocument();
+		expect(screen.getByText("font")).toBeInTheDocument();
+		expect(screen.getByText("image")).toBeInTheDocument();
+		expect(screen.getByText("other")).toBeInTheDocument();
+	});
+	it("shows the Within budget badge when no resources are loaded", () => {
+		render(() => <DxDashboard />);
+		expect(screen.getByText("Within budget")).toBeInTheDocument();
+	});
+	it("shows pass badges for every empty category", () => {
+		render(() => <DxDashboard />);
+		let passBadges=screen.getAllByText("pass");
+		expect(passBadges).toHaveLength(5);
+	});
+	it("refreshes the budget when the Refresh budget button is clicked", () => {
+		render(() => <DxDashboard />);
+		let button=screen.getByRole("button", {name: /refresh budget/i});
+		fireEvent.click(button);
+		expect(screen.getByText("Within budget")).toBeInTheDocument();
+	});
+});
