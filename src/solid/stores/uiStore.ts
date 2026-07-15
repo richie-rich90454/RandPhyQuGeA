@@ -9,7 +9,7 @@
 import {createStore} from "zustand/vanilla";
 import {createSolidStore} from "./createSolidStore";
 /** Identifiers for the modal overlays managed by the shell. */
-export type ModalId = "onboarding" | "help" | "shortcuts" | "settings" | "print" | "recommend" | "manage-data" | "resume-session";
+export type ModalId = "onboarding" | "help" | "shortcuts" | "settings" | "print" | "recommend" | "manage-data" | "resume-session" | "formulas" | "unit-converter" | "glossary";
 export interface UiState {
 	searchQuery: string;
 	activeModal: ModalId | null;
