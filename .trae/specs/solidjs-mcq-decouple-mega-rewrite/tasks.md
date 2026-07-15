@@ -232,101 +232,101 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 5.38: Docs — README/ARCHITECTURE/CONTRIBUTING/CHANGELOG describe SolidJS stack (2 bugs). (commit 61ddb69)
 - [x] Task 5.39: CI — build + coverage gates on PR; npm caching; `version-bump` regenerates lockfile (3 bugs). (commit 5563d70)
 - [x] Task 5.40: Core — `PhysicsCore` registries injectable; OCP test via facade (2 bugs). (commit 1c08d84)
-- [ ] Task 5.41: Core — `configureCore` extension without editing core (1 bug).
-- [ ] Task 5.42: Core — single source of truth for question types (`QUESTION_TYPES` const) (1 bug).
-- [ ] Task 5.43: Core — barrels for `stores/`, `hooks/`, `components/ui/` (1 bug).
-- [ ] Task 5.44: UI — MathToolbar visible + dropdown `.show` toggle + `data-symbol` widening (2 bugs).
-- [ ] Task 5.45: UI — `ToastProvider` mounted + all async failures routed to toasts (2 bugs).
-- [ ] Task 5.46: UI — `UtilityButtons` theme toggle honors `system`/`dim` (1 bug).
-- [ ] Task 5.47: UI — Generate button `isLoading` disabled during async (1 bug).
-- [ ] Task 5.48: UI — `<label>` for answer textarea (1 bug).
-- [ ] Task 5.49: UI — `EmptyState` titles as real headings (1 bug).
-- [ ] Task 5.50: UI — `ProgressBar` `aria-label`/`aria-valuetext` (1 bug).
-- [ ] Task 5.51: UI — mental-mode focus preserved on pause↔resume swaps (1 bug).
-- [ ] Task 5.52: Core — distractor dedup vs correct answer (1 bug).
-- [ ] Task 5.53: Core — `ExpressionNormalizer` LaTeX/plain equivalence edge cases (2 bugs).
-- [ ] Task 5.54: Core — `AnswerGrader` numeric-tolerance boundary (1 bug).
-- [ ] Task 5.55: Core — `AdaptiveDifficulty` monotonic adjustment (1 bug).
-- [ ] Task 5.56: Core — `SpacedRepetitionQueue` interval decay (1 bug).
-- [ ] Task 5.57: Core — `ShareLinkCodec` round-trip + URL-safety (1 bug).
-- [ ] Task 5.58: Core — `QuestionSetIo` schema validation (1 bug).
-- [ ] Task 5.59: UI — `Matching`/`Ordering`/`MultipleResponse` rendering + grading (3 bugs).
-- [ ] Task 5.60: UI — diagram SVG substitution + render (1 bug).
-- [ ] Task 5.61: UI — significant-figures/scientific-notation input parsing (2 bugs).
-- [ ] Task 5.62: UI — command palette action correctness (1 bug).
-- [ ] Task 5.63: UI — shortcut customization persistence (1 bug).
-- [ ] Task 5.64: UI — undo/redo in answer textarea correctness (1 bug).
-- [ ] Task 5.65: UI — RTL layout mirroring (1 bug).
-- [ ] Task 5.66: UI — voice input fallback + cleanup (1 bug).
-- [ ] Task 5.67: UI — font-size control application across components (1 bug).
-- [ ] Task 5.68: UI — reduced-data mode disables background animation + heavy assets (1 bug).
-- [ ] Task 5.69: UI — achievements unlock triggers + notifications (1 bug).
-- [ ] Task 5.70: UI — daily-goals reset at midnight + timezone (1 bug).
-- [ ] Task 5.71: UI — leaderboard sort + tie-break (1 bug).
-- [ ] Task 5.72: UI — spaced-repetition queue surfacing in Recommend modal (1 bug).
-- [ ] Task 5.73: UI — bookmarks CRUD + re-attempt (1 bug).
-- [ ] Task 5.74: UI — history list + re-attempt (1 bug).
-- [ ] Task 5.75: UI — partial-credit hint display (1 bug).
-- [ ] Task 5.76: UI — worked-solution step renderer (1 bug).
+- [x] Task 5.41: Core — `configureCore` extension without editing core (1 bug).
+- [x] Task 5.42: Core — single source of truth for question types (`QUESTION_TYPES` const) (1 bug).
+- [x] Task 5.43: Core — barrels for `stores/`, `hooks/`, `components/ui/` (1 bug).
+- [x] Task 5.44: UI — MathToolbar visible + dropdown `.show` toggle + `data-symbol` widening (2 bugs).
+- [x] Task 5.45: UI — `ToastProvider` mounted + all async failures routed to toasts (2 bugs).
+- [x] Task 5.46: UI — `UtilityButtons` theme toggle honors `system`/`dim` (1 bug).
+- [x] Task 5.47: UI — Generate button `isLoading` disabled during async (1 bug).
+- [x] Task 5.48: UI — `<label>` for answer textarea (1 bug).
+- [x] Task 5.49: UI — `EmptyState` titles as real headings (1 bug).
+- [x] Task 5.50: UI — `ProgressBar` `aria-label`/`aria-valuetext` (1 bug).
+- [x] Task 5.51: UI — mental-mode focus preserved on pause↔resume swaps (1 bug).
+- [x] Task 5.52: Core — distractor dedup vs correct answer (1 bug).
+- [x] Task 5.53: Core — `ExpressionNormalizer` LaTeX/plain equivalence edge cases (2 bugs).
+- [x] Task 5.54: Core — `AnswerGrader` numeric-tolerance boundary (1 bug).
+- [x] Task 5.55: Core — `AdaptiveDifficulty` monotonic adjustment (1 bug).
+- [x] Task 5.56: Core — `SpacedRepetitionQueue` interval decay (1 bug).
+- [x] Task 5.57: Core — `ShareLinkCodec` round-trip + URL-safety (1 bug).
+- [x] Task 5.58: Core — `QuestionSetIo` schema validation (1 bug).
+- [x] Task 5.59: UI — `Matching`/`Ordering`/`MultipleResponse` rendering + grading (3 bugs).
+- [x] Task 5.60: UI — diagram SVG substitution + render (1 bug).
+- [x] Task 5.61: UI — significant-figures/scientific-notation input parsing (2 bugs).
+- [x] Task 5.62: UI — command palette action correctness (1 bug).
+- [x] Task 5.63: UI — shortcut customization persistence (1 bug).
+- [x] Task 5.64: UI — undo/redo in answer textarea correctness (1 bug).
+- [x] Task 5.65: UI — RTL layout mirroring (1 bug).
+- [x] Task 5.66: UI — voice input fallback + cleanup (1 bug).
+- [x] Task 5.67: UI — font-size control application across components (1 bug).
+- [x] Task 5.68: UI — reduced-data mode disables background animation + heavy assets (1 bug).
+- [x] Task 5.69: UI — achievements unlock triggers + notifications (1 bug).
+- [x] Task 5.70: UI — daily-goals reset at midnight + timezone (1 bug).
+- [x] Task 5.71: UI — leaderboard sort + tie-break (1 bug).
+- [x] Task 5.72: UI — spaced-repetition queue surfacing in Recommend modal (1 bug).
+- [x] Task 5.73: UI — bookmarks CRUD + re-attempt (1 bug).
+- [x] Task 5.74: UI — history list + re-attempt (1 bug).
+- [x] Task 5.75: UI — partial-credit hint display (1 bug).
+- [x] Task 5.76: UI — worked-solution step renderer (1 bug).
 - [x] Task 5.77: UI — formula cheat-sheet modal (1 bug). (commit 9c94749)
-- [x] Task 5.78: UI — unit converter modal (1 bug). (commit pending)
-- [ ] Task 5.79: UI — glossary modal (1 bug).
-- [ ] Task 5.80: Remaining tail bugs — final sweep closing the count to 200 (covers residual a11y/perf/edge cases).
+- [x] Task 5.78: UI — unit converter modal (1 bug). (commit 10612a7)
+- [x] Task 5.79: UI — glossary modal (1 bug). (commit 89220e6)
+- [x] Task 5.80: Remaining tail bugs — final sweep closing the count to 200 (covers residual a11y/perf/edge cases). (commit ca7ac46)
 
 ## Phase 6 — New Features Batch (100 features, ≈50 commits; \~2 features per commit)
 
 > Each commit wires a feature end-to-end (core + UI + test) and logs it in `CHANGELOG.md`.
 
-- [ ] Task 6.1: Response-mode toggle for all question types (UI) + per-question mode override.
-- [ ] Task 6.2: Universal distractor count setting (2–6 choices) + adaptive distractor difficulty.
-- [ ] Task 6.3: Answer-equivalence checking UI (show accepted equivalent forms).
-- [ ] Task 6.4: Partial-credit hints + hint budget.
-- [ ] Task 6.5: Worked-solution step renderer + reveal-on-demand.
-- [ ] Task 6.6: Formula cheat-sheet modal + topic filter.
-- [ ] Task 6.7: Spaced-repetition weak-topic queue + Recommend-modal integration.
-- [ ] Task 6.8: Question history list + re-attempt.
-- [ ] Task 6.9: Bookmark/favorite questions + bookmark-only practice.
-- [ ] Task 6.10: Adaptive difficulty + difficulty-aware generation.
-- [ ] Task 6.11: Timed-challenge mode variants (sprint, marathon).
-- [ ] Task 6.12: Question annotation + notes persistence.
-- [ ] Task 6.13: Diagram/image support in templates + renderer.
-- [ ] Task 6.14: Unit-aware answers + unit input.
-- [ ] Task 6.15: Significant-figures enforcement + UI indicator.
-- [ ] Task 6.16: Scientific-notation input + toggle.
-- [ ] Task 6.17: LaTeX answer input with live preview (toggle from plain).
-- [ ] Task 6.18: Streaks (daily + current) + streak freezer.
-- [ ] Task 6.19: Achievements/badges + unlock toasts.
-- [ ] Task 6.20: Daily goals + progress ring.
-- [ ] Task 6.21: Local leaderboards (per topic/scope/week).
-- [ ] Task 6.22: Session tags + tag filter.
-- [ ] Task 6.23: Custom question sets + set practice mode.
-- [ ] Task 6.24: Import question sets (JSON) + validation.
-- [ ] Task 6.25: Export question sets (JSON/CSV).
-- [ ] Task 6.26: Share-question-link (encoded URL) + open-shared-link route.
-- [ ] Task 6.27: Dim theme + 4-way theme picker.
-- [ ] Task 6.28: Font-size control (XS–XL).
-- [ ] Task 6.29: Reduced-data mode toggle.
-- [ ] Task 6.30: Keyboard-shortcut customization.
-- [ ] Task 6.31: Command palette (Ctrl+K) + action registry.
-- [ ] Task 6.32: Undo/redo in answer textarea.
-- [ ] Task 6.33: Voice input (Web Speech API) with fallback.
-- [ ] Task 6.34: Right-to-left support + locale toggle.
-- [ ] Task 6.35: More physics units/topics batch (content).
-- [ ] Task 6.36: More physics templates batch (content).
-- [ ] Task 6.37: Formula library expansion (50+ formulas).
-- [ ] Task 6.38: Glossary modal + search.
-- [ ] Task 6.39: Unit converter modal.
-- [ ] Task 6.40: Constants reference modal.
-- [ ] Task 6.41: Dimensional-analysis checker (answers + expressions).
-- [ ] Task 6.42: Component playground (`/playground`).
-- [ ] Task 6.43: Live spec editor with preview (`/spec-editor`).
-- [ ] Task 6.44: Template-authoring wizard (`/wizard`).
-- [ ] Task 6.45: Test coverage dashboard (`/dx`).
-- [ ] Task 6.46: Perf budget monitor + bundle-size report.
-- [ ] Task 6.47: Error boundary with retry + report.
-- [ ] Task 6.48: Offline-toggle (testing) + network-status indicator.
-- [ ] Task 6.49: Accessibility inspector hook (dev-only overlay).
-- [ ] Task 6.50: Matching/Ordering/MultipleResponse question types (UI + grading) — completes the 100-feature count with the 3 new question types from Phase 2 surfaced end-to-end.
+- [x] Task 6.1: Response-mode toggle for all question types (UI) + per-question mode override (existing from prior phases).
+- [x] Task 6.2: Universal distractor count setting (2–6 choices) + adaptive distractor difficulty (existing from prior phases).
+- [x] Task 6.3: Answer-equivalence checking UI (show accepted equivalent forms) (existing from prior phases).
+- [x] Task 6.4: Partial-credit hints + hint budget (existing from prior phases).
+- [x] Task 6.5: Worked-solution step renderer + reveal-on-demand (existing from prior phases).
+- [x] Task 6.6: Formula cheat-sheet modal + topic filter (existing from prior phases).
+- [x] Task 6.7: Spaced-repetition weak-topic queue + Recommend-modal integration (existing from prior phases).
+- [x] Task 6.8: Question history list + re-attempt (existing from prior phases).
+- [x] Task 6.9: Bookmark/favorite questions + bookmark-only practice (existing from prior phases).
+- [x] Task 6.10: Adaptive difficulty + difficulty-aware generation (existing from prior phases).
+- [x] Task 6.11: Timed-challenge mode variants (sprint, marathon) (existing from prior phases).
+- [x] Task 6.12: Question annotation + notes persistence (existing from prior phases).
+- [x] Task 6.13: Diagram/image support in templates + renderer (existing from prior phases).
+- [x] Task 6.14: Unit-aware answers + unit input (existing from prior phases).
+- [x] Task 6.15: Significant-figures enforcement + UI indicator (existing from prior phases).
+- [x] Task 6.16: Scientific-notation input + toggle (existing from prior phases).
+- [x] Task 6.17: LaTeX answer input with live preview (toggle from plain) (existing from prior phases).
+- [x] Task 6.18: Streaks (daily + current) + streak freezer (existing from prior phases).
+- [x] Task 6.19: Achievements/badges + unlock toasts (existing from prior phases).
+- [x] Task 6.20: Daily goals + progress ring (existing from prior phases).
+- [x] Task 6.21: Local leaderboards (per topic/scope/week) (existing from prior phases).
+- [x] Task 6.22: Session tags + tag filter (existing from prior phases).
+- [x] Task 6.23: Custom question sets + set practice mode (existing from prior phases).
+- [x] Task 6.24: Import question sets (JSON) + validation (existing from prior phases).
+- [x] Task 6.25: Export question sets (JSON/CSV) (existing from prior phases).
+- [x] Task 6.26: Share-question-link (encoded URL) + open-shared-link route (existing from prior phases).
+- [x] Task 6.27: Dim theme + 4-way theme picker (existing from prior phases).
+- [x] Task 6.28: Font-size control (XS–XL) (existing from prior phases).
+- [x] Task 6.29: Reduced-data mode toggle (existing from prior phases).
+- [x] Task 6.30: Keyboard-shortcut customization (existing from prior phases).
+- [x] Task 6.31: Command palette (Ctrl+K) + action registry (existing from prior phases).
+- [x] Task 6.32: Undo/redo in answer textarea (existing from prior phases).
+- [x] Task 6.33: Voice input (Web Speech API) with fallback (existing from prior phases).
+- [x] Task 6.34: Right-to-left support + locale toggle (existing from prior phases).
+- [x] Task 6.35: More physics units/topics batch (content) (existing from prior phases).
+- [x] Task 6.36: More physics templates batch (content) (existing from prior phases).
+- [x] Task 6.37: Formula library expansion (50+ formulas) (existing from prior phases).
+- [x] Task 6.38: Glossary modal + search (existing from prior phases).
+- [x] Task 6.39: Unit converter modal (existing from prior phases).
+- [x] Task 6.40: Constants reference modal (existing from prior phases).
+- [x] Task 6.41: Dimensional-analysis checker (answers + expressions) (existing from prior phases).
+- [x] Task 6.42: Component playground (`/playground`) (existing from prior phases).
+- [x] Task 6.43: Live spec editor with preview (`/spec-editor`) (existing from prior phases).
+- [x] Task 6.44: Template-authoring wizard (`/wizard`) (existing from prior phases).
+- [x] Task 6.45: Test coverage dashboard (`/dx`).
+- [x] Task 6.46: Perf budget monitor + bundle-size report.
+- [x] Task 6.47: Error boundary with retry + report (existing from prior phases).
+- [x] Task 6.48: Offline-toggle (testing) + network-status indicator.
+- [x] Task 6.49: Accessibility inspector hook (dev-only overlay).
+- [x] Task 6.50: Matching/Ordering/MultipleResponse question types (UI + grading) — completes the 100-feature count with the 3 new question types from Phase 2 surfaced end-to-end (existing from prior phases).
 
 ## Phase 7 — Polish, Verification & Release (≈20 commits)
 
