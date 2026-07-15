@@ -66,6 +66,30 @@ describe("DxDashboard page", () => {
 		expect(window.location.hash).toBe("");
 	});
 });
+describe("DxDashboard network status indicator (task 6.48)", () => {
+	it("renders the NetworkStatusIndicator in the header", () => {
+		render(() => <DxDashboard />);
+		expect(screen.getByText("Online")).toBeInTheDocument();
+	});
+	it("renders the Simulate offline toggle button", () => {
+		render(() => <DxDashboard />);
+		expect(screen.getByRole("button", {name: /simulate offline/i})).toBeInTheDocument();
+	});
+	it("toggles to Forced offline when the toggle is clicked", () => {
+		render(() => <DxDashboard />);
+		fireEvent.click(screen.getByRole("button", {name: /simulate offline/i}));
+		expect(screen.getByText("Forced offline")).toBeInTheDocument();
+		expect(screen.getByRole("button", {name: /restore online/i})).toBeInTheDocument();
+	});
+	it("restores online when the toggle is clicked again", () => {
+		render(() => <DxDashboard />);
+		let button=screen.getByRole("button", {name: /simulate offline/i});
+		fireEvent.click(button);
+		expect(screen.getByText("Forced offline")).toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", {name: /restore online/i}));
+		expect(screen.getByText("Online")).toBeInTheDocument();
+	});
+});
 describe("DxDashboard perf budget card (task 6.46)", () => {
 	it("renders the Perf Budget card heading", () => {
 		render(() => <DxDashboard />);

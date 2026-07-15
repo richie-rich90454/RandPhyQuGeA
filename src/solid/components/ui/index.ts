@@ -8,6 +8,8 @@ export {CardContent} from "./Card";
 export {CardFooter} from "./Card";
 export type {CardProps, CardVariant, CardPadding, CardHeaderProps, CardTitleProps, CardSubtitleProps, CardContentProps, CardFooterProps} from "./Card";
 export {Modal} from "./Modal";
+export {NetworkStatusIndicator} from "./NetworkStatusIndicator";
+export type {NetworkStatusIndicatorProps} from "./NetworkStatusIndicator";
 export type {ModalProps} from "./Modal";
 export {Input} from "./Input";
 export type {InputProps} from "./Input";

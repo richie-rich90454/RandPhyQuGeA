@@ -1,7 +1,8 @@
 import type {JSX} from "solid-js";
 import {createSignal, createMemo, Show, For} from "solid-js";
-import {Button, Card, CardHeader, CardTitle, CardSubtitle, CardContent, Badge, EmptyState, Spinner} from "../components/ui";
+import {Button, Card, CardHeader, CardTitle, CardSubtitle, CardContent, Badge, EmptyState, Spinner, NetworkStatusIndicator} from "../components/ui";
 import {createPerfBudget} from "../primitives/createPerfBudget";
+import {createNetworkStatus} from "../primitives/createNetworkStatus";
 import {PerfBudget} from "../../lib/perf/PerfBudget";
 import {parseSpecification, generateQuestion, generateBatch, exportQuestions, loadDefaultSpec} from "../../services/physicsCore";
 import styles from "./DxDashboard.module.css";
@@ -44,6 +45,7 @@ export function DxDashboard(): JSX.Element {
 	let [running, setRunning]=createSignal(false);
 	let [error, setError]=createSignal<string | null>(null);
 	let perfBudget=createPerfBudget({observe: true});
+	let network=createNetworkStatus({listen: true});
 	let maxTime=createMemo(() => {
 		let rows=results();
 		if (rows.length===0) return 0;
@@ -97,6 +99,13 @@ export function DxDashboard(): JSX.Element {
 				</button>
 				<h1 class={styles.title}>DX Dashboard</h1>
 				<p class={styles.subtitle}>Coverage targets, environment info, and live performance benchmarks for the physics core.</p>
+				<div class={styles.statusRow}>
+					<NetworkStatusIndicator
+						online={network.online}
+						forcedOffline={network.forcedOffline}
+						onToggle={network.toggleForcedOffline}
+					/>
+				</div>
 			</header>
 			<div class={styles.grid}>
 				<Card class={styles.card} padding="md">
