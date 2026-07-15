@@ -268,8 +268,8 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [ ] Task 5.74: UI — history list + re-attempt (1 bug).
 - [ ] Task 5.75: UI — partial-credit hint display (1 bug).
 - [ ] Task 5.76: UI — worked-solution step renderer (1 bug).
-- [ ] Task 5.77: UI — formula cheat-sheet modal (1 bug).
-- [ ] Task 5.78: UI — unit converter modal (1 bug).
+- [x] Task 5.77: UI — formula cheat-sheet modal (1 bug). (commit 9c94749)
+- [x] Task 5.78: UI — unit converter modal (1 bug). (commit pending)
 - [ ] Task 5.79: UI — glossary modal (1 bug).
 - [ ] Task 5.80: Remaining tail bugs — final sweep closing the count to 200 (covers residual a11y/perf/edge cases).
 
