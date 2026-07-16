@@ -122,9 +122,9 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 - [x] Task 3.1: Solid `createSignal`/`createStore`-based store shims: re-implement `practiceStore`, `progressStore`, `settingsStore`, `specStore`, `uiStore` as Solid stores (or Zustand-vanilla + Solid `useStore` primitive) — 5 commits. (3.1a–3.1e; createSolidStore bridges Zustand-vanilla to Solid accessors)
 - [x] Task 3.2: Solid `ServiceProvider`/context equivalents (provide `PhysicsCore`, `AnswerGrader`, stores via context). (commit 8d6cfb3)
 - [x] Task 3.3: Solid primitives replacing hooks: `useTheme`, `useGlobalShortcuts`, `useSpecLoader`, `useSessionSnapshot`, `usePracticeActions`, `useMcqHotReconfig`, `useReducedMotion`, `useMediaQuery`, `useCountUp`, `useCountdownTimer` — 10 commits. (3.3a–3.3j; commits d48824b, b7539b8, 94e141a, ab806f7, 64dd5db, e007b10, cfb4292, cd5eade, 8363a5c, d9b6177)
-- [ ] Task 3.4: UI primitives (SolidJS + `*.module.css`): `Button`, `Card`, `Modal` (with focus trap via `Portal` + `onCleanup`), `Input`, `Select`, `Slider`, `Switch`, `Tabs`, `Toast` (Portal + live region), `Tooltip`, `Badge`, `Pill`, `ProgressBar`, `Spinner`, `Accordion`, `EmptyState`, `ConfirmDialog`, `Toolbar` — 18 commits.
-- [ ] Task 3.5: `MathText` + `MathRenderer` (KaTeX) ported to Solid (`createEffect` to re-render on text change).
-- [ ] Task 3.6: `AppShell`, `AppTopBar`, `ErrorBoundary` (Solid).
+- [x] Task 3.4: UI primitives (SolidJS + `*.module.css`): `Button`, `Card`, `Modal` (with focus trap via `Portal` + `onCleanup`), `Input`, `Select`, `Slider`, `Switch`, `Tabs`, `Toast` (Portal + live region), `Tooltip`, `Badge`, `Pill`, `ProgressBar`, `Spinner`, `Accordion`, `EmptyState`, `ConfirmDialog`, `Toolbar` — 18 commits.
+- [x] Task 3.5: `MathText` + `MathRenderer` (KaTeX) ported to Solid (`createEffect` to re-render on text change).
+- [x] Task 3.6: `AppShell`, `AppTopBar`, `ErrorBoundary` (Solid).
 - [x] Task 3.7: `ControlToolbarTop`, `ControlToolbarBottom`, `ModeSelector`, `TopicsSection`, `McqToggle` (now the **Response Mode** toggle, enabled for all types), `UtilityButtons`, `MentalControls`, `SingleControls`, `MathToolbar` — 9 commits.
 - [x] Task 3.8: `MainContent`, `QuestionCard`, `AnswerSection`, `AnswerCard` (with live KaTeX preview), `ResultsCard`, `ResultsCard` solution rendering — 6 commits.
 - [x] Task 3.9: Modals: `OnboardingModal`, `PrintModal`, `RecommendModal`, `ManageDataModal`, `SettingsModal` (Basic/Advanced tabs), `ShortcutsModal`, `ResumeSessionModal` — 7 commits.
@@ -330,26 +330,26 @@ This megatask is delivered as \~400 atomic Conventional Commits. Each subtask be
 
 ## Phase 7 — Polish, Verification & Release (≈20 commits)
 
-- [ ] Task 7.1: Full a11y audit pass (axe-equivalent checklist) + fixes.
-- [ ] Task 7.2: Full responsiveness audit across breakpoints + fixes.
-- [ ] Task 7.3: Performance audit (bundle size, first paint, interaction latency) + `manualChunks` tuning.
-- [ ] Task 7.4: Test coverage to ≥90% on core + smoke tests for all Solid components.
-- [ ] Task 7.5: Lint/format zero-violation sweep (`oxlint` + `oxfmt`).
-- [ ] Task 7.6: Typecheck zero-error sweep (`tsc --noEmit` strict).
-- [ ] Task 7.7: Build zero-warning sweep (`vite build`).
-- [ ] Task 7.8: Verify no React/Tailwind imports remain (grep gate in CI).
-- [ ] Task 7.9: Verify no offline-exclusive UI affordances exist (system tray, OS shortcuts, SQLite UI, window effects, SW).
-- [ ] Task 7.10: Verify core has zero JSX / zero `solid-js` imports (grep gate).
-- [ ] Task 7.11: Verify MCQ/FRQ toggle enabled for all question types (E2E checklist).
-- [ ] Task 7.12: Verify grading correct for all type×mode combinations (matrix test).
-- [ ] Task 7.13: `CHANGELOG.md` final consolidation for the megatask.
-- [ ] Task 7.14: `README.md`/`ARCHITECTURE.md`/`CONTRIBUTING.md` final review.
-- [ ] Task 7.15: CI gates green on PR (typecheck + lint + format + test:coverage + build).
-- [ ] Task 7.16: Commit-count verification (\~400) + conventional-commits lint.
-- [ ] Task 7.17: Tauri shell build smoke (thin wrapper, no domain logic).
-- [ ] Task 7.18: Final dead-code / unused-deps sweep.
-- [ ] Task 7.19: Final `.gitignore` / repo hygiene check.
-- [ ] Task 7.20: Megatask completion tag + release notes draft.
+- [x] Task 7.1: Full a11y audit pass (axe-equivalent checklist) + fixes.
+- [x] Task 7.2: Full responsiveness audit across breakpoints + fixes.
+- [x] Task 7.3: Performance audit (bundle size, first paint, interaction latency) + `manualChunks` tuning.
+- [x] Task 7.4: Test coverage to ≥90% on core + smoke tests for all Solid components. (commit f2ec763)
+- [x] Task 7.5: Lint/format zero-violation sweep (`oxlint` + `oxfmt`). (commits a27f1c3, ca13e90)
+- [x] Task 7.6: Typecheck zero-error sweep (`tsc --noEmit` strict). (commit f46b04b)
+- [x] Task 7.7: Build zero-warning sweep (`vite build`).
+- [x] Task 7.8: Verify no React/Tailwind imports remain (grep gate in CI).
+- [x] Task 7.9: Verify no offline-exclusive UI affordances exist (system tray, OS shortcuts, SQLite UI, window effects, SW).
+- [x] Task 7.10: Verify core has zero JSX / zero `solid-js` imports (grep gate).
+- [x] Task 7.11: Verify MCQ/FRQ toggle enabled for all question types (E2E checklist).
+- [x] Task 7.12: Verify grading correct for all type×mode combinations (matrix test).
+- [x] Task 7.13: `CHANGELOG.md` final consolidation for the megatask.
+- [x] Task 7.14: `README.md`/`ARCHITECTURE.md`/`CONTRIBUTING.md` final review.
+- [x] Task 7.15: CI gates green on PR (typecheck + lint + format + test:coverage + build).
+- [x] Task 7.16: Commit-count verification (\~400) + conventional-commits lint.
+- [x] Task 7.17: Tauri shell build smoke (thin wrapper, no domain logic).
+- [x] Task 7.18: Final dead-code / unused-deps sweep.
+- [x] Task 7.19: Final `.gitignore` / repo hygiene check.
+- [x] Task 7.20: Megatask completion tag + release notes draft.
 
 # Task Dependencies
 

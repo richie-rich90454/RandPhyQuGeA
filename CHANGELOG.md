@@ -38,17 +38,17 @@ The `solidjs-mcq-decouple-mega-rewrite` megatask is complete. All 8 phases (0–
 
 **Quality gate summary**
 
-| Gate               | Result                                              |
-| ------------------ | --------------------------------------------------- |
-| Typecheck (base)   | 0 errors                                            |
-| Typecheck (Solid)  | 0 errors                                            |
-| Lint (oxlint)      | 0 errors (warnings only in test files)              |
-| Format (oxfmt)     | All 455 files conform                                |
-| Tests (vitest)     | 2495 passed (177 test files)                        |
-| Build (vite)       | 0 warnings                                          |
-| Coverage           | Statements 96.49%, Branches 91.01%, Functions 98.57%, Lines 96.41% |
-| React/Tailwind grep| 0 imports remaining                                 |
-| Core JSX/Solid grep| 0 JSX files, 0 solid-js imports in core             |
+| Gate                | Result                                                             |
+| ------------------- | ------------------------------------------------------------------ |
+| Typecheck (base)    | 0 errors                                                           |
+| Typecheck (Solid)   | 0 errors                                                           |
+| Lint (oxlint)       | 0 errors (warnings only in test files)                             |
+| Format (oxfmt)      | All 455 files conform                                              |
+| Tests (vitest)      | 2495 passed (177 test files)                                       |
+| Build (vite)        | 0 warnings                                                         |
+| Coverage            | Statements 96.49%, Branches 91.01%, Functions 98.57%, Lines 96.41% |
+| React/Tailwind grep | 0 imports remaining                                                |
+| Core JSX/Solid grep | 0 JSX files, 0 solid-js imports in core                            |
 
 **Tagging**
 
