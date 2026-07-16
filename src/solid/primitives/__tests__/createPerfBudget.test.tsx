@@ -124,7 +124,7 @@ describe("createPerfBudget", () => {
 		try {
 			let rendered = render(makeRoot([], [{category: "script", limitBytes: 1000}], true));
 			expect(observerCalls).toHaveLength(1);
-			expect(observerCalls[0].type).toBe("resource");
+			expect(observerCalls[0]!.type).toBe("resource");
 			rendered.unmount();
 			expect(disconnect).toHaveBeenCalled();
 		} finally {

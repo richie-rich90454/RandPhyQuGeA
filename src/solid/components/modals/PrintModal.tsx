@@ -227,7 +227,7 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 				</CardHeader>
 				<CardContent class={styles.optionsContent}>
 					<div class={styles.option}>
-						<label htmlFor="print-question-count" class={styles.optionTitle}>
+						<label for="print-question-count" class={styles.optionTitle}>
 							Number of questions
 						</label>
 						<span class={styles.optionHint}>
@@ -249,7 +249,7 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 						</div>
 					</div>
 					<div class={styles.option}>
-						<label htmlFor="print-scope" class={styles.optionTitle}>
+						<label for="print-scope" class={styles.optionTitle}>
 							Topic scope
 						</label>
 						<span class={styles.optionHint}>Filter topics by subject area.</span>
@@ -276,7 +276,7 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
 						</Show>
 					</div>
 					<div class={styles.option}>
-						<label htmlFor="print-difficulty" class={styles.optionTitle}>
+						<label for="print-difficulty" class={styles.optionTitle}>
 							Difficulty
 						</label>
 						<span class={styles.optionHint}>Base challenge level for generated questions.</span>

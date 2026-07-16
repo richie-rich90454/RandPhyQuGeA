@@ -148,7 +148,7 @@ describe("UnitRegistry constructor and get", () => {
 });
 describe("UnitRegistry.resolve prefix edge cases", () => {
 	it("continues when a custom prefix maps to undefined", () => {
-		const reg = new UnitRegistry(undefined, {x: undefined} as Record<string, number>);
+		const reg = new UnitRegistry(undefined, {x: undefined} as unknown as Record<string, number>);
 		expect(reg.resolve("xm")).toBeNull();
 	});
 	it("returns null when token equals a prefix string exactly", () => {
