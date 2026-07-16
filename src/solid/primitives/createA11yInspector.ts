@@ -1,4 +1,4 @@
-import {createSignal, onCleanup, onMount} from "solid-js";
+import {createSignal, onMount} from "solid-js";
 import type {Accessor} from "solid-js";
 import {A11yChecker} from "../../lib/a11y/A11yChecker";
 import type {A11yIssue} from "../../lib/a11y/A11yChecker";

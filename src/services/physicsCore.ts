@@ -10,7 +10,7 @@
  * evaluator functions, or a seeded random source) via {@link configureCore}.
  */
 import partOneSpec from "../assets/part_one.txt?raw";
-import {PhysicsCore, ExpressionEvaluator, VariableGenerator, McqAssembler, UniversalDistractorGenerator, AnswerGrader} from "../lib/physics";
+import {PhysicsCore, ExpressionEvaluator, VariableGenerator, McqAssembler, UniversalDistractorGenerator} from "../lib/physics";
 import type {
 	QuestionFilter,
 	RandomGenerator,

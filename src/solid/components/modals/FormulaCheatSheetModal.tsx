@@ -109,7 +109,7 @@ export function FormulaCheatSheetModal(props: FormulaCheatSheetModalProps): JSX.
 				{filtered().length} formula{filtered().length === 1 ? "" : "s"}
 			</p>
 			<Show when={filtered().length > 0} fallback={<EmptyState illustration={<BookIcon />} title="No formulas match your search" description="Try a different keyword or topic." />}>
-				<ul class={styles.formulaList} role="list">
+				<ul class={styles.formulaList}>
 					<For each={filtered()}>
 						{formula => (
 							<li class={styles.formulaItem}>

@@ -72,7 +72,7 @@ describe("ShareLinkCodec.decode errors", () => {
 	});
 	it("throws when the base64 body is invalid", () => {
 		const codec = new ShareLinkCodec();
-		expect(() => codec.decode("pq:!!!")).toThrow();
+		expect(() => codec.decode("pq:!!!")).toThrow(/invalid character/i);
 	});
 	it("throws when the decoded payload is not an object", () => {
 		const codec = new ShareLinkCodec();

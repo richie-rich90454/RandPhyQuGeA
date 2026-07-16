@@ -281,7 +281,7 @@ describe("createPracticeActions", () => {
 		let promise = result!.check();
 		await flush();
 		expect(mock.submitAnswerCalls.length).toBe(1);
-		result!.check();
+		void result!.check();
 		await flush();
 		expect(mock.submitAnswerCalls.length).toBe(1);
 		d.resolve(makeResult());

@@ -1,10 +1,11 @@
 import {render, screen, fireEvent} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach, vi} from "vitest";
 import {Playground} from "../Playground";
+let clipboardWriteText = vi.fn<(data: string) => Promise<void>>(() => Promise.resolve());
 function resetClipboard() {
-	let writeText = vi.fn<(data: string) => Promise<void>>(() => Promise.resolve());
+	clipboardWriteText = vi.fn<(data: string) => Promise<void>>(() => Promise.resolve());
 	Object.defineProperty(navigator, "clipboard", {
-		value: {writeText},
+		value: {writeText: clipboardWriteText},
 		writable: true,
 		configurable: true,
 	});
@@ -101,7 +102,7 @@ describe("Playground page", () => {
 		let firstCopyButton = copyButtons[0];
 		if (!firstCopyButton) throw new Error("Copy button not found");
 		fireEvent.click(firstCopyButton);
-		expect(navigator.clipboard.writeText).toHaveBeenCalled();
+		expect(clipboardWriteText).toHaveBeenCalled();
 	});
 	it("updates the live button variant when the select changes", () => {
 		render(() => <Playground />);

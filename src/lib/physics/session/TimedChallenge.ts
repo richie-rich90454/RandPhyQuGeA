@@ -157,7 +157,7 @@ export class TimedChallenge {
 		return this.config;
 	}
 	/** Return the result when finished, otherwise undefined. */
-	public result(now: number = Date.now()): TimedChallengeResult | undefined {
+	public result(_now: number = Date.now()): TimedChallengeResult | undefined {
 		if (!this.isFinished()) {
 			return undefined;
 		}

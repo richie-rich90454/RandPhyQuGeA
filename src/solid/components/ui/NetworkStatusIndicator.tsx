@@ -1,5 +1,4 @@
 import type {JSX} from "solid-js";
-import {Show} from "solid-js";
 import styles from "./NetworkStatusIndicator.module.css";
 export interface NetworkStatusIndicatorProps {
 	/** Reactive true when the effective connection is online. */
@@ -36,9 +35,7 @@ export function NetworkStatusIndicator(props: NetworkStatusIndicatorProps): JSX.
 				aria-pressed={props.forcedOffline()}
 				title={props.forcedOffline() ? "Stop simulating offline" : "Simulate offline"}
 			>
-				<Show when={props.forcedOffline()} fallback={<span>Simulate offline</span>}>
-					<span>Restore online</span>
-				</Show>
+				{props.forcedOffline() ? <span>Restore online</span> : <span>Simulate offline</span>}
 			</button>
 		</div>
 	);

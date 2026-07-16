@@ -108,7 +108,7 @@ describe("QuestionSetIo.importInto", () => {
 describe("QuestionSetIo.importSets errors", () => {
 	it("throws on invalid JSON", () => {
 		const io = new QuestionSetIo();
-		expect(() => io.importSets("{not json")).toThrow();
+		expect(() => io.importSets("{not json")).toThrow(/JSON/);
 	});
 	it("throws when the payload is not an object", () => {
 		const io = new QuestionSetIo();

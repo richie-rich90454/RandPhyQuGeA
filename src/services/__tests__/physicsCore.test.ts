@@ -90,12 +90,14 @@ describe("configureCore", () => {
 		const exporters = new ExporterRegistry();
 		const questionTypes = QuestionTypeRegistry.createDefault();
 		const random = new SeededRandomGenerator(42);
-		configureCore({
-			exporters,
-			questionTypes,
-			random,
-		});
-		configureCore({});
+		expect(() => {
+			configureCore({
+				exporters,
+				questionTypes,
+				random,
+			});
+			configureCore({});
+		}).not.toThrow();
 	});
 	it("configureCore injects a custom FormulaLibrary without editing core (regression 5.41)", async () => {
 		const customLibrary = new FormulaLibrary([{name: "Custom Formula", latex: "E = mc^2", description: "custom", variables: ["E", "m", "c"], topic_id: "custom"}]);

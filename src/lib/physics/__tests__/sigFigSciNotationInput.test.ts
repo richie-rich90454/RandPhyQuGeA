@@ -1,7 +1,7 @@
 import {describe, it, expect} from "vitest";
 import {AnswerGrader} from "../grader/AnswerGrader";
 import {ExpressionNormalizer} from "../grader/ExpressionNormalizer";
-import type {GeneratedQuestion, ResponseMode} from "../types";
+import type {GeneratedQuestion} from "../types";
 function buildQuestion(overrides: Partial<GeneratedQuestion>): GeneratedQuestion {
 	const base: GeneratedQuestion = {
 		id: "q1",

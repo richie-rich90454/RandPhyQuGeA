@@ -22,7 +22,7 @@ describe("TimedChallenge state machine", () => {
 	it("throws when starting from a non-idle state", () => {
 		const c = new TimedChallenge(sprint30);
 		c.start(1000);
-		expect(() => c.start(2000)).toThrow();
+		expect(() => c.start(2000)).toThrow("Cannot start from state running");
 	});
 	it("pause/resume round-trips through paused", () => {
 		const c = new TimedChallenge(sprint30);

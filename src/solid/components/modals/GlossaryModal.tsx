@@ -109,7 +109,7 @@ export function GlossaryModal(props: GlossaryModalProps): JSX.Element {
 				{filtered().length} term{filtered().length === 1 ? "" : "s"}
 			</p>
 			<Show when={filtered().length > 0} fallback={<EmptyState illustration={<GlossaryIcon />} title="No terms match your search" description="Try a different keyword or category." />}>
-				<ul class={styles.termList} role="list">
+				<ul class={styles.termList}>
 					<For each={filtered()}>
 						{entry => (
 							<li class={styles.termItem}>
@@ -126,7 +126,7 @@ export function GlossaryModal(props: GlossaryModalProps): JSX.Element {
 									<span class={styles.termCategory}>{prettifyCategory(entry.category)}</span>
 									<Show when={entry.related && entry.related.length > 0}>
 										<span class={styles.relatedLabel}>Related:</span>
-										<ul class={styles.relatedList} role="list">
+										<ul class={styles.relatedList}>
 											<For each={entry.related}>
 												{(r, i) => (
 													<>

@@ -59,7 +59,7 @@ export function Switch(props: SwitchProps): JSX.Element {
 				<span class={`${styles.track} ${currentChecked() ? styles.trackOn : ""}`} aria-hidden="true" />
 				<span class={`${styles.thumb} ${currentChecked() ? styles.thumbOn : ""}`} aria-hidden="true" />
 			</span>
-			<Show when={local.label || local.hint}>
+			{local.label || local.hint ? (
 				<span class={styles.text}>
 					<Show when={local.label}>
 						<span class={styles.label}>{local.label}</span>
@@ -70,7 +70,7 @@ export function Switch(props: SwitchProps): JSX.Element {
 						</span>
 					</Show>
 				</span>
-			</Show>
+			) : null}
 		</label>
 	);
 }

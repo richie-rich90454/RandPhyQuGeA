@@ -2,8 +2,6 @@ import {render, screen, fireEvent} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach} from "vitest";
 import {UnitConverterModal} from "../UnitConverterModal";
 import {useUiStore} from "../../../stores/uiStore";
-import {UnitConverter} from "../../../../lib/physics/units/UnitConverter";
-import {UnitRegistry} from "../../../../lib/physics/units/UnitRegistry";
 beforeEach(() => {
 	useUiStore.setState(useUiStore.getInitialState());
 });

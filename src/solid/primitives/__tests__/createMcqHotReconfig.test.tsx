@@ -6,7 +6,7 @@ import type {CreateMcqHotReconfigOptions} from "../createMcqHotReconfig";
 import {usePracticeStore} from "../../stores/practiceStore";
 import {useSettingsStore} from "../../stores/settingsStore";
 import type {ISessionService, Session} from "../../../services/contracts";
-import type {GeneratedQuestion, PracticeResult, QuestionType, Specification} from "../../../types/models";
+import type {GeneratedQuestion, QuestionType, Specification} from "../../../types/models";
 import {QUESTION_TYPES} from "../../../types/models";
 function flush(): Promise<void> {
 	return new Promise(resolve => setTimeout(resolve, 0));

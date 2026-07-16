@@ -139,7 +139,7 @@ export function AnswerCard(): JSX.Element {
 						when={isMcq()}
 						fallback={
 							<div class={styles.answerInputWrapper}>
-								<label for="answer-box" class={styles.answerLabel}>
+								<label htmlFor="answer-box" class={styles.answerLabel}>
 									Answer
 								</label>
 								<textarea

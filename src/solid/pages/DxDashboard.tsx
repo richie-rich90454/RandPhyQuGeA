@@ -246,7 +246,7 @@ export function DxDashboard(): JSX.Element {
 											<td class={styles.cellNum}>{row.count}</td>
 											<td class={styles.cellNum}>{PerfBudget.formatBytes(row.actualBytes)}</td>
 											<td class={styles.cellNum}>{PerfBudget.formatBytes(row.limitBytes)}</td>
-											<td>
+											<td aria-label={row.passed ? "pass" : "fail"}>
 												<Show when={row.passed} fallback={<Badge variant="error">fail</Badge>}>
 													<Badge variant="success">pass</Badge>
 												</Show>

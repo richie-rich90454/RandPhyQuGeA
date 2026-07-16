@@ -127,7 +127,7 @@ describe("AnswerSection", () => {
 		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "force"});
 		render(() => <AnswerSection onError={message => errors.push(message)} />);
 		let button = screen.getByRole("button", {name: /Check/i});
-		await fireEvent.click(button);
+		fireEvent.click(button);
 		await flush();
 		expect(errors.length).toBe(1);
 		expect(errors[0]).toContain("ServiceProvider");
@@ -153,7 +153,7 @@ describe("AnswerSection", () => {
 		usePracticeStore.setState({...usePracticeStore.getState(), session, showFeedback: true});
 		render(() => <AnswerSection onError={message => errors.push(message)} />);
 		let button = screen.getByRole("button", {name: /Next/i});
-		await fireEvent.click(button);
+		fireEvent.click(button);
 		await flush();
 		expect(errors.length).toBe(1);
 		expect(errors[0]).toContain("ServiceProvider");

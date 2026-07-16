@@ -190,8 +190,8 @@ describe("createVoiceInput with a constructor", () => {
 			start = () => {
 				throw new Error("boom");
 			};
-			stop = vi.fn();
-			abort = vi.fn();
+			stop = vi.fn<() => void>();
+			abort = vi.fn<() => void>();
 			onresult: ((event: SpeechRecognitionEventLike) => void) | null = null;
 			onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null = null;
 			onend: (() => void) | null = null;

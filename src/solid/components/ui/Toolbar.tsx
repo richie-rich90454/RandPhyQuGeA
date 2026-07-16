@@ -137,9 +137,7 @@ export function ToolbarItem(props: ToolbarItemProps): JSX.Element {
 	let [local] = splitProps(props, ["children", "active", "class", "disabled", "onClick"]);
 	let ctx = useToolbarContext();
 	let id = ctx.register();
-	let itemEl: HTMLButtonElement | null = null;
 	let setRef = (el: HTMLButtonElement | null) => {
-		itemEl = el;
 		ctx.setItem(id, el);
 	};
 	let isFocused = () => ctx.focusedId() === id;
@@ -165,6 +163,7 @@ export interface ToolbarSeparatorProps {
 }
 export function ToolbarSeparator(props: ToolbarSeparatorProps): JSX.Element {
 	let [local] = splitProps(props, ["class"]);
+	// eslint-disable-next-line jsx-a11y/control-has-associated-label -- decorative separator, no label needed
 	return <div role="separator" aria-orientation="vertical" class={`${styles.separator} ${local.class ?? ""}`} />;
 }
 export type ToolbarRowPosition = "top" | "bottom";
