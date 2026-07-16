@@ -134,3 +134,27 @@ describe("TimedChallenge record after finish", () => {
 		expect(c.answeredCount()).toBe(before);
 	});
 });
+describe("TimedChallenge resume when not paused", () => {
+	it("returns false when resuming from an idle state", () => {
+		const c = new TimedChallenge(sprint30);
+		expect(c.resume(1000)).toBe(false);
+		expect(c.currentState()).toBe("idle");
+	});
+	it("returns false when resuming from a running state", () => {
+		const c = new TimedChallenge(sprint30);
+		c.start(1000);
+		expect(c.resume(2000)).toBe(false);
+		expect(c.currentState()).toBe("running");
+	});
+});
+describe("TimedChallenge result when not finished", () => {
+	it("returns undefined when the challenge is still running", () => {
+		const c = new TimedChallenge(sprint30);
+		c.start(1000);
+		expect(c.result()).toBeUndefined();
+	});
+	it("returns undefined when the challenge is idle", () => {
+		const c = new TimedChallenge(sprint30);
+		expect(c.result()).toBeUndefined();
+	});
+});

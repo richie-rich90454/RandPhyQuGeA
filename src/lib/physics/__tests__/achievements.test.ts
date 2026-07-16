@@ -141,3 +141,20 @@ describe("Achievements custom definitions", () => {
 		expect(a.check(baseline({questionsAnswered: 5})).map(d => d.id)).toEqual(["custom_1"]);
 	});
 });
+describe("Achievements speed_demon", () => {
+	it("unlocks speed_demon when 20+ questions are answered under 15s average", () => {
+		const a = new Achievements();
+		a.check(baseline({questionsAnswered: 20, avgTimePerQuestionMs: 10000}));
+		expect(a.isUnlocked("speed_demon")).toBe(true);
+	});
+	it("does not unlock speed_demon when the average exceeds 15s", () => {
+		const a = new Achievements();
+		a.check(baseline({questionsAnswered: 20, avgTimePerQuestionMs: 20000}));
+		expect(a.isUnlocked("speed_demon")).toBe(false);
+	});
+	it("does not unlock speed_demon when avgTimePerQuestionMs is 0", () => {
+		const a = new Achievements();
+		a.check(baseline({questionsAnswered: 20, avgTimePerQuestionMs: 0}));
+		expect(a.isUnlocked("speed_demon")).toBe(false);
+	});
+});

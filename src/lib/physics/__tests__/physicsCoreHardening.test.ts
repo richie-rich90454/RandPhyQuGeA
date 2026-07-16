@@ -1,6 +1,7 @@
 import {describe, it, expect} from "vitest";
 import {PhysicsCore} from "../PhysicsCore";
 import type {GeneratedQuestion, ResponseMode} from "../types";
+import type {UniversalDistractorGeneratorLike} from "../contracts";
 const SPEC = [
 	"[UNIT]",
 	"Id: U1",
@@ -181,5 +182,16 @@ describe("PhysicsCore hardening: every question type x every response mode (end-
 			expect(batch1[i]?.choices).toEqual(batch2[i]?.choices);
 			expect(batch1[i]?.correct_choice_index).toBe(batch2[i]?.correct_choice_index);
 		}
+	});
+});
+describe("PhysicsCore custom distractorGenerator not UniversalDistractorGenerator instance", () => {
+	it("constructs a McqAssembler with undefined distractor generator when the custom generator is not a UniversalDistractorGenerator instance", () => {
+		const fake: UniversalDistractorGeneratorLike = {
+			generate: () => [],
+			register: () => {},
+		};
+		const core = new PhysicsCore(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, fake);
+		expect(core.getDistractorGenerator()).toBe(fake);
+		expect(core.getMcqAssembler()).toBeDefined();
 	});
 });

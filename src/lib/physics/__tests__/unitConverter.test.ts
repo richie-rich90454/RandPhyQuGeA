@@ -67,3 +67,15 @@ describe("UnitConverter.listConvertible", () => {
 		expect(conv.listConvertible("blarg")).toEqual([]);
 	});
 });
+describe("UnitConverter.convertString unresolvable target", () => {
+	const conv = new UnitConverter();
+	it("returns null when the target unit is unresolvable", () => {
+		expect(conv.convertString("5 m", "blarg")).toBeNull();
+	});
+});
+describe("UnitConverter non-integer result formatting", () => {
+	const conv = new UnitConverter();
+	it("formats a non-integer converted value with stripped trailing zeros", () => {
+		expect(conv.convertString("5 m", "km")).toBe("0.005 km");
+	});
+});

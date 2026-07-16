@@ -181,3 +181,13 @@ describe("ShareLinkCodec URL-safety and backward compatibility (task 5.57)", () 
 		expect(decoded.variables).toEqual({x: 42});
 	});
 });
+describe("ShareLinkCodec base64url length validation", () => {
+	it("throws when the base64url body has length % 4 == 1 (impossible length)", () => {
+		const codec = new ShareLinkCodec();
+		expect(() => codec.decode("pq.A")).toThrow("Invalid base64url length");
+	});
+	it("throws on the legacy pq: prefix when the body has length % 4 == 1", () => {
+		const codec = new ShareLinkCodec();
+		expect(() => codec.decode("pq:A")).toThrow("Invalid base64url length");
+	});
+});

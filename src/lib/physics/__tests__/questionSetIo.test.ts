@@ -230,3 +230,10 @@ describe("QuestionSetIo no-duplicates invariant (task 5.58)", () => {
 		expect(second[0]?.tags).toEqual(["a", "b"]);
 	});
 });
+describe("QuestionSetIo tags non-string element", () => {
+	it("throws when tags is an array containing a non-string element", () => {
+		const io = new QuestionSetIo();
+		const json = JSON.stringify({version: 1, exportedAt: 1, sets: [{id: "x", name: "A", templateIds: [], tags: ["ok", 5], createdAt: 1, updatedAt: 1}]});
+		expect(() => io.importSets(json)).toThrow("tags must be a string array");
+	});
+});

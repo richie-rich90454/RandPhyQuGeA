@@ -188,3 +188,9 @@ describe("DailyGoals localDay + timezone defaults (task 5.70)", () => {
 		spy.mockRestore();
 	});
 });
+describe("DailyGoals isComplete unknown id", () => {
+	it("returns false for an unknown goal id", () => {
+		const g = new DailyGoals(undefined, "2026-01-01");
+		expect(g.isComplete("nope")).toBe(false);
+	});
+});

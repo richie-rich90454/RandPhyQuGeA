@@ -226,3 +226,15 @@ describe("QuestionSetStore.remove / count / clear", () => {
 		expect(qs.id).toBe("qs-2");
 	});
 });
+describe("QuestionSetStore.setDescription unknown set", () => {
+	it("returns false when setting the description of an unknown set", () => {
+		const s = new QuestionSetStore();
+		expect(s.setDescription("nope", "desc")).toBe(false);
+	});
+});
+describe("QuestionSetStore.hasTemplate unknown set", () => {
+	it("returns false when checking a template on an unknown set", () => {
+		const s = new QuestionSetStore();
+		expect(s.hasTemplate("nope", "T1")).toBe(false);
+	});
+});

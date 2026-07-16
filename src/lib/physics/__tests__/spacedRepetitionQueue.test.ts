@@ -197,3 +197,14 @@ describe("SpacedRepetitionQueue.interval monotonicity (preventive fix)", () => {
 		expect(result.interval).toBe(Math.max(beforeInterval, Math.round(beforeInterval * beforeEase)));
 	});
 });
+describe("SpacedRepetitionQueue.stats not-due item", () => {
+	it("does not count an item as due when its due timestamp is in the future", () => {
+		const q = new SpacedRepetitionQueue(1000);
+		q.register("a", 0);
+		q.review("a", 5, 0);
+		const stats = q.stats(500);
+		expect(stats.due).toBe(0);
+		expect(stats.total).toBe(1);
+		expect(stats.learned).toBe(1);
+	});
+});

@@ -182,6 +182,37 @@ describe("VariableGenerator", () => {
 		expect(vars.x).toBeGreaterThanOrEqual(1);
 		expect(vars.y).toBe(0);
 	});
+	it("uses a custom registry when provided to the constructor", () => {
+		const registry = new VariableTypeRegistry();
+		registry.register({type: "custom", generate: () => 99});
+		const gen = new VariableGenerator(registry);
+		const rng = new SeededRandomGenerator(1);
+		const vars = gen.generate([{name: "x", var_type: "custom"}], rng);
+		expect(vars.x).toBe(99);
+	});
+	it("returns an empty object when definitions is empty", () => {
+		const gen = new VariableGenerator();
+		const rng = new SeededRandomGenerator(1);
+		const vars = gen.generate([], rng);
+		expect(vars).toEqual({});
+	});
+});
+describe("TemplateSubstituter.toLatexScientific", () => {
+	const substituter = new TemplateSubstituter();
+	it("returns the raw exponential string when the regex does not match (Infinity)", () => {
+		expect(substituter.toLatexScientific(Infinity)).toBe("Infinity");
+	});
+	it("returns the raw exponential string when the regex does not match (NaN)", () => {
+		expect(substituter.toLatexScientific(NaN)).toBe("NaN");
+	});
+	it("formats a normal small value into LaTeX scientific notation", () => {
+		const result = substituter.toLatexScientific(6.674e-7);
+		expect(result).toBe("{6.674 \\times 10^{-7}}");
+	});
+	it("formats a normal large value into LaTeX scientific notation", () => {
+		const result = substituter.toLatexScientific(3e8);
+		expect(result).toBe("{3 \\times 10^{8}}");
+	});
 });
 describe("VariableTypeRegistry", () => {
 	it("registers and retrieves handlers (open-closed)", () => {

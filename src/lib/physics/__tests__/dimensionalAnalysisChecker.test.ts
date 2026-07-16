@@ -81,3 +81,13 @@ describe("DimensionalAnalysisChecker.hasDimension", () => {
 		expect(checker.hasDimension("hello", {L: 1})).toBe(false);
 	});
 });
+describe("DimensionalAnalysisChecker.checkConsistency rhs unresolvable", () => {
+	const checker = new DimensionalAnalysisChecker();
+	it("reports a message when the right side is unresolvable but the left side is resolvable", () => {
+		const result = checker.checkConsistency("N", "blarg");
+		expect(result.consistent).toBe(false);
+		expect(result.lhs).not.toBeNull();
+		expect(result.rhs).toBeNull();
+		expect(result.message).toContain("Right-hand side");
+	});
+});

@@ -160,4 +160,48 @@ describe("AnswerGrader", () => {
 			expect(result.normalized_response.length).toBeGreaterThan(0);
 		});
 	});
+	describe("MCQ edge cases", () => {
+		it("falls back to exact comparison when an MCQ question has no choices", () => {
+			const q = buildQuestion({
+				question_type: "MC",
+				answer: "42",
+				response_mode: "mcq" as ResponseMode,
+				correct_choice_index: 0,
+			});
+			const result = grader.grade(q, "42");
+			expect(result.is_correct).toBe(true);
+		});
+		it("falls back to exact comparison when the response text matches no choice", () => {
+			const q = buildQuestion({
+				question_type: "MC",
+				answer: "42",
+				response_mode: "mcq" as ResponseMode,
+				choices: ["10", "20", "30"],
+				correct_choice_index: 0,
+			});
+			const result = grader.grade(q, "42");
+			expect(result.is_correct).toBe(true);
+		});
+	});
+	describe("multi-select setsEqual same-size different elements", () => {
+		it("marks incorrect when the selected set and correct set have the same size but different elements", () => {
+			const q = buildQuestion({
+				question_type: "MC",
+				answer: "0,2",
+				response_mode: "mcq" as ResponseMode,
+				choices: ["a", "b", "c", "d"],
+				correct_choice_indices: [0, 2],
+			});
+			const result = grader.grade(q, "0,1");
+			expect(result.is_correct).toBe(false);
+		});
+	});
+	describe("TF non-boolean response", () => {
+		it("normalizes a non-boolean TF response to its lowercased form", () => {
+			const q = buildQuestion({question_type: "TF", answer: "True"});
+			const result = grader.grade(q, "maybe");
+			expect(result.is_correct).toBe(false);
+			expect(result.normalized_response).toBe("maybe");
+		});
+	});
 });

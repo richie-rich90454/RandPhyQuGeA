@@ -132,3 +132,43 @@ describe("SessionTags.clear", () => {
 		expect(s.statsFor("S1")).toBeUndefined();
 	});
 });
+describe("SessionTags.tagsForSession unknown session", () => {
+	it("returns an empty array for an unknown session", () => {
+		const s = new SessionTags();
+		expect(s.tagsForSession("unknown")).toEqual([]);
+	});
+});
+describe("SessionTags.setStats new session", () => {
+	it("creates the session record when setStats is called on an unknown session", () => {
+		const s = new SessionTags();
+		s.setStats("newSession", {questionsAnswered: 5, correctAnswers: 3, totalTimeMs: 1000});
+		expect(s.hasSession("newSession")).toBe(true);
+		expect(s.statsFor("newSession")).toEqual({questionsAnswered: 5, correctAnswers: 3, totalTimeMs: 1000});
+	});
+});
+describe("SessionTags.untagSession shared tag", () => {
+	it("does not remove the tag index when other sessions still carry the tag", () => {
+		const s = new SessionTags();
+		s.tagSession("S1", ["shared"]);
+		s.tagSession("S2", ["shared"]);
+		expect(s.untagSession("S1", "shared")).toBe(true);
+		expect(s.sessionsForTag("shared")).toEqual(["S2"]);
+		expect(s.allTags()).toEqual(["shared"]);
+	});
+});
+describe("SessionTags.tagSession empty tags", () => {
+	it("creates a session with no tags when given an empty tags array", () => {
+		const s = new SessionTags();
+		expect(s.tagSession("S1", [])).toEqual([]);
+		expect(s.hasSession("S1")).toBe(true);
+		expect(s.allTags()).toEqual([]);
+	});
+});
+describe("SessionTags.removeSession no tags", () => {
+	it("removes a session that has no tags without errors", () => {
+		const s = new SessionTags();
+		s.recordResult("S1", true, 100);
+		expect(s.removeSession("S1")).toBe(true);
+		expect(s.hasSession("S1")).toBe(false);
+	});
+});

@@ -43,3 +43,20 @@ describe("Glossary", () => {
 		}
 	});
 });
+describe("Glossary.register duplicate term", () => {
+	it("does not duplicate the order entry when re-registering an existing term", () => {
+		const g = new Glossary([{term: "X", definition: "d1", category: "c"}]);
+		expect(g.getAll().length).toBe(1);
+		g.register({term: "X", definition: "d2", category: "c"});
+		expect(g.getAll().length).toBe(1);
+		expect(g.get("x")?.definition).toBe("d2");
+	});
+	it("does not duplicate order entries when the constructor receives duplicate terms", () => {
+		const g = new Glossary([
+			{term: "Y", definition: "a", category: "c"},
+			{term: "Y", definition: "b", category: "c"},
+		]);
+		expect(g.getAll().length).toBe(1);
+		expect(g.get("y")?.definition).toBe("b");
+	});
+});

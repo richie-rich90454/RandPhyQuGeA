@@ -101,4 +101,15 @@ describe("ExpressionNormalizer", () => {
 			expect(normalizer.isEquivalent("a*b", "a+b")).toBe(false);
 		});
 	});
+	describe("scientific-notation e handling", () => {
+		it("does not insert multiplication inside scientific notation like 2e3", () => {
+			expect(normalizer.normalize("2e3")).toBe("2e3");
+		});
+		it("inserts multiplication between a digit and e when e is not part of scientific notation", () => {
+			expect(normalizer.normalize("2ex")).toBe("2*ex");
+		});
+		it("inserts multiplication between e and a digit when e is not preceded by a digit", () => {
+			expect(normalizer.normalize("xe2")).toBe("2*xe");
+		});
+	});
 });
