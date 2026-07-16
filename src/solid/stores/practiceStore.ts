@@ -47,19 +47,20 @@ const initialSessionState = {
 const initialConfigState = {
 	selectedTopicId: null as string | null,
 };
-const practiceStore = createStore<PracticeState>()((set) => ({
+const practiceStore = createStore<PracticeState>()(set => ({
 	...initialSessionState,
 	...initialConfigState,
 	setSession: session => set({session}),
 	setUserAnswer: answer => set({userAnswer: answer}),
 	selectChoice: index => set({selectedChoiceIndex: index}),
-	toggleChoice: index => set(state => {
-		let current=state.selectedChoiceIndices;
-		if (current.includes(index)) {
-			return {selectedChoiceIndices: current.filter(i => i !== index)};
-		}
-		return {selectedChoiceIndices: [...current, index]};
-	}),
+	toggleChoice: index =>
+		set(state => {
+			let current = state.selectedChoiceIndices;
+			if (current.includes(index)) {
+				return {selectedChoiceIndices: current.filter(i => i !== index)};
+			}
+			return {selectedChoiceIndices: [...current, index]};
+		}),
 	setSelectedChoiceIndices: indices => set({selectedChoiceIndices: indices}),
 	setShowFeedback: show => set({showFeedback: show}),
 	setLastResult: result => set({lastResult: result}),

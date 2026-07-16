@@ -41,20 +41,12 @@ export function AppShell(props: AppShellProps): JSX.Element {
 			<div class={styles.container}>
 				<AppTopBar actions={props.actions} />
 				<div class={styles.content}>
-					<Show when={props.toolbar}>
-						{props.toolbar}
-					</Show>
+					<Show when={props.toolbar}>{props.toolbar}</Show>
 					<main id="main-content" class={styles.main} tabindex={-1}>
 						{props.children}
 					</main>
 				</div>
-				<Footer
-					githubUrl={props.githubUrl}
-					onOpenSettings={props.onOpenSettings}
-					onOpenShortcuts={props.onOpenShortcuts}
-					onToggleTheme={props.onToggleTheme}
-					themeLabel={props.themeLabel}
-				/>
+				<Footer githubUrl={props.githubUrl} onOpenSettings={props.onOpenSettings} onOpenShortcuts={props.onOpenShortcuts} onToggleTheme={props.onToggleTheme} themeLabel={props.themeLabel} />
 			</div>
 		</>
 	);

@@ -13,7 +13,7 @@ interface HostProps {
 	setup: GsapSetup;
 }
 function Host(props: HostProps): JSX.Element {
-	let ctx=createGsapContext({setup: props.setup, scope: props.scope});
+	let ctx = createGsapContext({setup: props.setup, scope: props.scope});
 	props.onReady(ctx);
 	return <div>gsap</div>;
 }
@@ -22,20 +22,36 @@ afterEach(() => {
 });
 describe("createGsapContext", () => {
 	it("creates a gsap.Context on mount and invokes setup with it", async () => {
-		let captured: {ctx: Accessor<gsap.Context | null>} | null=null;
-		let setupContext: gsap.Context | null=null;
-		render(() => <Host onReady={(ctx) => {captured={ctx};}} setup={(ctx) => {setupContext=ctx;}} />);
+		let captured: {ctx: Accessor<gsap.Context | null>} | null = null;
+		let setupContext: gsap.Context | null = null;
+		render(() => (
+			<Host
+				onReady={ctx => {
+					captured = {ctx};
+				}}
+				setup={ctx => {
+					setupContext = ctx;
+				}}
+			/>
+		));
 		await flush();
 		expect(captured).not.toBeNull();
-		let context=captured!.ctx();
+		let context = captured!.ctx();
 		expect(context).not.toBeNull();
 		expect(context).toBe(setupContext);
 	});
 	it("reverts the context on unmount", async () => {
-		let captured: {ctx: Accessor<gsap.Context | null>} | null=null;
-		let result=render(() => <Host onReady={(ctx) => {captured={ctx};}} setup={() => {}} />);
+		let captured: {ctx: Accessor<gsap.Context | null>} | null = null;
+		let result = render(() => (
+			<Host
+				onReady={ctx => {
+					captured = {ctx};
+				}}
+				setup={() => {}}
+			/>
+		));
 		await flush();
-		let context=captured!.ctx();
+		let context = captured!.ctx();
 		expect(context).not.toBeNull();
 		expect(context!.isReverted).toBe(false);
 		result.unmount();
@@ -43,9 +59,9 @@ describe("createGsapContext", () => {
 		expect(context!.isReverted).toBe(true);
 	});
 	it("forwards the scope to gsap.context", async () => {
-		let scope=document.createElement("div");
+		let scope = document.createElement("div");
 		document.body.appendChild(scope);
-		let spy=vi.spyOn(gsap, "context");
+		let spy = vi.spyOn(gsap, "context");
 		render(() => <Host scope={scope} onReady={() => {}} setup={() => {}} />);
 		await flush();
 		expect(spy).toHaveBeenCalled();

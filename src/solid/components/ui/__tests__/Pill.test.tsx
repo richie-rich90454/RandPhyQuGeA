@@ -35,7 +35,7 @@ describe("Pill", () => {
 		expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "false");
 	});
 	it("calls onClick when clicked", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<() => void>();
 		render(() => <Pill name="Physics" onClick={handler} />);
 		fireEvent.click(screen.getByRole("button"));
 		expect(handler).toHaveBeenCalledOnce();

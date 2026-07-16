@@ -31,14 +31,14 @@ export interface ControlToolbarBottomProps {
  * full width. The glassmorphism surface comes from the `.glass` utility (4.3a).
  */
 export function ControlToolbarBottom(props: ControlToolbarBottomProps): JSX.Element {
-	let isActive=usePracticeStore(selectIsActive);
-	let sessionMode=usePracticeStore(selectMode);
-	let defaultMode=useSettingsStore(s => s.defaultMode);
-	let mode=createMemo<PracticeMode>(() => (isActive() ? sessionMode() : defaultMode()));
-	let modeClass=() => mode()==="Mental" ? styles.mental : styles.single;
+	let isActive = usePracticeStore(selectIsActive);
+	let sessionMode = usePracticeStore(selectMode);
+	let defaultMode = useSettingsStore(s => s.defaultMode);
+	let mode = createMemo<PracticeMode>(() => (isActive() ? sessionMode() : defaultMode()));
+	let modeClass = () => (mode() === "Mental" ? styles.mental : styles.single);
 	return (
 		<ToolbarRow position="bottom" class={`glass ${styles.row} ${modeClass()} ${props.class ?? ""}`}>
-			<Show when={mode()==="Single"} fallback={props.mentalControls}>
+			<Show when={mode() === "Single"} fallback={props.mentalControls}>
 				{props.singleControls}
 			</Show>
 		</ToolbarRow>

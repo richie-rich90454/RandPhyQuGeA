@@ -25,7 +25,9 @@
 		transition-duration: 0ms;
 		transition-delay: 0ms;
 	}
-	.fadeHidden, .slideHidden, .scaleHidden {
+	.fadeHidden,
+	.slideHidden,
+	.scaleHidden {
 		opacity: 1;
 		transform: none;
 	}

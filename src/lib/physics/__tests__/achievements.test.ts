@@ -56,7 +56,10 @@ describe("Achievements.check", () => {
 		expect(ids).toContain("streak_10");
 		expect(ids).toContain("polymath");
 		const order = newly.map(d => d.id);
-		const catalogOrder = a.all().map(d => d.id).filter(id => order.includes(id));
+		const catalogOrder = a
+			.all()
+			.map(d => d.id)
+			.filter(id => order.includes(id));
 		expect(order).toEqual(catalogOrder);
 	});
 	it("does not unlock streak achievements from currentStreak alone", () => {
@@ -132,9 +135,7 @@ describe("Achievements.reset", () => {
 });
 describe("Achievements custom definitions", () => {
 	it("accepts a custom catalog and uses it exclusively", () => {
-		const custom: AchievementDefinition[] = [
-			{id: "custom_1", name: "Custom", description: "x", category: "x", check: s => s.questionsAnswered >= 5},
-		];
+		const custom: AchievementDefinition[] = [{id: "custom_1", name: "Custom", description: "x", category: "x", check: s => s.questionsAnswered >= 5}];
 		const a = new Achievements(custom);
 		expect(a.total()).toBe(1);
 		expect(a.check(baseline({questionsAnswered: 5})).map(d => d.id)).toEqual(["custom_1"]);

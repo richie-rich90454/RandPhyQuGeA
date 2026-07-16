@@ -3,7 +3,7 @@ import {describe, it, expect, beforeEach} from "vitest";
 import {Wizard} from "../Wizard";
 import {QUESTION_TYPE_ALIASES} from "../../../types/models";
 beforeEach(() => {
-	window.location.hash="";
+	window.location.hash = "";
 });
 describe("Wizard page", () => {
 	it("renders the page heading and subtitle", () => {
@@ -44,7 +44,7 @@ describe("Wizard page", () => {
 	});
 	it("disables the Next button on the last step", () => {
 		render(() => <Wizard />);
-		let nextButton=screen.getByRole("button", {name: /^next$/i});
+		let nextButton = screen.getByRole("button", {name: /^next$/i});
 		fireEvent.click(nextButton);
 		fireEvent.click(nextButton);
 		fireEvent.click(nextButton);
@@ -56,14 +56,14 @@ describe("Wizard page", () => {
 	});
 	it("derives question-type options from the canonical QUESTION_TYPE_ALIASES (regression 5.42)", () => {
 		render(() => <Wizard />);
-		let typeSelect=screen.getByRole("combobox", {name: /question type/i}) as HTMLSelectElement;
-		let optionValues=Array.from(typeSelect.options).map(o=>o.value);
-		let expected=Object.keys(QUESTION_TYPE_ALIASES).filter(k=>k!==QUESTION_TYPE_ALIASES[k]);
+		let typeSelect = screen.getByRole("combobox", {name: /question type/i}) as HTMLSelectElement;
+		let optionValues = Array.from(typeSelect.options).map(o => o.value);
+		let expected = Object.keys(QUESTION_TYPE_ALIASES).filter(k => k !== QUESTION_TYPE_ALIASES[k]);
 		expect(optionValues).toEqual(expected);
 	});
 	it("updates the question type when the select changes", () => {
 		render(() => <Wizard />);
-		let typeSelect=screen.getByRole("combobox", {name: /question type/i});
+		let typeSelect = screen.getByRole("combobox", {name: /question type/i});
 		fireEvent.change(typeSelect, {target: {value: "ShortAnswer"}});
 		expect((typeSelect as HTMLSelectElement).value).toBe("ShortAnswer");
 	});
@@ -75,26 +75,26 @@ describe("Wizard page", () => {
 	});
 	it("hides the Distractors field when the question type is not MultipleChoice", () => {
 		render(() => <Wizard />);
-		let typeSelect=screen.getByRole("combobox", {name: /question type/i});
+		let typeSelect = screen.getByRole("combobox", {name: /question type/i});
 		fireEvent.change(typeSelect, {target: {value: "ShortAnswer"}});
 		fireEvent.click(screen.getByRole("button", {name: /^next$/i}));
 		fireEvent.click(screen.getByRole("button", {name: /^next$/i}));
 		expect(screen.queryByLabelText(/distractors/i)).not.toBeInTheDocument();
 	});
 	it("shows the spec preview and generates a sample question on step 4", async () => {
-		let {container}=render(() => <Wizard />);
-		let nextButton=screen.getByRole("button", {name: /^next$/i});
+		let {container} = render(() => <Wizard />);
+		let nextButton = screen.getByRole("button", {name: /^next$/i});
 		fireEvent.click(nextButton);
 		fireEvent.click(nextButton);
 		fireEvent.click(nextButton);
 		expect(screen.getByText("Step 4 of 4")).toBeInTheDocument();
-		let pre=container.querySelector("pre");
+		let pre = container.querySelector("pre");
 		expect(pre?.textContent ?? "").toContain("[UNIT]");
 		fireEvent.click(screen.getByRole("button", {name: /generate sample question/i}));
 		await waitFor(() => expect(screen.getByText("Answer:")).toBeInTheDocument(), {timeout: 3000});
 	});
 	it("clears the hash when the back link is clicked", () => {
-		window.location.hash="/wizard";
+		window.location.hash = "/wizard";
 		render(() => <Wizard />);
 		fireEvent.click(screen.getByRole("button", {name: /back to app/i}));
 		expect(window.location.hash).toBe("");

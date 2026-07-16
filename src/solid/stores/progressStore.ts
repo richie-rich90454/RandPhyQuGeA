@@ -27,16 +27,17 @@ export interface ProgressState {
 	clearResults: () => void;
 	getResultsByMode: (mode: PracticeMode) => PracticeResult[];
 }
-const MAX_RESULTS=2000;
+const MAX_RESULTS = 2000;
 const progressStore = createStore<ProgressState>()(
 	persist(
 		(set, get) => ({
 			results: [],
-			addResults: newResults => set(state => {
-				const combined=[...state.results, ...newResults];
-				const results=combined.length>MAX_RESULTS ? combined.slice(-MAX_RESULTS) : combined;
-				return {results};
-			}),
+			addResults: newResults =>
+				set(state => {
+					const combined = [...state.results, ...newResults];
+					const results = combined.length > MAX_RESULTS ? combined.slice(-MAX_RESULTS) : combined;
+					return {results};
+				}),
 			deleteResult: id => set(state => ({results: state.results.filter(r => r.id !== id)})),
 			clearResults: () => set({results: []}),
 			getResultsByMode: mode => get().results.filter(result => result.mode === mode),
@@ -48,22 +49,22 @@ const progressStore = createStore<ProgressState>()(
 				if (!persistedState || typeof persistedState !== "object" || Array.isArray(persistedState)) {
 					return {results: []} as unknown as ProgressState;
 				}
-				const state=persistedState as Record<string, unknown>;
+				const state = persistedState as Record<string, unknown>;
 				if (version === 0) {
 					if ("history" in state && Array.isArray(state.history)) {
-						state.results=state.history;
+						state.results = state.history;
 						delete state.history;
 					}
 				}
 				if (!state.results || !Array.isArray(state.results)) {
-					state.results=[];
+					state.results = [];
 				}
 				return {results: state.results as PracticeResult[]} as unknown as ProgressState;
 			},
 			storage: createJSONStorage(() => localStorage, {
 				reviver: (key, value) => {
 					if (key === "" && value && typeof value === "object" && !Array.isArray(value) && typeof (value as {version?: unknown}).version !== "number") {
-						(value as {version: number}).version=0;
+						(value as {version: number}).version = 0;
 					}
 					return value;
 				},
@@ -72,8 +73,8 @@ const progressStore = createStore<ProgressState>()(
 	),
 );
 export const useProgressStore = createSolidStore<ProgressState>(progressStore);
-let cachedResults: PracticeResult[] | null=null;
-let cachedStats: PracticeStats | null=null;
+let cachedResults: PracticeResult[] | null = null;
+let cachedStats: PracticeStats | null = null;
 /**
  * Derive aggregate {@link PracticeStats} from the progress store state.
  *
@@ -83,18 +84,18 @@ let cachedStats: PracticeStats | null=null;
  * and {@link selectRecentResults}.
  */
 export const selectStats = (state: ProgressState): PracticeStats => {
-	const results=state.results;
+	const results = state.results;
 	if (cachedResults === results && cachedStats) {
 		return cachedStats;
 	}
-	const totalCount=results.length;
-	const correctCount=results.filter(r => r.is_correct).length;
-	const accuracy=totalCount === 0 ? 0 : (correctCount / totalCount) * 100;
-	const totalTimeMs=results.reduce((sum, r) => sum + r.time_taken_ms, 0);
-	const singleCount=results.filter(r => r.mode === "Single").length;
-	const mentalCount=results.filter(r => r.mode === "Mental").length;
-	cachedResults=results;
-	cachedStats={totalCount, correctCount, accuracy, totalTimeMs, singleCount, mentalCount};
+	const totalCount = results.length;
+	const correctCount = results.filter(r => r.is_correct).length;
+	const accuracy = totalCount === 0 ? 0 : (correctCount / totalCount) * 100;
+	const totalTimeMs = results.reduce((sum, r) => sum + r.time_taken_ms, 0);
+	const singleCount = results.filter(r => r.mode === "Single").length;
+	const mentalCount = results.filter(r => r.mode === "Mental").length;
+	cachedResults = results;
+	cachedStats = {totalCount, correctCount, accuracy, totalTimeMs, singleCount, mentalCount};
 	return cachedStats;
 };
 /** Return the most recent `n` results, newest first. */

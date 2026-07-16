@@ -16,9 +16,9 @@ import type {IAnalyticsService, WeakTopic} from "../../../services/contracts";
 import type {SpacedRepetitionQueue, SpacedRepetitionItem} from "../../../lib/physics/spaced/SpacedRepetitionQueue";
 import styles from "./RecommendModal.module.css";
 /** Maximum number of weak topics to display. */
-const MAX_RECOMMENDATIONS=8;
+const MAX_RECOMMENDATIONS = 8;
 /** Weak-topic accuracy threshold passed to analytics. */
-const WEAK_THRESHOLD=70;
+const WEAK_THRESHOLD = 70;
 function TargetIcon(): JSX.Element {
 	return (
 		<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -78,33 +78,33 @@ export interface RecommendModalProps {
  * replaced with inline SVG.
  */
 export function RecommendModal(props: RecommendModalProps): JSX.Element {
-	let isOpen=useUiStore(s => s.activeModal==="recommend");
-	let results=useProgressStore(s => s.results);
-	let specification=useSpecStore(s => s.specification);
-	let analytics: IAnalyticsService=props.analytics ?? new AnalyticsService();
-	let weakTopics=createMemo<WeakTopic[]>(() => {
-		let spec=specification();
+	let isOpen = useUiStore(s => s.activeModal === "recommend");
+	let results = useProgressStore(s => s.results);
+	let specification = useSpecStore(s => s.specification);
+	let analytics: IAnalyticsService = props.analytics ?? new AnalyticsService();
+	let weakTopics = createMemo<WeakTopic[]>(() => {
+		let spec = specification();
 		if (!spec) return [];
-		let r=results();
-		if (r.length===0) return [];
+		let r = results();
+		if (r.length === 0) return [];
 		return analytics.getWeakTopics(r, spec, WEAK_THRESHOLD).slice(0, MAX_RECOMMENDATIONS);
 	});
-	let dueItems=createMemo<SpacedRepetitionItem[]>(() => {
+	let dueItems = createMemo<SpacedRepetitionItem[]>(() => {
 		if (!props.spacedRepetition) return [];
 		return props.spacedRepetition.getDue();
 	});
-	let totalAttempts=() => results().length;
-	let handlePractice=(topicId: string) => {
+	let totalAttempts = () => results().length;
+	let handlePractice = (topicId: string) => {
 		usePracticeStore.getState().setSelectedTopicId(topicId);
 		useSettingsStore.getState().setDefaultMode("Single");
 		useUiStore.getState().closeModal();
 	};
-	let handlePracticeAll=() => {
+	let handlePracticeAll = () => {
 		usePracticeStore.getState().setSelectedTopicId(null);
 		useSettingsStore.getState().setDefaultMode("Single");
 		useUiStore.getState().closeModal();
 	};
-	let close=() => useUiStore.getState().closeModal();
+	let close = () => useUiStore.getState().closeModal();
 	return (
 		<Modal
 			open={isOpen()}
@@ -116,79 +116,112 @@ export function RecommendModal(props: RecommendModalProps): JSX.Element {
 			class={styles.recommend}
 			footer={
 				<>
-					<Button variant="secondary" size="md" onClick={close}>Dismiss</Button>
-					<Show when={weakTopics().length>0}>
-						<Button variant="primary" size="md" onClick={handlePracticeAll}>Practice All</Button>
+					<Button variant="secondary" size="md" onClick={close}>
+						Dismiss
+					</Button>
+					<Show when={weakTopics().length > 0}>
+						<Button variant="primary" size="md" onClick={handlePracticeAll}>
+							Practice All
+						</Button>
 					</Show>
 				</>
 			}
 		>
-			<Show when={dueItems().length>0}>
+			<Show when={dueItems().length > 0}>
 				<section class={styles.reviewSection} aria-label="Spaced repetition reviews due">
 					<div class={styles.reviewHeader}>
-						<span class={styles.reviewIcon}><ClockIcon /></span>
+						<span class={styles.reviewIcon}>
+							<ClockIcon />
+						</span>
 						<span class={styles.reviewTitle}>Due for Review</span>
 						<span class={styles.reviewCount}>{dueItems().length}</span>
 					</div>
 					<ul class={styles.reviewList}>
-						<For each={dueItems()}>{(item) => {
-							return (
-								<li class={styles.reviewItem}>
-									<span class={styles.reviewKey}>{item.key}</span>
-									<span class={styles.reviewMeta}>{item.interval}d interval · {item.repetitions} rep{item.repetitions===1 ? "" : "s"}</span>
-									<Button variant="secondary" size="sm" class={styles.reviewAction} onClick={() => handlePractice(item.key)}>Review</Button>
-								</li>
-							);
-						}}</For>
+						<For each={dueItems()}>
+							{item => {
+								return (
+									<li class={styles.reviewItem}>
+										<span class={styles.reviewKey}>{item.key}</span>
+										<span class={styles.reviewMeta}>
+											{item.interval}d interval · {item.repetitions} rep{item.repetitions === 1 ? "" : "s"}
+										</span>
+										<Button variant="secondary" size="sm" class={styles.reviewAction} onClick={() => handlePractice(item.key)}>
+											Review
+										</Button>
+									</li>
+								);
+							}}
+						</For>
 					</ul>
 				</section>
 			</Show>
-			<Show when={weakTopics().length===0 && dueItems().length===0} fallback={
-				<>
-					<Card variant="filled" class={styles.summaryCard}>
-						<CardContent class={styles.summaryContent}>
-							<div class={styles.summaryItem}>
-								<span class={`${styles.summaryIcon} ${styles.danger}`}><TrendDownIcon /></span>
-								<span class={styles.summaryValue}>{weakTopics().length}</span>
-								<span class={styles.summaryLabel}>topic{weakTopics().length===1 ? "" : "s"} below {WEAK_THRESHOLD}%</span>
-							</div>
-							<div class={styles.summaryItem}>
-								<span class={`${styles.summaryIcon} ${styles.success}`}><CheckCircleIcon /></span>
-								<span class={styles.summaryValue}>{totalAttempts()}</span>
-								<span class={styles.summaryLabel}>attempt{totalAttempts()===1 ? "" : "s"} recorded</span>
-							</div>
-						</CardContent>
-					</Card>
-					<ul class={styles.topicList}>
-						<For each={weakTopics()}>{(topic) => {
-							let badgeVariant=() => topic.accuracy<50 ? "error" : "warning";
-							let correctCount=() => Math.round((topic.accuracy/100)*topic.attempts);
-							return (
-								<li class={styles.topicItem}>
-									<Card variant="hover" class={styles.topicCard}>
-										<CardHeader class={styles.topicHeader}>
-											<div class={styles.topicTitleRow}>
-												<span class={styles.topicIcon}><TargetIcon /></span>
-												<CardTitle class={styles.topicTitle}>{topic.topicName}</CardTitle>
-											</div>
-											<Badge variant={badgeVariant()} size="sm">{Math.round(topic.accuracy)}%</Badge>
-										</CardHeader>
-										<CardContent class={styles.topicContent}>
-											<ProgressBar value={topic.accuracy} ariaLabel={`${topic.topicName} accuracy`} />
-											<span class={styles.topicMeta}>{topic.attempts} attempt{topic.attempts===1 ? "" : "s"} · {correctCount()} correct</span>
-											<Button variant="secondary" size="sm" class={styles.topicAction} onClick={() => handlePractice(topic.topicId)}>Practice this topic</Button>
-										</CardContent>
-									</Card>
-								</li>
-							);
-						}}</For>
-					</ul>
-				</>
-			}>
+			<Show
+				when={weakTopics().length === 0 && dueItems().length === 0}
+				fallback={
+					<>
+						<Card variant="filled" class={styles.summaryCard}>
+							<CardContent class={styles.summaryContent}>
+								<div class={styles.summaryItem}>
+									<span class={`${styles.summaryIcon} ${styles.danger}`}>
+										<TrendDownIcon />
+									</span>
+									<span class={styles.summaryValue}>{weakTopics().length}</span>
+									<span class={styles.summaryLabel}>
+										topic{weakTopics().length === 1 ? "" : "s"} below {WEAK_THRESHOLD}%
+									</span>
+								</div>
+								<div class={styles.summaryItem}>
+									<span class={`${styles.summaryIcon} ${styles.success}`}>
+										<CheckCircleIcon />
+									</span>
+									<span class={styles.summaryValue}>{totalAttempts()}</span>
+									<span class={styles.summaryLabel}>attempt{totalAttempts() === 1 ? "" : "s"} recorded</span>
+								</div>
+							</CardContent>
+						</Card>
+						<ul class={styles.topicList}>
+							<For each={weakTopics()}>
+								{topic => {
+									let badgeVariant = () => (topic.accuracy < 50 ? "error" : "warning");
+									let correctCount = () => Math.round((topic.accuracy / 100) * topic.attempts);
+									return (
+										<li class={styles.topicItem}>
+											<Card variant="hover" class={styles.topicCard}>
+												<CardHeader class={styles.topicHeader}>
+													<div class={styles.topicTitleRow}>
+														<span class={styles.topicIcon}>
+															<TargetIcon />
+														</span>
+														<CardTitle class={styles.topicTitle}>{topic.topicName}</CardTitle>
+													</div>
+													<Badge variant={badgeVariant()} size="sm">
+														{Math.round(topic.accuracy)}%
+													</Badge>
+												</CardHeader>
+												<CardContent class={styles.topicContent}>
+													<ProgressBar value={topic.accuracy} ariaLabel={`${topic.topicName} accuracy`} />
+													<span class={styles.topicMeta}>
+														{topic.attempts} attempt{topic.attempts === 1 ? "" : "s"} · {correctCount()} correct
+													</span>
+													<Button variant="secondary" size="sm" class={styles.topicAction} onClick={() => handlePractice(topic.topicId)}>
+														Practice this topic
+													</Button>
+												</CardContent>
+											</Card>
+										</li>
+									);
+								}}
+							</For>
+						</ul>
+					</>
+				}
+			>
 				<EmptyState
 					illustration={<LightbulbIcon />}
-					title={totalAttempts()===0 ? "No recommendations yet" : "Great job! No weak topics found."}
-					description={totalAttempts()===0 ? "Complete a few questions and we will highlight topics worth reviewing." : "Your accuracy is strong across every topic you have practiced. Keep it up."}
+					title={totalAttempts() === 0 ? "No recommendations yet" : "Great job! No weak topics found."}
+					description={
+						totalAttempts() === 0 ? "Complete a few questions and we will highlight topics worth reviewing." : "Your accuracy is strong across every topic you have practiced. Keep it up."
+					}
 				/>
 			</Show>
 		</Modal>

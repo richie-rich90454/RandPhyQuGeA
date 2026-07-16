@@ -4,19 +4,7 @@ import {QuestionGenerator} from "../generator/QuestionGenerator";
 import {ExpressionEvaluator} from "../ExpressionEvaluator";
 import {SeededRandomGenerator} from "../random";
 import partOneSpec from "../../../assets/part_one.txt?raw";
-const NEW_TEMPLATE_IDS = [
-	"qu-mc-1",
-	"qu-sa-1",
-	"qu-mc-2",
-	"qu-ne-1",
-	"qu-tf-1",
-	"nu-mc-1",
-	"nu-sa-1",
-	"nu-ne-1",
-	"nu-mc-2",
-	"nu-sa-2",
-	"nu-ne-2",
-];
+const NEW_TEMPLATE_IDS = ["qu-mc-1", "qu-sa-1", "qu-mc-2", "qu-ne-1", "qu-tf-1", "nu-mc-1", "nu-sa-1", "nu-ne-1", "nu-mc-2", "nu-sa-2", "nu-ne-2"];
 function buildGenerator(seed: number): {gen: QuestionGenerator; templateIds: string[]} {
 	const parser = new SpecificationParser();
 	const spec = parser.parse(partOneSpec);

@@ -13,9 +13,9 @@ export interface ProgressBarProps {
 }
 /** Progress bar with determinate and indeterminate modes. */
 export function ProgressBar(props: ProgressBarProps): JSX.Element {
-	let [local]=splitProps(props, ["value", "indeterminate", "class", "ariaLabel"]);
-	let clamped=createMemo(() => Math.min(100, Math.max(0, local.value ?? 0)));
-	let rounded=createMemo(() => Math.round(clamped()));
+	let [local] = splitProps(props, ["value", "indeterminate", "class", "ariaLabel"]);
+	let clamped = createMemo(() => Math.min(100, Math.max(0, local.value ?? 0)));
+	let rounded = createMemo(() => Math.round(clamped()));
 	return (
 		<div
 			class={`${styles.track} ${local.class ?? ""}`}
@@ -26,10 +26,7 @@ export function ProgressBar(props: ProgressBarProps): JSX.Element {
 			aria-valuetext={local.indeterminate ? undefined : `${rounded()}%`}
 			aria-label={local.ariaLabel ?? "Progress"}
 		>
-			<Show
-				when={local.indeterminate}
-				fallback={<div class={styles.fill} style={`width: ${clamped()}%;`} />}
-			>
+			<Show when={local.indeterminate} fallback={<div class={styles.fill} style={`width: ${clamped()}%;`} />}>
 				<div class={`${styles.fill} ${styles.indeterminate}`} />
 			</Show>
 		</div>

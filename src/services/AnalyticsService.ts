@@ -57,7 +57,10 @@ export class AnalyticsService implements IAnalyticsService {
 		if (results.length === 0) {
 			return "Single";
 		}
-		let counts = new Map<PracticeMode, number>([["Single", 0], ["Mental", 0]]);
+		let counts = new Map<PracticeMode, number>([
+			["Single", 0],
+			["Mental", 0],
+		]);
 		for (let result of results) {
 			counts.set(result.mode, (counts.get(result.mode) ?? 0) + 1);
 		}

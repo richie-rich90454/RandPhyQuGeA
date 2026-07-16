@@ -4,7 +4,7 @@ import type {JSX} from "solid-js";
 import {createHistory} from "../createHistory";
 import type {HistoryState} from "../createHistory";
 import type {QuestionAttempt} from "../../../lib/physics/history/QuestionHistory";
-function makeAttempt(overrides: Partial<QuestionAttempt>={}): QuestionAttempt {
+function makeAttempt(overrides: Partial<QuestionAttempt> = {}): QuestionAttempt {
 	return {
 		id: "att-1",
 		questionId: "Q1",
@@ -15,15 +15,15 @@ function makeAttempt(overrides: Partial<QuestionAttempt>={}): QuestionAttempt {
 		...overrides,
 	};
 }
-let state: HistoryState | null=null;
+let state: HistoryState | null = null;
 function makeRoot(options?: Parameters<typeof createHistory>[0]): () => JSX.Element {
 	return () => {
-		state=createHistory(options);
+		state = createHistory(options);
 		return <div>history</div>;
 	};
 }
 beforeEach(() => {
-	state=null;
+	state = null;
 });
 describe("createHistory default state (task 5.74)", () => {
 	it("starts empty with count 0 and zero accuracy", () => {
@@ -49,7 +49,7 @@ describe("createHistory default state (task 5.74)", () => {
 describe("createHistory record reactivity (task 5.74)", () => {
 	it("record appends an attempt and updates attempts/count/stats accessors", () => {
 		render(makeRoot());
-		let attempt=state!.record({questionId: "Q1", correct: true, response: "5", mode: "frq"});
+		let attempt = state!.record({questionId: "Q1", correct: true, response: "5", mode: "frq"});
 		expect(attempt.id).toBe("att-1");
 		expect(attempt.questionId).toBe("Q1");
 		expect(state!.count()).toBe(1);
@@ -57,7 +57,7 @@ describe("createHistory record reactivity (task 5.74)", () => {
 		expect(state!.stats()).toEqual({total: 1, correct: 1, accuracy: 1});
 	});
 	it("record fires onRecord callback with the stored attempt", () => {
-		let onRecord=vi.fn();
+		let onRecord = vi.fn<(attempt: QuestionAttempt) => void>();
 		render(makeRoot({onRecord}));
 		state!.record({questionId: "Q1", correct: true, response: "5", mode: "frq"});
 		expect(onRecord).toHaveBeenCalledTimes(1);
@@ -65,14 +65,14 @@ describe("createHistory record reactivity (task 5.74)", () => {
 	});
 	it("record auto-assigns a monotonically increasing id", () => {
 		render(makeRoot());
-		let a1=state!.record({questionId: "Q1", correct: true, response: "1", mode: "frq"});
-		let a2=state!.record({questionId: "Q2", correct: false, response: "2", mode: "frq"});
+		let a1 = state!.record({questionId: "Q1", correct: true, response: "1", mode: "frq"});
+		let a2 = state!.record({questionId: "Q2", correct: false, response: "2", mode: "frq"});
 		expect(a1.id).toBe("att-1");
 		expect(a2.id).toBe("att-2");
 	});
 	it("record accepts an explicit timestamp", () => {
 		render(makeRoot());
-		let a=state!.record({questionId: "Q1", correct: true, response: "1", mode: "frq", timestamp: 5000});
+		let a = state!.record({questionId: "Q1", correct: true, response: "1", mode: "frq", timestamp: 5000});
 		expect(a.timestamp).toBe(5000);
 	});
 	it("stats reflect running accuracy across mixed-correctness attempts", () => {
@@ -80,7 +80,7 @@ describe("createHistory record reactivity (task 5.74)", () => {
 		state!.record({questionId: "Q1", correct: true, response: "1", mode: "frq"});
 		state!.record({questionId: "Q2", correct: false, response: "2", mode: "frq"});
 		state!.record({questionId: "Q3", correct: true, response: "3", mode: "frq"});
-		expect(state!.stats()).toEqual({total: 3, correct: 2, accuracy: 2/3});
+		expect(state!.stats()).toEqual({total: 3, correct: 2, accuracy: 2 / 3});
 	});
 	it("ring buffer drops oldest entry when over capacity", () => {
 		render(makeRoot({capacity: 2}));
@@ -149,7 +149,7 @@ describe("createHistory reattempt queue + callback (task 5.74)", () => {
 		expect(state!.needsReattempt("Q1")).toBe(false);
 	});
 	it("reattempt fires onReattempt and returns true when the question needs another attempt", () => {
-		let onReattempt=vi.fn();
+		let onReattempt = vi.fn<(questionId: string) => void>();
 		render(makeRoot({onReattempt}));
 		state!.record({questionId: "Q1", correct: false, response: "x", mode: "frq"});
 		expect(state!.reattempt("Q1")).toBe(true);
@@ -157,14 +157,14 @@ describe("createHistory reattempt queue + callback (task 5.74)", () => {
 		expect(onReattempt).toHaveBeenCalledWith("Q1");
 	});
 	it("reattempt returns false and does not fire onReattempt when the question does not need another attempt", () => {
-		let onReattempt=vi.fn();
+		let onReattempt = vi.fn<(questionId: string) => void>();
 		render(makeRoot({onReattempt}));
 		state!.record({questionId: "Q1", correct: true, response: "x", mode: "frq"});
 		expect(state!.reattempt("Q1")).toBe(false);
 		expect(onReattempt).not.toHaveBeenCalled();
 	});
 	it("reattempt returns false when no attempts exist for the question", () => {
-		let onReattempt=vi.fn();
+		let onReattempt = vi.fn<(questionId: string) => void>();
 		render(makeRoot({onReattempt}));
 		expect(state!.reattempt("nope")).toBe(false);
 		expect(onReattempt).not.toHaveBeenCalled();
@@ -192,7 +192,7 @@ describe("createHistory clear + cleanup (task 5.74)", () => {
 		expect(state!.reattemptQueue()).toEqual([]);
 	});
 	it("resets the underlying instance on disposal", () => {
-		let rendered=render(makeRoot());
+		let rendered = render(makeRoot());
 		state!.record({questionId: "Q1", correct: true, response: "1", mode: "frq"});
 		expect(state!.inner().count()).toBe(1);
 		rendered.unmount();

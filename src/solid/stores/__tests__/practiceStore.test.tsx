@@ -1,7 +1,19 @@
 import {describe, it, expect, beforeEach} from "vitest";
 import {render, screen} from "@solidjs/testing-library";
 import type {JSX} from "solid-js";
-import {usePracticeStore, selectCurrentQuestion, selectIsActive, selectIsFinished, selectMode, selectResults, selectCurrentIndex, selectQuestions, selectQuestionStartTime, selectSessionStartTime, selectSpecification} from "../practiceStore";
+import {
+	usePracticeStore,
+	selectCurrentQuestion,
+	selectIsActive,
+	selectIsFinished,
+	selectMode,
+	selectResults,
+	selectCurrentIndex,
+	selectQuestions,
+	selectQuestionStartTime,
+	selectSessionStartTime,
+	selectSpecification,
+} from "../practiceStore";
 import type {Session} from "../../../services/contracts";
 import type {GeneratedQuestion, Specification} from "../../../types/models";
 function makeQuestion(overrides: Partial<GeneratedQuestion> = {}): GeneratedQuestion {

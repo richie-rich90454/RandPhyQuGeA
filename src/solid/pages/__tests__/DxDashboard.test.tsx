@@ -2,7 +2,7 @@ import {render, screen, fireEvent, waitFor} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach} from "vitest";
 import {DxDashboard} from "../DxDashboard";
 beforeEach(() => {
-	window.location.hash="";
+	window.location.hash = "";
 });
 describe("DxDashboard page", () => {
 	it("renders the page heading and subtitle", () => {
@@ -60,7 +60,7 @@ describe("DxDashboard page", () => {
 		expect(screen.getByText("Time", {exact: true})).toBeInTheDocument();
 	});
 	it("clears the hash when the back link is clicked", () => {
-		window.location.hash="/dx";
+		window.location.hash = "/dx";
 		render(() => <DxDashboard />);
 		fireEvent.click(screen.getByRole("button", {name: /back to app/i}));
 		expect(window.location.hash).toBe("");
@@ -110,7 +110,7 @@ describe("DxDashboard network status indicator (task 6.48)", () => {
 	});
 	it("restores online when the toggle is clicked again", () => {
 		render(() => <DxDashboard />);
-		let button=screen.getByRole("button", {name: /simulate offline/i});
+		let button = screen.getByRole("button", {name: /simulate offline/i});
 		fireEvent.click(button);
 		expect(screen.getByText("Forced offline")).toBeInTheDocument();
 		fireEvent.click(screen.getByRole("button", {name: /restore online/i}));
@@ -149,12 +149,12 @@ describe("DxDashboard perf budget card (task 6.46)", () => {
 	});
 	it("shows pass badges for every empty category", () => {
 		render(() => <DxDashboard />);
-		let passBadges=screen.getAllByText("pass");
+		let passBadges = screen.getAllByText("pass");
 		expect(passBadges).toHaveLength(5);
 	});
 	it("refreshes the budget when the Refresh budget button is clicked", () => {
 		render(() => <DxDashboard />);
-		let button=screen.getByRole("button", {name: /refresh budget/i});
+		let button = screen.getByRole("button", {name: /refresh budget/i});
 		fireEvent.click(button);
 		expect(screen.getByText("Within budget")).toBeInTheDocument();
 	});

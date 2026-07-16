@@ -32,7 +32,10 @@
 	border: 1px solid transparent;
 	border-radius: var(--radius-sm);
 	cursor: pointer;
-	transition: color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+	transition:
+		color var(--duration-fast) var(--ease-standard),
+		background var(--duration-fast) var(--ease-standard),
+		border-color var(--duration-fast) var(--ease-standard);
 }
 .sectionHeader:hover {
 	color: var(--text);
@@ -79,7 +82,11 @@
 	font-size: var(--font-size-sm);
 	font-family: var(--font-mono);
 	cursor: pointer;
-	transition: background var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+	transition:
+		background var(--duration-fast) var(--ease-standard),
+		border-color var(--duration-fast) var(--ease-standard),
+		transform var(--duration-fast) var(--ease-standard),
+		box-shadow var(--duration-fast) var(--ease-standard);
 }
 .btn:hover:not(:disabled) {
 	background: var(--surface-muted);
@@ -168,7 +175,9 @@
 }
 @media (prefers-reduced-motion: reduce) {
 	.sectionHeader {
-		transition: color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
+		transition:
+			color var(--duration-fast) var(--ease-standard),
+			background var(--duration-fast) var(--ease-standard);
 	}
 	.sectionHeader:active {
 		transform: none;
@@ -177,7 +186,9 @@
 		transition: none;
 	}
 	.btn {
-		transition: background var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+		transition:
+			background var(--duration-fast) var(--ease-standard),
+			border-color var(--duration-fast) var(--ease-standard);
 	}
 	.btn:active:not(:disabled) {
 		transform: none;

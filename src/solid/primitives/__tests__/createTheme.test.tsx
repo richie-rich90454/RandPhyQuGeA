@@ -3,7 +3,7 @@ import {describe, it, expect, beforeEach} from "vitest";
 import type {JSX} from "solid-js";
 import {createTheme} from "../createTheme";
 import {useSettingsStore} from "../../stores/settingsStore";
-type MqlListener=(event: MediaQueryListEvent) => void;
+type MqlListener = (event: MediaQueryListEvent) => void;
 interface MqlMock {
 	matches: boolean;
 	media: string;
@@ -19,18 +19,18 @@ interface MatchMediaMock {
 	setMatches: (query: string, value: boolean) => void;
 }
 function createMatchMediaMock(): MatchMediaMock {
-	let byQuery=new Map<string, {matches: boolean, listeners: Set<MqlListener>}>();
-	let ensure=(query: string) => {
-		let entry=byQuery.get(query);
+	let byQuery = new Map<string, {matches: boolean; listeners: Set<MqlListener>}>();
+	let ensure = (query: string) => {
+		let entry = byQuery.get(query);
 		if (!entry) {
-			entry={matches: false, listeners: new Set()};
+			entry = {matches: false, listeners: new Set()};
 			byQuery.set(query, entry);
 		}
 		return entry;
 	};
-	let fn: MatchMediaMock=Object.assign(
+	let fn: MatchMediaMock = Object.assign(
 		(query: string): MqlMock => {
-			let entry=ensure(query);
+			let entry = ensure(query);
 			return {
 				get matches() {
 					return entry.matches;
@@ -54,8 +54,8 @@ function createMatchMediaMock(): MatchMediaMock {
 		},
 		{
 			setMatches: (query: string, value: boolean) => {
-				let entry=ensure(query);
-				entry.matches=value;
+				let entry = ensure(query);
+				entry.matches = value;
 				entry.listeners.forEach(listener => listener({matches: value, media: query} as MediaQueryListEvent));
 			},
 		},
@@ -70,7 +70,9 @@ function ThemeRoot(): JSX.Element {
 	createTheme({settingsStore: useSettingsStore});
 	return <div>theme</div>;
 }
-function resetSettings(overrides: {themeMode?: "light" | "dark" | "dim" | "system", reducedMotion?: boolean, locale?: string, fontSize?: "small" | "medium" | "large", reducedDataMode?: boolean}={}): void {
+function resetSettings(
+	overrides: {themeMode?: "light" | "dark" | "dim" | "system"; reducedMotion?: boolean; locale?: string; fontSize?: "small" | "medium" | "large"; reducedDataMode?: boolean} = {},
+): void {
 	useSettingsStore.setState({themeMode: "light", reducedMotion: false, locale: "en", fontSize: "medium", reducedDataMode: false, ...overrides});
 }
 beforeEach(() => {
@@ -79,15 +81,15 @@ beforeEach(() => {
 	document.documentElement.removeAttribute("dir");
 	document.documentElement.removeAttribute("data-font-size");
 	document.documentElement.removeAttribute("data-reduced-data");
-	let existingMeta=document.querySelector('meta[name="theme-color"]');
+	let existingMeta = document.querySelector('meta[name="theme-color"]');
 	if (existingMeta) {
 		existingMeta.remove();
 	}
-	let meta=document.createElement("meta");
+	let meta = document.createElement("meta");
 	meta.setAttribute("name", "theme-color");
 	meta.setAttribute("content", "#0b2540");
 	document.head.appendChild(meta);
-	matchMediaMock=createMatchMediaMock();
+	matchMediaMock = createMatchMediaMock();
 	Object.defineProperty(window, "matchMedia", {writable: true, value: matchMediaMock});
 	resetSettings();
 });
@@ -154,15 +156,15 @@ describe("createTheme", () => {
 	it("removes listeners on disposal", async () => {
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", false);
 		resetSettings({themeMode: "system"});
-		let result=render(() => <ThemeRoot />);
+		let result = render(() => <ThemeRoot />);
 		await flush();
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", true);
 		await flush();
 		expect(document.querySelector('meta[name="theme-color"]')?.getAttribute("content")).toBe("#1a1f2e");
 		result.unmount();
 		document.documentElement.removeAttribute("data-theme");
-		let meta=document.querySelector('meta[name="theme-color"]');
-		let contentBefore=meta?.getAttribute("content") ?? "";
+		let meta = document.querySelector('meta[name="theme-color"]');
+		let contentBefore = meta?.getAttribute("content") ?? "";
 		matchMediaMock.setMatches("(prefers-color-scheme: dark)", false);
 		await flush();
 		expect(meta?.getAttribute("content")).toBe(contentBefore);

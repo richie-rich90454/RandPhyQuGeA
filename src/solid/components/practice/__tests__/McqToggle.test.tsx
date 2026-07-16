@@ -9,7 +9,7 @@ beforeEach(() => {
 describe("McqToggle", () => {
 	it("renders the MCQ switch unchecked by default", () => {
 		render(() => <McqToggle />);
-		let sw=screen.getByRole("switch");
+		let sw = screen.getByRole("switch");
 		expect(sw).not.toBeChecked();
 	});
 	it("reflects the settings store defaultResponseMode state", () => {

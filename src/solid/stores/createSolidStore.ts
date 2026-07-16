@@ -54,25 +54,25 @@ export function createSolidStore<T>(store: StoreApi<T>): SolidStore<T> {
 	function useStore(): Accessor<T>;
 	function useStore<S>(selector: (state: T) => S): Accessor<S>;
 	function useStore<S>(selector?: (state: T) => S): Accessor<S | T> {
-		const compute=(): S | T => selector ? selector(store.getState()) : store.getState();
-		const [slice, setSlice]=createSignal<S | T>(compute());
-		const unsubscribe=store.subscribe(() => {
+		const compute = (): S | T => (selector ? selector(store.getState()) : store.getState());
+		const [slice, setSlice] = createSignal<S | T>(compute());
+		const unsubscribe = store.subscribe(() => {
 			setSlice(() => compute());
 		});
-		const owner=getOwner();
+		const owner = getOwner();
 		if (owner) {
 			runWithOwner(owner, () => onCleanup(unsubscribe));
 		}
 		return slice;
 	}
-	const bound=useStore as SolidStore<T>;
-	bound.getState=store.getState;
-	bound.setState=store.setState;
-	bound.subscribe=store.subscribe;
-	bound.getInitialState=store.getInitialState;
-	const persisted=store as StoreApi<T> & {persist?: StorePersistApi<T>};
+	const bound = useStore as SolidStore<T>;
+	bound.getState = store.getState;
+	bound.setState = store.setState;
+	bound.subscribe = store.subscribe;
+	bound.getInitialState = store.getInitialState;
+	const persisted = store as StoreApi<T> & {persist?: StorePersistApi<T>};
 	if (persisted.persist) {
-		bound.persist=persisted.persist;
+		bound.persist = persisted.persist;
 	}
 	return bound;
 }

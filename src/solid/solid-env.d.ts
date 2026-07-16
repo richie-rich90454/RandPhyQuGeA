@@ -7,7 +7,7 @@ declare module "node:fs" {
 		isDirectory(): boolean;
 		isFile(): boolean;
 	}
-	export function readdirSync(path: string, options: { withFileTypes: true }): Dirent[];
+	export function readdirSync(path: string, options: {withFileTypes: true}): Dirent[];
 }
 declare module "node:path" {
 	export function join(...paths: string[]): string;

@@ -1,8 +1,8 @@
 import type {JSX, JSXElement} from "solid-js";
 import {Show, splitProps} from "solid-js";
 import styles from "./Pill.module.css";
-export type PillVariant="default" | "active" | "outline";
-export type PillSize="sm" | "md" | "lg";
+export type PillVariant = "default" | "active" | "outline";
+export type PillSize = "sm" | "md" | "lg";
 export interface PillProps {
 	/** Pill label text. */
 	name: string;
@@ -23,22 +23,22 @@ export interface PillProps {
 	/** Whether the pill is disabled. */
 	disabled?: boolean;
 }
-let variantClass: Record<PillVariant, string | undefined>={
+let variantClass: Record<PillVariant, string | undefined> = {
 	default: styles.default,
 	active: styles.active,
 	outline: styles.outline,
 };
-let sizeClass: Record<PillSize, string | undefined>={
+let sizeClass: Record<PillSize, string | undefined> = {
 	sm: styles.sm,
 	md: styles.md,
 	lg: styles.lg,
 };
 /** Pill-shaped toggle button with variant, size, and optional icon. */
 export function Pill(props: PillProps): JSX.Element {
-	let [local]=splitProps(props, ["name", "icon", "active", "variant", "size", "onClick", "class", "ariaLabel", "disabled"]);
-	let isActive=() => local.variant === "active" || Boolean(local.active);
-	let resolvedVariant=() => isActive() ? "active" : (local.variant ?? "default");
-	let size=local.size ?? "md";
+	let [local] = splitProps(props, ["name", "icon", "active", "variant", "size", "onClick", "class", "ariaLabel", "disabled"]);
+	let isActive = () => local.variant === "active" || Boolean(local.active);
+	let resolvedVariant = () => (isActive() ? "active" : (local.variant ?? "default"));
+	let size = local.size ?? "md";
 	return (
 		<button
 			type="button"

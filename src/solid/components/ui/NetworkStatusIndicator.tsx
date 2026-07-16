@@ -17,19 +17,15 @@ export interface NetworkStatusIndicatorProps {
  * forced-offline state. Status changes are announced via an aria-live region.
  */
 export function NetworkStatusIndicator(props: NetworkStatusIndicatorProps): JSX.Element {
-	let statusText=() => {
+	let statusText = () => {
 		if (props.forcedOffline()) return "Forced offline";
 		if (props.online()) return "Online";
 		return "Offline";
 	};
-	let isOnline=() => props.online() && !props.forcedOffline();
+	let isOnline = () => props.online() && !props.forcedOffline();
 	return (
 		<div class={styles.root} data-online={isOnline() ? "true" : "false"}>
-			<span
-				class={`${styles.pill} ${isOnline() ? styles.online : styles.offline}`}
-				aria-live="polite"
-				aria-atomic="true"
-			>
+			<span class={`${styles.pill} ${isOnline() ? styles.online : styles.offline}`} aria-live="polite" aria-atomic="true">
 				<span class={styles.dot} aria-hidden="true" />
 				{statusText()}
 			</span>

@@ -26,13 +26,13 @@ export interface SpecState {
 	setEmpty: (empty: boolean) => void;
 	reset: () => void;
 }
-const initialState={
+const initialState = {
 	specification: null as Specification | null,
 	loading: false,
 	error: null as SpecError | null,
 	empty: true,
 };
-const specStore=createStore<SpecState>()(set => ({
+const specStore = createStore<SpecState>()(set => ({
 	...initialState,
 	setSpecification: specification => set({specification}),
 	setLoading: loading => set({loading}),
@@ -40,4 +40,4 @@ const specStore=createStore<SpecState>()(set => ({
 	setEmpty: empty => set({empty}),
 	reset: () => set({...initialState}),
 }));
-export const useSpecStore=createSolidStore<SpecState>(specStore);
+export const useSpecStore = createSolidStore<SpecState>(specStore);

@@ -44,7 +44,9 @@ export class MultipleResponseHandler implements QuestionTypeHandler {
 		const baseText = this.substituter.substitute(template.text_template, variables).replaceAll("{options}", allLabels);
 		const solutionText = this.substituter.substitute(template.solution_template, variables).replaceAll("{options}", allLabels).replaceAll("{answer}", answer);
 		const solutionLatex =
-			template.solution_latex_template.trim().length > 0 ? this.substituter.substitute(template.solution_latex_template, variables).replaceAll("{options}", allLabels).replaceAll("{answer}", answer) : "";
+			template.solution_latex_template.trim().length > 0
+				? this.substituter.substitute(template.solution_latex_template, variables).replaceAll("{options}", allLabels).replaceAll("{answer}", answer)
+				: "";
 		const diagramSvg = template.diagram_svg !== undefined ? this.substituter.substituteDiagram(template.diagram_svg, variables, answer) : undefined;
 		return {
 			id: generateId(),
@@ -71,7 +73,10 @@ export function parseMultipleResponseOptions(template: QuestionTemplate): Multip
 			continue;
 		}
 		const label = raw.slice(0, idx).trim();
-		const flag = raw.slice(idx + 1).trim().toLowerCase();
+		const flag = raw
+			.slice(idx + 1)
+			.trim()
+			.toLowerCase();
 		if (label === "") {
 			continue;
 		}

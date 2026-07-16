@@ -1,9 +1,9 @@
 import type {ComponentProps, JSX, JSXElement} from "solid-js";
 import {Show, splitProps} from "solid-js";
 import styles from "./Input.module.css";
-let idCounter=0;
+let idCounter = 0;
 function generateId(): string {
-	idCounter=idCounter+1;
+	idCounter = idCounter + 1;
 	return `solid-input-${idCounter}`;
 }
 export interface InputProps extends ComponentProps<"input"> {
@@ -16,16 +16,18 @@ export interface InputProps extends ComponentProps<"input"> {
 }
 /** Text input primitive with label, error, and hint affordances. */
 export function Input(props: InputProps): JSX.Element {
-	let [local, others]=splitProps(props, ["label", "error", "hint", "class", "id"]);
-	let generatedId=generateId();
-	let inputId=() => local.id ?? generatedId;
-	let errorId=() => `${inputId()}-error`;
-	let hintId=() => `${inputId()}-hint`;
-	let describedBy=() => [local.error ? errorId() : null, local.hint ? hintId() : null].filter(Boolean).join(" ") || undefined;
+	let [local, others] = splitProps(props, ["label", "error", "hint", "class", "id"]);
+	let generatedId = generateId();
+	let inputId = () => local.id ?? generatedId;
+	let errorId = () => `${inputId()}-error`;
+	let hintId = () => `${inputId()}-hint`;
+	let describedBy = () => [local.error ? errorId() : null, local.hint ? hintId() : null].filter(Boolean).join(" ") || undefined;
 	return (
 		<div class={styles.wrapper}>
 			<Show when={local.label}>
-				<label for={inputId()} class={styles.label}>{local.label}</label>
+				<label for={inputId()} class={styles.label}>
+					{local.label}
+				</label>
 			</Show>
 			<input
 				id={inputId()}
@@ -35,10 +37,14 @@ export function Input(props: InputProps): JSX.Element {
 				{...others}
 			/>
 			<Show when={local.error}>
-				<p id={errorId()} class={styles.error}>{local.error}</p>
+				<p id={errorId()} class={styles.error}>
+					{local.error}
+				</p>
 			</Show>
 			<Show when={local.hint}>
-				<p id={hintId()} class={styles.hint}>{local.hint}</p>
+				<p id={hintId()} class={styles.hint}>
+					{local.hint}
+				</p>
 			</Show>
 		</div>
 	);

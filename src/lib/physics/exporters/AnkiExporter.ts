@@ -18,10 +18,12 @@ export class AnkiExporter implements Exporter {
 	private renderFront(q: GeneratedQuestion): string {
 		let front = q.text;
 		if (q.choices !== undefined && q.choices.length > 0) {
-			const listed = q.choices.map((choice, i) => {
-				const letter = String.fromCharCode("A".charCodeAt(0) + i);
-				return `${letter}) ${choice}`;
-			}).join("<br>");
+			const listed = q.choices
+				.map((choice, i) => {
+					const letter = String.fromCharCode("A".charCodeAt(0) + i);
+					return `${letter}) ${choice}`;
+				})
+				.join("<br>");
 			front = `${q.text}<br>${listed}`;
 		}
 		return front;

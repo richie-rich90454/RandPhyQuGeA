@@ -52,7 +52,7 @@ describe("Accordion", () => {
 		expect(screen.queryByText("Content A")).not.toBeInTheDocument();
 	});
 	it("calls onValueChange when toggled", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(value: string) => void>();
 		render(() => (
 			<Accordion defaultValue="a" onValueChange={handler}>
 				<AccordionItem value="a">
@@ -108,8 +108,8 @@ describe("Accordion", () => {
 				</AccordionItem>
 			</Accordion>
 		));
-		let trigger=screen.getByText("Section A");
-		let content=screen.getByRole("region");
+		let trigger = screen.getByText("Section A");
+		let content = screen.getByRole("region");
 		expect(trigger).toHaveAttribute("aria-controls", content.id);
 		expect(content).toHaveAttribute("aria-labelledby", trigger.id);
 	});

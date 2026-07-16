@@ -44,48 +44,48 @@ export interface CreatePracticeActionsReturn {
  * built lazily from the {@link useServiceProvider} core.
  */
 export function createPracticeActions(options: CreatePracticeActionsOptions = {}): CreatePracticeActionsReturn {
-	let practice=options.practiceStore ?? usePracticeStore;
-	let progress=options.progressStore ?? useProgressStore;
-	let ui=options.uiStore ?? useUiStore;
-	let mode=options.mode;
-	let shortcutEnabled=options.shortcutEnabled !== false;
-	let onError=options.onError;
-	let cachedSessionService: ISessionService | null=null;
-	let resolveSessionService=(): ISessionService => {
+	let practice = options.practiceStore ?? usePracticeStore;
+	let progress = options.progressStore ?? useProgressStore;
+	let ui = options.uiStore ?? useUiStore;
+	let mode = options.mode;
+	let shortcutEnabled = options.shortcutEnabled !== false;
+	let onError = options.onError;
+	let cachedSessionService: ISessionService | null = null;
+	let resolveSessionService = (): ISessionService => {
 		if (options.sessionService) {
 			return options.sessionService;
 		}
 		if (!cachedSessionService) {
-			let {core}=useServiceProvider();
-			cachedSessionService=new SessionService(new PhysicsService(core), new AnalyticsService());
+			let {core} = useServiceProvider();
+			cachedSessionService = new SessionService(new PhysicsService(core), new AnalyticsService());
 		}
 		return cachedSessionService;
 	};
-	let isSubmitting=false;
-	let check=async (): Promise<void> => {
-		let store=practice.getState();
-		let currentQuestion=selectCurrentQuestion(store);
+	let isSubmitting = false;
+	let check = async (): Promise<void> => {
+		let store = practice.getState();
+		let currentQuestion = selectCurrentQuestion(store);
 		if (!store.session || !currentQuestion || store.showFeedback) {
 			return;
 		}
-		if (mode!==undefined && store.session.mode!==mode) {
+		if (mode !== undefined && store.session.mode !== mode) {
 			return;
 		}
 		if (isSubmitting) {
 			return;
 		}
-		isSubmitting=true;
+		isSubmitting = true;
 		try {
-			let sessionService=resolveSessionService();
-			let answer=store.userAnswer;
-			let choiceIndex: number | undefined=undefined;
+			let sessionService = resolveSessionService();
+			let answer = store.userAnswer;
+			let choiceIndex: number | undefined = undefined;
 			if (currentQuestion.correct_choice_indices !== undefined) {
-				let sorted=[...store.selectedChoiceIndices].sort((a, b) => a - b);
-				answer=sorted.join(",");
+				let sorted = [...store.selectedChoiceIndices].sort((a, b) => a - b);
+				answer = sorted.join(",");
 			} else {
-				choiceIndex=store.selectedChoiceIndex>=0 ? store.selectedChoiceIndex : undefined;
+				choiceIndex = store.selectedChoiceIndex >= 0 ? store.selectedChoiceIndex : undefined;
 			}
-			let result=await sessionService.submitAnswer(answer, choiceIndex);
+			let result = await sessionService.submitAnswer(answer, choiceIndex);
 			progress.getState().addResults([result]);
 			practice.setState({
 				session: sessionService.getSession(),
@@ -99,20 +99,20 @@ export function createPracticeActions(options: CreatePracticeActionsOptions = {}
 				throw err;
 			}
 		} finally {
-			isSubmitting=false;
+			isSubmitting = false;
 		}
 	};
 	if (shortcutEnabled) {
-		let handleKeyDown=(event: KeyboardEvent) => {
-			if (event.shiftKey && event.key==="Enter") {
+		let handleKeyDown = (event: KeyboardEvent) => {
+			if (event.shiftKey && event.key === "Enter") {
 				if (ui.getState().activeModal) {
 					return;
 				}
 				if (practice.getState().showFeedback) {
 					return;
 				}
-				let target=event.target as HTMLElement | null;
-				if (target && (target.tagName==="TEXTAREA" || target.tagName==="INPUT")) {
+				let target = event.target as HTMLElement | null;
+				if (target && (target.tagName === "TEXTAREA" || target.tagName === "INPUT")) {
 					event.preventDefault();
 					void check();
 				}

@@ -1,4 +1,6 @@
-.wrapper { width: 100%; }
+.wrapper {
+	width: 100%;
+}
 .label {
 	display: block;
 	margin-bottom: var(--space-1);
@@ -6,7 +8,9 @@
 	font-weight: var(--font-weight-medium);
 	color: var(--text-muted);
 }
-.control { position: relative; }
+.control {
+	position: relative;
+}
 .select {
 	width: 100%;
 	appearance: none;
@@ -17,7 +21,9 @@
 	padding-right: var(--space-8);
 	font-size: var(--font-size-sm);
 	color: var(--text);
-	transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+	transition:
+		border-color var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
 }
 .select:hover:not(:disabled) {
 	border-color: var(--border-strong);
@@ -31,9 +37,15 @@
 	cursor: not-allowed;
 	opacity: 0.5;
 }
-.scope { border-radius: var(--radius-full); }
-.difficulty { border-radius: var(--radius-full); }
-.errorSelect { border-color: var(--danger); }
+.scope {
+	border-radius: var(--radius-full);
+}
+.difficulty {
+	border-radius: var(--radius-full);
+}
+.errorSelect {
+	border-color: var(--danger);
+}
 .errorSelect:hover:not(:disabled) {
 	border-color: var(--danger);
 }

@@ -2,7 +2,7 @@ import type {JSX, JSXElement} from "solid-js";
 import {For, Show, createContext, createSignal, onCleanup, useContext} from "solid-js";
 import {Portal} from "solid-js/web";
 import styles from "./Toast.module.css";
-export type ToastVariant="success" | "error" | "info" | "warning";
+export type ToastVariant = "success" | "error" | "info" | "warning";
 export interface ToastOptions {
 	/** Message text shown in the toast body. */
 	message: string;
@@ -26,17 +26,17 @@ export interface ToastApi {
 export interface ToastProviderProps {
 	children?: JSXElement;
 }
-let ToastContext=createContext<ToastApi>();
-let DEFAULT_DURATION=4000;
-let idCounter=0;
-let VARIANT_COLOR: Record<ToastVariant, string>={
+let ToastContext = createContext<ToastApi>();
+let DEFAULT_DURATION = 4000;
+let idCounter = 0;
+let VARIANT_COLOR: Record<ToastVariant, string> = {
 	success: "var(--success)",
 	error: "var(--danger)",
 	warning: "var(--warning)",
 	info: "var(--accent)",
 };
 function ToastIcon(props: {variant: ToastVariant}): JSX.Element {
-	let color=VARIANT_COLOR[props.variant] ?? "var(--accent)";
+	let color = VARIANT_COLOR[props.variant] ?? "var(--accent)";
 	switch (props.variant) {
 		case "success":
 			return (
@@ -79,51 +79,54 @@ function ToastIcon(props: {variant: ToastVariant}): JSX.Element {
  * `onCleanup`. Error/warning toasts announce assertively; others are polite.
  */
 export function ToastProvider(props: ToastProviderProps): JSX.Element {
-	let [toasts, setToasts]=createSignal<ToastItem[]>([]);
-	let timers=new Map<number, ReturnType<typeof setTimeout>>();
-	let removeToast=(id: number) => {
+	let [toasts, setToasts] = createSignal<ToastItem[]>([]);
+	let timers = new Map<number, ReturnType<typeof setTimeout>>();
+	let removeToast = (id: number) => {
 		setToasts(prev => prev.filter(item => item.id !== id));
-		let timer=timers.get(id);
+		let timer = timers.get(id);
 		if (timer) {
 			clearTimeout(timer);
 			timers.delete(id);
 		}
 	};
-	let toast=(options: ToastOptions) => {
-		let variant=options.variant ?? "info";
-		let duration=options.duration ?? DEFAULT_DURATION;
-		idCounter=idCounter+1;
-		let id=idCounter;
+	let toast = (options: ToastOptions) => {
+		let variant = options.variant ?? "info";
+		let duration = options.duration ?? DEFAULT_DURATION;
+		idCounter = idCounter + 1;
+		let id = idCounter;
 		setToasts(prev => [...prev, {id, message: options.message, variant, duration}]);
-		if (duration>0) {
-			timers.set(id, setTimeout(() => removeToast(id), duration));
+		if (duration > 0) {
+			timers.set(
+				id,
+				setTimeout(() => removeToast(id), duration),
+			);
 		}
 	};
 	onCleanup(() => {
 		timers.forEach(timer => clearTimeout(timer));
 		timers.clear();
 	});
-	let api: ToastApi={toast, removeToast};
+	let api: ToastApi = {toast, removeToast};
 	return (
 		<ToastContext.Provider value={api}>
 			{props.children}
 			<Portal mount={document.body}>
 				<div class={styles.stack} role="region" aria-label="Notifications">
 					<For each={toasts()}>
-						{(item) => {
-							let accent=VARIANT_COLOR[item.variant] ?? "var(--accent)";
-							let live: "assertive" | "polite"=item.variant === "error" || item.variant === "warning" ? "assertive" : "polite";
+						{item => {
+							let accent = VARIANT_COLOR[item.variant] ?? "var(--accent)";
+							let live: "assertive" | "polite" = item.variant === "error" || item.variant === "warning" ? "assertive" : "polite";
 							return (
 								<div class={styles.toast} style={`border-left: 4px solid ${accent}; --toast-duration: ${item.duration}ms;`} role="status" aria-live={live} data-toast-id={item.id}>
-								<ToastIcon variant={item.variant} />
-								<p class={styles.message}>{item.message}</p>
-								<button type="button" class={styles.close} aria-label="Dismiss notification" onClick={() => removeToast(item.id)}>
-									<span aria-hidden="true">×</span>
-								</button>
-								<Show when={item.duration > 0}>
-									<span class={styles.progress} style={`background: ${accent};`} aria-hidden="true" />
-								</Show>
-							</div>
+									<ToastIcon variant={item.variant} />
+									<p class={styles.message}>{item.message}</p>
+									<button type="button" class={styles.close} aria-label="Dismiss notification" onClick={() => removeToast(item.id)}>
+										<span aria-hidden="true">×</span>
+									</button>
+									<Show when={item.duration > 0}>
+										<span class={styles.progress} style={`background: ${accent};`} aria-hidden="true" />
+									</Show>
+								</div>
 							);
 						}}
 					</For>
@@ -134,7 +137,7 @@ export function ToastProvider(props: ToastProviderProps): JSX.Element {
 }
 /** Access the toast API. Must be used inside a `ToastProvider`. */
 export function useToast(): ToastApi {
-	let ctx=useContext(ToastContext);
+	let ctx = useContext(ToastContext);
 	if (!ctx) throw new Error("useToast must be used within a ToastProvider");
 	return ctx;
 }

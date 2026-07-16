@@ -5,11 +5,11 @@ import {useToast} from "../components/ui/Toast";
 import {parseSpecification, generateQuestion, loadDefaultSpec} from "../../services/physicsCore";
 import type {Specification, GeneratedQuestion} from "../../types/models";
 import styles from "./SpecEditor.module.css";
-const STORAGE_KEY="randphyqugea:spec-editor:text";
-const DEBOUNCE_MS=400;
+const STORAGE_KEY = "randphyqugea:spec-editor:text";
+const DEBOUNCE_MS = 400;
 function loadSavedSpec(): string {
 	try {
-		let saved=localStorage.getItem(STORAGE_KEY);
+		let saved = localStorage.getItem(STORAGE_KEY);
 		if (saved !== null) return saved;
 	} catch {
 		// localStorage unavailable
@@ -24,11 +24,11 @@ function saveSpec(text: string): void {
 	}
 }
 function downloadFile(filename: string, content: string): void {
-	let blob=new Blob([content], {type: "text/plain;charset=utf-8"});
-	let url=URL.createObjectURL(blob);
-	let anchor=document.createElement("a");
-	anchor.href=url;
-	anchor.download=filename;
+	let blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+	let url = URL.createObjectURL(blob);
+	let anchor = document.createElement("a");
+	anchor.href = url;
+	anchor.download = filename;
 	document.body.appendChild(anchor);
 	anchor.click();
 	document.body.removeChild(anchor);
@@ -40,15 +40,15 @@ interface ParseState {
 	error?: string;
 }
 export function SpecEditor(): JSX.Element {
-	let [specText, setSpecText]=createSignal<string>(loadSavedSpec());
-	let [parseState, setParseState]=createSignal<ParseState>({status: "idle"});
-	let [previewQuestion, setPreviewQuestion]=createSignal<GeneratedQuestion | null>(null);
-	let [previewError, setPreviewError]=createSignal<string | null>(null);
-	let [loadingDefault, setLoadingDefault]=createSignal(false);
-	let [saved, setSaved]=createSignal(false);
-	let {toast}=useToast();
+	let [specText, setSpecText] = createSignal<string>(loadSavedSpec());
+	let [parseState, setParseState] = createSignal<ParseState>({status: "idle"});
+	let [previewQuestion, setPreviewQuestion] = createSignal<GeneratedQuestion | null>(null);
+	let [previewError, setPreviewError] = createSignal<string | null>(null);
+	let [loadingDefault, setLoadingDefault] = createSignal(false);
+	let [saved, setSaved] = createSignal(false);
+	let {toast} = useToast();
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
-	let runPreview=(text: string) => {
+	let runPreview = (text: string) => {
 		if (text.trim() === "") {
 			setParseState({status: "idle"});
 			setPreviewQuestion(null);
@@ -56,26 +56,29 @@ export function SpecEditor(): JSX.Element {
 			return;
 		}
 		setParseState({status: "parsing"});
-		parseSpecification(text).then((spec) => {
-			setParseState({status: "success", spec});
-			setPreviewError(null);
-			return generateQuestion(spec);
-		}).then((question) => {
-			setPreviewQuestion(question);
-		}).catch((err: unknown) => {
-			let message=err instanceof Error ? err.message : String(err);
-			setParseState({status: "error", error: message});
-			setPreviewQuestion(null);
-			setPreviewError(message);
-		});
+		parseSpecification(text)
+			.then(spec => {
+				setParseState({status: "success", spec});
+				setPreviewError(null);
+				return generateQuestion(spec);
+			})
+			.then(question => {
+				setPreviewQuestion(question);
+			})
+			.catch((err: unknown) => {
+				let message = err instanceof Error ? err.message : String(err);
+				setParseState({status: "error", error: message});
+				setPreviewQuestion(null);
+				setPreviewError(message);
+			});
 	};
 	createEffect(() => {
-		let text=specText();
+		let text = specText();
 		saveSpec(text);
 		setSaved(true);
-		let timer=setTimeout(() => setSaved(false), 1500);
+		let timer = setTimeout(() => setSaved(false), 1500);
 		if (debounceTimer) clearTimeout(debounceTimer);
-		debounceTimer=setTimeout(() => {
+		debounceTimer = setTimeout(() => {
 			runPreview(text);
 		}, DEBOUNCE_MS);
 		onCleanup(() => {
@@ -83,29 +86,32 @@ export function SpecEditor(): JSX.Element {
 			if (debounceTimer) clearTimeout(debounceTimer);
 		});
 	});
-	let handleLoadDefault=() => {
+	let handleLoadDefault = () => {
 		setLoadingDefault(true);
-		loadDefaultSpec().then((text) => {
-			setSpecText(text);
-		}).catch((err: unknown) => {
-			let message=err instanceof Error ? err.message : String(err);
-			toast({variant: "error", message: "Failed to load default spec: " + message});
-		}).finally(() => {
-			setLoadingDefault(false);
-		});
+		loadDefaultSpec()
+			.then(text => {
+				setSpecText(text);
+			})
+			.catch((err: unknown) => {
+				let message = err instanceof Error ? err.message : String(err);
+				toast({variant: "error", message: "Failed to load default spec: " + message});
+			})
+			.finally(() => {
+				setLoadingDefault(false);
+			});
 	};
-	let handleExport=() => {
+	let handleExport = () => {
 		downloadFile("specification.txt", specText());
 	};
-	let handleClear=() => {
+	let handleClear = () => {
 		setSpecText("");
 	};
-	let unitCount=() => parseState().spec?.units.length ?? 0;
-	let topicCount=() => parseState().spec?.topics.length ?? 0;
-	let skillCount=() => parseState().spec?.skills.length ?? 0;
-	let templateCount=() => parseState().spec?.templates.length ?? 0;
-	let handleBack=() => {
-		window.location.hash="";
+	let unitCount = () => parseState().spec?.units.length ?? 0;
+	let topicCount = () => parseState().spec?.topics.length ?? 0;
+	let skillCount = () => parseState().spec?.skills.length ?? 0;
+	let templateCount = () => parseState().spec?.templates.length ?? 0;
+	let handleBack = () => {
+		window.location.hash = "";
 	};
 	return (
 		<div class={styles.root}>
@@ -120,9 +126,15 @@ export function SpecEditor(): JSX.Element {
 				<p class={styles.subtitle}>Edit a question specification and preview generated questions in real time.</p>
 			</header>
 			<div class={styles.toolbar}>
-				<Button variant="secondary" size="sm" onClick={handleLoadDefault} loading={loadingDefault()}>Load default spec</Button>
-				<Button variant="ghost" size="sm" onClick={handleExport} disabled={specText().trim() === ""}>Export .txt</Button>
-				<Button variant="ghost" size="sm" onClick={handleClear} disabled={specText() === ""}>Clear</Button>
+				<Button variant="secondary" size="sm" onClick={handleLoadDefault} loading={loadingDefault()}>
+					Load default spec
+				</Button>
+				<Button variant="ghost" size="sm" onClick={handleExport} disabled={specText().trim() === ""}>
+					Export .txt
+				</Button>
+				<Button variant="ghost" size="sm" onClick={handleClear} disabled={specText() === ""}>
+					Clear
+				</Button>
 				<Show when={saved()}>
 					<Badge variant="success">Saved</Badge>
 				</Show>
@@ -137,8 +149,8 @@ export function SpecEditor(): JSX.Element {
 						<textarea
 							class={styles.editor}
 							value={specText()}
-							onInput={(e) => setSpecText(e.currentTarget.value)}
-							placeholder="[UNIT id:kinematics name:Kinematics]&#10;[TOPIC id:proj-motion name:&quot;Projectile Motion&quot; unit:kinematics]&#10;[SKILL id:calc-trajectory name:&quot;Calculate Trajectory&quot; topic:proj-motion]&#10;[TEMPLATE id:t1 skill:calc-trajectory type:MC difficulty:3 ...]"
+							onInput={e => setSpecText(e.currentTarget.value)}
+							placeholder='[UNIT id:kinematics name:Kinematics]&#10;[TOPIC id:proj-motion name:"Projectile Motion" unit:kinematics]&#10;[SKILL id:calc-trajectory name:"Calculate Trajectory" topic:proj-motion]&#10;[TEMPLATE id:t1 skill:calc-trajectory type:MC difficulty:3 ...]'
 							spellcheck={false}
 							aria-label="Specification text editor"
 						/>
@@ -170,10 +182,22 @@ export function SpecEditor(): JSX.Element {
 													<span class={styles.statusText}>Parsed successfully</span>
 												</div>
 												<div class={styles.stats}>
-													<div class={styles.stat}><span class={styles.statLabel}>Units</span><span class={styles.statValue}>{unitCount()}</span></div>
-													<div class={styles.stat}><span class={styles.statLabel}>Topics</span><span class={styles.statValue}>{topicCount()}</span></div>
-													<div class={styles.stat}><span class={styles.statLabel}>Skills</span><span class={styles.statValue}>{skillCount()}</span></div>
-													<div class={styles.stat}><span class={styles.statLabel}>Templates</span><span class={styles.statValue}>{templateCount()}</span></div>
+													<div class={styles.stat}>
+														<span class={styles.statLabel}>Units</span>
+														<span class={styles.statValue}>{unitCount()}</span>
+													</div>
+													<div class={styles.stat}>
+														<span class={styles.statLabel}>Topics</span>
+														<span class={styles.statValue}>{topicCount()}</span>
+													</div>
+													<div class={styles.stat}>
+														<span class={styles.statLabel}>Skills</span>
+														<span class={styles.statValue}>{skillCount()}</span>
+													</div>
+													<div class={styles.stat}>
+														<span class={styles.statLabel}>Templates</span>
+														<span class={styles.statValue}>{templateCount()}</span>
+													</div>
 												</div>
 											</Show>
 										}
@@ -203,7 +227,7 @@ export function SpecEditor(): JSX.Element {
 									</Show>
 								}
 							>
-								{(question) => (
+								{question => (
 									<div class={styles.questionBlock}>
 										<div class={styles.questionMeta}>
 											<Badge variant="info">{question().question_type}</Badge>
@@ -213,11 +237,13 @@ export function SpecEditor(): JSX.Element {
 										<p class={styles.questionText}>{question().text}</p>
 										<Show when={question().choices}>
 											<ul class={styles.choices}>
-												<For each={question().choices}>{(choice, index) => (
-													<li class={question().correct_choice_index === index() ? styles.correctChoice : styles.choice}>
-														{String.fromCharCode(65 + index())}. {choice}
-													</li>
-												)}</For>
+												<For each={question().choices}>
+													{(choice, index) => (
+														<li class={question().correct_choice_index === index() ? styles.correctChoice : styles.choice}>
+															{String.fromCharCode(65 + index())}. {choice}
+														</li>
+													)}
+												</For>
 											</ul>
 										</Show>
 										<div class={styles.answerBlock}>

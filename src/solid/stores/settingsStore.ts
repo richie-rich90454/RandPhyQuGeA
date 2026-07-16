@@ -97,7 +97,7 @@ export interface SettingsState {
 	clearSpecification: () => void;
 	resetToDefaults: () => void;
 }
-const defaultState= {
+const defaultState = {
 	themeMode: "system" as ThemeMode,
 	fontMode: "default" as FontMode,
 	specificationContent: "",
@@ -138,8 +138,8 @@ const defaultState= {
 	reducedMotion: false,
 } as Omit<SettingsState, "appVersion">;
 /** Current persisted-store schema version. Bump when adding/removing/renaming fields so {@link migrateSettingsState} can apply incremental migrations. */
-export const SETTINGS_SCHEMA_VERSION=2;
-const VALID_RESPONSE_MODES: ReadonlySet<string>=new Set(["mcq", "frq"]);
+export const SETTINGS_SCHEMA_VERSION = 2;
+const VALID_RESPONSE_MODES: ReadonlySet<string> = new Set(["mcq", "frq"]);
 /**
  * Migrate a persisted settings payload to the current schema.
  *
@@ -152,51 +152,60 @@ const VALID_RESPONSE_MODES: ReadonlySet<string>=new Set(["mcq", "frq"]);
  * v1 added them; v2 added validation of those fields' values).
  */
 export function migrateSettingsState(persistedState: unknown, version: number): Omit<SettingsState, "appVersion"> {
-	const merged: Omit<SettingsState, "appVersion">={...defaultState};
+	const merged: Omit<SettingsState, "appVersion"> = {...defaultState};
 	if (!persistedState || typeof persistedState !== "object" || Array.isArray(persistedState)) {
 		return merged;
 	}
-	const state=persistedState as Record<string, unknown>;
-	const knownKeys=new Set(Object.keys(defaultState));
+	const state = persistedState as Record<string, unknown>;
+	const knownKeys = new Set(Object.keys(defaultState));
 	for (const [key, value] of Object.entries(state)) {
 		if (!knownKeys.has(key)) continue;
 		if (value === null || value === undefined) continue;
 		if (key === "defaultResponseMode") {
 			if (typeof value === "string" && VALID_RESPONSE_MODES.has(value)) {
-				(merged as Record<string, unknown>)[key]=value;
+				(merged as Record<string, unknown>)[key] = value;
 			}
 			continue;
 		}
 		if (key === "sigFigs") {
-			if (typeof value === "number" && Number.isFinite(value) && value>0 && Number.isInteger(value)) {
-				(merged as Record<string, unknown>)[key]=value;
+			if (typeof value === "number" && Number.isFinite(value) && value > 0 && Number.isInteger(value)) {
+				(merged as Record<string, unknown>)[key] = value;
 			}
 			continue;
 		}
-		if (key === "mcqChoices" || key === "defaultQuestionCount" || key === "mentalMaxQuestions" || key === "mentalDurationSec" || key === "autoCheckDelay" || key === "decimalPlaces" || key === "fpsCap" || key === "accentHue") {
+		if (
+			key === "mcqChoices" ||
+			key === "defaultQuestionCount" ||
+			key === "mentalMaxQuestions" ||
+			key === "mentalDurationSec" ||
+			key === "autoCheckDelay" ||
+			key === "decimalPlaces" ||
+			key === "fpsCap" ||
+			key === "accentHue"
+		) {
 			if (typeof value === "number" && Number.isFinite(value)) {
-				(merged as Record<string, unknown>)[key]=value;
+				(merged as Record<string, unknown>)[key] = value;
 			}
 			continue;
 		}
 		if (key === "defaultDifficulties") {
 			if (Array.isArray(value) && value.every(v => typeof v === "number")) {
-				(merged as Record<string, unknown>)[key]=value;
+				(merged as Record<string, unknown>)[key] = value;
 			}
 			continue;
 		}
 		if (key === "customShortcuts") {
 			if (value && typeof value === "object" && !Array.isArray(value)) {
-				(merged as Record<string, unknown>)[key]=value;
+				(merged as Record<string, unknown>)[key] = value;
 			}
 			continue;
 		}
-		(merged as Record<string, unknown>)[key]=value;
+		(merged as Record<string, unknown>)[key] = value;
 	}
 	void version;
 	return merged;
 }
-const settingsStore=createStore<SettingsState>()(
+const settingsStore = createStore<SettingsState>()(
 	persist(
 		(set, get) => ({
 			...defaultState,
@@ -240,7 +249,7 @@ const settingsStore=createStore<SettingsState>()(
 			setReducedMotion: enabled => set({reducedMotion: enabled}),
 			clearSpecification: () => set({specificationPath: "", specificationContent: ""}),
 			resetToDefaults: () => {
-				const currentSpec=get();
+				const currentSpec = get();
 				set({
 					...defaultState,
 					appVersion: pkg.version,
@@ -253,18 +262,18 @@ const settingsStore=createStore<SettingsState>()(
 			name: "physics-quest-settings",
 			version: SETTINGS_SCHEMA_VERSION,
 			migrate: (persistedState, version) => {
-				const migrated=migrateSettingsState(persistedState, version);
+				const migrated = migrateSettingsState(persistedState, version);
 				return {...migrated, appVersion: pkg.version} as SettingsState;
 			},
 			partialize: state => {
-				const {appVersion:_appVersion, ...rest}=state;
+				const {appVersion: _appVersion, ...rest} = state;
 				void _appVersion;
 				return rest;
 			},
 			storage: createJSONStorage(() => localStorage, {
 				reviver: (key, value) => {
 					if (key === "" && value && typeof value === "object" && !Array.isArray(value) && typeof (value as {version?: unknown}).version !== "number") {
-						(value as {version: number}).version=0;
+						(value as {version: number}).version = 0;
 					}
 					return value;
 				},
@@ -272,4 +281,4 @@ const settingsStore=createStore<SettingsState>()(
 		},
 	),
 );
-export const useSettingsStore=createSolidStore<SettingsState>(settingsStore);
+export const useSettingsStore = createSolidStore<SettingsState>(settingsStore);

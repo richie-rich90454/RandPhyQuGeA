@@ -2,7 +2,7 @@ import {render, screen, fireEvent} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach, vi} from "vitest";
 import {Playground} from "../Playground";
 function resetClipboard() {
-	let writeText=vi.fn(() => Promise.resolve());
+	let writeText = vi.fn<(data: string) => Promise<void>>(() => Promise.resolve());
 	Object.defineProperty(navigator, "clipboard", {
 		value: {writeText},
 		writable: true,
@@ -11,7 +11,7 @@ function resetClipboard() {
 }
 beforeEach(() => {
 	resetClipboard();
-	window.location.hash="";
+	window.location.hash = "";
 });
 describe("Playground page", () => {
 	it("renders the page heading and subtitle", () => {
@@ -85,53 +85,53 @@ describe("Playground page", () => {
 		expect(screen.getByRole("button", {name: /How to extend/})).toBeInTheDocument();
 	});
 	it("renders code snippets in pre blocks", () => {
-		let {container}=render(() => <Playground />);
-		let pres=container.querySelectorAll("pre");
+		let {container} = render(() => <Playground />);
+		let pres = container.querySelectorAll("pre");
 		expect(pres.length).toBeGreaterThan(0);
 		expect(pres[0]!.textContent).toContain("Button");
 	});
 	it("renders copy-code buttons for each section", () => {
 		render(() => <Playground />);
-		let copyButtons=screen.getAllByRole("button", {name: /copy code for/i});
+		let copyButtons = screen.getAllByRole("button", {name: /copy code for/i});
 		expect(copyButtons.length).toBeGreaterThanOrEqual(14);
 	});
 	it("copies code to clipboard when the copy button is clicked", () => {
 		render(() => <Playground />);
-		let copyButtons=screen.getAllByRole("button", {name: /copy code for/i});
-		let firstCopyButton=copyButtons[0];
+		let copyButtons = screen.getAllByRole("button", {name: /copy code for/i});
+		let firstCopyButton = copyButtons[0];
 		if (!firstCopyButton) throw new Error("Copy button not found");
 		fireEvent.click(firstCopyButton);
 		expect(navigator.clipboard.writeText).toHaveBeenCalled();
 	});
 	it("updates the live button variant when the select changes", () => {
 		render(() => <Playground />);
-		let selects=screen.getAllByRole("combobox");
-		let variantSelect=selects[0];
+		let selects = screen.getAllByRole("combobox");
+		let variantSelect = selects[0];
 		if (!variantSelect) throw new Error("Variant select not found");
 		fireEvent.change(variantSelect, {target: {value: "danger"}});
-		let liveButton=screen.getByRole("button", {name: "Live Button"});
+		let liveButton = screen.getByRole("button", {name: "Live Button"});
 		expect(liveButton.className).toContain("danger");
 	});
 	it("updates the live button size when the select changes", () => {
 		render(() => <Playground />);
-		let selects=screen.getAllByRole("combobox");
-		let sizeSelect=selects[1];
+		let selects = screen.getAllByRole("combobox");
+		let sizeSelect = selects[1];
 		if (!sizeSelect) throw new Error("Size select not found");
 		fireEvent.change(sizeSelect, {target: {value: "lg"}});
-		let liveButton=screen.getByRole("button", {name: "Live Button"});
+		let liveButton = screen.getByRole("button", {name: "Live Button"});
 		expect(liveButton.className).toContain("lg");
 	});
 	it("toggles the live button loading state when the checkbox changes", () => {
 		render(() => <Playground />);
-		let checkbox=screen.getByRole("checkbox");
+		let checkbox = screen.getByRole("checkbox");
 		fireEvent.click(checkbox);
-		let liveButton=screen.getByRole("button", {name: "Live Button"});
+		let liveButton = screen.getByRole("button", {name: "Live Button"});
 		expect(liveButton.hasAttribute("disabled")).toBe(true);
 	});
 	it("clears the hash when the back link is clicked", () => {
-		window.location.hash="/playground";
+		window.location.hash = "/playground";
 		render(() => <Playground />);
-		let backLink=screen.getByRole("button", {name: /back to app/i});
+		let backLink = screen.getByRole("button", {name: /back to app/i});
 		fireEvent.click(backLink);
 		expect(window.location.hash).toBe("");
 	});

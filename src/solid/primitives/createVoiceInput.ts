@@ -66,7 +66,7 @@ export interface VoiceInputState {
 }
 function resolveCtor(): SpeechRecognitionConstructor | null {
 	if (typeof window === "undefined") return null;
-	let w=window as unknown as {SpeechRecognition?: SpeechRecognitionConstructor, webkitSpeechRecognition?: SpeechRecognitionConstructor};
+	let w = window as unknown as {SpeechRecognition?: SpeechRecognitionConstructor; webkitSpeechRecognition?: SpeechRecognitionConstructor};
 	return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
 }
 /**
@@ -81,67 +81,67 @@ function resolveCtor(): SpeechRecognitionConstructor | null {
  * `createRoot`, `render`) never leak event handlers or microphone handles.
  */
 export function createVoiceInput(options: CreateVoiceInputOptions = {}): VoiceInputState {
-	let ctor=options.ctor ?? resolveCtor();
-	let supported=ctor !== null;
-	let [listening, setListening]=createSignal<boolean>(false);
-	let [transcript, setTranscript]=createSignal<string>("");
-	let [error, setError]=createSignal<string | null>(null);
-	let recognition: SpeechRecognitionInstance | null=null;
-	let baseLang=options.lang ?? (typeof document !== "undefined" && document.documentElement.lang ? document.documentElement.lang : "en-US");
-	let shouldUseInterim=options.interimResults ?? true;
-	let cleanup=() => {
+	let ctor = options.ctor ?? resolveCtor();
+	let supported = ctor !== null;
+	let [listening, setListening] = createSignal<boolean>(false);
+	let [transcript, setTranscript] = createSignal<string>("");
+	let [error, setError] = createSignal<string | null>(null);
+	let recognition: SpeechRecognitionInstance | null = null;
+	let baseLang = options.lang ?? (typeof document !== "undefined" && document.documentElement.lang ? document.documentElement.lang : "en-US");
+	let shouldUseInterim = options.interimResults ?? true;
+	let cleanup = () => {
 		if (recognition) {
-			recognition.onresult=null;
-			recognition.onerror=null;
-			recognition.onend=null;
+			recognition.onresult = null;
+			recognition.onerror = null;
+			recognition.onend = null;
 			try {
 				recognition.abort();
 			} catch {
 				// ignore — already stopped or never started
 			}
-			recognition=null;
+			recognition = null;
 		}
 		setListening(false);
 	};
 	onCleanup(cleanup);
-	let start=() => {
+	let start = () => {
 		if (!supported || listening() || !ctor) return;
 		setError(null);
 		setTranscript("");
-		let instance=new ctor();
-		instance.lang=baseLang;
-		instance.continuous=options.continuous ?? false;
-		instance.interimResults=shouldUseInterim;
-		instance.maxAlternatives=1;
-		instance.onresult=(event: SpeechRecognitionEvent) => {
-			let text="";
-			for (let i=event.resultIndex; i<event.results.length; i++) {
-				let result=event.results[i];
+		let instance = new ctor();
+		instance.lang = baseLang;
+		instance.continuous = options.continuous ?? false;
+		instance.interimResults = shouldUseInterim;
+		instance.maxAlternatives = 1;
+		instance.onresult = (event: SpeechRecognitionEvent) => {
+			let text = "";
+			for (let i = event.resultIndex; i < event.results.length; i++) {
+				let result = event.results[i];
 				if (!result) continue;
 				if (!shouldUseInterim && !result.isFinal) continue;
-				let alt=result[0];
+				let alt = result[0];
 				if (!alt) continue;
 				text += alt.transcript;
 			}
 			if (text) setTranscript(text);
 		};
-		instance.onerror=(event: SpeechRecognitionErrorEvent) => {
+		instance.onerror = (event: SpeechRecognitionErrorEvent) => {
 			setError(event.error);
 			setListening(false);
 		};
-		instance.onend=() => {
+		instance.onend = () => {
 			setListening(false);
 		};
-		recognition=instance;
+		recognition = instance;
 		try {
 			instance.start();
 			setListening(true);
 		} catch {
 			setError("start-failed");
-			recognition=null;
+			recognition = null;
 		}
 	};
-	let stop=() => {
+	let stop = () => {
 		if (!supported || !recognition || !listening()) return;
 		try {
 			recognition.stop();

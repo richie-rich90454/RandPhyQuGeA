@@ -8,7 +8,7 @@ import {useSettingsStore} from "../../../stores/settingsStore";
 import {useSpecStore} from "../../../stores/specStore";
 import type {IExportService, ExportMetadata} from "../../../../services/contracts";
 import type {PracticeResult} from "../../../../types/models";
-function makeResult(overrides: Partial<PracticeResult>={}): PracticeResult {
+function makeResult(overrides: Partial<PracticeResult> = {}): PracticeResult {
 	return {
 		id: "r1",
 		question_id: "q1",
@@ -27,9 +27,11 @@ class FakeExportService implements IExportService {
 	public getExportMetadata(): ExportMetadata {
 		return {format: "json", extension: ".json", mimeType: "application/json", label: "JSON"};
 	}
-	public downloadText=vi.fn<(filename: string, content: string, format?: "html" | "pdf" | "markdown" | "text" | "json" | "csv" | "latex") => void>();
+	public downloadText = vi.fn<(filename: string, content: string, format?: "html" | "pdf" | "markdown" | "text" | "json" | "csv" | "latex") => void>();
 	public downloadBlob(): void {}
-	public buildWorksheetHtml(): string { return ""; }
+	public buildWorksheetHtml(): string {
+		return "";
+	}
 	public printWorksheet(): void {}
 }
 function renderWithServices(exportService?: IExportService) {
@@ -72,14 +74,14 @@ describe("ManageDataModal", () => {
 	it("exports practice data through the export service", () => {
 		useProgressStore.setState({results: [makeResult({id: "r1"})]});
 		useUiStore.getState().openModal("manage-data");
-		let exportService=new FakeExportService();
+		let exportService = new FakeExportService();
 		renderWithServices(exportService);
 		fireEvent.click(screen.getByRole("button", {name: /export json/i}));
 		expect(exportService.downloadText).toHaveBeenCalledTimes(1);
-		let call=exportService.downloadText.mock.calls[0];
+		let call = exportService.downloadText.mock.calls[0];
 		expect(call).toBeDefined();
-		let content=call![1];
-		let payload=JSON.parse(content);
+		let content = call![1];
+		let payload = JSON.parse(content);
 		expect(payload.results).toHaveLength(1);
 		expect(payload.results[0].id).toBe("r1");
 		expect(payload.appVersion).toBe(useSettingsStore.getState().appVersion);
@@ -87,9 +89,9 @@ describe("ManageDataModal", () => {
 	it("imports practice data from a JSON file after confirmation", async () => {
 		useUiStore.getState().openModal("manage-data");
 		renderWithServices();
-		let imported=[makeResult({id: "imported-1"}), makeResult({id: "imported-2"})];
-		let file=new File([JSON.stringify({results: imported})], "data.json", {type: "application/json"});
-		let input=screen.getByLabelText("Import practice data file");
+		let imported = [makeResult({id: "imported-1"}), makeResult({id: "imported-2"})];
+		let file = new File([JSON.stringify({results: imported})], "data.json", {type: "application/json"});
+		let input = screen.getByLabelText("Import practice data file");
 		fireEvent.change(input, {target: {files: [file]}});
 		await waitFor(() => expect(screen.getByText("Import practice data?")).toBeInTheDocument());
 		fireEvent.click(screen.getByRole("button", {name: "Import"}));
@@ -100,8 +102,8 @@ describe("ManageDataModal", () => {
 		useProgressStore.setState({results: [makeResult({id: "r1"})]});
 		useUiStore.getState().openModal("manage-data");
 		renderWithServices();
-		let file=new File(["not-json"], "bad.json", {type: "application/json"});
-		let input=screen.getByLabelText("Import practice data file");
+		let file = new File(["not-json"], "bad.json", {type: "application/json"});
+		let input = screen.getByLabelText("Import practice data file");
 		fireEvent.change(input, {target: {files: [file]}});
 		await waitFor(() => expect(screen.getByText("Failed to import data. File is not valid JSON.")).toBeInTheDocument());
 		expect(useProgressStore.getState().results).toHaveLength(1);
@@ -119,7 +121,7 @@ describe("ManageDataModal", () => {
 		useProgressStore.setState({results: [makeResult({id: "r1", timestamp: "2026-07-06T11:00:00.000Z"}), makeResult({id: "r2", timestamp: "2026-07-06T10:00:00.000Z"})]});
 		useUiStore.getState().openModal("manage-data");
 		renderWithServices();
-		let buttons=screen.getAllByRole("button", {name: "Delete record"});
+		let buttons = screen.getAllByRole("button", {name: "Delete record"});
 		fireEvent.click(buttons[0]!);
 		await waitFor(() => expect(screen.getByText("Delete record?")).toBeInTheDocument());
 		fireEvent.click(screen.getByRole("button", {name: "Delete"}));

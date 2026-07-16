@@ -15,10 +15,10 @@ export interface CreateReducedMotionOptions {
  * Returns an {@link Accessor} that tracks the preference reactively.
  */
 export function createReducedMotion(options: CreateReducedMotionOptions = {}): Accessor<boolean> {
-	let query=options.query ?? "(prefers-reduced-motion: reduce)";
-	let mql=window.matchMedia(query);
-	let [reducedMotion, setReducedMotion]=createSignal<boolean>(mql.matches);
-	let handleChange=(event: MediaQueryListEvent) => {
+	let query = options.query ?? "(prefers-reduced-motion: reduce)";
+	let mql = window.matchMedia(query);
+	let [reducedMotion, setReducedMotion] = createSignal<boolean>(mql.matches);
+	let handleChange = (event: MediaQueryListEvent) => {
 		setReducedMotion(event.matches);
 	};
 	mql.addEventListener("change", handleChange);

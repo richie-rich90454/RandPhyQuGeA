@@ -23,9 +23,7 @@ export interface MainContentProps {
 export function MainContent(props: MainContentProps): JSX.Element {
 	return (
 		<div class={`${styles.mainContent} ${props.class ?? ""}`}>
-			<div class={styles.contentStack}>
-				{props.children}
-			</div>
+			<div class={styles.contentStack}>{props.children}</div>
 			{props.analytics}
 		</div>
 	);

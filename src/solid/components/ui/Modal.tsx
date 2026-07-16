@@ -3,7 +3,7 @@ import {Show, createEffect, createSignal, onCleanup, splitProps} from "solid-js"
 import {Portal} from "solid-js/web";
 import styles from "./Modal.module.css";
 /** Selector matching focusable descendants used by the focus trap. */
-let FOCUSABLE_SELECTOR='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+let FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
 export interface ModalProps {
 	/** When true the modal is rendered. */
 	open: boolean;
@@ -35,38 +35,38 @@ export interface ModalProps {
  * while open. All setup is torn down via onCleanup.
  */
 export function Modal(props: ModalProps): JSX.Element {
-	let [local]=splitProps(props, ["open", "onClose", "title", "titleId", "modalId", "children", "footer", "class", "ariaLabel", "scrollerRef"]);
-	let [containerEl, setContainerEl]=createSignal<HTMLDivElement | null>(null);
-	let labelledBy=() => local.title ? (local.titleId ?? "modal-title") : undefined;
+	let [local] = splitProps(props, ["open", "onClose", "title", "titleId", "modalId", "children", "footer", "class", "ariaLabel", "scrollerRef"]);
+	let [containerEl, setContainerEl] = createSignal<HTMLDivElement | null>(null);
+	let labelledBy = () => (local.title ? (local.titleId ?? "modal-title") : undefined);
 	createEffect(() => {
-		let open=local.open;
-		let container=containerEl();
+		let open = local.open;
+		let container = containerEl();
 		if (!open || !container) return;
-		let previousFocus=document.activeElement instanceof HTMLElement ? document.activeElement : null;
-		let previousOverflow=document.body.style.overflow;
-		document.body.style.overflow="hidden";
-		let focusables=Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
-		let closeButton=container.querySelector<HTMLButtonElement>('[data-modal-close="true"]');
-		let target=closeButton ?? focusables[0] ?? container;
+		let previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+		let previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+		let focusables = Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+		let closeButton = container.querySelector<HTMLButtonElement>('[data-modal-close="true"]');
+		let target = closeButton ?? focusables[0] ?? container;
 		target.focus();
-		let handleKeyDown=(event: KeyboardEvent) => {
+		let handleKeyDown = (event: KeyboardEvent) => {
 			if (event.key === "Escape") {
 				local.onClose();
 				return;
 			}
 			if (event.key !== "Tab") return;
-			let node=containerEl();
+			let node = containerEl();
 			if (!node) return;
-			let items=Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+			let items = Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
 			if (items.length === 0) {
 				event.preventDefault();
 				node.focus();
 				return;
 			}
-			let first=items[0];
-			let last=items[items.length-1];
+			let first = items[0];
+			let last = items[items.length - 1];
 			if (!first || !last) return;
-			let active=document.activeElement;
+			let active = document.activeElement;
 			if (event.shiftKey) {
 				if (active === first || !node.contains(active)) {
 					event.preventDefault();
@@ -79,13 +79,13 @@ export function Modal(props: ModalProps): JSX.Element {
 				}
 			}
 		};
-		let handleFocusIn=(event: FocusEvent) => {
-			let node=containerEl();
+		let handleFocusIn = (event: FocusEvent) => {
+			let node = containerEl();
 			if (!node) return;
-			let target=event.target instanceof HTMLElement ? event.target : null;
+			let target = event.target instanceof HTMLElement ? event.target : null;
 			if (target && !node.contains(target)) {
-				let items=Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
-				if (items.length>0) {
+				let items = Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+				if (items.length > 0) {
 					items[0]!.focus();
 				} else {
 					node.focus();
@@ -97,22 +97,32 @@ export function Modal(props: ModalProps): JSX.Element {
 		onCleanup(() => {
 			document.removeEventListener("keydown", handleKeyDown);
 			document.removeEventListener("focusin", handleFocusIn);
-			document.body.style.overflow=previousOverflow;
+			document.body.style.overflow = previousOverflow;
 			if (previousFocus) previousFocus.focus();
 		});
 	});
-	let setRef=(el: HTMLDivElement | null) => {
+	let setRef = (el: HTMLDivElement | null) => {
 		setContainerEl(el);
 		if (local.scrollerRef) local.scrollerRef(el);
 	};
 	return (
 		<Show when={local.open}>
 			<Portal mount={document.body}>
-				<div id={local.modalId} class={`${styles.modal} ${styles.show}`} role="dialog" aria-modal="true" aria-labelledby={labelledBy()} aria-label={local.title ? undefined : local.ariaLabel} onClick={local.onClose}>
-					<div ref={setRef} tabIndex={-1} class={`${styles.content} glass ${local.class ?? ""}`} onClick={(event) => event.stopPropagation()}>
+				<div
+					id={local.modalId}
+					class={`${styles.modal} ${styles.show}`}
+					role="dialog"
+					aria-modal="true"
+					aria-labelledby={labelledBy()}
+					aria-label={local.title ? undefined : local.ariaLabel}
+					onClick={local.onClose}
+				>
+					<div ref={setRef} tabIndex={-1} class={`${styles.content} glass ${local.class ?? ""}`} onClick={event => event.stopPropagation()}>
 						<div class={styles.header}>
 							<Show when={local.title}>
-								<h2 id={labelledBy() ?? undefined} class={styles.title}>{local.title}</h2>
+								<h2 id={labelledBy() ?? undefined} class={styles.title}>
+									{local.title}
+								</h2>
 							</Show>
 							<button type="button" data-modal-close="true" class={styles.iconButton} aria-label="Close dialog" onClick={local.onClose}>
 								<span aria-hidden="true">×</span>

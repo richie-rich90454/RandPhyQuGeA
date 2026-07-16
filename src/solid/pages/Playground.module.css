@@ -25,7 +25,9 @@
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+	transition:
+		color var(--duration-fast) var(--ease-standard),
+		background-color var(--duration-fast) var(--ease-standard);
 }
 .backLink:hover {
 	color: var(--text);
@@ -127,7 +129,9 @@
 	font-family: inherit;
 }
 .copyButton {
-	transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+	transition:
+		color var(--duration-fast) var(--ease-standard),
+		background-color var(--duration-fast) var(--ease-standard);
 }
 .copyButtonCopied {
 	color: var(--success);

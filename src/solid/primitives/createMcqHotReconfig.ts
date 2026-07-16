@@ -32,54 +32,54 @@ export interface CreateMcqHotReconfigOptions {
  * from the {@link useServiceProvider} core.
  */
 export function createMcqHotReconfig(options: CreateMcqHotReconfigOptions = {}): void {
-	let practice=options.practiceStore ?? usePracticeStore;
-	let settings=options.settingsStore ?? useSettingsStore;
-	let responseMode=settings(s => s.defaultResponseMode);
-	let mcqEnabled=() => responseMode() === "mcq";
-	let cachedSessionService: ISessionService | null=null;
-	let resolveSessionService=(): ISessionService => {
+	let practice = options.practiceStore ?? usePracticeStore;
+	let settings = options.settingsStore ?? useSettingsStore;
+	let responseMode = settings(s => s.defaultResponseMode);
+	let mcqEnabled = () => responseMode() === "mcq";
+	let cachedSessionService: ISessionService | null = null;
+	let resolveSessionService = (): ISessionService => {
 		if (options.sessionService) {
 			return options.sessionService;
 		}
 		if (!cachedSessionService) {
-			let {core}=useServiceProvider();
-			cachedSessionService=new SessionService(new PhysicsService(core), new AnalyticsService());
+			let {core} = useServiceProvider();
+			cachedSessionService = new SessionService(new PhysicsService(core), new AnalyticsService());
 		}
 		return cachedSessionService;
 	};
-	let generation=0;
-	let prevMcqEnabled: boolean | undefined=undefined;
-	let disposed=false;
+	let generation = 0;
+	let prevMcqEnabled: boolean | undefined = undefined;
+	let disposed = false;
 	onCleanup(() => {
-		disposed=true;
+		disposed = true;
 	});
 	createEffect(() => {
-		let enabled=mcqEnabled();
-		if (prevMcqEnabled===undefined) {
-			prevMcqEnabled=enabled;
+		let enabled = mcqEnabled();
+		if (prevMcqEnabled === undefined) {
+			prevMcqEnabled = enabled;
 			return;
 		}
-		if (enabled===prevMcqEnabled) {
+		if (enabled === prevMcqEnabled) {
 			return;
 		}
-		prevMcqEnabled=enabled;
-		let state=practice.getState();
-		let session=state.session;
-		let currentQuestion=selectCurrentQuestion(state);
+		prevMcqEnabled = enabled;
+		let state = practice.getState();
+		let session = state.session;
+		let currentQuestion = selectCurrentQuestion(state);
 		if (!session || !currentQuestion || session.isFinished || !session.isActive) {
 			return;
 		}
-		let targetType: QuestionType=enabled ? QUESTION_TYPES.MC : QUESTION_TYPES.SA;
-		if (currentQuestion.question_type===targetType) {
+		let targetType: QuestionType = enabled ? QUESTION_TYPES.MC : QUESTION_TYPES.SA;
+		if (currentQuestion.question_type === targetType) {
 			return;
 		}
-		let myGen=++generation;
+		let myGen = ++generation;
 		void (async () => {
 			await resolveSessionService().regenerateCurrentQuestionAs(targetType);
-			if (disposed || myGen!==generation) {
+			if (disposed || myGen !== generation) {
 				return;
 			}
-			let updatedSession=resolveSessionService().getSession();
+			let updatedSession = resolveSessionService().getSession();
 			practice.setState({
 				session: updatedSession,
 				userAnswer: "",

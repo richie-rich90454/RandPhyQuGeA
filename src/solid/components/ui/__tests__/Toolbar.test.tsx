@@ -39,7 +39,7 @@ describe("Toolbar", () => {
 				<ToolbarItem>Italic</ToolbarItem>
 			</Toolbar>
 		));
-		let buttons=screen.getAllByRole("button");
+		let buttons = screen.getAllByRole("button");
 		expect(buttons[0]).toHaveAttribute("tabindex", "0");
 		expect(buttons[1]).toHaveAttribute("tabindex", "-1");
 	});
@@ -50,7 +50,7 @@ describe("Toolbar", () => {
 				<ToolbarItem>Italic</ToolbarItem>
 			</Toolbar>
 		));
-		let buttons=screen.getAllByRole("button");
+		let buttons = screen.getAllByRole("button");
 		buttons[0]!.focus();
 		expect(buttons[0]).toHaveFocus();
 		fireEvent.keyDown(screen.getByRole("toolbar"), {key: "ArrowRight"});
@@ -63,7 +63,7 @@ describe("Toolbar", () => {
 				<ToolbarItem>Italic</ToolbarItem>
 			</Toolbar>
 		));
-		let buttons=screen.getAllByRole("button");
+		let buttons = screen.getAllByRole("button");
 		buttons[1]!.focus();
 		fireEvent.keyDown(screen.getByRole("toolbar"), {key: "ArrowRight"});
 		expect(buttons[0]).toHaveFocus();
@@ -75,7 +75,7 @@ describe("Toolbar", () => {
 				<ToolbarItem>Italic</ToolbarItem>
 			</Toolbar>
 		));
-		let buttons=screen.getAllByRole("button");
+		let buttons = screen.getAllByRole("button");
 		buttons[1]!.focus();
 		fireEvent.keyDown(screen.getByRole("toolbar"), {key: "ArrowLeft"});
 		expect(buttons[0]).toHaveFocus();
@@ -88,7 +88,7 @@ describe("Toolbar", () => {
 				<ToolbarItem>Underline</ToolbarItem>
 			</Toolbar>
 		));
-		let buttons=screen.getAllByRole("button");
+		let buttons = screen.getAllByRole("button");
 		buttons[2]!.focus();
 		fireEvent.keyDown(screen.getByRole("toolbar"), {key: "Home"});
 		expect(buttons[0]).toHaveFocus();
@@ -101,13 +101,13 @@ describe("Toolbar", () => {
 				<ToolbarItem>Underline</ToolbarItem>
 			</Toolbar>
 		));
-		let buttons=screen.getAllByRole("button");
+		let buttons = screen.getAllByRole("button");
 		buttons[0]!.focus();
 		fireEvent.keyDown(screen.getByRole("toolbar"), {key: "End"});
 		expect(buttons[2]).toHaveFocus();
 	});
 	it("calls onClick when item is clicked", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<() => void>();
 		render(() => (
 			<Toolbar>
 				<ToolbarItem onClick={handler}>Bold</ToolbarItem>

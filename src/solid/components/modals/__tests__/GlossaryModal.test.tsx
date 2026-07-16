@@ -4,9 +4,9 @@ import {GlossaryModal} from "../GlossaryModal";
 import {useUiStore} from "../../../stores/uiStore";
 import {Glossary} from "../../../../lib/physics/reference/Glossary";
 import type {GlossaryEntry} from "../../../../lib/physics/reference/Glossary";
-const ALL_CATEGORIES_SENTINEL="__all__";
+const ALL_CATEGORIES_SENTINEL = "__all__";
 function makeGlossary(): Glossary {
-	let entries: GlossaryEntry[]=[
+	let entries: GlossaryEntry[] = [
 		{term: "Velocity", definition: "Rate of change of displacement with respect to time", category: "mechanics", related: ["Speed", "Displacement"], latex: "\\vec{v}"},
 		{term: "Wavelength", definition: "Distance between successive crests of a wave", category: "waves", latex: "\\lambda"},
 		{term: "Photon", definition: "A quantum of electromagnetic radiation", category: "quantum", related: ["Energy"]},
@@ -33,13 +33,13 @@ describe("GlossaryModal (task 5.79)", () => {
 	it("renders the result count via aria-live polite region", () => {
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal glossary={makeGlossary()} />);
-		let live=screen.getByText(/3 terms/i);
+		let live = screen.getByText(/3 terms/i);
 		expect(live).toHaveAttribute("aria-live", "polite");
 	});
 	it("filters terms by search query on term name", () => {
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal glossary={makeGlossary()} />);
-		let input=screen.getByLabelText("Search glossary by term or definition");
+		let input = screen.getByLabelText("Search glossary by term or definition");
 		fireEvent.input(input, {target: {value: "photo"}});
 		expect(screen.getByText("Photon")).toBeInTheDocument();
 		expect(screen.queryByText("Velocity")).not.toBeInTheDocument();
@@ -49,7 +49,7 @@ describe("GlossaryModal (task 5.79)", () => {
 	it("filters terms by search query on definition", () => {
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal glossary={makeGlossary()} />);
-		let input=screen.getByLabelText("Search glossary by term or definition");
+		let input = screen.getByLabelText("Search glossary by term or definition");
 		fireEvent.input(input, {target: {value: "electromagnetic"}});
 		expect(screen.getByText("Photon")).toBeInTheDocument();
 		expect(screen.queryByText("Velocity")).not.toBeInTheDocument();
@@ -58,7 +58,7 @@ describe("GlossaryModal (task 5.79)", () => {
 	it("filters terms by category select", () => {
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal glossary={makeGlossary()} />);
-		let select=screen.getByLabelText("Filter glossary by category");
+		let select = screen.getByLabelText("Filter glossary by category");
 		fireEvent.change(select, {target: {value: "waves"}});
 		expect(screen.getByText("Wavelength")).toBeInTheDocument();
 		expect(screen.queryByText("Velocity")).not.toBeInTheDocument();
@@ -67,7 +67,7 @@ describe("GlossaryModal (task 5.79)", () => {
 	it("renders the empty state when no term matches the search", () => {
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal glossary={makeGlossary()} />);
-		let input=screen.getByLabelText("Search glossary by term or definition");
+		let input = screen.getByLabelText("Search glossary by term or definition");
 		fireEvent.input(input, {target: {value: "zzzzznomatch"}});
 		expect(screen.getByRole("heading", {name: /no terms match your search/i, level: 3})).toBeInTheDocument();
 		expect(screen.getByText(/try a different keyword or category/i)).toBeInTheDocument();
@@ -77,14 +77,14 @@ describe("GlossaryModal (task 5.79)", () => {
 		render(() => <GlossaryModal glossary={makeGlossary()} />);
 		// Two entries have latex: Velocity (\vec{v}) and Wavelength (\lambda).
 		// KaTeX wraps rendered output in <span class="katex">.
-		let rendered=document.querySelectorAll(".katex");
+		let rendered = document.querySelectorAll(".katex");
 		expect(rendered.length).toBe(2);
 	});
 	it("renders prettified category labels in the category select", () => {
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal glossary={makeGlossary()} />);
-		let select=screen.getByLabelText("Filter glossary by category");
-		let options=Array.from(select.querySelectorAll("option"));
+		let select = screen.getByLabelText("Filter glossary by category");
+		let options = Array.from(select.querySelectorAll("option"));
 		expect(options.some(o => o.textContent === "All categories")).toBe(true);
 		expect(options.some(o => o.textContent === "Mechanics")).toBe(true);
 		expect(options.some(o => o.textContent === "Waves")).toBe(true);
@@ -114,40 +114,42 @@ describe("GlossaryModal (task 5.79)", () => {
 	it("uses the default Glossary when no glossary prop is supplied", () => {
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal />);
-		let live=screen.getByText(/\d+ terms/i);
+		let live = screen.getByText(/\d+ terms/i);
 		expect(live).toBeInTheDocument();
 	});
 	it("does not duplicate category options when multiple terms share a category", () => {
-		let entries: GlossaryEntry[]=[
+		let entries: GlossaryEntry[] = [
 			{term: "Velocity", definition: "v", category: "mechanics"},
 			{term: "Force", definition: "f", category: "mechanics"},
 			{term: "Wavelength", definition: "w", category: "waves"},
 		];
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal glossary={new Glossary(entries)} />);
-		let select=screen.getByLabelText("Filter glossary by category");
-		let mechanicsOptions=Array.from(select.querySelectorAll("option")).filter(o => o.value === "mechanics");
+		let select = screen.getByLabelText("Filter glossary by category");
+		let mechanicsOptions = Array.from(select.querySelectorAll("option")).filter(o => o.value === "mechanics");
 		expect(mechanicsOptions.length).toBe(1);
 	});
 	it("shows plural 'terms' for counts other than 1 and singular 'term' for 1", () => {
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal glossary={makeGlossary()} />);
 		expect(screen.getByText(/3 terms/i)).toBeInTheDocument();
-		let input=screen.getByLabelText("Search glossary by term or definition");
+		let input = screen.getByLabelText("Search glossary by term or definition");
 		fireEvent.input(input, {target: {value: "photo"}});
 		expect(screen.getByText(/1 term/i)).toBeInTheDocument();
 	});
 	it("sorts categories alphabetically in the category select", () => {
-		let entries: GlossaryEntry[]=[
+		let entries: GlossaryEntry[] = [
 			{term: "A", definition: "a", category: "waves"},
 			{term: "B", definition: "b", category: "mechanics"},
 			{term: "C", definition: "c", category: "quantum"},
 		];
 		useUiStore.getState().openModal("glossary");
 		render(() => <GlossaryModal glossary={new Glossary(entries)} />);
-		let select=screen.getByLabelText("Filter glossary by category");
-		let optionValues=Array.from(select.querySelectorAll("option")).map(o => o.value).filter(v => v !== ALL_CATEGORIES_SENTINEL);
-		let sorted=[...optionValues].sort((a, b) => a.localeCompare(b));
+		let select = screen.getByLabelText("Filter glossary by category");
+		let optionValues = Array.from(select.querySelectorAll("option"))
+			.map(o => o.value)
+			.filter(v => v !== ALL_CATEGORIES_SENTINEL);
+		let sorted = [...optionValues].sort((a, b) => a.localeCompare(b));
 		expect(optionValues).toEqual(sorted);
 	});
 });

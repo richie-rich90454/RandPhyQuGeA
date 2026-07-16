@@ -30,11 +30,11 @@ export interface CreateNetworkStatusReturn {
  * `effectiveOnline` combines the actual connection state with the override.
  */
 export function createNetworkStatus(options: CreateNetworkStatusOptions = {}): CreateNetworkStatusReturn {
-	let listen=options.listen ?? true;
-	let [online, setOnline]=createSignal<boolean>(options.initialOnline ?? (typeof navigator !== "undefined" ? navigator.onLine : true));
-	let [forcedOffline, setForcedOffline]=createSignal<boolean>(options.initialForcedOffline ?? false);
-	let handleOnline=() => setOnline(true);
-	let handleOffline=() => setOnline(false);
+	let listen = options.listen ?? true;
+	let [online, setOnline] = createSignal<boolean>(options.initialOnline ?? (typeof navigator !== "undefined" ? navigator.onLine : true));
+	let [forcedOffline, setForcedOffline] = createSignal<boolean>(options.initialForcedOffline ?? false);
+	let handleOnline = () => setOnline(true);
+	let handleOffline = () => setOnline(false);
 	onMount(() => {
 		if (!listen) return;
 		if (typeof window === "undefined") return;
@@ -45,9 +45,9 @@ export function createNetworkStatus(options: CreateNetworkStatusOptions = {}): C
 			window.removeEventListener("offline", handleOffline);
 		});
 	});
-	let effectiveOnline=() => online() && !forcedOffline();
-	let toggleForcedOffline=() => setForcedOffline(!forcedOffline());
-	let refresh=() => {
+	let effectiveOnline = () => online() && !forcedOffline();
+	let toggleForcedOffline = () => setForcedOffline(!forcedOffline());
+	let refresh = () => {
 		if (typeof navigator !== "undefined") setOnline(navigator.onLine);
 	};
 	return {online, forcedOffline, effectiveOnline, setForcedOffline, toggleForcedOffline, refresh};

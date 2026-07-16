@@ -12,7 +12,7 @@ describe("EmptyState", () => {
 	});
 	it("renders the title as an accessible heading with the correct level (task 5.49, preventive fix)", () => {
 		render(() => <EmptyState title="No results" description="Try again" />);
-		let heading=screen.getByRole("heading", {name: "No results", level: 3});
+		let heading = screen.getByRole("heading", {name: "No results", level: 3});
 		expect(heading).toBeInTheDocument();
 		expect(heading.tagName).toBe("H3");
 	});

@@ -6,7 +6,7 @@ import {useSpecStore} from "../../stores/specStore";
 import type {IAnalyticsService, WeakTopic, SessionSummary} from "../../../services/contracts";
 import type {StreakData} from "../../../services/streakService";
 import type {PracticeResult, Specification} from "../../../types/models";
-function makeResult(overrides: Partial<PracticeResult>={}): PracticeResult {
+function makeResult(overrides: Partial<PracticeResult> = {}): PracticeResult {
 	return {
 		id: "r1",
 		question_id: "q1",
@@ -30,10 +30,17 @@ function makeSpec(): Specification {
 	};
 }
 class FakeAnalyticsService implements IAnalyticsService {
-	public getStreak=vi.fn<(results: PracticeResult[]) => StreakData>(() => ({currentStreak: 3, bestStreak: 5, totalActiveDays: 4}));
-	public getWeakTopics=vi.fn<(results: PracticeResult[], spec: Specification, threshold?: number) => WeakTopic[]>(() => []);
-	public getAccuracy=vi.fn<(results: PracticeResult[]) => number>(() => 80);
-	public getSessionSummary=vi.fn<(results: PracticeResult[]) => SessionSummary>(() => ({totalQuestions: 1, correctCount: 1, accuracy: 100, totalTimeMs: 1500, averageTimeMs: 1500, mode: "Single"}));
+	public getStreak = vi.fn<(results: PracticeResult[]) => StreakData>(() => ({currentStreak: 3, bestStreak: 5, totalActiveDays: 4}));
+	public getWeakTopics = vi.fn<(results: PracticeResult[], spec: Specification, threshold?: number) => WeakTopic[]>(() => []);
+	public getAccuracy = vi.fn<(results: PracticeResult[]) => number>(() => 80);
+	public getSessionSummary = vi.fn<(results: PracticeResult[]) => SessionSummary>(() => ({
+		totalQuestions: 1,
+		correctCount: 1,
+		accuracy: 100,
+		totalTimeMs: 1500,
+		averageTimeMs: 1500,
+		mode: "Single",
+	}));
 }
 beforeEach(() => {
 	useProgressStore.setState(useProgressStore.getInitialState());
@@ -59,7 +66,7 @@ describe("progress smoke", () => {
 	it("renders weak topics when present", () => {
 		useProgressStore.setState({results: [makeResult()]});
 		useSpecStore.setState({specification: makeSpec(), empty: false});
-		let analytics=new FakeAnalyticsService();
+		let analytics = new FakeAnalyticsService();
 		analytics.getWeakTopics.mockReturnValue([{topicId: "t1", topicName: "Kinematics", accuracy: 40, attempts: 3}]);
 		render(() => <ProgressPanel analytics={analytics} />);
 		expect(screen.getByText("Weak Topics")).toBeInTheDocument();

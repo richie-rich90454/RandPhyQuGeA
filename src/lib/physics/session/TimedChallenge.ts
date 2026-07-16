@@ -42,9 +42,7 @@ export const MARATHON_CHALLENGES: TimedChallengeConfig[] = [
 	{kind: "marathon", durationMs: 1800000, targetCorrect: 0, label: "30min Marathon"},
 ];
 /** Built-in accuracy-challenge variants. */
-export const ACCURACY_CHALLENGES: TimedChallengeConfig[] = [
-	{kind: "accuracy", durationMs: 0, targetCorrect: 50, label: "50-Correct Accuracy Challenge"},
-];
+export const ACCURACY_CHALLENGES: TimedChallengeConfig[] = [{kind: "accuracy", durationMs: 0, targetCorrect: 50, label: "50-Correct Accuracy Challenge"}];
 /** Drives a single timed-challenge lifecycle with an injected clock. */
 export class TimedChallenge {
 	private readonly config: TimedChallengeConfig;

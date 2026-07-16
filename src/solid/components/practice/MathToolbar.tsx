@@ -10,7 +10,7 @@ export interface SymbolGroup {
 	title: string;
 	symbols: MathSymbol[];
 }
-const PRIMARY_GROUPS: readonly SymbolGroup[]=[
+const PRIMARY_GROUPS: readonly SymbolGroup[] = [
 	{
 		title: "Basic",
 		symbols: [
@@ -162,7 +162,7 @@ const PRIMARY_GROUPS: readonly SymbolGroup[]=[
 		],
 	},
 ];
-const DROPDOWN_GROUPS: readonly SymbolGroup[]=[
+const DROPDOWN_GROUPS: readonly SymbolGroup[] = [
 	{
 		title: "Advanced Vectors & Matrices",
 		symbols: [
@@ -227,16 +227,7 @@ export interface MathToolbarProps {
 }
 function ChevronIcon(props: {open: boolean}): JSX.Element {
 	return (
-		<svg
-			viewBox="0 0 24 24"
-			width="10"
-			height="10"
-			fill="none"
-			stroke="currentColor"
-			stroke-width="2.5"
-			class={`${styles.chevron} ${props.open ? styles.chevronOpen : ""}`}
-			aria-hidden="true"
-		>
+		<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" class={`${styles.chevron} ${props.open ? styles.chevronOpen : ""}`} aria-hidden="true">
 			<path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
 		</svg>
 	);
@@ -256,33 +247,30 @@ interface SymbolSectionProps {
  * hidden buttons.
  */
 function SymbolSection(props: SymbolSectionProps): JSX.Element {
-	let [open, setOpen]=createSignal(props.defaultOpen ?? true);
-	let toggle=() => setOpen(prev => !prev);
+	let [open, setOpen] = createSignal(props.defaultOpen ?? true);
+	let toggle = () => setOpen(prev => !prev);
 	return (
 		<div class={styles.section} title={props.group.title}>
-			<button
-				type="button"
-				class={styles.sectionHeader}
-				aria-expanded={open() ? "true" : "false"}
-				onClick={toggle}
-			>
+			<button type="button" class={styles.sectionHeader} aria-expanded={open() ? "true" : "false"} onClick={toggle}>
 				<span class={styles.sectionTitle}>{props.group.title}</span>
 				<ChevronIcon open={open()} />
 			</button>
 			<Show when={open()}>
 				<div class={styles.sectionBody}>
-					<For each={props.group.symbols}>{(symbol) => (
-						<button
-							type="button"
-							class={styles.btn}
-							data-symbol={symbol.latex}
-							title={symbol.title ?? symbol.label}
-							disabled={props.disabled}
-							onClick={() => props.onInsert(symbol.latex)}
-						>
-							{symbol.label}
-						</button>
-					)}</For>
+					<For each={props.group.symbols}>
+						{symbol => (
+							<button
+								type="button"
+								class={styles.btn}
+								data-symbol={symbol.latex}
+								title={symbol.title ?? symbol.label}
+								disabled={props.disabled}
+								onClick={() => props.onInsert(symbol.latex)}
+							>
+								{symbol.label}
+							</button>
+						)}
+					</For>
 				</div>
 			</Show>
 		</div>
@@ -301,18 +289,18 @@ function SymbolSection(props: SymbolSectionProps): JSX.Element {
  * dropdown via a `createEffect`-driven `mousedown` listener.
  */
 export function MathToolbar(props: MathToolbarProps): JSX.Element {
-	let [local]=splitProps(props, ["onInsert", "disabled"]);
-	let [dropdownOpen, setDropdownOpen]=createSignal(false);
-	let dropdownEl: HTMLDivElement | null=null;
-	let handleClick=(latex: string) => {
+	let [local] = splitProps(props, ["onInsert", "disabled"]);
+	let [dropdownOpen, setDropdownOpen] = createSignal(false);
+	let dropdownEl: HTMLDivElement | null = null;
+	let handleClick = (latex: string) => {
 		if (!local.disabled) local.onInsert(latex);
 	};
-	let toggleDropdown=() => {
+	let toggleDropdown = () => {
 		if (!local.disabled) setDropdownOpen(prev => !prev);
 	};
 	createEffect(() => {
 		if (!dropdownOpen()) return;
-		let handleOutside=(event: MouseEvent) => {
+		let handleOutside = (event: MouseEvent) => {
 			if (dropdownEl && !dropdownEl.contains(event.target as Node)) {
 				setDropdownOpen(false);
 			}
@@ -323,45 +311,52 @@ export function MathToolbar(props: MathToolbarProps): JSX.Element {
 	return (
 		<div id="math-toolbar" class={styles.toolbar}>
 			<div class={`${styles.row} ${styles.primaryRow}`}>
-				<For each={PRIMARY_GROUPS}>{(group) => (
-					<SymbolSection group={group} disabled={local.disabled} onInsert={handleClick} />
-				)}</For>
-				<div class={`${styles.section} ${styles.dropdownTrigger}`} ref={(el: HTMLDivElement) => { dropdownEl=el; }}>
-					<button
-					type="button"
-					class={`${styles.btn} ${styles.dropdownBtn}`}
-					id="math-dropdown-btn"
-					title="More symbols"
-					aria-label="More symbols"
-					aria-haspopup="true"
-					aria-expanded={dropdownOpen() ? "true" : "false"}
-					aria-controls="math-dropdown"
-					disabled={local.disabled}
-					onClick={toggleDropdown}
+				<For each={PRIMARY_GROUPS}>{group => <SymbolSection group={group} disabled={local.disabled} onInsert={handleClick} />}</For>
+				<div
+					class={`${styles.section} ${styles.dropdownTrigger}`}
+					ref={(el: HTMLDivElement) => {
+						dropdownEl = el;
+					}}
 				>
+					<button
+						type="button"
+						class={`${styles.btn} ${styles.dropdownBtn}`}
+						id="math-dropdown-btn"
+						title="More symbols"
+						aria-label="More symbols"
+						aria-haspopup="true"
+						aria-expanded={dropdownOpen() ? "true" : "false"}
+						aria-controls="math-dropdown"
+						disabled={local.disabled}
+						onClick={toggleDropdown}
+					>
 						{"\u22ef"}
 					</button>
 					<div class={`${styles.dropdown} ${dropdownOpen() ? styles.show : ""}`} id="math-dropdown">
 						<div class={styles.dropdownContent}>
-							<For each={DROPDOWN_GROUPS}>{(group) => (
-								<div class={styles.section} title={group.title}>
-									<For each={group.symbols}>{(symbol) => (
-										<button
-											type="button"
-											class={styles.btn}
-											data-symbol={symbol.latex}
-											title={symbol.title ?? symbol.label}
-											disabled={local.disabled}
-											onClick={() => {
-												handleClick(symbol.latex);
-												setDropdownOpen(false);
-											}}
-										>
-											{symbol.label}
-										</button>
-									)}</For>
-								</div>
-							)}</For>
+							<For each={DROPDOWN_GROUPS}>
+								{group => (
+									<div class={styles.section} title={group.title}>
+										<For each={group.symbols}>
+											{symbol => (
+												<button
+													type="button"
+													class={styles.btn}
+													data-symbol={symbol.latex}
+													title={symbol.title ?? symbol.label}
+													disabled={local.disabled}
+													onClick={() => {
+														handleClick(symbol.latex);
+														setDropdownOpen(false);
+													}}
+												>
+													{symbol.label}
+												</button>
+											)}
+										</For>
+									</div>
+								)}
+							</For>
 						</div>
 					</div>
 				</div>

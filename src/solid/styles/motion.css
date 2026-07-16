@@ -14,5 +14,7 @@
 	--micro-shadow-active: var(--shadow-xs);
 	--micro-border-hover: var(--border-strong);
 	--micro-focus-ring: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent);
-	--micro-transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out), background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), opacity var(--duration-fast) var(--ease-out);
+	--micro-transition:
+		transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out),
+		background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out), opacity var(--duration-fast) var(--ease-out);
 }

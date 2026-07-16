@@ -53,7 +53,7 @@ describe("HintPanel progressive disclosure (task 5.75)", () => {
 	it("switches to Reset hints button after all hints are revealed", () => {
 		render(() => <HintPanel context={richContext()} />);
 		// Default cap is 3 levels.
-		for (let i=0; i<3; i++) {
+		for (let i = 0; i < 3; i++) {
 			fireEvent.click(screen.getByRole("button", {name: /reveal next hint/i}));
 		}
 		expect(screen.getByRole("button", {name: /reset hints/i})).toBeInTheDocument();
@@ -73,8 +73,8 @@ describe("HintPanel progressive disclosure (task 5.75)", () => {
 });
 describe("HintPanel maxLevel cap (task 5.75)", () => {
 	it("caps the hint ladder at maxLevel", () => {
-		let gen=new HintGenerator();
-		let ctx=richContext();
+		let gen = new HintGenerator();
+		let ctx = richContext();
 		// Sanity: the unbounded ladder would produce at least 5 hints.
 		expect(gen.generate(ctx).length).toBeGreaterThanOrEqual(5);
 		render(() => <HintPanel context={ctx} maxLevel={2} />);
@@ -86,8 +86,8 @@ describe("HintPanel maxLevel cap (task 5.75)", () => {
 });
 describe("HintPanel a11y (task 5.75)", () => {
 	it("exposes an aria-live region announcing revealed count", () => {
-		let {container}=render(() => <HintPanel context={richContext()} />);
-		let live=container.querySelector('[role="status"][aria-live="polite"]');
+		let {container} = render(() => <HintPanel context={richContext()} />);
+		let live = container.querySelector('[role="status"][aria-live="polite"]');
 		expect(live).not.toBeNull();
 		fireEvent.click(screen.getByRole("button", {name: /reveal next hint/i}));
 		expect(live?.textContent).toContain("1 of");
@@ -107,11 +107,11 @@ describe("HintPanel generator injection (task 5.75)", () => {
 	it("accepts a custom generator for testing", () => {
 		class StubGenerator extends HintGenerator {
 			public override generate(context: HintContext, maxLevel?: number): Hint[] {
-				let base=super.generate(context, maxLevel);
+				let base = super.generate(context, maxLevel);
 				return base.slice(0, 1);
 			}
 		}
-		let gen=new StubGenerator();
+		let gen = new StubGenerator();
 		render(() => <HintPanel context={richContext()} generator={gen} />);
 		fireEvent.click(screen.getByRole("button", {name: /reveal next hint/i}));
 		expect(screen.getAllByRole("listitem")).toHaveLength(1);

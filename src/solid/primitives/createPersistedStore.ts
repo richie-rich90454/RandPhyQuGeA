@@ -10,7 +10,7 @@ export interface CreatePersistedStoreOptions {
 function readStored<T extends object>(key: string, defaultValue: T): T {
 	if (typeof window === "undefined") return defaultValue;
 	try {
-		let raw=window.localStorage.getItem(key);
+		let raw = window.localStorage.getItem(key);
 		if (raw === null) return defaultValue;
 		return JSON.parse(raw) as T;
 	} catch {
@@ -37,9 +37,9 @@ function writeStored(key: string, value: object): void {
  * {@link SetStoreFunction}, allowing path-based updates.
  */
 export function createPersistedStore<T extends object>(options: CreatePersistedStoreOptions): [T, SetStoreFunction<T>] {
-	let {key, defaultValue}=options;
-	let initial=readStored(key, defaultValue) as T;
-	let [store, setStore]=createStore<T>(initial);
+	let {key, defaultValue} = options;
+	let initial = readStored(key, defaultValue) as T;
+	let [store, setStore] = createStore<T>(initial);
 	createEffect(() => {
 		writeStored(key, store);
 	});

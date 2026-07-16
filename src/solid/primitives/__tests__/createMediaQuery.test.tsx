@@ -4,7 +4,7 @@ import type {JSX} from "solid-js";
 import {createSignal} from "solid-js";
 import type {Accessor} from "solid-js";
 import {createMediaQuery} from "../createMediaQuery";
-type MqlListener=(event: MediaQueryListEvent) => void;
+type MqlListener = (event: MediaQueryListEvent) => void;
 interface MqlMock {
 	matches: boolean;
 	media: string;
@@ -20,18 +20,18 @@ interface MatchMediaMock {
 	setMatches: (query: string, value: boolean) => void;
 }
 function createMatchMediaMock(): MatchMediaMock {
-	let byQuery=new Map<string, {matches: boolean, listeners: Set<MqlListener>}>();
-	let ensure=(query: string) => {
-		let entry=byQuery.get(query);
+	let byQuery = new Map<string, {matches: boolean; listeners: Set<MqlListener>}>();
+	let ensure = (query: string) => {
+		let entry = byQuery.get(query);
 		if (!entry) {
-			entry={matches: false, listeners: new Set()};
+			entry = {matches: false, listeners: new Set()};
 			byQuery.set(query, entry);
 		}
 		return entry;
 	};
-	let fn: MatchMediaMock=Object.assign(
+	let fn: MatchMediaMock = Object.assign(
 		(query: string): MqlMock => {
-			let entry=ensure(query);
+			let entry = ensure(query);
 			return {
 				get matches() {
 					return entry.matches;
@@ -55,8 +55,8 @@ function createMatchMediaMock(): MatchMediaMock {
 		},
 		{
 			setMatches: (query: string, value: boolean) => {
-				let entry=ensure(query);
-				entry.matches=value;
+				let entry = ensure(query);
+				entry.matches = value;
 				entry.listeners.forEach(listener => listener({matches: value, media: query} as MediaQueryListEvent));
 			},
 		},
@@ -67,23 +67,23 @@ let matchMediaMock: MatchMediaMock;
 function flush(): Promise<void> {
 	return new Promise(resolve => setTimeout(resolve, 0));
 }
-let result: Accessor<boolean> | null=null;
+let result: Accessor<boolean> | null = null;
 function makeRootStatic(query: string): () => JSX.Element {
 	return () => {
-		result=createMediaQuery(query);
+		result = createMediaQuery(query);
 		return <div>mq</div>;
 	};
 }
 function makeRootReactive(querySignal: Accessor<string>): () => JSX.Element {
 	return () => {
-		result=createMediaQuery(querySignal);
+		result = createMediaQuery(querySignal);
 		return <div>mq</div>;
 	};
 }
 beforeEach(() => {
-	matchMediaMock=createMatchMediaMock();
+	matchMediaMock = createMatchMediaMock();
 	Object.defineProperty(window, "matchMedia", {writable: true, value: matchMediaMock});
-	result=null;
+	result = null;
 });
 describe("createMediaQuery", () => {
 	it("returns the initial match for a static query string", async () => {
@@ -111,7 +111,7 @@ describe("createMediaQuery", () => {
 	it("re-subscribes when a reactive query changes", async () => {
 		matchMediaMock.setMatches("(min-width: 768px)", false);
 		matchMediaMock.setMatches("(min-width: 1200px)", true);
-		let [query, setQuery]=createSignal("(min-width: 768px)");
+		let [query, setQuery] = createSignal("(min-width: 768px)");
 		render(makeRootReactive(query));
 		await flush();
 		expect(result!()).toBe(false);
@@ -124,7 +124,7 @@ describe("createMediaQuery", () => {
 	it("does not react to the old query after re-subscribing", async () => {
 		matchMediaMock.setMatches("(min-width: 768px)", false);
 		matchMediaMock.setMatches("(min-width: 1200px)", false);
-		let [query, setQuery]=createSignal("(min-width: 768px)");
+		let [query, setQuery] = createSignal("(min-width: 768px)");
 		render(makeRootReactive(query));
 		await flush();
 		expect(result!()).toBe(false);
@@ -135,7 +135,7 @@ describe("createMediaQuery", () => {
 	});
 	it("stops updating after disposal", async () => {
 		matchMediaMock.setMatches("(min-width: 768px)", false);
-		let rendered=render(makeRootStatic("(min-width: 768px)"));
+		let rendered = render(makeRootStatic("(min-width: 768px)"));
 		await flush();
 		expect(result!()).toBe(false);
 		rendered.unmount();

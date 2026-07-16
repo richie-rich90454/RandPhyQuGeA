@@ -7,7 +7,7 @@
  * skips, duplicate IDs, and a missing document language. Returns a list of
  * structured issues. Used by the dev-only a11y inspector overlay.
  */
-export type A11yIssueSeverity="error" | "warning" | "info";
+export type A11yIssueSeverity = "error" | "warning" | "info";
 export interface A11yIssue {
 	/** Rule identifier, e.g. "img-alt". */
 	rule: string;
@@ -25,7 +25,7 @@ export class A11yChecker {
 	 * Run every check against `root` (defaults to `document`) and return the
 	 * combined list of issues.
 	 */
-	check(root: ParentNode=document): A11yIssue[] {
+	check(root: ParentNode = document): A11yIssue[] {
 		return [
 			...this.checkImageAlt(root),
 			...this.checkButtonNames(root),
@@ -37,9 +37,9 @@ export class A11yChecker {
 		];
 	}
 	/** Images must have an alt attribute (empty alt is allowed for decorative). */
-	checkImageAlt(root: ParentNode=document): A11yIssue[] {
-		let issues: A11yIssue[]=[];
-		let imgs=root.querySelectorAll("img");
+	checkImageAlt(root: ParentNode = document): A11yIssue[] {
+		let issues: A11yIssue[] = [];
+		let imgs = root.querySelectorAll("img");
 		for (let img of imgs) {
 			if (!img.hasAttribute("alt")) {
 				issues.push({
@@ -54,11 +54,11 @@ export class A11yChecker {
 		return issues;
 	}
 	/** Buttons must have an accessible name (text, aria-label, or aria-labelledby). */
-	checkButtonNames(root: ParentNode=document): A11yIssue[] {
-		let issues: A11yIssue[]=[];
-		let buttons=root.querySelectorAll("button");
+	checkButtonNames(root: ParentNode = document): A11yIssue[] {
+		let issues: A11yIssue[] = [];
+		let buttons = root.querySelectorAll("button");
 		for (let btn of buttons) {
-			if (this.getAccessibleName(btn).length===0) {
+			if (this.getAccessibleName(btn).length === 0) {
 				issues.push({
 					rule: "button-name",
 					severity: "error",
@@ -71,11 +71,11 @@ export class A11yChecker {
 		return issues;
 	}
 	/** Links must have an accessible name. */
-	checkLinkNames(root: ParentNode=document): A11yIssue[] {
-		let issues: A11yIssue[]=[];
-		let links=root.querySelectorAll("a[href]");
+	checkLinkNames(root: ParentNode = document): A11yIssue[] {
+		let issues: A11yIssue[] = [];
+		let links = root.querySelectorAll("a[href]");
 		for (let link of links) {
-			if (this.getAccessibleName(link).length===0) {
+			if (this.getAccessibleName(link).length === 0) {
 				issues.push({
 					rule: "link-name",
 					severity: "error",
@@ -88,16 +88,16 @@ export class A11yChecker {
 		return issues;
 	}
 	/** Form inputs (text/email/number/etc.) must have an associated label. */
-	checkInputLabels(root: ParentNode=document): A11yIssue[] {
-		let issues: A11yIssue[]=[];
-		let inputs=root.querySelectorAll("input, textarea, select");
+	checkInputLabels(root: ParentNode = document): A11yIssue[] {
+		let issues: A11yIssue[] = [];
+		let inputs = root.querySelectorAll("input, textarea, select");
 		for (let input of inputs) {
-			let type=(input.getAttribute("type") ?? "").toLowerCase();
-			if (type==="hidden" || type==="submit" || type==="button" || type==="reset") continue;
+			let type = (input.getAttribute("type") ?? "").toLowerCase();
+			if (type === "hidden" || type === "submit" || type === "button" || type === "reset") continue;
 			if (input.hasAttribute("aria-label") || input.hasAttribute("aria-labelledby")) continue;
-			let id=input.id;
-			let hasLabel=id ? root.querySelector(`label[for="${id}"]`) !== null : false;
-			let wrappedLabel=input.closest("label") !== null;
+			let id = input.id;
+			let hasLabel = id ? root.querySelector(`label[for="${id}"]`) !== null : false;
+			let wrappedLabel = input.closest("label") !== null;
 			if (!hasLabel && !wrappedLabel) {
 				issues.push({
 					rule: "input-label",
@@ -111,13 +111,13 @@ export class A11yChecker {
 		return issues;
 	}
 	/** Heading levels should not skip (e.g. h1 -> h3). */
-	checkHeadingHierarchy(root: ParentNode=document): A11yIssue[] {
-		let issues: A11yIssue[]=[];
-		let headings=root.querySelectorAll("h1, h2, h3, h4, h5, h6");
-		let prevLevel=0;
+	checkHeadingHierarchy(root: ParentNode = document): A11yIssue[] {
+		let issues: A11yIssue[] = [];
+		let headings = root.querySelectorAll("h1, h2, h3, h4, h5, h6");
+		let prevLevel = 0;
 		for (let heading of headings) {
-			let level=parseInt(heading.tagName.substring(1), 10);
-			if (prevLevel>0 && level>prevLevel+1) {
+			let level = parseInt(heading.tagName.substring(1), 10);
+			if (prevLevel > 0 && level > prevLevel + 1) {
 				issues.push({
 					rule: "heading-order",
 					severity: "warning",
@@ -126,21 +126,21 @@ export class A11yChecker {
 					element: heading.tagName.toLowerCase(),
 				});
 			}
-			prevLevel=level;
+			prevLevel = level;
 		}
 		return issues;
 	}
 	/** No two elements should share the same ID. */
-	checkDuplicateIds(root: ParentNode=document): A11yIssue[] {
-		let issues: A11yIssue[]=[];
-		let seen=new Map<string, number>();
-		let all=root.querySelectorAll("[id]");
+	checkDuplicateIds(root: ParentNode = document): A11yIssue[] {
+		let issues: A11yIssue[] = [];
+		let seen = new Map<string, number>();
+		let all = root.querySelectorAll("[id]");
 		for (let el of all) {
-			let id=el.id;
-			seen.set(id, (seen.get(id) ?? 0)+1);
+			let id = el.id;
+			seen.set(id, (seen.get(id) ?? 0) + 1);
 		}
 		for (let [id, count] of seen) {
-			if (count>1) {
+			if (count > 1) {
 				issues.push({
 					rule: "duplicate-id",
 					severity: "warning",
@@ -153,9 +153,9 @@ export class A11yChecker {
 	}
 	/** The document element should declare a language. */
 	checkDocumentLang(): A11yIssue[] {
-		let issues: A11yIssue[]=[];
+		let issues: A11yIssue[] = [];
 		if (typeof document === "undefined") return issues;
-		let html=document.documentElement;
+		let html = document.documentElement;
 		if (!html || !html.getAttribute("lang")) {
 			issues.push({
 				rule: "html-lang",
@@ -169,21 +169,21 @@ export class A11yChecker {
 	}
 	/** Compute the accessible name of an element (textContent, aria-label, or aria-labelledby). */
 	getAccessibleName(el: Element): string {
-		let labelledby=el.getAttribute("aria-labelledby");
+		let labelledby = el.getAttribute("aria-labelledby");
 		if (labelledby && el.ownerDocument) {
-			let parts=labelledby.split(/\s+/).map(id => el.ownerDocument!.getElementById(id));
-			let text=parts.map(p => p?.textContent?.trim() ?? "").join(" ");
-			if (text.length>0) return text;
+			let parts = labelledby.split(/\s+/).map(id => el.ownerDocument!.getElementById(id));
+			let text = parts.map(p => p?.textContent?.trim() ?? "").join(" ");
+			if (text.length > 0) return text;
 		}
-		let ariaLabel=el.getAttribute("aria-label");
-		if (ariaLabel && ariaLabel.trim().length>0) return ariaLabel.trim();
+		let ariaLabel = el.getAttribute("aria-label");
+		if (ariaLabel && ariaLabel.trim().length > 0) return ariaLabel.trim();
 		return (el.textContent ?? "").trim();
 	}
 	/** Build a best-effort CSS selector for an element. */
 	selectorFor(el: Element): string {
 		if (el.id) return `#${el.id}`;
-		let tag=el.tagName.toLowerCase();
-		if (el.classList.length>0) return `${tag}.${el.classList[0]}`;
+		let tag = el.tagName.toLowerCase();
+		if (el.classList.length > 0) return `${tag}.${el.classList[0]}`;
 		return tag;
 	}
 }

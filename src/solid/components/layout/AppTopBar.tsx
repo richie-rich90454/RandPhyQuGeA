@@ -19,9 +19,9 @@ export interface AppTopBarProps {
  * Uses an inline atom SVG so no icon-library dependency is required.
  */
 export function AppTopBar(props: AppTopBarProps): JSX.Element {
-	let [local]=splitProps(props, ["actions", "wordmark", "href", "class"]);
-	let label=local.wordmark ?? "RandPhyQuGeA";
-	let href=local.href ?? "/";
+	let [local] = splitProps(props, ["actions", "wordmark", "href", "class"]);
+	let label = local.wordmark ?? "RandPhyQuGeA";
+	let href = local.href ?? "/";
 	return (
 		<header class={`glass ${styles.bar} ${local.class ?? ""}`}>
 			<div class={styles.inner}>
@@ -35,7 +35,9 @@ export function AppTopBar(props: AppTopBarProps): JSX.Element {
 					<h1 class={styles.text}>{label}</h1>
 				</a>
 				<Show when={local.actions}>
-					<nav class={styles.actions} aria-label="Primary actions">{local.actions}</nav>
+					<nav class={styles.actions} aria-label="Primary actions">
+						{local.actions}
+					</nav>
 				</Show>
 			</div>
 		</header>

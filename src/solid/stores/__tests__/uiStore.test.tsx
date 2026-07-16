@@ -13,7 +13,7 @@ describe("solid uiStore", () => {
 	});
 	describe("initial state", () => {
 		it("has an empty search query and no active modal", () => {
-			const state: UiState=useUiStore.getState();
+			const state: UiState = useUiStore.getState();
 			expect(state.searchQuery).toBe("");
 			expect(state.activeModal).toBeNull();
 		});

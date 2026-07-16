@@ -51,19 +51,18 @@ export function A11yInspectorOverlay(props: A11yInspectorOverlayProps): JSX.Elem
 							</button>
 						</div>
 					</div>
-					<Show
-						when={props.issues().length>0}
-						fallback={<p class={styles.empty}>No accessibility issues found.</p>}
-					>
+					<Show when={props.issues().length > 0} fallback={<p class={styles.empty}>No accessibility issues found.</p>}>
 						<ul class={styles.list}>
-							<For each={props.issues()}>{(issue) => (
-								<li class={styles.item} data-severity={issue.severity}>
-									<span class={styles.badge}>{issue.severity}</span>
-									<span class={styles.rule}>{issue.rule}</span>
-									<span class={styles.message}>{issue.message}</span>
-									<code class={styles.selector}>{issue.selector}</code>
-								</li>
-							)}</For>
+							<For each={props.issues()}>
+								{issue => (
+									<li class={styles.item} data-severity={issue.severity}>
+										<span class={styles.badge}>{issue.severity}</span>
+										<span class={styles.rule}>{issue.rule}</span>
+										<span class={styles.message}>{issue.message}</span>
+										<code class={styles.selector}>{issue.selector}</code>
+									</li>
+								)}
+							</For>
 						</ul>
 					</Show>
 				</div>

@@ -1,9 +1,9 @@
 import type {JSX, JSXElement} from "solid-js";
 import {Show, createContext, createMemo, createSignal, splitProps, useContext} from "solid-js";
 import styles from "./Tabs.module.css";
-let idCounter=0;
+let idCounter = 0;
 function generateId(): string {
-	idCounter=idCounter+1;
+	idCounter = idCounter + 1;
 	return `solid-tabs-${idCounter}`;
 }
 interface TabsContextValue {
@@ -12,9 +12,9 @@ interface TabsContextValue {
 	baseId: string;
 	ariaLabel?: string;
 }
-let TabsContext=createContext<TabsContextValue>();
+let TabsContext = createContext<TabsContextValue>();
 function useTabsContext(): TabsContextValue {
-	let ctx=useContext(TabsContext);
+	let ctx = useContext(TabsContext);
 	if (!ctx) throw new Error("Tabs subcomponents must be rendered inside <Tabs>");
 	return ctx;
 }
@@ -34,18 +34,18 @@ export interface TabsProps {
 }
 /** Root tabs component managing active value and keyboard navigation. */
 export function Tabs(props: TabsProps): JSX.Element {
-	let [local]=splitProps(props, ["value", "defaultValue", "onValueChange", "children", "class", "ariaLabel"]);
-	let baseId=generateId();
-	let isControlled=() => local.value !== undefined;
-	let [internalValue, setInternalValue]=createSignal(local.defaultValue ?? "");
-	let active=createMemo(() => isControlled() ? (local.value ?? "") : internalValue());
-	let setActive=(next: string) => {
+	let [local] = splitProps(props, ["value", "defaultValue", "onValueChange", "children", "class", "ariaLabel"]);
+	let baseId = generateId();
+	let isControlled = () => local.value !== undefined;
+	let [internalValue, setInternalValue] = createSignal(local.defaultValue ?? "");
+	let active = createMemo(() => (isControlled() ? (local.value ?? "") : internalValue()));
+	let setActive = (next: string) => {
 		if (!isControlled()) {
 			setInternalValue(next);
 		}
 		local.onValueChange?.(next);
 	};
-	let ctx: TabsContextValue={active, setActive, baseId, ariaLabel: local.ariaLabel};
+	let ctx: TabsContextValue = {active, setActive, baseId, ariaLabel: local.ariaLabel};
 	return (
 		<TabsContext.Provider value={ctx}>
 			<div class={`${styles.root} ${local.class ?? ""}`} data-tabs-root="">
@@ -60,27 +60,27 @@ export interface TabsListProps {
 	ariaLabel?: string;
 }
 export function TabsList(props: TabsListProps): JSX.Element {
-	let [local]=splitProps(props, ["children", "class", "ariaLabel"]);
-	let ctx=useTabsContext();
-	let [values, setValues]=createSignal<string[]>([]);
-	let register=(value: string) => {
-		setValues(prev => prev.includes(value) ? prev : [...prev, value]);
+	let [local] = splitProps(props, ["children", "class", "ariaLabel"]);
+	let ctx = useTabsContext();
+	let [values, setValues] = createSignal<string[]>([]);
+	let register = (value: string) => {
+		setValues(prev => (prev.includes(value) ? prev : [...prev, value]));
 	};
-	let moveFocus=(delta: number) => {
-		let list=values();
+	let moveFocus = (delta: number) => {
+		let list = values();
 		if (list.length === 0) return;
-		let currentIndex=list.findIndex(v => v === ctx.active());
-		let nextIndex=currentIndex+delta;
-		if (nextIndex<0) nextIndex=list.length-1;
-		if (nextIndex>=list.length) nextIndex=0;
-		let nextValue=list[nextIndex];
+		let currentIndex = list.findIndex(v => v === ctx.active());
+		let nextIndex = currentIndex + delta;
+		if (nextIndex < 0) nextIndex = list.length - 1;
+		if (nextIndex >= list.length) nextIndex = 0;
+		let nextValue = list[nextIndex];
 		if (nextValue) {
 			ctx.setActive(nextValue);
-			let trigger=document.getElementById(`${ctx.baseId}-trigger-${nextValue}`);
+			let trigger = document.getElementById(`${ctx.baseId}-trigger-${nextValue}`);
 			if (trigger) trigger.focus();
 		}
 	};
-	let handleKeyDown=(event: KeyboardEvent) => {
+	let handleKeyDown = (event: KeyboardEvent) => {
 		switch (event.key) {
 			case "ArrowRight":
 			case "ArrowDown":
@@ -95,10 +95,10 @@ export function TabsList(props: TabsListProps): JSX.Element {
 			case "Home":
 				event.preventDefault();
 				{
-					let first=values()[0];
+					let first = values()[0];
 					if (first) {
 						ctx.setActive(first);
-						let trigger=document.getElementById(`${ctx.baseId}-trigger-${first}`);
+						let trigger = document.getElementById(`${ctx.baseId}-trigger-${first}`);
 						if (trigger) trigger.focus();
 					}
 				}
@@ -106,11 +106,11 @@ export function TabsList(props: TabsListProps): JSX.Element {
 			case "End":
 				event.preventDefault();
 				{
-					let list=values();
-					let last=list[list.length-1];
+					let list = values();
+					let last = list[list.length - 1];
 					if (last) {
 						ctx.setActive(last);
-						let trigger=document.getElementById(`${ctx.baseId}-trigger-${last}`);
+						let trigger = document.getElementById(`${ctx.baseId}-trigger-${last}`);
 						if (trigger) trigger.focus();
 					}
 				}
@@ -128,9 +128,9 @@ export function TabsList(props: TabsListProps): JSX.Element {
 interface TabsListInternalContextValue {
 	register: (value: string) => void;
 }
-let TabsListInternalContext=createContext<TabsListInternalContextValue>();
+let TabsListInternalContext = createContext<TabsListInternalContextValue>();
 function useTabsListInternalContext(): TabsListInternalContextValue {
-	let ctx=useContext(TabsListInternalContext);
+	let ctx = useContext(TabsListInternalContext);
 	if (!ctx) throw new Error("TabsTrigger must be rendered inside <TabsList>");
 	return ctx;
 }
@@ -141,11 +141,11 @@ export interface TabsTriggerProps {
 	disabled?: boolean;
 }
 export function TabsTrigger(props: TabsTriggerProps): JSX.Element {
-	let [local]=splitProps(props, ["value", "children", "class", "disabled"]);
-	let ctx=useTabsContext();
-	let listCtx=useTabsListInternalContext();
+	let [local] = splitProps(props, ["value", "children", "class", "disabled"]);
+	let ctx = useTabsContext();
+	let listCtx = useTabsListInternalContext();
 	listCtx.register(local.value);
-	let isActive=() => ctx.active() === local.value;
+	let isActive = () => ctx.active() === local.value;
 	return (
 		<button
 			type="button"
@@ -169,17 +169,12 @@ export interface TabsContentProps {
 	class?: string;
 }
 export function TabsContent(props: TabsContentProps): JSX.Element {
-	let [local]=splitProps(props, ["value", "children", "class"]);
-	let ctx=useTabsContext();
-	let isActive=() => ctx.active() === local.value;
+	let [local] = splitProps(props, ["value", "children", "class"]);
+	let ctx = useTabsContext();
+	let isActive = () => ctx.active() === local.value;
 	return (
 		<Show when={isActive()}>
-			<div
-				role="tabpanel"
-				id={`${ctx.baseId}-panel-${local.value}`}
-				aria-labelledby={`${ctx.baseId}-trigger-${local.value}`}
-				class={`${styles.panel} ${local.class ?? ""}`}
-			>
+			<div role="tabpanel" id={`${ctx.baseId}-panel-${local.value}`} aria-labelledby={`${ctx.baseId}-trigger-${local.value}`} class={`${styles.panel} ${local.class ?? ""}`}>
 				{local.children}
 			</div>
 		</Show>

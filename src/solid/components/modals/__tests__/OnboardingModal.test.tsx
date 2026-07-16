@@ -27,7 +27,7 @@ describe("OnboardingModal", () => {
 		useUiStore.getState().openModal("onboarding");
 		render(() => <OnboardingModal />);
 		await flush();
-		let list=screen.getByRole("list");
+		let list = screen.getByRole("list");
 		expect(list.tagName).toBe("OL");
 	});
 	it("advances to the next step when Next is clicked", async () => {
@@ -68,7 +68,7 @@ describe("OnboardingModal", () => {
 		useUiStore.getState().openModal("onboarding");
 		render(() => <OnboardingModal />);
 		await flush();
-		let dots=screen.getAllByRole("tab");
+		let dots = screen.getAllByRole("tab");
 		fireEvent.click(dots[2]!);
 		expect(screen.getByText("Quick setup")).toBeInTheDocument();
 	});

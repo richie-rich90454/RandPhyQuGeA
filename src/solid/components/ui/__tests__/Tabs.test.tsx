@@ -43,7 +43,7 @@ describe("Tabs", () => {
 				<TabsContent value="a">Content A</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		expect(tabs[0]).toHaveAttribute("aria-selected", "true");
 		expect(tabs[1]).toHaveAttribute("aria-selected", "false");
 	});
@@ -63,7 +63,7 @@ describe("Tabs", () => {
 		expect(screen.queryByText("Content A")).not.toBeInTheDocument();
 	});
 	it("calls onValueChange when active changes", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(value: string) => void>();
 		render(() => (
 			<Tabs defaultValue="a" onValueChange={handler}>
 				<TabsList>
@@ -98,8 +98,8 @@ describe("Tabs", () => {
 				<TabsContent value="a">Content A</TabsContent>
 			</Tabs>
 		));
-		let trigger=screen.getByRole("tab");
-		let panel=screen.getByRole("tabpanel");
+		let trigger = screen.getByRole("tab");
+		let panel = screen.getByRole("tabpanel");
 		expect(trigger).toHaveAttribute("aria-controls", panel.id);
 		expect(panel).toHaveAttribute("aria-labelledby", trigger.id);
 	});
@@ -138,7 +138,7 @@ describe("Tabs", () => {
 				<TabsContent value="b">Content B</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		expect(tabs[0]).toHaveAttribute("aria-selected", "true");
 		expect(tabs[1]).toHaveAttribute("aria-selected", "false");
 	});
@@ -153,7 +153,7 @@ describe("Tabs", () => {
 				<TabsContent value="b">Content B</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		expect(tabs[0]).toHaveAttribute("aria-controls");
 		expect(tabs[1]).toHaveAttribute("aria-controls");
 		expect(tabs[0]!.getAttribute("aria-controls")).not.toBe(tabs[1]!.getAttribute("aria-controls"));
@@ -169,7 +169,7 @@ describe("Tabs", () => {
 				<TabsContent value="b">Content B</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		tabs[0]!.focus();
 		expect(document.activeElement).toBe(tabs[0]);
 		fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowRight"});
@@ -188,7 +188,7 @@ describe("Tabs", () => {
 				<TabsContent value="b">Content B</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		tabs[1]!.focus();
 		expect(document.activeElement).toBe(tabs[1]);
 		fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowLeft"});
@@ -207,7 +207,7 @@ describe("Tabs", () => {
 				<TabsContent value="b">Content B</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		tabs[1]!.focus();
 		fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowRight"});
 		expect(document.activeElement).toBe(tabs[0]);
@@ -224,7 +224,7 @@ describe("Tabs", () => {
 				<TabsContent value="b">Content B</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		tabs[0]!.focus();
 		fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowLeft"});
 		expect(document.activeElement).toBe(tabs[1]);
@@ -241,7 +241,7 @@ describe("Tabs", () => {
 				<TabsContent value="b">Content B</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		tabs[0]!.focus();
 		fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowDown"});
 		expect(document.activeElement).toBe(tabs[1]);
@@ -257,7 +257,7 @@ describe("Tabs", () => {
 				<TabsContent value="b">Content B</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		tabs[1]!.focus();
 		fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowUp"});
 		expect(document.activeElement).toBe(tabs[0]);
@@ -275,7 +275,7 @@ describe("Tabs", () => {
 				<TabsContent value="c">Content C</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		tabs[1]!.focus();
 		fireEvent.keyDown(screen.getByRole("tablist"), {key: "Home"});
 		expect(document.activeElement).toBe(tabs[0]);
@@ -294,7 +294,7 @@ describe("Tabs", () => {
 				<TabsContent value="c">Content C</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		tabs[0]!.focus();
 		fireEvent.keyDown(screen.getByRole("tablist"), {key: "End"});
 		expect(document.activeElement).toBe(tabs[2]);
@@ -310,7 +310,7 @@ describe("Tabs", () => {
 				<TabsContent value="a">Content A</TabsContent>
 			</Tabs>
 		));
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		expect(tabs[0]).toHaveAttribute("tabindex", "0");
 		expect(tabs[1]).toHaveAttribute("tabindex", "-1");
 	});

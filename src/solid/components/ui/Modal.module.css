@@ -19,7 +19,9 @@
 		opacity: 1;
 	}
 }
-.show { opacity: 1; }
+.show {
+	opacity: 1;
+}
 .content {
 	position: relative;
 	border-radius: var(--radius-lg);
@@ -52,7 +54,9 @@
 	color: var(--text-muted);
 	font-size: var(--font-size-lg);
 	line-height: 1;
-	transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		color var(--duration-fast) var(--ease-out);
 }
 .iconButton:hover {
 	background: var(--surface-muted);

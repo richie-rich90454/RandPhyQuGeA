@@ -16,15 +16,15 @@ import type {IExportService} from "../../../services/contracts";
 import type {PracticeResult} from "../../../types/models";
 import styles from "./ManageDataModal.module.css";
 /** localStorage keys managed by the app's persisted stores. */
-const STORAGE_KEYS=["physics-quest-settings", "physics-quest-progress"] as const;
+const STORAGE_KEYS = ["physics-quest-settings", "physics-quest-progress"] as const;
 /** Format a byte count as a human-readable string. */
 function formatBytes(bytes: number): string {
-	if (bytes<1024) return `${bytes} B`;
-	if (bytes<1024*1024) return `${(bytes/1024).toFixed(1)} KB`;
-	return `${(bytes/(1024*1024)).toFixed(2)} MB`;
+	if (bytes < 1024) return `${bytes} B`;
+	if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+	return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 /** Number of records to show per page in the data list. */
-const PAGE_SIZE=20;
+const PAGE_SIZE = 20;
 function DownloadIcon(): JSX.Element {
 	return (
 		<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -92,7 +92,7 @@ function isValidResult(value: unknown): value is PracticeResult {
 	if (!value || typeof value !== "object") {
 		return false;
 	}
-	let result=value as Record<string, unknown>;
+	let result = value as Record<string, unknown>;
 	return (
 		typeof result.id === "string" &&
 		typeof result.question_id === "string" &&
@@ -123,70 +123,70 @@ export interface ManageDataModalProps {
  * replaced with inline SVG.
  */
 export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
-	let isOpen=useUiStore(s => s.activeModal==="manage-data");
-	let results=useProgressStore(s => s.results);
-	let specification=useSpecStore(s => s.specification);
-	let {toast}=useToast();
-	let [page, setPage]=createSignal<number>(0);
-	let [confirmDeleteAll, setConfirmDeleteAll]=createSignal<boolean>(false);
-	let [confirmDeleteId, setConfirmDeleteId]=createSignal<string | null>(null);
-	let [confirmReset, setConfirmReset]=createSignal<boolean>(false);
-	let [confirmResetSettings, setConfirmResetSettings]=createSignal<boolean>(false);
-	let [pendingImport, setPendingImport]=createSignal<PracticeResult[] | null>(null);
-	let [storageVersion, setStorageVersion]=createSignal<number>(0);
-	let fileInput: HTMLInputElement | null=null;
-	let exportService: IExportService=props.exportService ?? new ExportService();
-	let sortedResults=createMemo(() => [...results()].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
-	let totalPages=createMemo(() => Math.max(1, Math.ceil(sortedResults().length/PAGE_SIZE)));
-	let currentPage=createMemo(() => Math.min(page(), totalPages()-1));
-	let pageResults=createMemo(() => {
-		let start=currentPage()*PAGE_SIZE;
-		return sortedResults().slice(start, start+PAGE_SIZE);
+	let isOpen = useUiStore(s => s.activeModal === "manage-data");
+	let results = useProgressStore(s => s.results);
+	let specification = useSpecStore(s => s.specification);
+	let {toast} = useToast();
+	let [page, setPage] = createSignal<number>(0);
+	let [confirmDeleteAll, setConfirmDeleteAll] = createSignal<boolean>(false);
+	let [confirmDeleteId, setConfirmDeleteId] = createSignal<string | null>(null);
+	let [confirmReset, setConfirmReset] = createSignal<boolean>(false);
+	let [confirmResetSettings, setConfirmResetSettings] = createSignal<boolean>(false);
+	let [pendingImport, setPendingImport] = createSignal<PracticeResult[] | null>(null);
+	let [storageVersion, setStorageVersion] = createSignal<number>(0);
+	let fileInput: HTMLInputElement | null = null;
+	let exportService: IExportService = props.exportService ?? new ExportService();
+	let sortedResults = createMemo(() => [...results()].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
+	let totalPages = createMemo(() => Math.max(1, Math.ceil(sortedResults().length / PAGE_SIZE)));
+	let currentPage = createMemo(() => Math.min(page(), totalPages() - 1));
+	let pageResults = createMemo(() => {
+		let start = currentPage() * PAGE_SIZE;
+		return sortedResults().slice(start, start + PAGE_SIZE);
 	});
-	let totalAttempts=() => results().length;
-	let correctCount=createMemo(() => results().filter(r => r.is_correct).length);
-	let accuracy=createMemo(() => {
-		let total=totalAttempts();
-		return total===0 ? 0 : Math.round((correctCount()/total)*100);
+	let totalAttempts = () => results().length;
+	let correctCount = createMemo(() => results().filter(r => r.is_correct).length);
+	let accuracy = createMemo(() => {
+		let total = totalAttempts();
+		return total === 0 ? 0 : Math.round((correctCount() / total) * 100);
 	});
-	let storageUsage=createMemo(() => {
+	let storageUsage = createMemo(() => {
 		void storageVersion();
-		let bytes=0;
+		let bytes = 0;
 		for (let key of STORAGE_KEYS) {
-			let raw=localStorage.getItem(key);
+			let raw = localStorage.getItem(key);
 			if (raw) {
-				bytes+=raw.length;
+				bytes += raw.length;
 			}
 		}
 		return {bytes, label: formatBytes(bytes)};
 	});
-	let refreshStorage=() => setStorageVersion(v => v+1);
-	let handleExport=() => {
-		let payload={appVersion: useSettingsStore.getState().appVersion, exportedAt: new Date().toISOString(), results: results()};
-		let content=JSON.stringify(payload, null, 2);
+	let refreshStorage = () => setStorageVersion(v => v + 1);
+	let handleExport = () => {
+		let payload = {appVersion: useSettingsStore.getState().appVersion, exportedAt: new Date().toISOString(), results: results()};
+		let content = JSON.stringify(payload, null, 2);
 		exportService.downloadText(`physics-quest-data-${new Date().toISOString().slice(0, 10)}.json`, content, "json");
 		toast({variant: "success", message: "Practice data exported."});
 	};
-	let handleImportClick=() => {
+	let handleImportClick = () => {
 		fileInput?.click();
 	};
-	let handleFileChange=(event: Event) => {
-		let target=event.target as HTMLInputElement;
-		let file=target.files?.[0];
+	let handleFileChange = (event: Event) => {
+		let target = event.target as HTMLInputElement;
+		let file = target.files?.[0];
 		if (!file) {
 			return;
 		}
-		let reader=new FileReader();
-		reader.onload=() => {
+		let reader = new FileReader();
+		reader.onload = () => {
 			try {
-				let text=String(reader.result);
-				let parsed=JSON.parse(text) as unknown;
-				let imported=Array.isArray((parsed as Record<string, unknown>)?.results) ? (parsed as Record<string, unknown>).results as unknown[] : [];
-				let valid=imported.every(isValidResult);
+				let text = String(reader.result);
+				let parsed = JSON.parse(text) as unknown;
+				let imported = Array.isArray((parsed as Record<string, unknown>)?.results) ? ((parsed as Record<string, unknown>).results as unknown[]) : [];
+				let valid = imported.every(isValidResult);
 				if (!valid) {
 					throw new Error("Invalid data format");
 				}
-				if (imported.length===0) {
+				if (imported.length === 0) {
 					toast({variant: "warning", message: "No practice records found in file."});
 					return;
 				}
@@ -195,14 +195,14 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 				toast({variant: "error", message: "Failed to import data. File is not valid JSON."});
 			} finally {
 				if (fileInput) {
-					fileInput.value="";
+					fileInput.value = "";
 				}
 			}
 		};
 		reader.readAsText(file);
 	};
-	let handleConfirmImport=() => {
-		let pending=pendingImport();
+	let handleConfirmImport = () => {
+		let pending = pendingImport();
 		if (pending) {
 			useProgressStore.setState({results: pending});
 			setPendingImport(null);
@@ -211,28 +211,28 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 			toast({variant: "success", message: `Imported ${pending.length} records.`});
 		}
 	};
-	let handleConfirmDeleteAll=() => {
+	let handleConfirmDeleteAll = () => {
 		useProgressStore.getState().clearResults();
 		setPage(0);
 		setConfirmDeleteAll(false);
 		refreshStorage();
 		toast({variant: "info", message: "All practice data deleted."});
 	};
-	let handleConfirmDeleteOne=() => {
-		let id=confirmDeleteId();
+	let handleConfirmDeleteOne = () => {
+		let id = confirmDeleteId();
 		if (id) {
 			useProgressStore.getState().deleteResult(id);
 		}
 		setConfirmDeleteId(null);
 		refreshStorage();
 	};
-	let handleConfirmResetSettings=() => {
+	let handleConfirmResetSettings = () => {
 		useSettingsStore.getState().resetToDefaults();
 		setConfirmResetSettings(false);
 		refreshStorage();
 		toast({variant: "info", message: "Settings reset to defaults."});
 	};
-	let handleConfirmReset=() => {
+	let handleConfirmReset = () => {
 		useProgressStore.getState().clearResults();
 		useSettingsStore.getState().resetToDefaults();
 		useSpecStore.getState().reset();
@@ -241,12 +241,12 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 		useUiStore.getState().closeModal();
 		toast({variant: "info", message: "App reset to defaults."});
 	};
-	let getTopicName=(topicId: string): string => {
-		let spec=specification();
-		let topic=spec?.topics.find(t => t.id===topicId);
+	let getTopicName = (topicId: string): string => {
+		let spec = specification();
+		let topic = spec?.topics.find(t => t.id === topicId);
 		return topic?.name ?? topicId;
 	};
-	let close=() => useUiStore.getState().closeModal();
+	let close = () => useUiStore.getState().closeModal();
 	return (
 		<>
 			<Modal
@@ -257,44 +257,69 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 				titleId="data-title"
 				ariaLabel="Manage data"
 				class={styles.manage}
-				footer={<Button variant="secondary" size="md" onClick={close}>Close</Button>}
+				footer={
+					<Button variant="secondary" size="md" onClick={close}>
+						Close
+					</Button>
+				}
 			>
 				<div class={styles.actionsGrid}>
 					<Card variant="filled" class={styles.actionCard}>
 						<CardHeader class={styles.actionHeader}>
-							<span class={`${styles.actionIcon} ${styles.exportIcon}`}><DownloadIcon /></span>
+							<span class={`${styles.actionIcon} ${styles.exportIcon}`}>
+								<DownloadIcon />
+							</span>
 							<div class={styles.actionTitles}>
 								<CardTitle>Export Data</CardTitle>
 								<CardSubtitle>Download your practice history as JSON.</CardSubtitle>
 							</div>
 						</CardHeader>
 						<CardContent class={styles.actionContent}>
-							<Button variant="secondary" size="sm" leftIcon={<DownloadIcon />} onClick={handleExport} disabled={results().length===0}>Export JSON</Button>
+							<Button variant="secondary" size="sm" leftIcon={<DownloadIcon />} onClick={handleExport} disabled={results().length === 0}>
+								Export JSON
+							</Button>
 						</CardContent>
 					</Card>
 					<Card variant="filled" class={styles.actionCard}>
 						<CardHeader class={styles.actionHeader}>
-							<span class={`${styles.actionIcon} ${styles.importIcon}`}><UploadIcon /></span>
+							<span class={`${styles.actionIcon} ${styles.importIcon}`}>
+								<UploadIcon />
+							</span>
 							<div class={styles.actionTitles}>
 								<CardTitle>Import Data</CardTitle>
 								<CardSubtitle>Restore practice history from a JSON file.</CardSubtitle>
 							</div>
 						</CardHeader>
 						<CardContent class={styles.actionContent}>
-							<input ref={(el: HTMLInputElement) => {fileInput=el;}} type="file" accept=".json,application/json" aria-label="Import practice data file" class={styles.srOnly} onChange={handleFileChange} />
-							<Button variant="secondary" size="sm" leftIcon={<UploadIcon />} onClick={handleImportClick}>Import JSON</Button>
+							<input
+								ref={(el: HTMLInputElement) => {
+									fileInput = el;
+								}}
+								type="file"
+								accept=".json,application/json"
+								aria-label="Import practice data file"
+								class={styles.srOnly}
+								onChange={handleFileChange}
+							/>
+							<Button variant="secondary" size="sm" leftIcon={<UploadIcon />} onClick={handleImportClick}>
+								Import JSON
+							</Button>
 						</CardContent>
 					</Card>
 					<Card variant="filled" class={styles.actionCard}>
 						<CardHeader class={styles.actionHeader}>
-							<span class={`${styles.actionIcon} ${styles.storageIcon}`}><DatabaseIcon /></span>
+							<span class={`${styles.actionIcon} ${styles.storageIcon}`}>
+								<DatabaseIcon />
+							</span>
 							<div class={styles.actionTitles}>
 								<CardTitle>Storage Usage</CardTitle>
 								<CardSubtitle>Estimated local storage used by the app.</CardSubtitle>
 							</div>
 						</CardHeader>
 						<CardContent class={styles.actionContent}>
-							<span class={styles.storageValue} aria-live="polite">{storageUsage().label}</span>
+							<span class={styles.storageValue} aria-live="polite">
+								{storageUsage().label}
+							</span>
 						</CardContent>
 					</Card>
 				</div>
@@ -302,52 +327,71 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 					<CardHeader class={styles.historyHeader}>
 						<div class={styles.historyTitles}>
 							<CardTitle>History</CardTitle>
-							<CardSubtitle>{totalAttempts()} record{totalAttempts()===1 ? "" : "s"}</CardSubtitle>
+							<CardSubtitle>
+								{totalAttempts()} record{totalAttempts() === 1 ? "" : "s"}
+							</CardSubtitle>
 						</div>
 						<div class={styles.historyActions}>
-							<Show when={totalAttempts()>0}>
-								<Badge variant={accuracy()>=70 ? "success" : accuracy()>=50 ? "warning" : "error"} size="sm">{accuracy()}% accuracy</Badge>
+							<Show when={totalAttempts() > 0}>
+								<Badge variant={accuracy() >= 70 ? "success" : accuracy() >= 50 ? "warning" : "error"} size="sm">
+									{accuracy()}% accuracy
+								</Badge>
 							</Show>
-							<Button variant="danger" size="sm" leftIcon={<TrashIcon />} aria-label="Delete all records" onClick={() => setConfirmDeleteAll(true)} disabled={results().length===0}>Delete All</Button>
+							<Button variant="danger" size="sm" leftIcon={<TrashIcon />} aria-label="Delete all records" onClick={() => setConfirmDeleteAll(true)} disabled={results().length === 0}>
+								Delete All
+							</Button>
 						</div>
 					</CardHeader>
 					<CardContent class={styles.historyContent}>
-						<Show when={results().length===0} fallback={
-							<>
-								<div class={styles.list}>
-									<For each={pageResults()}>{(result) => (
-										<div class={styles.item}>
-											<div class={styles.itemInfo}>
-												<span class={`${styles.itemResult} ${result.is_correct ? styles.correct : styles.incorrect}`}>{result.is_correct ? <CheckIcon /> : <XIcon />}</span>
-												<span class={styles.itemTopic}>{getTopicName(result.topic_id)}</span>
-												<span class={styles.itemMeta}>{result.mode} · D{result.difficulty} · {(result.time_taken_ms/1000).toFixed(1)}s · {new Date(result.timestamp).toLocaleString()}</span>
-											</div>
-											<Button variant="icon" size="sm" class={styles.itemDelete} aria-label="Delete record" onClick={() => setConfirmDeleteId(result.id)}>
-												<XIcon />
+						<Show
+							when={results().length === 0}
+							fallback={
+								<>
+									<div class={styles.list}>
+										<For each={pageResults()}>
+											{result => (
+												<div class={styles.item}>
+													<div class={styles.itemInfo}>
+														<span class={`${styles.itemResult} ${result.is_correct ? styles.correct : styles.incorrect}`}>
+															{result.is_correct ? <CheckIcon /> : <XIcon />}
+														</span>
+														<span class={styles.itemTopic}>{getTopicName(result.topic_id)}</span>
+														<span class={styles.itemMeta}>
+															{result.mode} · D{result.difficulty} · {(result.time_taken_ms / 1000).toFixed(1)}s · {new Date(result.timestamp).toLocaleString()}
+														</span>
+													</div>
+													<Button variant="icon" size="sm" class={styles.itemDelete} aria-label="Delete record" onClick={() => setConfirmDeleteId(result.id)}>
+														<XIcon />
+													</Button>
+												</div>
+											)}
+										</For>
+									</div>
+									<Show when={totalPages() > 1}>
+										<div class={styles.pagination}>
+											<Button variant="secondary" size="sm" onClick={() => setPage(currentPage() - 1)} disabled={currentPage() === 0}>
+												Previous
+											</Button>
+											<span class={styles.paginationInfo}>
+												Page {currentPage() + 1} of {totalPages()}
+											</span>
+											<Button variant="secondary" size="sm" onClick={() => setPage(currentPage() + 1)} disabled={currentPage() >= totalPages() - 1}>
+												Next
 											</Button>
 										</div>
-									)}</For>
-								</div>
-								<Show when={totalPages()>1}>
-									<div class={styles.pagination}>
-										<Button variant="secondary" size="sm" onClick={() => setPage(currentPage()-1)} disabled={currentPage()===0}>Previous</Button>
-										<span class={styles.paginationInfo}>Page {currentPage()+1} of {totalPages()}</span>
-										<Button variant="secondary" size="sm" onClick={() => setPage(currentPage()+1)} disabled={currentPage()>=totalPages()-1}>Next</Button>
-									</div>
-								</Show>
-							</>
-						}>
-							<EmptyState
-								illustration={<FileXIcon />}
-								title="No practice data"
-								description="Start a session to build your history."
-							/>
+									</Show>
+								</>
+							}
+						>
+							<EmptyState illustration={<FileXIcon />} title="No practice data" description="Start a session to build your history." />
 						</Show>
 					</CardContent>
 				</Card>
 				<Card variant="outline" class={styles.dangerCard}>
 					<CardHeader class={styles.dangerHeader}>
-						<span class={styles.dangerIcon}><WarningIcon /></span>
+						<span class={styles.dangerIcon}>
+							<WarningIcon />
+						</span>
 						<div class={styles.actionTitles}>
 							<CardTitle>Danger Zone</CardTitle>
 							<CardSubtitle>Irreversible actions. Confirm carefully.</CardSubtitle>
@@ -359,14 +403,18 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 								<span class={styles.dangerRowTitle}>Reset settings</span>
 								<span class={styles.dangerRowHint}>Restore all preferences to defaults. Your practice history is kept.</span>
 							</div>
-							<Button variant="danger" size="sm" onClick={() => setConfirmResetSettings(true)}>Reset Settings</Button>
+							<Button variant="danger" size="sm" onClick={() => setConfirmResetSettings(true)}>
+								Reset Settings
+							</Button>
 						</div>
 						<div class={styles.dangerRow}>
 							<div class={styles.dangerRowInfo}>
 								<span class={styles.dangerRowTitle}>Reset everything</span>
 								<span class={styles.dangerRowHint}>Clear practice data, reset settings, and unload the specification.</span>
 							</div>
-							<Button variant="danger" size="sm" leftIcon={<WarningIcon />} onClick={() => setConfirmReset(true)}>Reset Everything</Button>
+							<Button variant="danger" size="sm" leftIcon={<WarningIcon />} onClick={() => setConfirmReset(true)}>
+								Reset Everything
+							</Button>
 						</div>
 					</CardContent>
 				</Card>
@@ -409,7 +457,7 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
 			/>
 			<ConfirmDialog
 				title="Import practice data?"
-				message={pendingImport() ? `Import ${pendingImport()!.length} record${pendingImport()!.length===1 ? "" : "s"}? This will replace your current history.` : ""}
+				message={pendingImport() ? `Import ${pendingImport()!.length} record${pendingImport()!.length === 1 ? "" : "s"}? This will replace your current history.` : ""}
 				confirmLabel="Import"
 				open={pendingImport() !== null}
 				onConfirm={handleConfirmImport}

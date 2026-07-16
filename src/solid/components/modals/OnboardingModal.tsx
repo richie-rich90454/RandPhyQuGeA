@@ -101,23 +101,23 @@ function AutoIcon(): JSX.Element {
 		</svg>
 	);
 }
-const FEATURES: readonly FeatureCard[]=[
+const FEATURES: readonly FeatureCard[] = [
 	{id: "practice", icon: ClipboardIcon, title: "Practice your way", body: "Single questions, full sessions, or timed mental drills with adjustable difficulty."},
 	{id: "shortcuts", icon: KeyboardIcon, title: "Stay in flow", body: "Number keys for choices, Enter to check, then Enter again to advance."},
 	{id: "progress", icon: LightningIcon, title: "Build momentum", body: "Streaks, accuracy trends, and weak-topic recommendations keep you improving."},
 	{id: "insights", icon: ChartIcon, title: "Track insights", body: "Visualize accuracy per topic and export your history anytime."},
 ];
-const THEME_OPTIONS: readonly ThemeOption[]=[
+const THEME_OPTIONS: readonly ThemeOption[] = [
 	{value: "light", label: "Light", icon: SunIcon},
 	{value: "dark", label: "Dark", icon: MoonIcon},
 	{value: "system", label: "System", icon: AutoIcon},
 ];
-const MODE_OPTIONS: readonly ModeOption[]=[
+const MODE_OPTIONS: readonly ModeOption[] = [
 	{value: "Single", label: "Single", hint: "Deep focus, one question at a time."},
 	{value: "Mental", label: "Mental", hint: "Timed drill with countdown and score."},
 ];
 /** Total number of onboarding steps. */
-const TOTAL_STEPS=4;
+const TOTAL_STEPS = 4;
 /**
  * First-launch onboarding overlay mapped to `#onboarding-overlay`.
  *
@@ -131,39 +131,39 @@ const TOTAL_STEPS=4;
  * transitions are CSS-driven with a `prefers-reduced-motion` guard.
  */
 export function OnboardingModal(): JSX.Element {
-	let isOpen=useUiStore(s => s.activeModal==="onboarding");
-	let settings=useSettingsStore();
-	let [stepIndex, setStepIndex]=createSignal(0);
-	let [themeChoice, setThemeChoice]=createSignal<ThemeMode>(settings().themeMode === "dark" ? "dark" : settings().themeMode === "system" ? "system" : "light");
-	let [modeChoice, setModeChoice]=createSignal<PracticeMode>(settings().defaultMode);
-	let handleDismiss=() => {
+	let isOpen = useUiStore(s => s.activeModal === "onboarding");
+	let settings = useSettingsStore();
+	let [stepIndex, setStepIndex] = createSignal(0);
+	let [themeChoice, setThemeChoice] = createSignal<ThemeMode>(settings().themeMode === "dark" ? "dark" : settings().themeMode === "system" ? "system" : "light");
+	let [modeChoice, setModeChoice] = createSignal<PracticeMode>(settings().defaultMode);
+	let handleDismiss = () => {
 		commitSetupIfNeeded();
 		useSettingsStore.getState().setOnboardingCompleted(true);
 		useUiStore.getState().closeModal();
 	};
-	let commitSetupIfNeeded=() => {
-		if (stepIndex()>=2) {
+	let commitSetupIfNeeded = () => {
+		if (stepIndex() >= 2) {
 			useSettingsStore.getState().setThemeMode(themeChoice());
 			useSettingsStore.getState().setDefaultMode(modeChoice());
 		}
 	};
-	let goToStep=(nextIndex: number) => {
-		let clamped=Math.max(0, Math.min(TOTAL_STEPS-1, nextIndex));
+	let goToStep = (nextIndex: number) => {
+		let clamped = Math.max(0, Math.min(TOTAL_STEPS - 1, nextIndex));
 		setStepIndex(clamped);
 	};
-	let handleNext=() => {
-		if (stepIndex()<TOTAL_STEPS-1) {
-			goToStep(stepIndex()+1);
+	let handleNext = () => {
+		if (stepIndex() < TOTAL_STEPS - 1) {
+			goToStep(stepIndex() + 1);
 		} else {
 			handleDismiss();
 		}
 	};
-	let handlePrevious=() => {
-		if (stepIndex()>0) {
-			goToStep(stepIndex()-1);
+	let handlePrevious = () => {
+		if (stepIndex() > 0) {
+			goToStep(stepIndex() - 1);
 		}
 	};
-	let handleFinish=() => {
+	let handleFinish = () => {
 		commitSetupIfNeeded();
 		useSettingsStore.getState().setOnboardingCompleted(true);
 		useUiStore.getState().closeModal();
@@ -173,36 +173,36 @@ export function OnboardingModal(): JSX.Element {
 			setStepIndex(0);
 			return;
 		}
-		let handleKeyDown=(event: KeyboardEvent) => {
-			if (event.key==="ArrowRight") {
+		let handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "ArrowRight") {
 				event.preventDefault();
 				handleNext();
-			} else if (event.key==="ArrowLeft") {
+			} else if (event.key === "ArrowLeft") {
 				event.preventDefault();
 				handlePrevious();
-			} else if (event.key==="Home") {
+			} else if (event.key === "Home") {
 				event.preventDefault();
 				goToStep(0);
-			} else if (event.key==="End") {
+			} else if (event.key === "End") {
 				event.preventDefault();
-				goToStep(TOTAL_STEPS-1);
+				goToStep(TOTAL_STEPS - 1);
 			}
 		};
 		document.addEventListener("keydown", handleKeyDown);
 		onCleanup(() => document.removeEventListener("keydown", handleKeyDown));
 	});
-	let isLastStep=() => stepIndex()===TOTAL_STEPS-1;
-	let progressPercent=createMemo(() => ((stepIndex()+1)/TOTAL_STEPS)*100);
-	let stepHeadline=createMemo<string>(() => {
-		if (stepIndex()===0) return "Physics practice, simplified";
-		if (stepIndex()===1) return "Everything you need to study";
-		if (stepIndex()===2) return "Quick setup";
+	let isLastStep = () => stepIndex() === TOTAL_STEPS - 1;
+	let progressPercent = createMemo(() => ((stepIndex() + 1) / TOTAL_STEPS) * 100);
+	let stepHeadline = createMemo<string>(() => {
+		if (stepIndex() === 0) return "Physics practice, simplified";
+		if (stepIndex() === 1) return "Everything you need to study";
+		if (stepIndex() === 2) return "Quick setup";
 		return "You are ready to begin";
 	});
-	let stepBody=createMemo<string>(() => {
-		if (stepIndex()===0) return "A focused practice environment for physics problems. Pick a topic, generate questions, and track your progress over time.";
-		if (stepIndex()===1) return "A few highlights to help you get the most out of RandPhyQuGeA.";
-		if (stepIndex()===2) return "Choose a starting theme and practice mode. You can change these later in Settings.";
+	let stepBody = createMemo<string>(() => {
+		if (stepIndex() === 0) return "A focused practice environment for physics problems. Pick a topic, generate questions, and track your progress over time.";
+		if (stepIndex() === 1) return "A few highlights to help you get the most out of RandPhyQuGeA.";
+		if (stepIndex() === 2) return "Choose a starting theme and practice mode. You can change these later in Settings.";
 		return "Pick up where you left off anytime. Your progress is saved locally on this device.";
 	});
 	return (
@@ -217,26 +217,39 @@ export function OnboardingModal(): JSX.Element {
 			footer={
 				<div class={styles.footer}>
 					<div class={styles.dots} role="tablist" aria-label="Onboarding steps">
-						<For each={Array.from({length: TOTAL_STEPS})}>{(_, index) => (
-							<button
-								type="button"
-								role="tab"
-								aria-selected={index()===stepIndex()}
-								aria-label={`Step ${index()+1}`}
-								class={`${styles.dot} ${index()===stepIndex() ? styles.dotActive : ""} ${index()<stepIndex() ? styles.dotCompleted : ""}`}
-								onClick={() => goToStep(index())}
-							/>
-						)}</For>
+						<For each={Array.from({length: TOTAL_STEPS})}>
+							{(_, index) => (
+								<button
+									type="button"
+									role="tab"
+									aria-selected={index() === stepIndex()}
+									aria-label={`Step ${index() + 1}`}
+									class={`${styles.dot} ${index() === stepIndex() ? styles.dotActive : ""} ${index() < stepIndex() ? styles.dotCompleted : ""}`}
+									onClick={() => goToStep(index())}
+								/>
+							)}
+						</For>
 					</div>
 					<div class={styles.actions}>
-						<Button variant="ghost" size="md" onClick={handleDismiss}>Skip</Button>
-						<Show when={stepIndex()>0} fallback={<span class={styles.spacer} />}>
-							<Button variant="ghost" size="md" leftIcon={<ArrowLeftIcon />} onClick={handlePrevious}>Back</Button>
+						<Button variant="ghost" size="md" onClick={handleDismiss}>
+							Skip
+						</Button>
+						<Show when={stepIndex() > 0} fallback={<span class={styles.spacer} />}>
+							<Button variant="ghost" size="md" leftIcon={<ArrowLeftIcon />} onClick={handlePrevious}>
+								Back
+							</Button>
 						</Show>
-						<Show when={isLastStep()} fallback={
-							<Button variant="primary" size="md" rightIcon={<ArrowRightIcon />} onClick={handleNext}>Next</Button>
-						}>
-							<Button variant="primary" size="md" onClick={handleFinish}>Get started</Button>
+						<Show
+							when={isLastStep()}
+							fallback={
+								<Button variant="primary" size="md" rightIcon={<ArrowRightIcon />} onClick={handleNext}>
+									Next
+								</Button>
+							}
+						>
+							<Button variant="primary" size="md" onClick={handleFinish}>
+								Get started
+							</Button>
 						</Show>
 					</div>
 				</div>
@@ -244,71 +257,81 @@ export function OnboardingModal(): JSX.Element {
 		>
 			<div class={styles.viewport} aria-live="polite" aria-atomic="true">
 				<ol class={styles.stepList}>
-					<Show when={stepIndex()===0}>
+					<Show when={stepIndex() === 0}>
 						<li class={`${styles.step} ${styles.stepWelcome}`}>
-							<span class={styles.heroIcon}><AtomIcon /></span>
+							<span class={styles.heroIcon}>
+								<AtomIcon />
+							</span>
 							<h3 class={styles.headline}>{stepHeadline()}</h3>
 							<p class={styles.body}>{stepBody()}</p>
 						</li>
 					</Show>
-					<Show when={stepIndex()===1}>
+					<Show when={stepIndex() === 1}>
 						<li class={`${styles.step} ${styles.stepFeatures}`}>
 							<h3 class={styles.headline}>{stepHeadline()}</h3>
 							<p class={styles.body}>{stepBody()}</p>
 							<ul class={styles.featureGrid}>
-								<For each={FEATURES}>{(feature) => (
-									<li class={styles.featureCard}>
-										<span class={styles.featureIcon}>{feature.icon()}</span>
-										<span class={styles.featureTitle}>{feature.title}</span>
-										<span class={styles.featureBody}>{feature.body}</span>
-									</li>
-								)}</For>
+								<For each={FEATURES}>
+									{feature => (
+										<li class={styles.featureCard}>
+											<span class={styles.featureIcon}>{feature.icon()}</span>
+											<span class={styles.featureTitle}>{feature.title}</span>
+											<span class={styles.featureBody}>{feature.body}</span>
+										</li>
+									)}
+								</For>
 							</ul>
 						</li>
 					</Show>
-					<Show when={stepIndex()===2}>
+					<Show when={stepIndex() === 2}>
 						<li class={`${styles.step} ${styles.stepSetup}`}>
 							<h3 class={styles.headline}>{stepHeadline()}</h3>
 							<p class={styles.body}>{stepBody()}</p>
 							<div class={styles.setupGroup}>
 								<span class={styles.setupLabel}>Theme</span>
 								<div class={styles.themeOptions} role="radiogroup" aria-label="Theme">
-									<For each={THEME_OPTIONS}>{(option) => (
-										<button
-											type="button"
-											role="radio"
-											aria-checked={themeChoice()===option.value}
-											class={`${styles.themeOption} ${themeChoice()===option.value ? styles.themeOptionActive : ""}`}
-											onClick={() => setThemeChoice(option.value)}
-										>
-											<span class={styles.themeOptionIcon}>{option.icon()}</span>
-											<span class={styles.themeOptionLabel}>{option.label}</span>
-										</button>
-									)}</For>
+									<For each={THEME_OPTIONS}>
+										{option => (
+											<button
+												type="button"
+												role="radio"
+												aria-checked={themeChoice() === option.value}
+												class={`${styles.themeOption} ${themeChoice() === option.value ? styles.themeOptionActive : ""}`}
+												onClick={() => setThemeChoice(option.value)}
+											>
+												<span class={styles.themeOptionIcon}>{option.icon()}</span>
+												<span class={styles.themeOptionLabel}>{option.label}</span>
+											</button>
+										)}
+									</For>
 								</div>
 							</div>
 							<div class={styles.setupGroup}>
 								<span class={styles.setupLabel}>Default mode</span>
 								<div class={styles.modeOptions} role="radiogroup" aria-label="Default mode">
-									<For each={MODE_OPTIONS}>{(option) => (
-										<button
-											type="button"
-											role="radio"
-											aria-checked={modeChoice()===option.value}
-											class={`${styles.modeOption} ${modeChoice()===option.value ? styles.modeOptionActive : ""}`}
-											onClick={() => setModeChoice(option.value)}
-										>
-											<span class={styles.modeOptionLabel}>{option.label}</span>
-											<span class={styles.modeOptionHint}>{option.hint}</span>
-										</button>
-									)}</For>
+									<For each={MODE_OPTIONS}>
+										{option => (
+											<button
+												type="button"
+												role="radio"
+												aria-checked={modeChoice() === option.value}
+												class={`${styles.modeOption} ${modeChoice() === option.value ? styles.modeOptionActive : ""}`}
+												onClick={() => setModeChoice(option.value)}
+											>
+												<span class={styles.modeOptionLabel}>{option.label}</span>
+												<span class={styles.modeOptionHint}>{option.hint}</span>
+											</button>
+										)}
+									</For>
 								</div>
 							</div>
 						</li>
 					</Show>
-					<Show when={stepIndex()===3}>
+					<Show when={stepIndex() === 3}>
 						<li class={`${styles.step} ${styles.stepFinish}`}>
-							<span class={styles.heroIcon}><AtomIcon /></span>
+							<span class={styles.heroIcon}>
+								<AtomIcon />
+							</span>
 							<h3 class={styles.headline}>{stepHeadline()}</h3>
 							<p class={styles.body}>{stepBody()}</p>
 						</li>

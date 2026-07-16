@@ -1,27 +1,74 @@
 import {render, screen, fireEvent} from "@solidjs/testing-library";
 import {describe, it, expect, vi} from "vitest";
 import type {JSX} from "solid-js";
-import {Button, Card, CardHeader, CardTitle, CardContent, Modal, Input, Select, Slider, Switch, Tabs, TabsList, TabsTrigger, TabsContent, Tooltip, TooltipTrigger, TooltipContent, Badge, Pill, ProgressBar, Spinner, Accordion, AccordionItem, AccordionTrigger, AccordionContent, EmptyState, ConfirmDialog, Toolbar, ToolbarGroup, ToolbarItem, ToolbarSeparator} from "../../components/ui";
+import {
+	Button,
+	Card,
+	CardHeader,
+	CardTitle,
+	CardContent,
+	Modal,
+	Input,
+	Select,
+	Slider,
+	Switch,
+	Tabs,
+	TabsList,
+	TabsTrigger,
+	TabsContent,
+	Tooltip,
+	TooltipTrigger,
+	TooltipContent,
+	Badge,
+	Pill,
+	ProgressBar,
+	Spinner,
+	Accordion,
+	AccordionItem,
+	AccordionTrigger,
+	AccordionContent,
+	EmptyState,
+	ConfirmDialog,
+	Toolbar,
+	ToolbarGroup,
+	ToolbarItem,
+	ToolbarSeparator,
+} from "../../components/ui";
 import {ToastProvider, useToast} from "../../components/ui/ToastProvider";
 function ToastCaller(props: {message: string}): JSX.Element {
-	let {toast}=useToast();
-	return <button type="button" onClick={() => toast({variant: "info", message: props.message, duration: 0})}>Fire</button>;
+	let {toast} = useToast();
+	return (
+		<button type="button" onClick={() => toast({variant: "info", message: props.message, duration: 0})}>
+			Fire
+		</button>
+	);
 }
 describe("ui primitives smoke", () => {
 	it("Button renders and fires onClick", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<() => void>();
 		render(() => <Button onClick={handler}>Click</Button>);
 		fireEvent.click(screen.getByRole("button", {name: /click/i}));
 		expect(handler).toHaveBeenCalledTimes(1);
 	});
 	it("Card renders children with header and content", () => {
-		render(() => <Card><CardHeader><CardTitle>Title</CardTitle></CardHeader><CardContent>Body</CardContent></Card>);
+		render(() => (
+			<Card>
+				<CardHeader>
+					<CardTitle>Title</CardTitle>
+				</CardHeader>
+				<CardContent>Body</CardContent>
+			</Card>
+		));
 		expect(screen.getByText("Title")).toBeInTheDocument();
 		expect(screen.getByText("Body")).toBeInTheDocument();
 	});
 	it("Modal renders into a portal when open and closes on Escape", () => {
-		let onClose=vi.fn();
-		render(() => <Modal open={true} onClose={onClose} title="My Dialog"><p>Modal body</p></Modal>);
+		let onClose = vi.fn<() => void>();
+		render(() => (
+			<Modal open={true} onClose={onClose} title="My Dialog">
+				<p>Modal body</p>
+			</Modal>
+		));
 		expect(screen.getByRole("dialog")).toBeInTheDocument();
 		expect(screen.getByText("Modal body")).toBeInTheDocument();
 		fireEvent.keyDown(document, {key: "Escape"});
@@ -32,23 +79,32 @@ describe("ui primitives smoke", () => {
 		expect(screen.getByLabelText("Name")).toBeInTheDocument();
 	});
 	it("Select renders options and fires onChange", () => {
-		let handler=vi.fn();
-		render(() => <Select label="Scope" options={[{value: "all", label: "All"}, {value: "u1", label: "Unit 1"}]} onChange={handler} />);
-		let select=screen.getByLabelText("Scope") as HTMLSelectElement;
+		let handler = vi.fn<() => void>();
+		render(() => (
+			<Select
+				label="Scope"
+				options={[
+					{value: "all", label: "All"},
+					{value: "u1", label: "Unit 1"},
+				]}
+				onChange={handler}
+			/>
+		));
+		let select = screen.getByLabelText("Scope") as HTMLSelectElement;
 		expect(select.options.length).toBe(2);
 		fireEvent.change(select, {target: {value: "u1"}});
 		expect(handler).toHaveBeenCalledTimes(1);
 	});
 	it("Slider renders dual range thumbs and fires onChange", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(value: [number, number]) => void>();
 		render(() => <Slider min={0} max={10} value={[2, 8]} onChange={handler} label="Range" />);
-		let thumbs=screen.getAllByRole("slider");
+		let thumbs = screen.getAllByRole("slider");
 		expect(thumbs).toHaveLength(2);
 	});
 	it("Switch toggles on click", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(checked: boolean) => void>();
 		render(() => <Switch label="Auto" onCheckedChange={handler} />);
-		let sw=screen.getByRole("switch");
+		let sw = screen.getByRole("switch");
 		fireEvent.click(sw);
 		expect(handler).toHaveBeenCalledWith(true);
 	});
@@ -80,7 +136,9 @@ describe("ui primitives smoke", () => {
 	it("Tooltip renders content when the trigger is focused", () => {
 		render(() => (
 			<Tooltip defaultOpen={true}>
-				<TooltipTrigger><span>Hover me</span></TooltipTrigger>
+				<TooltipTrigger>
+					<span>Hover me</span>
+				</TooltipTrigger>
 				<TooltipContent>Tip text</TooltipContent>
 			</Tooltip>
 		));
@@ -92,18 +150,18 @@ describe("ui primitives smoke", () => {
 		expect(screen.getByText("New")).toBeInTheDocument();
 	});
 	it("Pill renders and fires onClick", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<() => void>();
 		render(() => <Pill name="Mechanics" onClick={handler} />);
 		fireEvent.click(screen.getByRole("button", {name: /mechanics/i}));
 		expect(handler).toHaveBeenCalledTimes(1);
 	});
 	it("ProgressBar renders with an accessible role", () => {
 		render(() => <ProgressBar value={50} ariaLabel="Completion" />);
-		let bar=screen.getByRole("progressbar");
+		let bar = screen.getByRole("progressbar");
 		expect(bar).toHaveAttribute("aria-valuenow", "50");
 	});
 	it("Spinner renders a loading indicator", () => {
-		let {container}=render(() => <Spinner standalone={true} />);
+		let {container} = render(() => <Spinner standalone={true} />);
 		expect(container.querySelector("[role='status']")).toBeInTheDocument();
 	});
 	it("Accordion expands and collapses on trigger click", () => {
@@ -125,7 +183,7 @@ describe("ui primitives smoke", () => {
 		expect(screen.getByText("Try generating a question.")).toBeInTheDocument();
 	});
 	it("ConfirmDialog renders and fires onConfirm", () => {
-		let onConfirm=vi.fn();
+		let onConfirm = vi.fn<() => void>();
 		render(() => <ConfirmDialog open={true} title="Delete?" message="Are you sure?" onConfirm={onConfirm} onCancel={() => {}} />);
 		expect(screen.getByText("Are you sure?")).toBeInTheDocument();
 		fireEvent.click(screen.getByRole("button", {name: /confirm/i}));

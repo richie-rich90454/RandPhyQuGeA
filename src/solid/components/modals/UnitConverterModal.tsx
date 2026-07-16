@@ -7,7 +7,7 @@ import {UnitRegistry} from "../../../lib/physics/units/UnitRegistry";
 import {useUiStore} from "../../stores/uiStore";
 import styles from "./UnitConverterModal.module.css";
 /** Sentinel value representing "no source unit selected yet". */
-const NONE="";
+const NONE = "";
 /** Format a converted number with up to 8 significant digits, trimming trailing zeros. */
 function formatResult(value: number): string {
 	if (!Number.isFinite(value)) return "—";
@@ -39,16 +39,21 @@ export interface UnitConverterModalProps {
  * store's `closeModal` action.
  */
 export function UnitConverterModal(props: UnitConverterModalProps): JSX.Element {
-	let isOpen=useUiStore(s => s.activeModal === "unit-converter");
-	let close=() => useUiStore.getState().closeModal();
-	let registry=() => props.registry ?? UnitConverterModal.defaultRegistry;
-	let converter=() => props.converter ?? UnitConverterModal.defaultConverter;
-	let [value, setValue]=createSignal<string>("");
-	let [fromUnit, setFromUnit]=createSignal<string>(NONE);
-	let [toUnit, setToUnit]=createSignal<string>(NONE);
-	let allUnits=createMemo<string[]>(() => registry().symbols().slice().sort((a, b) => a.localeCompare(b)));
-	let convertibleTargets=createMemo<string[]>(() => {
-		let from=fromUnit();
+	let isOpen = useUiStore(s => s.activeModal === "unit-converter");
+	let close = () => useUiStore.getState().closeModal();
+	let registry = () => props.registry ?? UnitConverterModal.defaultRegistry;
+	let converter = () => props.converter ?? UnitConverterModal.defaultConverter;
+	let [value, setValue] = createSignal<string>("");
+	let [fromUnit, setFromUnit] = createSignal<string>(NONE);
+	let [toUnit, setToUnit] = createSignal<string>(NONE);
+	let allUnits = createMemo<string[]>(() =>
+		registry()
+			.symbols()
+			.slice()
+			.sort((a, b) => a.localeCompare(b)),
+	);
+	let convertibleTargets = createMemo<string[]>(() => {
+		let from = fromUnit();
 		if (from === NONE) return [];
 		// Show every registered unit except the source; the converter reports
 		// null for dimensionally-incompatible pairs and the result row surfaces
@@ -57,37 +62,37 @@ export function UnitConverterModal(props: UnitConverterModalProps): JSX.Element 
 		// prefixes as separate symbols.
 		return allUnits().filter(u => u !== from);
 	});
-	let result=createMemo<{ok: true; value: string; unit: string} | {ok: false; error: string}>(() => {
-		let raw=value().trim();
-		let from=fromUnit();
-		let to=toUnit();
+	let result = createMemo<{ok: true; value: string; unit: string} | {ok: false; error: string}>(() => {
+		let raw = value().trim();
+		let from = fromUnit();
+		let to = toUnit();
 		if (raw === "" || from === NONE || to === NONE) {
 			return {ok: false, error: "Enter a value and pick both units to convert."};
 		}
-		let parsed=Number(raw);
+		let parsed = Number(raw);
 		if (!Number.isFinite(parsed)) {
 			return {ok: false, error: "Value must be a finite number."};
 		}
-		let converted=converter().convert(parsed, from, to);
+		let converted = converter().convert(parsed, from, to);
 		if (converted === null) {
 			return {ok: false, error: "Units are not dimensionally compatible."};
 		}
 		return {ok: true, value: formatResult(converted), unit: to};
 	});
-	let swap=() => {
-		let from=fromUnit();
-		let to=toUnit();
+	let swap = () => {
+		let from = fromUnit();
+		let to = toUnit();
 		if (from === NONE || to === NONE) return;
 		setFromUnit(to);
 		setToUnit(from);
 	};
-	let onPickFrom=(e: Event) => {
-		let target=e.currentTarget as HTMLSelectElement;
+	let onPickFrom = (e: Event) => {
+		let target = e.currentTarget as HTMLSelectElement;
 		setFromUnit(target.value);
 		setToUnit(NONE);
 	};
-	let onPickTo=(e: Event) => {
-		let target=e.currentTarget as HTMLSelectElement;
+	let onPickTo = (e: Event) => {
+		let target = e.currentTarget as HTMLSelectElement;
 		setToUnit(target.value);
 	};
 	return (
@@ -99,7 +104,11 @@ export function UnitConverterModal(props: UnitConverterModalProps): JSX.Element 
 			titleId="unit-converter-title"
 			ariaLabel="Unit converter"
 			class={styles.unitConverter}
-			footer={<Button variant="primary" size="md" onClick={close}>Close</Button>}
+			footer={
+				<Button variant="primary" size="md" onClick={close}>
+					Close
+				</Button>
+			}
 		>
 			<div class={styles.grid}>
 				<label class={`${styles.field} ${styles.valueField}`}>
@@ -109,59 +118,39 @@ export function UnitConverterModal(props: UnitConverterModalProps): JSX.Element 
 						class={styles.input}
 						placeholder="Enter a number"
 						value={value()}
-						onInput={(e) => setValue(e.currentTarget.value)}
+						onInput={e => setValue(e.currentTarget.value)}
 						aria-label="Numeric value to convert"
 						step="any"
 					/>
 				</label>
 				<label class={`${styles.field} ${styles.fromField}`}>
 					<span class={styles.label}>From unit</span>
-					<select
-						class={styles.select}
-						value={fromUnit()}
-						onChange={onPickFrom}
-						aria-label="Source unit"
-					>
+					<select class={styles.select} value={fromUnit()} onChange={onPickFrom} aria-label="Source unit">
 						<option value={NONE}>-- select unit --</option>
-						<For each={allUnits()}>{(u) => (
-							<option value={u}>{u}</option>
-						)}</For>
+						<For each={allUnits()}>{u => <option value={u}>{u}</option>}</For>
 					</select>
 				</label>
 				<div class={styles.swapCell}>
-					<Button
-						variant="ghost"
-						size="sm"
-						type="button"
-						onClick={swap}
-						aria-label="Swap source and target units"
-						disabled={fromUnit() === NONE || toUnit() === NONE}
-					>
+					<Button variant="ghost" size="sm" type="button" onClick={swap} aria-label="Swap source and target units" disabled={fromUnit() === NONE || toUnit() === NONE}>
 						<SwapIcon />
 						<span>Swap</span>
 					</Button>
 				</div>
 				<label class={`${styles.field} ${styles.toField}`}>
-				<span class={styles.label}>To unit</span>
-				<select
-					class={styles.select}
-					value={toUnit()}
-					onChange={onPickTo}
-					aria-label="Target unit"
-					disabled={convertibleTargets().length === 0}
-				>
-					<option value={NONE}>{convertibleTargets().length === 0 ? "-- pick source first --" : "-- select unit --"}</option>
-					<For each={convertibleTargets()}>{(u) => (
-						<option value={u}>{u}</option>
-					)}</For>
-				</select>
-			</label>
+					<span class={styles.label}>To unit</span>
+					<select class={styles.select} value={toUnit()} onChange={onPickTo} aria-label="Target unit" disabled={convertibleTargets().length === 0}>
+						<option value={NONE}>{convertibleTargets().length === 0 ? "-- pick source first --" : "-- select unit --"}</option>
+						<For each={convertibleTargets()}>{u => <option value={u}>{u}</option>}</For>
+					</select>
+				</label>
 			</div>
 			<div class={styles.resultRow} aria-live="polite">
 				<Show
 					when={result().ok}
 					fallback={
-						<p class={styles.resultError} role="status">{(result() as {ok: false; error: string}).error}</p>
+						<p class={styles.resultError} role="status">
+							{(result() as {ok: false; error: string}).error}
+						</p>
 					}
 				>
 					<p class={styles.resultText}>
@@ -170,15 +159,13 @@ export function UnitConverterModal(props: UnitConverterModalProps): JSX.Element 
 					</p>
 				</Show>
 			</div>
-			<p class={styles.hint}>
-				Units share the same physical dimension (length, mass, time, etc.). The target dropdown only shows units convertible from the source.
-			</p>
+			<p class={styles.hint}>Units share the same physical dimension (length, mass, time, etc.). The target dropdown only shows units convertible from the source.</p>
 		</Modal>
 	);
 }
 export namespace UnitConverterModal {
 	/** Default unit registry instance shared across renders. */
-	export const defaultRegistry: UnitRegistry=UnitRegistry.createDefault();
+	export const defaultRegistry: UnitRegistry = UnitRegistry.createDefault();
 	/** Default unit converter instance shared across renders. */
-	export const defaultConverter: UnitConverter=new UnitConverter(defaultRegistry);
+	export const defaultConverter: UnitConverter = new UnitConverter(defaultRegistry);
 }

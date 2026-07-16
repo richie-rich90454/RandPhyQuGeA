@@ -6,7 +6,7 @@ import styles from "../A11yLiveRegion.module.css";
 describe("A11yLiveRegion", () => {
 	it("renders a status role with polite aria-live by default", () => {
 		render(() => <A11yLiveRegion message="hello" />);
-		let region=screen.getByTestId("a11y-live-region");
+		let region = screen.getByTestId("a11y-live-region");
 		expect(region).toHaveAttribute("role", "status");
 		expect(region).toHaveAttribute("aria-live", "polite");
 	});
@@ -19,9 +19,9 @@ describe("A11yLiveRegion", () => {
 		expect(screen.getByTestId("a11y-live-region").textContent).toBe("Question 2 loaded");
 	});
 	it("updates text content when the accessor changes", () => {
-		let [msg, setMsg]=createSignal<string>("first");
+		let [msg, setMsg] = createSignal<string>("first");
 		render(() => <A11yLiveRegion message={msg} />);
-		let region=screen.getByTestId("a11y-live-region");
+		let region = screen.getByTestId("a11y-live-region");
 		expect(region.textContent).toBe("first");
 		setMsg("second");
 		expect(region.textContent).toBe("second");
@@ -32,13 +32,13 @@ describe("A11yLiveRegion", () => {
 	});
 	it("applies the visually-hidden class", () => {
 		render(() => <A11yLiveRegion message="hidden" />);
-		let region=screen.getByTestId("a11y-live-region");
+		let region = screen.getByTestId("a11y-live-region");
 		expect(region.classList.contains(styles.srOnly ?? "")).toBe(true);
 	});
 	it("clears the announcement when the message becomes empty", () => {
-		let [msg, setMsg]=createSignal<string>("announce");
+		let [msg, setMsg] = createSignal<string>("announce");
 		render(() => <A11yLiveRegion message={msg} />);
-		let region=screen.getByTestId("a11y-live-region");
+		let region = screen.getByTestId("a11y-live-region");
 		expect(region.textContent).toBe("announce");
 		setMsg("");
 		expect(region.textContent).toBe("");

@@ -57,7 +57,9 @@
 	cursor: pointer;
 	font-size: var(--font-size-md);
 	line-height: 1;
-	transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		color var(--duration-fast) var(--ease-out);
 }
 .close:hover {
 	background: var(--surface-muted);

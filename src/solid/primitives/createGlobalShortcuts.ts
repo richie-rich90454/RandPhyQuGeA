@@ -24,21 +24,21 @@ export interface CreateGlobalShortcutsOptions {
  * practice page so it only fires on the relevant route.
  */
 export function createGlobalShortcuts(options: CreateGlobalShortcutsOptions = {}): void {
-	let settings=options.settingsStore ?? useSettingsStore;
-	let ui=options.uiStore ?? useUiStore;
-	let isTyping=(event: KeyboardEvent): boolean => {
-		let target=event.target;
+	let settings = options.settingsStore ?? useSettingsStore;
+	let ui = options.uiStore ?? useUiStore;
+	let isTyping = (event: KeyboardEvent): boolean => {
+		let target = event.target;
 		if (!(target instanceof HTMLElement)) return false;
 		return target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable;
 	};
-	let handleKeyDown=(event: KeyboardEvent) => {
+	let handleKeyDown = (event: KeyboardEvent) => {
 		if (!event.ctrlKey && !event.metaKey) {
 			return;
 		}
 		if (ui.getState().activeModal !== null) {
 			return;
 		}
-		let key=event.key.toLowerCase();
+		let key = event.key.toLowerCase();
 		if (key === "1" && !event.shiftKey) {
 			if (isTyping(event)) return;
 			event.preventDefault();
@@ -58,7 +58,7 @@ export function createGlobalShortcuts(options: CreateGlobalShortcutsOptions = {}
 		}
 		if (key === "t" && event.shiftKey) {
 			event.preventDefault();
-			let current=settings.getState().themeMode;
+			let current = settings.getState().themeMode;
 			settings.getState().setThemeMode(current === "dark" ? "light" : "dark");
 			return;
 		}

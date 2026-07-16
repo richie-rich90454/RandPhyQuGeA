@@ -13,12 +13,12 @@ describe("ControlToolbarTop", () => {
 		expect(screen.getByTestId("topics")).toBeInTheDocument();
 	});
 	it("renders without children", () => {
-		let {container}=render(() => <ControlToolbarTop />);
+		let {container} = render(() => <ControlToolbarTop />);
 		expect(container.firstChild).not.toBeNull();
 	});
 	it("applies an extra class", () => {
-		let {container}=render(() => <ControlToolbarTop class="extra">x</ControlToolbarTop>);
-		let row=container.firstChild as HTMLElement;
+		let {container} = render(() => <ControlToolbarTop class="extra">x</ControlToolbarTop>);
+		let row = container.firstChild as HTMLElement;
 		expect(row.className).toContain("extra");
 	});
 });

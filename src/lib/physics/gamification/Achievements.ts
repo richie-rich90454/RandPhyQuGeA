@@ -60,14 +60,32 @@ const DEFAULT_DEFINITIONS: AchievementDefinition[] = [
 	{id: "sprint_session", name: "Sprint", description: "Practice for 5 minutes in a session.", category: "session", check: s => s.sessionDurationMs >= 300000},
 	{id: "polymath", name: "Polymath", description: "Practice 5 different topics.", category: "breadth", check: s => s.topicsPracticed >= 5},
 	{id: "renaissance", name: "Renaissance", description: "Practice 3 different units.", category: "breadth", check: s => s.unitsPracticed >= 3},
-	{id: "sharpshooter", name: "Sharpshooter", description: "Reach 90% accuracy over at least 20 questions.", category: "accuracy", check: s => s.questionsAnswered >= 20 && Achievements.accuracy(s) >= 0.9},
-	{id: "accuracy_master", name: "Accuracy Master", description: "Reach 95% accuracy over at least 50 questions.", category: "accuracy", check: s => s.questionsAnswered >= 50 && Achievements.accuracy(s) >= 0.95},
+	{
+		id: "sharpshooter",
+		name: "Sharpshooter",
+		description: "Reach 90% accuracy over at least 20 questions.",
+		category: "accuracy",
+		check: s => s.questionsAnswered >= 20 && Achievements.accuracy(s) >= 0.9,
+	},
+	{
+		id: "accuracy_master",
+		name: "Accuracy Master",
+		description: "Reach 95% accuracy over at least 50 questions.",
+		category: "accuracy",
+		check: s => s.questionsAnswered >= 50 && Achievements.accuracy(s) >= 0.95,
+	},
 	{id: "bookworm", name: "Bookworm", description: "Bookmark 10 questions.", category: "collection", check: s => s.bookmarksCreated >= 10},
 	{id: "dedicated", name: "Dedicated", description: "Complete 10 practice sessions.", category: "session", check: s => s.totalSessions >= 10},
 	{id: "flawless", name: "Flawless", description: "Complete a perfect session (100% over 10+ questions).", category: "accuracy", check: s => s.perfectSessions >= 1},
 	{id: "daily_streak_3", name: "Consistent", description: "Practice 3 days in a row.", category: "streak", check: s => s.dailyStreak >= 3},
 	{id: "daily_streak_7", name: "Week Warrior", description: "Practice 7 days in a row.", category: "streak", check: s => s.dailyStreak >= 7},
-	{id: "speed_demon", name: "Speed Demon", description: "Average under 15s per question over 20+ questions.", category: "speed", check: s => s.questionsAnswered >= 20 && s.avgTimePerQuestionMs > 0 && s.avgTimePerQuestionMs <= 15000},
+	{
+		id: "speed_demon",
+		name: "Speed Demon",
+		description: "Average under 15s per question over 20+ questions.",
+		category: "speed",
+		check: s => s.questionsAnswered >= 20 && s.avgTimePerQuestionMs > 0 && s.avgTimePerQuestionMs <= 15000,
+	},
 ];
 /** Tracks achievement unlock state and evaluates conditions against stats snapshots. */
 export class Achievements {

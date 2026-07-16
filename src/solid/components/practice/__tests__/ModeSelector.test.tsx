@@ -13,7 +13,7 @@ describe("ModeSelector", () => {
 	});
 	it("marks the active mode as pressed", () => {
 		render(() => <ModeSelector />);
-		let single=screen.getByRole("button", {name: "Single"});
+		let single = screen.getByRole("button", {name: "Single"});
 		expect(single).toHaveAttribute("aria-pressed", "true");
 	});
 	it("switches the default mode when clicked", () => {

@@ -4,10 +4,12 @@ import type {JSX} from "solid-js";
 import {ToastProvider, useToast} from "../ToastProvider";
 import type {ToastApi} from "../ToastProvider";
 function ToastConsumer(props: {message: string; variant?: "success" | "error" | "info" | "warning"; duration?: number}): JSX.Element {
-	let api=useToast();
-	let handleClick=() => api.toast({message: props.message, variant: props.variant, duration: props.duration});
+	let api = useToast();
+	let handleClick = () => api.toast({message: props.message, variant: props.variant, duration: props.duration});
 	return (
-		<button type="button" onClick={handleClick}>Push</button>
+		<button type="button" onClick={handleClick}>
+			Push
+		</button>
 	);
 }
 describe("ToastProvider", () => {
@@ -18,11 +20,19 @@ describe("ToastProvider", () => {
 		vi.useRealTimers();
 	});
 	it("renders nothing initially", () => {
-		render(() => <ToastProvider><div>No toast yet</div></ToastProvider>);
+		render(() => (
+			<ToastProvider>
+				<div>No toast yet</div>
+			</ToastProvider>
+		));
 		expect(screen.queryByRole("status")).not.toBeInTheDocument();
 	});
 	it("renders children content", () => {
-		render(() => <ToastProvider><div>Child content</div></ToastProvider>);
+		render(() => (
+			<ToastProvider>
+				<div>Child content</div>
+			</ToastProvider>
+		));
 		expect(screen.getByText("Child content")).toBeInTheDocument();
 	});
 	it("shows a toast when toast() is called", () => {
@@ -57,10 +67,10 @@ describe("ToastProvider", () => {
 		expect(screen.getByText("Persistent")).toBeInTheDocument();
 	});
 	it("removeToast dismisses a queued toast by id", () => {
-		let captured: ToastApi | null=null;
+		let captured: ToastApi | null = null;
 		function Captor(): JSX.Element {
-			let api=useToast();
-			captured=api;
+			let api = useToast();
+			captured = api;
 			return <div>captor</div>;
 		}
 		render(() => (
@@ -71,8 +81,8 @@ describe("ToastProvider", () => {
 		expect(captured).not.toBeNull();
 		captured!.toast({message: "Removable", duration: 0});
 		expect(screen.getByText("Removable")).toBeInTheDocument();
-		let status=screen.getByRole("status");
-		let id=Number(status.dataset.toastId ?? "0");
+		let status = screen.getByRole("status");
+		let id = Number(status.dataset.toastId ?? "0");
 		captured!.removeToast(id);
 		expect(screen.queryByText("Removable")).not.toBeInTheDocument();
 	});
@@ -83,14 +93,16 @@ describe("ToastProvider", () => {
 			</ToastProvider>
 		));
 		fireEvent.click(screen.getByText("Push"));
-		let region=screen.getByRole("region", {name: /notifications/i});
+		let region = screen.getByRole("region", {name: /notifications/i});
 		expect(region).toBeInTheDocument();
 		expect(document.body.contains(region)).toBe(true);
 	});
 	it("throws when useToast is used outside a provider", () => {
-		expect(() => render(() => {
-			useToast();
-			return <div />;
-		})).toThrow(/ToastProvider/);
+		expect(() =>
+			render(() => {
+				useToast();
+				return <div />;
+			}),
+		).toThrow(/ToastProvider/);
 	});
 });

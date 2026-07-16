@@ -25,7 +25,9 @@
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+	transition:
+		color var(--duration-fast) var(--ease-standard),
+		background-color var(--duration-fast) var(--ease-standard);
 }
 .backLink:hover {
 	color: var(--text);
@@ -53,7 +55,10 @@
 	border-radius: var(--radius-sm);
 	padding: var(--space-1) var(--space-2);
 	cursor: pointer;
-	transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+	transition:
+		color var(--duration-fast) var(--ease-standard),
+		background-color var(--duration-fast) var(--ease-standard),
+		border-color var(--duration-fast) var(--ease-standard);
 }
 .a11yToggle:hover {
 	color: var(--text);
@@ -93,7 +98,9 @@
 	background: var(--surface-muted);
 	border-radius: var(--radius-sm);
 	border-left: 3px solid var(--border-subtle);
-	transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+	transition:
+		border-color var(--duration-fast) var(--ease-standard),
+		background-color var(--duration-fast) var(--ease-standard);
 }
 .envRow:hover {
 	border-left-color: var(--accent);
@@ -126,7 +133,10 @@
 	background: var(--surface-muted);
 	border-radius: var(--radius-md);
 	border: 1px solid var(--border-subtle);
-	transition: border-color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+	transition:
+		border-color var(--duration-fast) var(--ease-standard),
+		background-color var(--duration-fast) var(--ease-standard),
+		transform var(--duration-fast) var(--ease-standard);
 }
 .metricCell:hover {
 	border-color: var(--accent);
@@ -191,7 +201,8 @@
 	border-collapse: collapse;
 	font-size: var(--font-size-sm);
 }
-.benchTable th, .benchTable td {
+.benchTable th,
+.benchTable td {
 	padding: var(--space-2) var(--space-3);
 	text-align: left;
 	border-bottom: 1px solid var(--border-subtle);
@@ -259,7 +270,10 @@
 	}
 }
 @media (prefers-reduced-motion: reduce) {
-	.envRow, .metricCell, .benchTable tbody tr, .cellTimeBar {
+	.envRow,
+	.metricCell,
+	.benchTable tbody tr,
+	.cellTimeBar {
 		transition: none;
 	}
 	.metricCell:hover {

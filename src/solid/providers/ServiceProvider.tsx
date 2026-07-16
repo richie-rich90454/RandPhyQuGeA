@@ -22,15 +22,15 @@ export interface SolidServiceContextValue {
 	specStore: SolidStore<SpecState>;
 	uiStore: SolidStore<UiState>;
 }
-const ServiceContext=createContext<SolidServiceContextValue|null>(null);
+const ServiceContext = createContext<SolidServiceContextValue | null>(null);
 export interface ServiceProviderProps {
 	core?: PhysicsCore;
 	grader?: AnswerGrader;
 }
 export function ServiceProvider(props: ParentProps<ServiceProviderProps>): JSX.Element {
-	let core=props.core ?? PhysicsCore.default();
-	let grader=props.grader ?? new AnswerGrader();
-	let value: SolidServiceContextValue={
+	let core = props.core ?? PhysicsCore.default();
+	let grader = props.grader ?? new AnswerGrader();
+	let value: SolidServiceContextValue = {
 		core,
 		grader,
 		practiceStore: usePracticeStore,
@@ -39,14 +39,10 @@ export function ServiceProvider(props: ParentProps<ServiceProviderProps>): JSX.E
 		specStore: useSpecStore,
 		uiStore: useUiStore,
 	};
-	return (
-		<ServiceContext.Provider value={value}>
-			{props.children}
-		</ServiceContext.Provider>
-	);
+	return <ServiceContext.Provider value={value}>{props.children}</ServiceContext.Provider>;
 }
 export function useServiceProvider(): SolidServiceContextValue {
-	let value=useContext(ServiceContext);
+	let value = useContext(ServiceContext);
 	if (!value) {
 		throw new Error("useServiceProvider must be used within a ServiceProvider.");
 	}

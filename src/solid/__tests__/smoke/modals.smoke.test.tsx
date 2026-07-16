@@ -27,10 +27,12 @@ function createMatchMedia(): Window["matchMedia"] {
 	});
 }
 function makeSnapshot(): SessionSnapshot {
-	let session: Session={
+	let session: Session = {
 		id: "s1",
 		specification: {units: [], topics: [], skills: [], templates: []},
-		questions: [{id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", response_mode: "frq", difficulty: 1, text: "text", answer: "42", solution_text: "", solution_latex: "", variables: {}}],
+		questions: [
+			{id: "q1", topic_id: "t1", skill_id: "s1", question_type: "SA", response_mode: "frq", difficulty: 1, text: "text", answer: "42", solution_text: "", solution_latex: "", variables: {}},
+		],
 		mode: "Single",
 		currentIndex: 0,
 		results: [],
@@ -53,7 +55,7 @@ function resetStores() {
 }
 beforeEach(() => {
 	resetStores();
-	window.matchMedia=createMatchMedia();
+	window.matchMedia = createMatchMedia();
 });
 describe("modals smoke", () => {
 	it("OnboardingModal renders the dialog when open", async () => {

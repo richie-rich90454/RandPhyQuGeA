@@ -2,7 +2,7 @@ import type {ComponentProps, JSX} from "solid-js";
 import {createSignal, createEffect, onCleanup, splitProps} from "solid-js";
 import styles from "./Motion.module.css";
 /** Entrance animation variant. */
-export type MotionVariant="fade-in" | "slide-up" | "scale-in";
+export type MotionVariant = "fade-in" | "slide-up" | "scale-in";
 export interface MotionProps extends ComponentProps<"div"> {
 	/** Entrance animation; defaults to fade-in. */
 	variant?: MotionVariant;
@@ -11,7 +11,7 @@ export interface MotionProps extends ComponentProps<"div"> {
 	/** Transition duration, in milliseconds; defaults to 320. */
 	duration?: number;
 }
-let hiddenClass: Record<MotionVariant, string | undefined>={
+let hiddenClass: Record<MotionVariant, string | undefined> = {
 	"fade-in": styles.fadeHidden,
 	"slide-up": styles.slideHidden,
 	"scale-in": styles.scaleHidden,
@@ -28,13 +28,13 @@ let hiddenClass: Record<MotionVariant, string | undefined>={
  * forces the visible state, so motion-sensitive users see content immediately.
  */
 export function Motion(props: MotionProps): JSX.Element {
-	let [local, others]=splitProps(props, ["variant", "delay", "duration", "class", "children"]);
-	let variant=() => local.variant ?? "fade-in";
-	let duration=() => local.duration ?? 320;
-	let delay=() => local.delay ?? 0;
-	let [visible, setVisible]=createSignal(false);
+	let [local, others] = splitProps(props, ["variant", "delay", "duration", "class", "children"]);
+	let variant = () => local.variant ?? "fade-in";
+	let duration = () => local.duration ?? 320;
+	let delay = () => local.delay ?? 0;
+	let [visible, setVisible] = createSignal(false);
 	createEffect(() => {
-		let id=requestAnimationFrame(() => {
+		let id = requestAnimationFrame(() => {
 			setVisible(true);
 		});
 		onCleanup(() => {

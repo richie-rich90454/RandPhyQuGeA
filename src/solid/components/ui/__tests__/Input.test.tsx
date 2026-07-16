@@ -20,7 +20,7 @@ describe("Input", () => {
 		expect(screen.getByText("Must be a number")).toBeInTheDocument();
 	});
 	it("calls onInput handler", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<() => void>();
 		render(() => <Input onInput={handler} />);
 		fireEvent.input(screen.getByRole("textbox"), {target: {value: "hello"}});
 		expect(handler).toHaveBeenCalledTimes(1);

@@ -18,7 +18,7 @@ export interface UiState {
 	closeModal: () => void;
 	replaceModal: (id: ModalId) => void;
 }
-const uiStore=createStore<UiState>()(set => ({
+const uiStore = createStore<UiState>()(set => ({
 	searchQuery: "",
 	activeModal: null,
 	setSearchQuery: query => set({searchQuery: query}),
@@ -26,4 +26,4 @@ const uiStore=createStore<UiState>()(set => ({
 	closeModal: () => set({activeModal: null}),
 	replaceModal: id => set({activeModal: id}),
 }));
-export const useUiStore=createSolidStore<UiState>(uiStore);
+export const useUiStore = createSolidStore<UiState>(uiStore);

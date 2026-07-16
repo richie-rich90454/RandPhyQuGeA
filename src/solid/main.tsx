@@ -9,10 +9,10 @@ import "@fontsource/noto-sans-mono/700.css";
 import "./styles/globals.css";
 import "./styles/glass.css";
 import "./styles/motion.css";
-let root=document.getElementById("root");
+let root = document.getElementById("root");
 if (!root) {
-	root=document.createElement("div");
-	root.id="root";
+	root = document.createElement("div");
+	root.id = "root";
 	document.body.appendChild(root);
 }
 render(() => <App />, root);

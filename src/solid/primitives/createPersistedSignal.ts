@@ -9,7 +9,7 @@ export interface CreatePersistedSignalOptions {
 function readStored(key: string, defaultValue: unknown): unknown {
 	if (typeof window === "undefined") return defaultValue;
 	try {
-		let raw=window.localStorage.getItem(key);
+		let raw = window.localStorage.getItem(key);
 		if (raw === null) return defaultValue;
 		return JSON.parse(raw);
 	} catch {
@@ -36,9 +36,9 @@ function writeStored(key: string, value: unknown): void {
  * owner (a component or `createRoot`) so the effect is disposed correctly.
  */
 export function createPersistedSignal<T>(options: CreatePersistedSignalOptions): [Accessor<T>, Setter<T>] {
-	let {key, defaultValue}=options;
-	let initial=readStored(key, defaultValue) as T;
-	let [value, setValue]=createSignal<T>(initial);
+	let {key, defaultValue} = options;
+	let initial = readStored(key, defaultValue) as T;
+	let [value, setValue] = createSignal<T>(initial);
 	createEffect(() => {
 		writeStored(key, value());
 	});

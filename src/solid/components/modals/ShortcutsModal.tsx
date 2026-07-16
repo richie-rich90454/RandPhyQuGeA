@@ -22,7 +22,7 @@ interface ShortcutGroup {
 	shortcuts: Shortcut[];
 }
 /** Shortcut groups displayed in the shortcuts reference modal. */
-const GROUPS: ShortcutGroup[]=[
+const GROUPS: ShortcutGroup[] = [
 	{
 		title: "Practice",
 		shortcuts: [
@@ -59,14 +59,14 @@ function KeyboardIcon(): JSX.Element {
 }
 /** Navigate between rows within a group using arrow keys. */
 function handleRowKeyDown(event: KeyboardEvent): void {
-	let current=event.currentTarget as HTMLElement;
-	if (event.key==="ArrowDown") {
+	let current = event.currentTarget as HTMLElement;
+	if (event.key === "ArrowDown") {
 		event.preventDefault();
-		let next=current.nextElementSibling as HTMLElement | null;
+		let next = current.nextElementSibling as HTMLElement | null;
 		next?.focus();
-	} else if (event.key==="ArrowUp") {
+	} else if (event.key === "ArrowUp") {
 		event.preventDefault();
-		let prev=current.previousElementSibling as HTMLElement | null;
+		let prev = current.previousElementSibling as HTMLElement | null;
 		prev?.focus();
 	}
 }
@@ -80,8 +80,8 @@ function handleRowKeyDown(event: KeyboardEvent): void {
  * dismissed via the close button, Escape, or backdrop click.
  */
 export function ShortcutsModal(): JSX.Element {
-	let isOpen=useUiStore(s => s.activeModal==="shortcuts");
-	let close=() => useUiStore.getState().closeModal();
+	let isOpen = useUiStore(s => s.activeModal === "shortcuts");
+	let close = () => useUiStore.getState().closeModal();
 	return (
 		<Modal
 			open={isOpen()}
@@ -91,40 +91,58 @@ export function ShortcutsModal(): JSX.Element {
 			titleId="shortcuts-title"
 			ariaLabel="Keyboard shortcuts"
 			class={styles.shortcuts}
-			footer={<Button variant="primary" size="md" onClick={close}>Got it</Button>}
+			footer={
+				<Button variant="primary" size="md" onClick={close}>
+					Got it
+				</Button>
+			}
 		>
 			<div class={styles.intro}>
-				<span class={styles.introIcon}><KeyboardIcon /></span>
+				<span class={styles.introIcon}>
+					<KeyboardIcon />
+				</span>
 				<p class={styles.introText}>Use these shortcuts to stay in flow while practicing. Navigate rows with arrow keys.</p>
 			</div>
 			<div class={styles.groups}>
-				<For each={GROUPS}>{(group) => (
-					<Card variant="filled" class={styles.groupCard}>
-						<CardHeader>
-							<CardTitle>{group.title}</CardTitle>
-						</CardHeader>
-						<CardContent class={styles.groupContent}>
-							<table class={styles.table}>
-								<thead>
-									<tr>
-										<th scope="col" class={styles.actionHeader}>Action</th>
-										<th scope="col" class={styles.shortcutHeader}>Shortcut</th>
-										<th scope="col" class={styles.descriptionHeader}>Description</th>
-									</tr>
-								</thead>
-								<tbody>
-									<For each={group.shortcuts}>{(shortcut) => (
-										<tr tabindex="0" onKeyDown={handleRowKeyDown} class={styles.row}>
-											<td class={styles.action}>{shortcut.action}</td>
-											<td class={styles.shortcut}><kbd>{shortcut.shortcut}</kbd></td>
-											<td class={styles.description}>{shortcut.description}</td>
+				<For each={GROUPS}>
+					{group => (
+						<Card variant="filled" class={styles.groupCard}>
+							<CardHeader>
+								<CardTitle>{group.title}</CardTitle>
+							</CardHeader>
+							<CardContent class={styles.groupContent}>
+								<table class={styles.table}>
+									<thead>
+										<tr>
+											<th scope="col" class={styles.actionHeader}>
+												Action
+											</th>
+											<th scope="col" class={styles.shortcutHeader}>
+												Shortcut
+											</th>
+											<th scope="col" class={styles.descriptionHeader}>
+												Description
+											</th>
 										</tr>
-									)}</For>
-								</tbody>
-							</table>
-						</CardContent>
-					</Card>
-				)}</For>
+									</thead>
+									<tbody>
+										<For each={group.shortcuts}>
+											{shortcut => (
+												<tr tabindex="0" onKeyDown={handleRowKeyDown} class={styles.row}>
+													<td class={styles.action}>{shortcut.action}</td>
+													<td class={styles.shortcut}>
+														<kbd>{shortcut.shortcut}</kbd>
+													</td>
+													<td class={styles.description}>{shortcut.description}</td>
+												</tr>
+											)}
+										</For>
+									</tbody>
+								</table>
+							</CardContent>
+						</Card>
+					)}
+				</For>
 			</div>
 		</Modal>
 	);

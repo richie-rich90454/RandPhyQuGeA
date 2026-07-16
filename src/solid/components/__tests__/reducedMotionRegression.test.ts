@@ -1,8 +1,8 @@
 import {describe, it, expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {resolve} from "node:path";
-let base=resolve(__dirname, "..");
-let files: Record<string, string>={
+let base = resolve(__dirname, "..");
+let files: Record<string, string> = {
 	"Card.module.css": readFileSync(resolve(base, "ui/Card.module.css"), "utf-8"),
 	"Accordion.module.css": readFileSync(resolve(base, "ui/Accordion.module.css"), "utf-8"),
 	"Pill.module.css": readFileSync(resolve(base, "ui/Pill.module.css"), "utf-8"),

@@ -4,7 +4,7 @@ import type {JSX} from "solid-js";
 import type {Accessor} from "solid-js";
 import {createReducedMotion} from "../createReducedMotion";
 import type {CreateReducedMotionOptions} from "../createReducedMotion";
-type MqlListener=(event: MediaQueryListEvent) => void;
+type MqlListener = (event: MediaQueryListEvent) => void;
 interface MqlMock {
 	matches: boolean;
 	media: string;
@@ -20,18 +20,18 @@ interface MatchMediaMock {
 	setMatches: (query: string, value: boolean) => void;
 }
 function createMatchMediaMock(): MatchMediaMock {
-	let byQuery=new Map<string, {matches: boolean, listeners: Set<MqlListener>}>();
-	let ensure=(query: string) => {
-		let entry=byQuery.get(query);
+	let byQuery = new Map<string, {matches: boolean; listeners: Set<MqlListener>}>();
+	let ensure = (query: string) => {
+		let entry = byQuery.get(query);
 		if (!entry) {
-			entry={matches: false, listeners: new Set()};
+			entry = {matches: false, listeners: new Set()};
 			byQuery.set(query, entry);
 		}
 		return entry;
 	};
-	let fn: MatchMediaMock=Object.assign(
+	let fn: MatchMediaMock = Object.assign(
 		(query: string): MqlMock => {
-			let entry=ensure(query);
+			let entry = ensure(query);
 			return {
 				get matches() {
 					return entry.matches;
@@ -55,8 +55,8 @@ function createMatchMediaMock(): MatchMediaMock {
 		},
 		{
 			setMatches: (query: string, value: boolean) => {
-				let entry=ensure(query);
-				entry.matches=value;
+				let entry = ensure(query);
+				entry.matches = value;
 				entry.listeners.forEach(listener => listener({matches: value, media: query} as MediaQueryListEvent));
 			},
 		},
@@ -67,17 +67,17 @@ let matchMediaMock: MatchMediaMock;
 function flush(): Promise<void> {
 	return new Promise(resolve => setTimeout(resolve, 0));
 }
-let result: Accessor<boolean> | null=null;
+let result: Accessor<boolean> | null = null;
 function makeRoot(opts: CreateReducedMotionOptions): () => JSX.Element {
 	return () => {
-		result=createReducedMotion(opts);
+		result = createReducedMotion(opts);
 		return <div>motion</div>;
 	};
 }
 beforeEach(() => {
-	matchMediaMock=createMatchMediaMock();
+	matchMediaMock = createMatchMediaMock();
 	Object.defineProperty(window, "matchMedia", {writable: true, value: matchMediaMock});
-	result=null;
+	result = null;
 });
 describe("createReducedMotion", () => {
 	it("returns false when the OS does not prefer reduced motion", async () => {
@@ -110,7 +110,7 @@ describe("createReducedMotion", () => {
 	});
 	it("stops updating after disposal", async () => {
 		matchMediaMock.setMatches("(prefers-reduced-motion: reduce)", false);
-		let rendered=render(makeRoot({}));
+		let rendered = render(makeRoot({}));
 		await flush();
 		expect(result!()).toBe(false);
 		rendered.unmount();

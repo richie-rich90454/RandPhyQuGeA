@@ -23,19 +23,19 @@ describe("ConfirmDialog", () => {
 		expect(screen.getByText("Keep it")).toBeInTheDocument();
 	});
 	it("calls onConfirm when confirm button clicked", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<() => void>();
 		render(() => <ConfirmDialog open={true} title="Delete" message="Sure?" onConfirm={handler} onCancel={() => {}} />);
 		fireEvent.click(screen.getByText("Confirm"));
 		expect(handler).toHaveBeenCalledOnce();
 	});
 	it("calls onCancel when cancel button clicked", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<() => void>();
 		render(() => <ConfirmDialog open={true} title="Delete" message="Sure?" onConfirm={() => {}} onCancel={handler} />);
 		fireEvent.click(screen.getByText("Cancel"));
 		expect(handler).toHaveBeenCalledOnce();
 	});
 	it("calls onCancel when modal is dismissed via Escape", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<() => void>();
 		render(() => <ConfirmDialog open={true} title="Delete" message="Sure?" onConfirm={() => {}} onCancel={handler} />);
 		fireEvent.keyDown(document, {key: "Escape"});
 		expect(handler).toHaveBeenCalledOnce();

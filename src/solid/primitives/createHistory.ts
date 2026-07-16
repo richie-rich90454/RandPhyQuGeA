@@ -54,8 +54,8 @@ export interface HistoryState {
  * disposal.
  */
 export function createHistory(options: CreateHistoryOptions = {}): HistoryState {
-	let capacity=options.capacity ?? 100;
-	let instance=new QuestionHistory(capacity);
+	let capacity = options.capacity ?? 100;
+	let instance = new QuestionHistory(capacity);
 	for (let attempt of options.attempts ?? []) {
 		instance.record({
 			questionId: attempt.questionId,
@@ -66,30 +66,30 @@ export function createHistory(options: CreateHistoryOptions = {}): HistoryState 
 			timeSpentMs: attempt.timeSpentMs,
 		});
 	}
-	let onRecord=options.onRecord;
-	let onReattempt=options.onReattempt;
-	let [attempts, setAttempts]=createSignal<QuestionAttempt[]>(instance.all());
-	let [count, setCount]=createSignal<number>(instance.count());
-	let [stats, setStats]=createSignal<HistoryStats>(instance.stats());
-	let [reattemptQueue, setReattemptQueue]=createSignal<string[]>(instance.reattemptQueue());
-	let sync=() => {
+	let onRecord = options.onRecord;
+	let onReattempt = options.onReattempt;
+	let [attempts, setAttempts] = createSignal<QuestionAttempt[]>(instance.all());
+	let [count, setCount] = createSignal<number>(instance.count());
+	let [stats, setStats] = createSignal<HistoryStats>(instance.stats());
+	let [reattemptQueue, setReattemptQueue] = createSignal<string[]>(instance.reattemptQueue());
+	let sync = () => {
 		setAttempts(instance.all());
 		setCount(instance.count());
 		setStats(instance.stats());
 		setReattemptQueue(instance.reattemptQueue());
 	};
-	let record=(input: Omit<QuestionAttempt, "id" | "timestamp"> & {timestamp?: number}): QuestionAttempt => {
-		let attempt=instance.record(input);
+	let record = (input: Omit<QuestionAttempt, "id" | "timestamp"> & {timestamp?: number}): QuestionAttempt => {
+		let attempt = instance.record(input);
 		sync();
 		onRecord?.(attempt);
 		return attempt;
 	};
-	let reattempt=(questionId: string): boolean => {
+	let reattempt = (questionId: string): boolean => {
 		if (!instance.needsReattempt(questionId)) return false;
 		onReattempt?.(questionId);
 		return true;
 	};
-	let clear=() => {
+	let clear = () => {
 		instance.clear();
 		sync();
 	};

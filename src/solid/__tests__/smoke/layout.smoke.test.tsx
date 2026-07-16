@@ -12,8 +12,12 @@ import {useSettingsStore} from "../../stores/settingsStore";
 import {useSpecStore} from "../../stores/specStore";
 import {useUiStore} from "../../stores/uiStore";
 function ToastCaller(props: {message: string}): JSX.Element {
-	let {toast}=useToast();
-	return <button type="button" onClick={() => toast({variant: "info", message: props.message, duration: 0})}>Fire</button>;
+	let {toast} = useToast();
+	return (
+		<button type="button" onClick={() => toast({variant: "info", message: props.message, duration: 0})}>
+			Fire
+		</button>
+	);
 }
 function resetStores() {
 	usePracticeStore.setState(usePracticeStore.getInitialState());
@@ -32,7 +36,7 @@ describe("layout smoke", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let skipLink=screen.getByRole("link", {name: /skip to main content/i});
+		let skipLink = screen.getByRole("link", {name: /skip to main content/i});
 		expect(skipLink.getAttribute("href")).toBe("#main-content");
 	});
 	it("AppShell renders the main landmark with id main-content", () => {
@@ -41,7 +45,7 @@ describe("layout smoke", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let main=screen.getByRole("main");
+		let main = screen.getByRole("main");
 		expect(main.id).toBe("main-content");
 	});
 	it("AppShell renders the footer with version and copyright", () => {
@@ -50,7 +54,7 @@ describe("layout smoke", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let footer=screen.getByRole("contentinfo");
+		let footer = screen.getByRole("contentinfo");
 		expect(footer.textContent).toContain("RandPhyQuGeA v");
 		expect(footer.textContent).toContain("2026 Richard");
 	});
@@ -61,13 +65,11 @@ describe("layout smoke", () => {
 			</AppShell>
 		));
 		expect(screen.getByTestId("toolbar")).toBeInTheDocument();
-		let main=screen.getByRole("main");
+		let main = screen.getByRole("main");
 		expect(main.contains(screen.getByTestId("main-child"))).toBe(true);
 	});
 	it("AppTopBar renders the wordmark and actions slot", () => {
-		render(() => (
-			<AppTopBar actions={<button data-testid="action">Action</button>} />
-		));
+		render(() => <AppTopBar actions={<button data-testid="action">Action</button>} />);
 		expect(screen.getByRole("link", {name: /RandPhyQuGeA home/i})).toBeInTheDocument();
 		expect(screen.getByTestId("action")).toBeInTheDocument();
 	});
@@ -76,14 +78,14 @@ describe("layout smoke", () => {
 		expect(screen.getByText("CustomBrand")).toBeInTheDocument();
 	});
 	it("LiquidBackground renders a decorative root marked aria-hidden", () => {
-		let {container}=render(() => <LiquidBackground />);
-		let root=container.firstChild as HTMLElement;
+		let {container} = render(() => <LiquidBackground />);
+		let root = container.firstChild as HTMLElement;
 		expect(root).toBeTruthy();
 		expect(root.getAttribute("aria-hidden")).toBe("true");
 	});
 	it("A11yLiveRegion renders a status role with polite aria-live", () => {
 		render(() => <A11yLiveRegion message="Question loaded" />);
-		let region=screen.getByTestId("a11y-live-region");
+		let region = screen.getByTestId("a11y-live-region");
 		expect(region).toHaveAttribute("role", "status");
 		expect(region).toHaveAttribute("aria-live", "polite");
 		expect(region.textContent).toBe("Question loaded");

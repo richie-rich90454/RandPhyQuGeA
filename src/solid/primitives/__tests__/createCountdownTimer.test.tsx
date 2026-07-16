@@ -6,25 +6,25 @@ import type {CreateCountdownTimerOptions, CreateCountdownTimerReturn} from "../c
 function flush(): Promise<void> {
 	return new Promise(resolve => setTimeout(resolve, 0));
 }
-let currentTime=0;
+let currentTime = 0;
 let dateSpy: ReturnType<typeof vi.spyOn>;
-let pending: Map<number, (timestamp: number) => void>=new Map();
-let nextRafId=1;
+let pending: Map<number, (timestamp: number) => void> = new Map();
+let nextRafId = 1;
 let rafSpy: ReturnType<typeof vi.spyOn>;
 let cancelSpy: ReturnType<typeof vi.spyOn>;
-let result: CreateCountdownTimerReturn | null=null;
+let result: CreateCountdownTimerReturn | null = null;
 function makeRoot(opts?: CreateCountdownTimerOptions): () => JSX.Element {
 	return () => {
-		result=createCountdownTimer(opts);
+		result = createCountdownTimer(opts);
 		return <div>timer</div>;
 	};
 }
 function tick(): void {
-	let first=pending.entries().next();
+	let first = pending.entries().next();
 	if (first.done) {
 		return;
 	}
-	let [id, cb]=first.value;
+	let [id, cb] = first.value;
 	pending.delete(id);
 	cb(currentTime);
 }
@@ -37,20 +37,20 @@ function setDocumentHidden(hidden: boolean): void {
 	document.dispatchEvent(new Event("visibilitychange"));
 }
 beforeEach(() => {
-	currentTime=0;
-	dateSpy=vi.spyOn(Date, "now").mockImplementation(() => currentTime);
-	pending=new Map();
-	nextRafId=1;
-	rafSpy=vi.spyOn(window, "requestAnimationFrame").mockImplementation(callback => {
-		let id=nextRafId++;
+	currentTime = 0;
+	dateSpy = vi.spyOn(Date, "now").mockImplementation(() => currentTime);
+	pending = new Map();
+	nextRafId = 1;
+	rafSpy = vi.spyOn(window, "requestAnimationFrame").mockImplementation(callback => {
+		let id = nextRafId++;
 		pending.set(id, callback);
 		return id;
 	});
-	cancelSpy=vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id: number) => {
+	cancelSpy = vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id: number) => {
 		pending.delete(id);
 	});
 	setDocumentHidden(false);
-	result=null;
+	result = null;
 });
 afterEach(() => {
 	dateSpy.mockRestore();
@@ -144,7 +144,7 @@ describe("createCountdownTimer", () => {
 		expect(result!.isRunning()).toBe(false);
 	});
 	it("cleans up rAF on unmount", async () => {
-		let rendered=render(makeRoot());
+		let rendered = render(makeRoot());
 		await flush();
 		result!.start(5);
 		expect(cancelSpy).not.toHaveBeenCalled();

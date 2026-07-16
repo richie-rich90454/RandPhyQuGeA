@@ -17,12 +17,14 @@ export interface EmptyStateProps {
 }
 /** Empty-state placeholder with illustration, title, description, and action. */
 export function EmptyState(props: EmptyStateProps): JSX.Element {
-	let [local]=splitProps(props, ["illustration", "icon", "title", "description", "action", "class"]);
-	let media=() => local.illustration ?? local.icon;
+	let [local] = splitProps(props, ["illustration", "icon", "title", "description", "action", "class"]);
+	let media = () => local.illustration ?? local.icon;
 	return (
 		<div class={`${styles.root} ${local.class ?? ""}`}>
 			<Show when={media()}>
-				<span aria-hidden="true" class={styles.media}>{media()}</span>
+				<span aria-hidden="true" class={styles.media}>
+					{media()}
+				</span>
 			</Show>
 			<h3 class={styles.title}>{local.title}</h3>
 			<Show when={local.description}>

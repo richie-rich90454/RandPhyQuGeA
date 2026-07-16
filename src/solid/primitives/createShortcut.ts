@@ -40,18 +40,18 @@ function resolveInitialEnabled(value: Accessor<boolean> | boolean | undefined): 
  * binding imperatively without re-mounting.
  */
 export function createShortcut(options: CreateShortcutOptions): [Accessor<boolean>, Setter<boolean>] {
-	let [enabled, setEnabled]=createSignal<boolean>(resolveInitialEnabled(options.enabled));
-	let mods=() => options.modifiers ?? {};
-	let matches=(event: KeyboardEvent) => {
-		let m=mods();
-		let keyOk=event.key.toLowerCase() === options.key.toLowerCase();
-		let ctrlOk=(m.ctrl ?? false) === event.ctrlKey;
-		let shiftOk=(m.shift ?? false) === event.shiftKey;
-		let altOk=(m.alt ?? false) === event.altKey;
-		let metaOk=(m.meta ?? false) === event.metaKey;
+	let [enabled, setEnabled] = createSignal<boolean>(resolveInitialEnabled(options.enabled));
+	let mods = () => options.modifiers ?? {};
+	let matches = (event: KeyboardEvent) => {
+		let m = mods();
+		let keyOk = event.key.toLowerCase() === options.key.toLowerCase();
+		let ctrlOk = (m.ctrl ?? false) === event.ctrlKey;
+		let shiftOk = (m.shift ?? false) === event.shiftKey;
+		let altOk = (m.alt ?? false) === event.altKey;
+		let metaOk = (m.meta ?? false) === event.metaKey;
 		return keyOk && ctrlOk && shiftOk && altOk && metaOk;
 	};
-	let handleKeyDown=(event: KeyboardEvent) => {
+	let handleKeyDown = (event: KeyboardEvent) => {
 		if (!enabled()) return;
 		if (matches(event)) {
 			options.handler(event);

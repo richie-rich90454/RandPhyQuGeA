@@ -8,38 +8,38 @@ import type {CreateCountUpOptions} from "../createCountUp";
 function flush(): Promise<void> {
 	return new Promise(resolve => setTimeout(resolve, 0));
 }
-let pending: Map<number, (timestamp: number) => void>=new Map();
-let nextRafId=1;
+let pending: Map<number, (timestamp: number) => void> = new Map();
+let nextRafId = 1;
 let rafSpy: ReturnType<typeof vi.spyOn>;
 let cancelSpy: ReturnType<typeof vi.spyOn>;
-let result: Accessor<number> | null=null;
+let result: Accessor<number> | null = null;
 function makeRoot(opts: CreateCountUpOptions): () => JSX.Element {
 	return () => {
-		result=createCountUp(opts);
+		result = createCountUp(opts);
 		return <div>count</div>;
 	};
 }
 function tick(timestamp: number): void {
-	let first=pending.entries().next();
+	let first = pending.entries().next();
 	if (first.done) {
 		return;
 	}
-	let [id, cb]=first.value;
+	let [id, cb] = first.value;
 	pending.delete(id);
 	cb(timestamp);
 }
 beforeEach(() => {
-	pending=new Map();
-	nextRafId=1;
-	rafSpy=vi.spyOn(window, "requestAnimationFrame").mockImplementation(callback => {
-		let id=nextRafId++;
+	pending = new Map();
+	nextRafId = 1;
+	rafSpy = vi.spyOn(window, "requestAnimationFrame").mockImplementation(callback => {
+		let id = nextRafId++;
 		pending.set(id, callback);
 		return id;
 	});
-	cancelSpy=vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id: number) => {
+	cancelSpy = vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id: number) => {
 		pending.delete(id);
 	});
-	result=null;
+	result = null;
 });
 afterEach(() => {
 	rafSpy.mockRestore();
@@ -65,7 +65,7 @@ describe("createCountUp", () => {
 		expect(pending.size).toBe(0);
 	});
 	it("updates the animation when the target changes", async () => {
-		let [target, setTarget]=createSignal(50);
+		let [target, setTarget] = createSignal(50);
 		render(makeRoot({target, duration: 50, reducedMotion: () => false}));
 		await flush();
 		tick(0);
@@ -79,7 +79,7 @@ describe("createCountUp", () => {
 		expect(result!()).toBe(80);
 	});
 	it("snaps to the target when reduced motion turns on mid-animation", async () => {
-		let [reducedMotion, setReducedMotion]=createSignal(false);
+		let [reducedMotion, setReducedMotion] = createSignal(false);
 		render(makeRoot({target: 100, duration: 100, reducedMotion}));
 		await flush();
 		tick(0);
@@ -90,7 +90,7 @@ describe("createCountUp", () => {
 		expect(pending.size).toBe(0);
 	});
 	it("cancels the pending animation frame on disposal", async () => {
-		let rendered=render(makeRoot({target: 100, duration: 100, reducedMotion: () => false}));
+		let rendered = render(makeRoot({target: 100, duration: 100, reducedMotion: () => false}));
 		await flush();
 		tick(0);
 		expect(cancelSpy).not.toHaveBeenCalled();

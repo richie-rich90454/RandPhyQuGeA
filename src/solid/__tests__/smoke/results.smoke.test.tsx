@@ -28,7 +28,7 @@ function makeQuestion(overrides?: Partial<GeneratedQuestion>): GeneratedQuestion
 	};
 }
 function makeSession(question: GeneratedQuestion): Session {
-	let now=Date.now();
+	let now = Date.now();
 	return {
 		id: "sess1",
 		specification: makeSpec(),

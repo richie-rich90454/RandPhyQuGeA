@@ -30,7 +30,7 @@ describe("SingleControls", () => {
 	});
 	it("renders the Auto and Shuffle switches unchecked by default", () => {
 		renderWithToast();
-		let switches=screen.getAllByRole("switch");
+		let switches = screen.getAllByRole("switch");
 		expect(switches).toHaveLength(2);
 		for (let sw of switches) {
 			expect(sw).not.toBeChecked();
@@ -38,26 +38,26 @@ describe("SingleControls", () => {
 	});
 	it("renders the scope select with a default All option", () => {
 		renderWithToast();
-		let select=screen.getByRole("combobox", {name: "Scope"}) as HTMLSelectElement;
-		let optionValues=Array.from(select.options).map(o => o.value);
+		let select = screen.getByRole("combobox", {name: "Scope"}) as HTMLSelectElement;
+		let optionValues = Array.from(select.options).map(o => o.value);
 		expect(optionValues).toEqual(["all"]);
 	});
 	it("toggles autoContinueEnabled when the Auto switch is clicked", () => {
 		renderWithToast();
-		let autoSwitch=screen.getAllByRole("switch")[0]!;
+		let autoSwitch = screen.getAllByRole("switch")[0]!;
 		fireEvent.click(autoSwitch);
 		expect(useSettingsStore.getState().autoContinueEnabled).toBe(true);
 	});
 	it("toggles shuffleByDefault when the Shuffle switch is clicked", () => {
 		renderWithToast();
-		let shuffleSwitch=screen.getAllByRole("switch")[1]!;
+		let shuffleSwitch = screen.getAllByRole("switch")[1]!;
 		fireEvent.click(shuffleSwitch);
 		expect(useSettingsStore.getState().shuffleByDefault).toBe(true);
 	});
 	it("updates the defaultScope in the settings store when changed", () => {
 		useSpecStore.setState({specification: {units: [{id: "u1", name: "Mechanics", description: ""}], topics: [], skills: [], templates: []}, loading: false, error: null, empty: false});
 		renderWithToast();
-		let select=screen.getByRole("combobox", {name: "Scope"});
+		let select = screen.getByRole("combobox", {name: "Scope"});
 		fireEvent.input(select, {target: {value: "u1"}});
 		expect(useSettingsStore.getState().defaultScope).toBe("u1");
 	});

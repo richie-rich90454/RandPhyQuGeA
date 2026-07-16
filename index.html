@@ -1,34 +1,34 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>RandPhyQuGeA</title>
-        <meta name="application-name" content="RandPhyQuGeA" />
-        <meta name="theme-color" content="#28465C" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <script>
-			(function(){
-				try{
-					var raw=localStorage.getItem("physics-quest-settings");
-					var state=raw ? JSON.parse(raw) : {};
-					var mode=(state && (state.state && state.state.themeMode || state.themeMode)) || "system";
-					var isDark=mode === "dark" || (mode !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>RandPhyQuGeA</title>
+		<meta name="application-name" content="RandPhyQuGeA" />
+		<meta name="theme-color" content="#28465C" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<script>
+			(function () {
+				try {
+					var raw = localStorage.getItem("physics-quest-settings");
+					var state = raw ? JSON.parse(raw) : {};
+					var mode = (state && ((state.state && state.state.themeMode) || state.themeMode)) || "system";
+					var isDark = mode === "dark" || (mode !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
 					document.documentElement.classList.toggle("dark", isDark);
-				}catch(e){
+				} catch (e) {
 					document.documentElement.classList.toggle("dark", window.matchMedia("(prefers-color-scheme: dark)").matches);
 				}
 			})();
-        </script>
-    </head>
-    <body>
-        <div id="root"></div>
-        <noscript>
-            <div style="font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 1.5rem; text-align: center; color: #1e293b">
-                <h1>JavaScript Required</h1>
-                <p>RandPhyQuGeA needs JavaScript to run. Please enable JavaScript in your browser settings and reload this page.</p>
-            </div>
-        </noscript>
-        <script type="module" src="/src/solid/main.tsx"></script>
-    </body>
+		</script>
+	</head>
+	<body>
+		<div id="root"></div>
+		<noscript>
+			<div style="font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 1.5rem; text-align: center; color: #1e293b">
+				<h1>JavaScript Required</h1>
+				<p>RandPhyQuGeA needs JavaScript to run. Please enable JavaScript in your browser settings and reload this page.</p>
+			</div>
+		</noscript>
+		<script type="module" src="/src/solid/main.tsx"></script>
+	</body>
 </html>

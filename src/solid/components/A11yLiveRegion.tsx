@@ -1,8 +1,8 @@
 import type {Accessor, JSX} from "solid-js";
 import {createEffect} from "solid-js";
 import styles from "./A11yLiveRegion.module.css";
-export type LiveRegionPoliteness="polite" | "assertive";
-export type LiveRegionRelevant="all" | "additions" | "additions text" | "additions removals" | "removals" | "removals additions" | "removals text" | "text" | "text additions" | "text removals";
+export type LiveRegionPoliteness = "polite" | "assertive";
+export type LiveRegionRelevant = "all" | "additions" | "additions text" | "additions removals" | "removals" | "removals additions" | "removals text" | "text" | "text additions" | "text removals";
 export interface A11yLiveRegionProps {
 	/** Reactive message text to announce. Empty string clears the announcement. */
 	message: Accessor<string> | string;
@@ -27,24 +27,26 @@ export interface A11yLiveRegionProps {
  * visually-hidden clip technique so it remains in the accessibility tree.
  */
 export function A11yLiveRegion(props: A11yLiveRegionProps): JSX.Element {
-	let politeness=() => props.politeness ?? "polite";
-	let resolveMessage=() => {
-		let value=props.message;
+	let politeness = () => props.politeness ?? "polite";
+	let resolveMessage = () => {
+		let value = props.message;
 		if (typeof value === "function") {
 			return value();
 		}
 		return value;
 	};
-	let node: HTMLSpanElement | null=null;
+	let node: HTMLSpanElement | null = null;
 	createEffect(() => {
-		let text=resolveMessage();
+		let text = resolveMessage();
 		if (node) {
-			node.textContent=text;
+			node.textContent = text;
 		}
 	});
 	return (
 		<span
-			ref={(el) => {node=el;}}
+			ref={el => {
+				node = el;
+			}}
 			id={props.id}
 			class={styles.srOnly}
 			role="status"

@@ -34,7 +34,9 @@
 	border-radius: var(--radius-full);
 	border: 1px solid var(--border);
 	background: var(--surface);
-	transition: background-color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out);
 }
 .trackOn {
 	border-color: var(--accent);
@@ -57,7 +59,9 @@
 	background: var(--surface);
 	box-shadow: var(--shadow-sm);
 	transform: translateY(-50%);
-	transition: transform var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+	transition:
+		transform var(--duration-fast) var(--ease-out),
+		box-shadow var(--duration-fast) var(--ease-out);
 }
 .root:hover:not(.disabled) .thumb {
 	box-shadow: var(--micro-shadow-hover);
@@ -95,7 +99,9 @@
 }
 @media (prefers-reduced-motion: reduce) {
 	.track {
-		transition: background-color var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+		transition:
+			background-color var(--duration-fast) var(--ease-out),
+			border-color var(--duration-fast) var(--ease-out);
 	}
 	.thumb {
 		transition: box-shadow var(--duration-fast) var(--ease-out);

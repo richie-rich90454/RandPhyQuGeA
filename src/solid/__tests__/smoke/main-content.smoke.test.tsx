@@ -36,7 +36,7 @@ function makeQuestion(overrides?: Partial<GeneratedQuestion>): GeneratedQuestion
 	};
 }
 function makeSession(question: GeneratedQuestion): Session {
-	let now=Date.now();
+	let now = Date.now();
 	return {
 		id: "sess1",
 		specification: makeSpec(),
@@ -87,7 +87,7 @@ describe("main content smoke", () => {
 		expect(screen.getByText("Compute velocity.")).toBeInTheDocument();
 	});
 	it("QuestionCard renders MCQ choices for a multiple-choice question", () => {
-		let mcq=makeQuestion({
+		let mcq = makeQuestion({
 			question_type: "MC",
 			choices: ["2 N", "4 N", "6 N", "8 N"],
 			correct_choice_index: 1,

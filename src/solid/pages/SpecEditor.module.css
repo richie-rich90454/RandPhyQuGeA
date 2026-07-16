@@ -25,7 +25,9 @@
 	background: transparent;
 	border: none;
 	cursor: pointer;
-	transition: color var(--duration-fast) var(--ease-standard), background-color var(--duration-fast) var(--ease-standard);
+	transition:
+		color var(--duration-fast) var(--ease-standard),
+		background-color var(--duration-fast) var(--ease-standard);
 }
 .backLink:hover {
 	color: var(--text);
@@ -68,7 +70,9 @@
 	line-height: var(--line-height-relaxed);
 	resize: vertical;
 	tab-size: 2;
-	transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+	transition:
+		border-color var(--duration-fast) var(--ease-standard),
+		box-shadow var(--duration-fast) var(--ease-standard);
 }
 .editor:focus {
 	outline: none;
@@ -80,7 +84,8 @@
 	flex-direction: column;
 	gap: var(--space-4);
 }
-.statusCard, .previewCard {
+.statusCard,
+.previewCard {
 	display: flex;
 	flex-direction: column;
 }
@@ -177,7 +182,8 @@
 	font-weight: var(--font-weight-semibold);
 	border: 1px solid var(--success);
 }
-.answerBlock, .solutionBlock {
+.answerBlock,
+.solutionBlock {
 	display: flex;
 	gap: var(--space-2);
 	align-items: baseline;

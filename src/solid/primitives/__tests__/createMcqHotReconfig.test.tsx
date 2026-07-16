@@ -14,7 +14,7 @@ function flush(): Promise<void> {
 function emptySpec(): Specification {
 	return {units: [], topics: [], skills: [], templates: []};
 }
-function makeQuestion(overrides: Partial<GeneratedQuestion>={}): GeneratedQuestion {
+function makeQuestion(overrides: Partial<GeneratedQuestion> = {}): GeneratedQuestion {
 	return {
 		id: "q1",
 		topic_id: "t1",
@@ -30,7 +30,7 @@ function makeQuestion(overrides: Partial<GeneratedQuestion>={}): GeneratedQuesti
 		...overrides,
 	};
 }
-function makeSession(overrides: Partial<Session>={}): Session {
+function makeSession(overrides: Partial<Session> = {}): Session {
 	return {
 		id: "s1",
 		specification: emptySpec(),
@@ -49,10 +49,10 @@ interface MockSessionService extends ISessionService {
 	regenerateCalls: QuestionType[];
 	getSessionCalls: number;
 }
-function createMockSessionService(opts: {regeneratedQuestion?: GeneratedQuestion, session?: Session, regenerateImpl?: (type: QuestionType) => Promise<GeneratedQuestion>}): MockSessionService {
-	let regenerateCalls: QuestionType[]=[];
-	let getSessionCallCount=0;
-	let service: MockSessionService={
+function createMockSessionService(opts: {regeneratedQuestion?: GeneratedQuestion; session?: Session; regenerateImpl?: (type: QuestionType) => Promise<GeneratedQuestion>}): MockSessionService {
+	let regenerateCalls: QuestionType[] = [];
+	let getSessionCallCount = 0;
+	let service: MockSessionService = {
 		startSession: async () => {
 			throw new Error("not implemented");
 		},
@@ -89,10 +89,10 @@ function createMockSessionService(opts: {regeneratedQuestion?: GeneratedQuestion
 	};
 	return service;
 }
-function deferred(): {promise: Promise<GeneratedQuestion>, resolve: (v: GeneratedQuestion) => void} {
+function deferred(): {promise: Promise<GeneratedQuestion>; resolve: (v: GeneratedQuestion) => void} {
 	let resolve!: (v: GeneratedQuestion) => void;
-	let promise=new Promise<GeneratedQuestion>(res => {
-		resolve=res;
+	let promise = new Promise<GeneratedQuestion>(res => {
+		resolve = res;
 	});
 	return {promise, resolve};
 }
@@ -118,8 +118,8 @@ beforeEach(() => {
 });
 describe("createMcqHotReconfig", () => {
 	it("regenerates the current question as MC when mcqEnabled toggles on", async () => {
-		let updatedSession=makeSession({questions: [makeQuestion({id: "q2", question_type: "MC", choices: ["2", "4"], correct_choice_index: 1})]});
-		let mock=createMockSessionService({regeneratedQuestion: makeQuestion({question_type: "MC"}), session: updatedSession});
+		let updatedSession = makeSession({questions: [makeQuestion({id: "q2", question_type: "MC", choices: ["2", "4"], correct_choice_index: 1})]});
+		let mock = createMockSessionService({regeneratedQuestion: makeQuestion({question_type: "MC"}), session: updatedSession});
 		seedSession(makeSession({questions: [makeQuestion({question_type: "SA"})]}));
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
@@ -134,8 +134,8 @@ describe("createMcqHotReconfig", () => {
 		expect(usePracticeStore.getState().lastResult).toBeNull();
 	});
 	it("regenerates the current question as SA when mcqEnabled toggles off", async () => {
-		let updatedSession=makeSession({questions: [makeQuestion({id: "q2", question_type: "SA"})]});
-		let mock=createMockSessionService({regeneratedQuestion: makeQuestion({question_type: "SA"}), session: updatedSession});
+		let updatedSession = makeSession({questions: [makeQuestion({id: "q2", question_type: "SA"})]});
+		let mock = createMockSessionService({regeneratedQuestion: makeQuestion({question_type: "SA"}), session: updatedSession});
 		seedSession(makeSession({questions: [makeQuestion({question_type: "MC", choices: ["2", "4"], correct_choice_index: 1})]}));
 		useSettingsStore.getState().setDefaultResponseMode("mcq");
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
@@ -147,7 +147,7 @@ describe("createMcqHotReconfig", () => {
 		expect(usePracticeStore.getState().session).toBe(updatedSession);
 	});
 	it("does nothing when there is no session", async () => {
-		let mock=createMockSessionService({regeneratedQuestion: makeQuestion()});
+		let mock = createMockSessionService({regeneratedQuestion: makeQuestion()});
 		usePracticeStore.setState({session: null, userAnswer: "", selectedChoiceIndex: -1, showFeedback: false, lastResult: null});
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
@@ -156,7 +156,7 @@ describe("createMcqHotReconfig", () => {
 		expect(mock.regenerateCalls.length).toBe(0);
 	});
 	it("does nothing when the session is finished", async () => {
-		let mock=createMockSessionService({regeneratedQuestion: makeQuestion()});
+		let mock = createMockSessionService({regeneratedQuestion: makeQuestion()});
 		seedSession(makeSession({isFinished: true, isActive: false, questions: [makeQuestion({question_type: "SA"})]}));
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
@@ -165,7 +165,7 @@ describe("createMcqHotReconfig", () => {
 		expect(mock.regenerateCalls.length).toBe(0);
 	});
 	it("does nothing when the current question type already matches the target", async () => {
-		let mock=createMockSessionService({regeneratedQuestion: makeQuestion()});
+		let mock = createMockSessionService({regeneratedQuestion: makeQuestion()});
 		seedSession(makeSession({questions: [makeQuestion({question_type: "MC", choices: ["2", "4"], correct_choice_index: 1})]}));
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
@@ -174,11 +174,11 @@ describe("createMcqHotReconfig", () => {
 		expect(mock.regenerateCalls.length).toBe(0);
 	});
 	it("does not write to the store after disposal", async () => {
-		let d=deferred();
-		let updatedSession=makeSession({questions: [makeQuestion({id: "q2", question_type: "MC"})]});
-		let mock=createMockSessionService({regenerateImpl: () => d.promise, session: updatedSession});
+		let d = deferred();
+		let updatedSession = makeSession({questions: [makeQuestion({id: "q2", question_type: "MC"})]});
+		let mock = createMockSessionService({regenerateImpl: () => d.promise, session: updatedSession});
 		seedSession(makeSession({questions: [makeQuestion({question_type: "TF"})]}));
-		let rendered=render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
+		let rendered = render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
 		useSettingsStore.getState().setDefaultResponseMode("mcq");
 		await flush();
@@ -190,9 +190,9 @@ describe("createMcqHotReconfig", () => {
 		expect(usePracticeStore.getState().session?.questions[0]?.question_type).toBe("TF");
 	});
 	it("a newer toggle supersedes an older in-flight regeneration", async () => {
-		let d=deferred();
-		let updatedSession=makeSession({questions: [makeQuestion({id: "q2", question_type: "SA"})]});
-		let mock=createMockSessionService({regenerateImpl: () => d.promise, session: updatedSession});
+		let d = deferred();
+		let updatedSession = makeSession({questions: [makeQuestion({id: "q2", question_type: "SA"})]});
+		let mock = createMockSessionService({regenerateImpl: () => d.promise, session: updatedSession});
 		seedSession(makeSession({questions: [makeQuestion({question_type: "TF"})]}));
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();
@@ -207,7 +207,7 @@ describe("createMcqHotReconfig", () => {
 		expect(usePracticeStore.getState().session).toBe(updatedSession);
 	});
 	it("ignores the initial mcqEnabled value on mount", async () => {
-		let mock=createMockSessionService({regeneratedQuestion: makeQuestion()});
+		let mock = createMockSessionService({regeneratedQuestion: makeQuestion()});
 		seedSession(makeSession({questions: [makeQuestion({question_type: "SA"})]}));
 		render(makeRoot({practiceStore: usePracticeStore, sessionService: mock}));
 		await flush();

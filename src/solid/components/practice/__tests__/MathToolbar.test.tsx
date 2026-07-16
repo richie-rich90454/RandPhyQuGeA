@@ -14,13 +14,13 @@ describe("MathToolbar", () => {
 		expect(screen.getByRole("button", {name: "More symbols"})).toBeInTheDocument();
 	});
 	it("calls onInsert with the LaTeX when a primary symbol is clicked", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(latex: string) => void>();
 		render(() => <MathToolbar onInsert={handler} />);
 		fireEvent.click(screen.getByText("\u221a"));
 		expect(handler).toHaveBeenCalledWith("\\sqrt{}");
 	});
 	it("does not call onInsert when disabled", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(latex: string) => void>();
 		render(() => <MathToolbar onInsert={handler} disabled={true} />);
 		fireEvent.click(screen.getByText("\u221a"));
 		expect(handler).not.toHaveBeenCalled();
@@ -31,7 +31,7 @@ describe("MathToolbar", () => {
 	});
 	it("opens the dropdown when the trigger is clicked", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
-		let trigger=screen.getByRole("button", {name: "More symbols"});
+		let trigger = screen.getByRole("button", {name: "More symbols"});
 		expect(trigger).toHaveAttribute("aria-expanded", "false");
 		fireEvent.click(trigger);
 		expect(trigger).toHaveAttribute("aria-expanded", "true");
@@ -43,9 +43,9 @@ describe("MathToolbar", () => {
 		expect(screen.getByText("\u2220")).toBeInTheDocument();
 	});
 	it("calls onInsert and closes the dropdown when a dropdown symbol is clicked", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(latex: string) => void>();
 		render(() => <MathToolbar onInsert={handler} />);
-		let trigger=screen.getByRole("button", {name: "More symbols"});
+		let trigger = screen.getByRole("button", {name: "More symbols"});
 		fireEvent.click(trigger);
 		fireEvent.click(screen.getByText("\u2200"));
 		expect(handler).toHaveBeenCalledWith("\\forall");
@@ -53,7 +53,7 @@ describe("MathToolbar", () => {
 	});
 	it("closes the dropdown on outside click", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
-		let trigger=screen.getByRole("button", {name: "More symbols"});
+		let trigger = screen.getByRole("button", {name: "More symbols"});
 		fireEvent.click(trigger);
 		expect(trigger).toHaveAttribute("aria-expanded", "true");
 		fireEvent.mouseDown(document.body);
@@ -67,7 +67,7 @@ describe("MathToolbar", () => {
 	});
 	it("collapses a section when its header is clicked", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
-		let header=screen.getByRole("button", {name: "Basic"});
+		let header = screen.getByRole("button", {name: "Basic"});
 		expect(header).toHaveAttribute("aria-expanded", "true");
 		fireEvent.click(header);
 		expect(header).toHaveAttribute("aria-expanded", "false");
@@ -115,7 +115,7 @@ describe("MathToolbar", () => {
 		expect(screen.getByText("mol")).toBeInTheDocument();
 	});
 	it("calls onInsert with the LaTeX when a physics symbol is clicked", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(latex: string) => void>();
 		render(() => <MathToolbar onInsert={handler} />);
 		fireEvent.click(screen.getByText("Hz"));
 		expect(handler).toHaveBeenCalledWith("\\text{Hz}");
@@ -126,27 +126,27 @@ describe("MathToolbar", () => {
 	});
 	it("does not carry a data-symbol attribute on the dropdown trigger", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
-		let trigger=screen.getByRole("button", {name: "More symbols"});
+		let trigger = screen.getByRole("button", {name: "More symbols"});
 		expect(trigger.hasAttribute("data-symbol")).toBe(false);
 	});
 	it("ensures every data-symbol button carries a real LaTeX value, not the dropdown marker", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
-		let toolbar=document.getElementById("math-toolbar")!;
-		let symbolButtons=toolbar.querySelectorAll("[data-symbol]");
+		let toolbar = document.getElementById("math-toolbar")!;
+		let symbolButtons = toolbar.querySelectorAll("[data-symbol]");
 		expect(symbolButtons.length).toBeGreaterThan(0);
 		symbolButtons.forEach(btn => {
-			let val=btn.getAttribute("data-symbol");
+			let val = btn.getAttribute("data-symbol");
 			expect(val).not.toBe("dropdown");
 			expect(val).toBeTruthy();
 		});
 	});
 	it("toggles the show class on the dropdown element when opened and closed (preventive fix)", () => {
 		render(() => <MathToolbar onInsert={() => {}} />);
-		let dropdown=document.getElementById("math-dropdown")!;
-		let closedClass=dropdown.className;
-		let trigger=screen.getByRole("button", {name: "More symbols"});
+		let dropdown = document.getElementById("math-dropdown")!;
+		let closedClass = dropdown.className;
+		let trigger = screen.getByRole("button", {name: "More symbols"});
 		fireEvent.click(trigger);
-		let openClass=dropdown.className;
+		let openClass = dropdown.className;
 		expect(openClass).not.toBe(closedClass);
 		expect(openClass.length).toBeGreaterThan(closedClass.length);
 		fireEvent.click(trigger);

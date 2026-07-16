@@ -15,8 +15,8 @@ import styles from "./McqToggle.module.css";
  * MCQ/FRQ decoupling).
  */
 export function McqToggle(): JSX.Element {
-	let responseMode=useSettingsStore(s => s.defaultResponseMode);
-	let handleChange=(checked: boolean) => {
+	let responseMode = useSettingsStore(s => s.defaultResponseMode);
+	let handleChange = (checked: boolean) => {
 		useSettingsStore.getState().setDefaultResponseMode(checked ? "mcq" : "frq");
 	};
 	return (

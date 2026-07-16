@@ -35,7 +35,7 @@ describe("live regions (task 5.23)", () => {
 				<MentalControls />
 			</ToastProvider>
 		));
-		let score=screen.getByLabelText("Current score");
+		let score = screen.getByLabelText("Current score");
 		expect(score).toHaveAttribute("aria-live", "polite");
 	});
 	it("score badge has aria-atomic=true for full-content announcement", () => {
@@ -44,18 +44,18 @@ describe("live regions (task 5.23)", () => {
 				<MentalControls />
 			</ToastProvider>
 		));
-		let score=screen.getByLabelText("Current score");
+		let score = screen.getByLabelText("Current score");
 		expect(score).toHaveAttribute("aria-atomic", "true");
 	});
 	it("question display live region has aria-atomic=true", () => {
 		render(() => <QuestionCard />);
-		let display=screen.getByRole("region", {name: "Question display"});
+		let display = screen.getByRole("region", {name: "Question display"});
 		expect(display).toHaveAttribute("aria-live", "polite");
 		expect(display).toHaveAttribute("aria-atomic", "true");
 	});
 	it("results display live region has aria-atomic=true", () => {
 		render(() => <ResultsCard />);
-		let display=screen.getByRole("status");
+		let display = screen.getByRole("status");
 		expect(display).toHaveAttribute("aria-live", "polite");
 		expect(display).toHaveAttribute("aria-atomic", "true");
 	});

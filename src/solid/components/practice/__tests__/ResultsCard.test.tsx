@@ -23,7 +23,7 @@ function makeQuestion(overrides?: Partial<GeneratedQuestion>): GeneratedQuestion
 	};
 }
 function makeSession(question: GeneratedQuestion): Session {
-	let now=Date.now();
+	let now = Date.now();
 	return {
 		id: "sess1",
 		specification: {units: [], topics: [], skills: [], templates: []},
@@ -125,9 +125,9 @@ describe("ResultsCard", () => {
 			showFeedback: true,
 			lastResult: {isCorrect: true, correctAnswer: "force"},
 		});
-		let {container}=render(() => <ResultsCard />);
+		let {container} = render(() => <ResultsCard />);
 		expect(screen.getByText("Use Newton's second law.")).toBeInTheDocument();
-		let solutionDisplay=container.querySelector('[class*="solutionDisplay"]');
+		let solutionDisplay = container.querySelector('[class*="solutionDisplay"]');
 		expect(solutionDisplay).not.toBeNull();
 		expect(solutionDisplay?.querySelector("div[class*='display']")).toBeNull();
 	});
@@ -152,7 +152,7 @@ describe("ResultsCard", () => {
 		expect(screen.getByText("Your results will appear here after checking")).toBeInTheDocument();
 	});
 	it("renders the worked solution title and steps when provided", () => {
-		let workedSolution: WorkedSolution={
+		let workedSolution: WorkedSolution = {
 			questionId: "q1",
 			title: "Step-by-step solution",
 			steps: [
@@ -172,13 +172,10 @@ describe("ResultsCard", () => {
 		expect(screen.getByText("Apply the formula")).toBeInTheDocument();
 	});
 	it("renders the worked solution steps as an ordered list", () => {
-		let workedSolution: WorkedSolution={
+		let workedSolution: WorkedSolution = {
 			questionId: "q1",
 			title: "Solution",
-			steps: [
-				{description: "Step one"},
-				{description: "Step two"},
-			],
+			steps: [{description: "Step one"}, {description: "Step two"}],
 		};
 		usePracticeStore.setState({
 			...usePracticeStore.getState(),
@@ -187,12 +184,12 @@ describe("ResultsCard", () => {
 			lastResult: {isCorrect: true, correctAnswer: "force"},
 		});
 		render(() => <ResultsCard workedSolution={workedSolution} />);
-		let list=screen.getByRole("list");
+		let list = screen.getByRole("list");
 		expect(list.tagName).toBe("OL");
 		expect(screen.getAllByRole("listitem")).toHaveLength(2);
 	});
 	it("renders the final answer when provided in the worked solution", () => {
-		let workedSolution: WorkedSolution={
+		let workedSolution: WorkedSolution = {
 			questionId: "q1",
 			title: "Solution",
 			steps: [{description: "Compute"}],
@@ -209,7 +206,7 @@ describe("ResultsCard", () => {
 		expect(screen.getByText("5 m/s")).toBeInTheDocument();
 	});
 	it("does not render the worked solution when steps are empty", () => {
-		let workedSolution: WorkedSolution={
+		let workedSolution: WorkedSolution = {
 			questionId: "q1",
 			title: "Empty",
 			steps: [],
@@ -236,7 +233,7 @@ describe("ResultsCard", () => {
 		expect(screen.queryByText("Final answer:")).not.toBeInTheDocument();
 	});
 	it("renders step.substitution as LaTeX via MathRenderer (regression 5.76)", () => {
-		let workedSolution: WorkedSolution={
+		let workedSolution: WorkedSolution = {
 			questionId: "q1",
 			title: "Solution",
 			steps: [
@@ -254,15 +251,15 @@ describe("ResultsCard", () => {
 			showFeedback: true,
 			lastResult: {isCorrect: true, correctAnswer: "5"},
 		});
-		let {container}=render(() => <ResultsCard workedSolution={workedSolution} />);
-		let substitutionEl=container.querySelector('[class*="stepSubstitution"]');
+		let {container} = render(() => <ResultsCard workedSolution={workedSolution} />);
+		let substitutionEl = container.querySelector('[class*="stepSubstitution"]');
 		expect(substitutionEl).not.toBeNull();
 		expect(substitutionEl?.querySelector(".katex")).not.toBeNull();
 		expect(substitutionEl?.querySelector("div[class*='display']")).not.toBeNull();
 		expect(substitutionEl?.querySelector("span.katex-html")).not.toBeNull();
 	});
 	it("renders step.latex as LaTeX via MathRenderer (regression 5.76)", () => {
-		let workedSolution: WorkedSolution={
+		let workedSolution: WorkedSolution = {
 			questionId: "q1",
 			title: "Solution",
 			steps: [
@@ -278,8 +275,8 @@ describe("ResultsCard", () => {
 			showFeedback: true,
 			lastResult: {isCorrect: true, correctAnswer: "5"},
 		});
-		let {container}=render(() => <ResultsCard workedSolution={workedSolution} />);
-		let expressionEl=container.querySelector('[class*="stepExpression"]');
+		let {container} = render(() => <ResultsCard workedSolution={workedSolution} />);
+		let expressionEl = container.querySelector('[class*="stepExpression"]');
 		expect(expressionEl).not.toBeNull();
 		expect(expressionEl?.querySelector(".katex")).not.toBeNull();
 		expect(expressionEl?.querySelector("div[class*='display']")).not.toBeNull();

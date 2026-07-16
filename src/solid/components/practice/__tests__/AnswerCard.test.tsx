@@ -22,7 +22,7 @@ function makeQuestion(overrides?: Partial<GeneratedQuestion>): GeneratedQuestion
 	};
 }
 function makeSession(question: GeneratedQuestion): Session {
-	let now=Date.now();
+	let now = Date.now();
 	return {
 		id: "sess1",
 		specification: {units: [], topics: [], skills: [], templates: []},
@@ -57,7 +57,7 @@ describe("AnswerCard", () => {
 	it("updates the practice store when typing in the answer textarea", () => {
 		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion())});
 		render(() => <AnswerCard />);
-		let textarea=screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+		let textarea = screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
 		fireEvent.input(textarea, {target: {value: "42 N"}});
 		expect(usePracticeStore.getState().userAnswer).toBe("42 N");
 	});
@@ -73,7 +73,7 @@ describe("AnswerCard", () => {
 		expect(usePracticeStore.getState().userAnswer).toBe("");
 	});
 	it("renders the MCQ summary instead of a textarea for multiple-choice questions", () => {
-		let mcq=makeQuestion({
+		let mcq = makeQuestion({
 			question_type: "MC",
 			choices: ["2 N", "4 N", "6 N", "8 N"],
 			correct_choice_index: 1,
@@ -86,7 +86,7 @@ describe("AnswerCard", () => {
 		expect(screen.getByText("4 N")).toBeInTheDocument();
 	});
 	it("renders a placeholder when no MCQ choice is selected", () => {
-		let mcq=makeQuestion({
+		let mcq = makeQuestion({
 			question_type: "MC",
 			choices: ["2 N", "4 N"],
 			correct_choice_index: 1,
@@ -97,7 +97,7 @@ describe("AnswerCard", () => {
 		expect(screen.getByText("Select an option in the question card")).toBeInTheDocument();
 	});
 	it("clears the MCQ selection when the clear button is clicked", () => {
-		let mcq=makeQuestion({
+		let mcq = makeQuestion({
 			question_type: "MC",
 			choices: ["2 N", "4 N"],
 			correct_choice_index: 1,
@@ -133,7 +133,7 @@ describe("AnswerCard", () => {
 	it("associates a label element with the answer textarea via for/id (task 5.48)", () => {
 		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion())});
 		render(() => <AnswerCard />);
-		let label=document.querySelector('label[for="answer-box"]');
+		let label = document.querySelector('label[for="answer-box"]');
 		expect(label).not.toBeNull();
 		expect(label?.textContent).toBe("Answer");
 		expect(screen.getByLabelText("Answer")).toBeInTheDocument();
@@ -141,29 +141,29 @@ describe("AnswerCard", () => {
 	it("inserts a math symbol at the cursor via the fallback path (undo/redo regression)", () => {
 		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "abc"});
 		render(() => <AnswerCard />);
-		let textarea=screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+		let textarea = screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
 		textarea.focus();
 		textarea.setSelectionRange(1, 1);
 		fireEvent.click(screen.getByText("\u221a"));
 		expect(usePracticeStore.getState().userAnswer).toBe("a\\sqrt{}bc");
 	});
 	it("uses execCommand insertText for undoable symbol insertion when available (undo/redo regression)", () => {
-		let execSpy=vi.fn().mockReturnValue(true);
+		let execSpy = vi.fn<(commandId: string, showUI?: boolean, value?: string) => boolean>().mockReturnValue(true);
 		Object.defineProperty(document, "execCommand", {value: execSpy, configurable: true, writable: true});
 		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "abc"});
 		render(() => <AnswerCard />);
-		let textarea=screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+		let textarea = screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
 		textarea.focus();
 		textarea.setSelectionRange(1, 1);
 		fireEvent.click(screen.getByText("\u221a"));
 		expect(execSpy).toHaveBeenCalledWith("insertText", false, "\\sqrt{}");
 	});
 	it("falls back to manual insertion when execCommand returns false (undo/redo regression)", () => {
-		let execSpy=vi.fn().mockReturnValue(false);
+		let execSpy = vi.fn<(commandId: string, showUI?: boolean, value?: string) => boolean>().mockReturnValue(false);
 		Object.defineProperty(document, "execCommand", {value: execSpy, configurable: true, writable: true});
 		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "abc"});
 		render(() => <AnswerCard />);
-		let textarea=screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+		let textarea = screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
 		textarea.focus();
 		textarea.setSelectionRange(2, 2);
 		fireEvent.click(screen.getByText("\u221a"));

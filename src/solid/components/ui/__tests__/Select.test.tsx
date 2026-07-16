@@ -3,7 +3,14 @@ import {describe, it, expect, vi} from "vitest";
 import {Select} from "../Select";
 describe("Select", () => {
 	it("renders options", () => {
-		render(() => <Select options={[{value: "a", label: "Alpha"}, {value: "b", label: "Beta"}]} />);
+		render(() => (
+			<Select
+				options={[
+					{value: "a", label: "Alpha"},
+					{value: "b", label: "Beta"},
+				]}
+			/>
+		));
 		expect(screen.getByRole("combobox")).toBeInTheDocument();
 		expect(screen.getByText("Alpha")).toBeInTheDocument();
 		expect(screen.getByText("Beta")).toBeInTheDocument();
@@ -18,9 +25,17 @@ describe("Select", () => {
 		expect(screen.getByText("Required")).toBeInTheDocument();
 	});
 	it("calls onChange and updates value", () => {
-		let handler=vi.fn();
-		render(() => <Select options={[{value: "a", label: "Alpha"}, {value: "b", label: "Beta"}]} onChange={handler} />);
-		let select=screen.getByRole("combobox") as HTMLSelectElement;
+		let handler = vi.fn<() => void>();
+		render(() => (
+			<Select
+				options={[
+					{value: "a", label: "Alpha"},
+					{value: "b", label: "Beta"},
+				]}
+				onChange={handler}
+			/>
+		));
+		let select = screen.getByRole("combobox") as HTMLSelectElement;
 		fireEvent.change(select, {target: {value: "b"}});
 		expect(handler).toHaveBeenCalledTimes(1);
 		expect(select.value).toBe("b");

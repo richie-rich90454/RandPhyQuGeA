@@ -4,8 +4,8 @@ import {AppShell} from "../AppShell";
 import {AppTopBar} from "../AppTopBar";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
-let appShellCss=readFileSync(join(process.cwd(), "src", "solid", "components", "layout", "AppShell.module.css"), "utf-8");
-let appTopBarCss=readFileSync(join(process.cwd(), "src", "solid", "components", "layout", "AppTopBar.module.css"), "utf-8");
+let appShellCss = readFileSync(join(process.cwd(), "src", "solid", "components", "layout", "AppShell.module.css"), "utf-8");
+let appTopBarCss = readFileSync(join(process.cwd(), "src", "solid", "components", "layout", "AppTopBar.module.css"), "utf-8");
 describe("skip-link, landmarks, and single h1", () => {
 	it("AppShell renders exactly one h1 as the wordmark", () => {
 		render(() => (
@@ -13,7 +13,7 @@ describe("skip-link, landmarks, and single h1", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let headings=screen.getAllByRole("heading", {level: 1});
+		let headings = screen.getAllByRole("heading", {level: 1});
 		expect(headings).toHaveLength(1);
 		expect(headings[0]?.textContent).toBe("RandPhyQuGeA");
 	});
@@ -23,8 +23,8 @@ describe("skip-link, landmarks, and single h1", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let banner=screen.getByRole("banner");
-		let h1=screen.getByRole("heading", {level: 1});
+		let banner = screen.getByRole("banner");
+		let h1 = screen.getByRole("heading", {level: 1});
 		expect(banner.contains(h1)).toBe(true);
 	});
 	it("AppShell main landmark does not override its implicit accessible name", () => {
@@ -33,7 +33,7 @@ describe("skip-link, landmarks, and single h1", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let main=screen.getByRole("main");
+		let main = screen.getByRole("main");
 		expect(main.getAttribute("aria-label")).toBeNull();
 	});
 	it("AppShell main landmark retains id and tabindex for skip-link target", () => {
@@ -42,7 +42,7 @@ describe("skip-link, landmarks, and single h1", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let main=screen.getByRole("main");
+		let main = screen.getByRole("main");
 		expect(main.id).toBe("main-content");
 		expect(main.getAttribute("tabindex")).toBe("-1");
 	});
@@ -52,7 +52,7 @@ describe("skip-link, landmarks, and single h1", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let skipLink=screen.getByRole("link", {name: /skip to main content/i});
+		let skipLink = screen.getByRole("link", {name: /skip to main content/i});
 		expect(skipLink.getAttribute("href")).toBe("#main-content");
 	});
 	it("AppShell exposes banner, main, and contentinfo landmarks", () => {
@@ -67,7 +67,7 @@ describe("skip-link, landmarks, and single h1", () => {
 	});
 	it("AppTopBar wordmark is an h1 element", () => {
 		render(() => <AppTopBar />);
-		let h1=screen.getByRole("heading", {level: 1});
+		let h1 = screen.getByRole("heading", {level: 1});
 		expect(h1.tagName).toBe("H1");
 		expect(h1.textContent).toBe("RandPhyQuGeA");
 	});

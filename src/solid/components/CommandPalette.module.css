@@ -109,7 +109,9 @@
 	border: none;
 	font-size: var(--font-size-sm);
 	font-family: var(--font-sans);
-	transition: background-color var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
+	transition:
+		background-color var(--duration-fast) var(--ease-out),
+		color var(--duration-fast) var(--ease-out);
 }
 .item:hover {
 	background: var(--surface-muted);

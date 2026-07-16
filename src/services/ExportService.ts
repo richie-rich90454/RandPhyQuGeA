@@ -18,7 +18,7 @@ export class ExportService implements IExportService {
 		return EXPORT_REGISTRY[format];
 	}
 	public downloadText(filename: string, content: string, format?: ExportFormat): void {
-		let metadata: ExportMetadata|undefined;
+		let metadata: ExportMetadata | undefined;
 		if (format) {
 			metadata = this.getExportMetadata(format);
 		}
@@ -44,7 +44,7 @@ export class ExportService implements IExportService {
 		return filename + extension;
 	}
 	public buildWorksheetHtml(questions: GeneratedQuestion[], includeAnswerKey: boolean): string {
-		const parts: string[]=[];
+		const parts: string[] = [];
 		parts.push('<!DOCTYPE html>\n<html><head><meta charset="utf-8">');
 		parts.push("<title>Physics Worksheet</title>");
 		parts.push('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.17.0/dist/katex.min.css">');
@@ -85,8 +85,8 @@ export class ExportService implements IExportService {
 		return parts.join("");
 	}
 	public printWorksheet(questions: GeneratedQuestion[], includeAnswerKey: boolean): void {
-		const html=this.buildWorksheetHtml(questions, includeAnswerKey);
-		const printWindow=window.open("", "_blank");
+		const html = this.buildWorksheetHtml(questions, includeAnswerKey);
+		const printWindow = window.open("", "_blank");
 		if (!printWindow) {
 			throw new Error("Pop-up blocked. Please allow pop-ups to print the worksheet.");
 		}
@@ -101,26 +101,26 @@ export class ExportService implements IExportService {
 	}
 	private renderMathInText(text: string): string {
 		if (!text) return "";
-		const pattern=/\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)|\$([^$]+?)\$|\\\$/g;
-		let html="";
-		let lastIndex=0;
+		const pattern = /\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)|\$([^$]+?)\$|\\\$/g;
+		let html = "";
+		let lastIndex = 0;
 		let match: RegExpExecArray | null;
-		while ((match=pattern.exec(text)) !== null) {
-			html+=this.escapeHtml(text.slice(lastIndex, match.index));
+		while ((match = pattern.exec(text)) !== null) {
+			html += this.escapeHtml(text.slice(lastIndex, match.index));
 			if (match[1] !== undefined) {
-				html+=katex.renderToString(match[1], {displayMode: true, throwOnError: false});
+				html += katex.renderToString(match[1], {displayMode: true, throwOnError: false});
 			} else if (match[2] !== undefined) {
-				html+=katex.renderToString(match[2], {displayMode: true, throwOnError: false});
+				html += katex.renderToString(match[2], {displayMode: true, throwOnError: false});
 			} else if (match[3] !== undefined) {
-				html+=katex.renderToString(match[3], {displayMode: false, throwOnError: false});
+				html += katex.renderToString(match[3], {displayMode: false, throwOnError: false});
 			} else if (match[4] !== undefined) {
-				html+=katex.renderToString(match[4], {displayMode: false, throwOnError: false});
+				html += katex.renderToString(match[4], {displayMode: false, throwOnError: false});
 			} else {
-				html+="$";
+				html += "$";
 			}
-			lastIndex=pattern.lastIndex;
+			lastIndex = pattern.lastIndex;
 		}
-		html+=this.escapeHtml(text.slice(lastIndex));
+		html += this.escapeHtml(text.slice(lastIndex));
 		return html;
 	}
 }

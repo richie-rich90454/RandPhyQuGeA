@@ -40,90 +40,90 @@ export interface CreateCountdownTimerReturn {
  */
 export function createCountdownTimer(options?: CreateCountdownTimerOptions): CreateCountdownTimerReturn {
 	void options?.pauseOnFeedback;
-	let [timeRemaining, setTimeRemaining]=createSignal(0);
-	let [isRunning, setIsRunning]=createSignal(false);
-	let rafId: number | null=null;
-	let endTime=0;
-	let remainingRef=0;
-	let wasRunningBeforeHidden=false;
-	let cancelFrame=() => {
+	let [timeRemaining, setTimeRemaining] = createSignal(0);
+	let [isRunning, setIsRunning] = createSignal(false);
+	let rafId: number | null = null;
+	let endTime = 0;
+	let remainingRef = 0;
+	let wasRunningBeforeHidden = false;
+	let cancelFrame = () => {
 		if (rafId !== null) {
 			cancelAnimationFrame(rafId);
-			rafId=null;
+			rafId = null;
 		}
 	};
-	let stop=() => {
+	let stop = () => {
 		cancelFrame();
-		endTime=0;
-		remainingRef=0;
+		endTime = 0;
+		remainingRef = 0;
 		setTimeRemaining(0);
 		setIsRunning(false);
 	};
-	let updateState=(remainingMs: number) => {
-		let remainingSec=Math.max(0, Math.ceil(remainingMs/1000));
+	let updateState = (remainingMs: number) => {
+		let remainingSec = Math.max(0, Math.ceil(remainingMs / 1000));
 		if (remainingSec !== remainingRef) {
-			remainingRef=remainingSec;
+			remainingRef = remainingSec;
 			setTimeRemaining(remainingSec);
 		}
 		if (remainingMs <= 0) {
 			stop();
 		}
 	};
-	let tick=() => {
+	let tick = () => {
 		if (endTime === 0) {
 			return;
 		}
-		let now=Date.now();
-		let remainingMs=endTime-now;
+		let now = Date.now();
+		let remainingMs = endTime - now;
 		updateState(remainingMs);
 		if (endTime !== 0) {
-			rafId=requestAnimationFrame(tick);
+			rafId = requestAnimationFrame(tick);
 		}
 	};
-	let start=(durationSec: number) => {
-		let clamped=Math.max(0, Math.floor(durationSec));
+	let start = (durationSec: number) => {
+		let clamped = Math.max(0, Math.floor(durationSec));
 		cancelFrame();
 		if (clamped === 0) {
 			stop();
 			return;
 		}
-		endTime=Date.now()+clamped*1000;
-		remainingRef=clamped;
+		endTime = Date.now() + clamped * 1000;
+		remainingRef = clamped;
 		setTimeRemaining(clamped);
 		setIsRunning(true);
-		rafId=requestAnimationFrame(tick);
+		rafId = requestAnimationFrame(tick);
 	};
-	let pause=() => {
+	let pause = () => {
 		cancelFrame();
 		if (endTime === 0) {
 			return;
 		}
-		let remainingMs=Math.max(0, endTime-Date.now());
-		remainingRef=Math.ceil(remainingMs/1000);
+		let remainingMs = Math.max(0, endTime - Date.now());
+		remainingRef = Math.ceil(remainingMs / 1000);
 		setTimeRemaining(remainingRef);
 		setIsRunning(false);
-		endTime=0;
+		endTime = 0;
 	};
-	let resume=() => {
+	let resume = () => {
 		if (remainingRef <= 0) {
 			return;
 		}
 		cancelFrame();
-		endTime=Date.now()+remainingRef*1000;
+		endTime = Date.now() + remainingRef * 1000;
 		setIsRunning(true);
-		rafId=requestAnimationFrame(tick);
+		rafId = requestAnimationFrame(tick);
 	};
-	let reset=() => {
+	let reset = () => {
 		stop();
 	};
-	let handleVisibilityChange=() => {
+	let handleVisibilityChange = () => {
 		if (document.hidden) {
 			if (isRunning()) {
-				wasRunningBeforeHidden=true;
+				wasRunningBeforeHidden = true;
 				pause();
 			}
 		} else if (wasRunningBeforeHidden && remainingRef > 0) {
-			wasRunningBeforeHidden=false;
+			wasRunningBeforeHidden = false;
 			resume();
 		}
 	};

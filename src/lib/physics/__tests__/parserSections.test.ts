@@ -26,7 +26,10 @@ const BASE_SPEC = [
 describe("SpecificationParser new sections", () => {
 	it("parses [DIAGRAM], [HINT], and [UNIT_CONVERT] sections into the Specification collections", () => {
 		const parser = new SpecificationParser();
-		const spec = parser.parse(BASE_SPEC + "\n[DIAGRAM]\nId: D1\nTemplateId: Q1\nCaption: A diagram\nSvg: <svg></svg>\n[HINT]\nId: H1\nTemplateId: Q1\nText: Think about units\nDifficulty: 2\n[UNIT_CONVERT]\nId: C1\nFrom: m\nTo: cm\nFactor: 100\nOffset: 0\n");
+		const spec = parser.parse(
+			BASE_SPEC +
+				"\n[DIAGRAM]\nId: D1\nTemplateId: Q1\nCaption: A diagram\nSvg: <svg></svg>\n[HINT]\nId: H1\nTemplateId: Q1\nText: Think about units\nDifficulty: 2\n[UNIT_CONVERT]\nId: C1\nFrom: m\nTo: cm\nFactor: 100\nOffset: 0\n",
+		);
 		expect(spec.diagrams?.length).toBe(1);
 		const diagram = spec.diagrams?.[0];
 		expect(diagram?.id).toBe("D1");
@@ -49,7 +52,10 @@ describe("SpecificationParser new sections", () => {
 	});
 	it("parses multiple diagrams, hints, and conversions", () => {
 		const parser = new SpecificationParser();
-		const spec = parser.parse(BASE_SPEC + "\n[DIAGRAM]\nId: D1\nTemplateId: Q1\n[DIAGRAM]\nId: D2\nTemplateId: Q1\nSvg: <svg/>\n[HINT]\nId: H1\nTemplateId: Q1\n[HINT]\nId: H2\nTemplateId: Q1\n[UNIT_CONVERT]\nId: C1\nFrom: km\nTo: m\nFactor: 1000\n[UNIT_CONVERT]\nId: C2\nFrom: h\nTo: min\nFactor: 60\n");
+		const spec = parser.parse(
+			BASE_SPEC +
+				"\n[DIAGRAM]\nId: D1\nTemplateId: Q1\n[DIAGRAM]\nId: D2\nTemplateId: Q1\nSvg: <svg/>\n[HINT]\nId: H1\nTemplateId: Q1\n[HINT]\nId: H2\nTemplateId: Q1\n[UNIT_CONVERT]\nId: C1\nFrom: km\nTo: m\nFactor: 1000\n[UNIT_CONVERT]\nId: C2\nFrom: h\nTo: min\nFactor: 60\n",
+		);
 		expect(spec.diagrams?.length).toBe(2);
 		expect(spec.hints?.length).toBe(2);
 		expect(spec.unit_conversions?.length).toBe(2);

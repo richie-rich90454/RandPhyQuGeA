@@ -2,7 +2,7 @@ import {describe, it, expect} from "vitest";
 import {UniformRandomGenerator, SeededRandomGenerator, SeededRandom} from "../random";
 describe("RNG range inclusivity (task 5.21)", () => {
 	describe("nextInt is inclusive of both endpoints", () => {
-		let seededFactories: Array<[string, () => SeededRandomGenerator|SeededRandom]> = [
+		let seededFactories: Array<[string, () => SeededRandomGenerator | SeededRandom]> = [
 			["SeededRandomGenerator", () => new SeededRandomGenerator(42)],
 			["SeededRandom", () => new SeededRandom(42)],
 		];
@@ -39,7 +39,7 @@ describe("RNG range inclusivity (task 5.21)", () => {
 		});
 	});
 	describe("nextDouble is half-open [min, max)", () => {
-		let seededFactories: Array<[string, () => SeededRandomGenerator|SeededRandom]> = [
+		let seededFactories: Array<[string, () => SeededRandomGenerator | SeededRandom]> = [
 			["SeededRandomGenerator", () => new SeededRandomGenerator(42)],
 			["SeededRandom", () => new SeededRandom(42)],
 		];
@@ -68,7 +68,7 @@ describe("RNG range inclusivity (task 5.21)", () => {
 		});
 	});
 	describe("degenerate-range fallbacks return min", () => {
-		let factories: Array<[string, () => SeededRandomGenerator|SeededRandom]> = [
+		let factories: Array<[string, () => SeededRandomGenerator | SeededRandom]> = [
 			["SeededRandomGenerator", () => new SeededRandomGenerator(42)],
 			["SeededRandom", () => new SeededRandom(42)],
 		];

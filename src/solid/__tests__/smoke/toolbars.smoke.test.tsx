@@ -47,22 +47,12 @@ describe("toolbars smoke", () => {
 	});
 	it("ControlToolbarBottom renders single controls slot by default", () => {
 		useSettingsStore.setState({...useSettingsStore.getState(), defaultMode: "Single"});
-		render(() => (
-			<ControlToolbarBottom
-				singleControls={<span data-testid="single">Single</span>}
-				mentalControls={<span data-testid="mental">Mental</span>}
-			/>
-		));
+		render(() => <ControlToolbarBottom singleControls={<span data-testid="single">Single</span>} mentalControls={<span data-testid="mental">Mental</span>} />);
 		expect(screen.getByTestId("single")).toBeInTheDocument();
 	});
 	it("ControlToolbarBottom renders mental controls slot when mode is Mental", () => {
 		useSettingsStore.setState({...useSettingsStore.getState(), defaultMode: "Mental"});
-		render(() => (
-			<ControlToolbarBottom
-				singleControls={<span data-testid="single">Single</span>}
-				mentalControls={<span data-testid="mental">Mental</span>}
-			/>
-		));
+		render(() => <ControlToolbarBottom singleControls={<span data-testid="single">Single</span>} mentalControls={<span data-testid="mental">Mental</span>} />);
 		expect(screen.getByTestId("mental")).toBeInTheDocument();
 	});
 	it("ModeSelector renders a button for each mode", () => {

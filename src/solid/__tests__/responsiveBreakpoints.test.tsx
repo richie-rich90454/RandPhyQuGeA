@@ -1,9 +1,9 @@
 import {describe, it, expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
-let answerCardCss=readFileSync(join(process.cwd(), "src", "solid", "components", "practice", "AnswerCard.module.css"), "utf-8");
-let topicsSectionCss=readFileSync(join(process.cwd(), "src", "solid", "components", "practice", "TopicsSection.module.css"), "utf-8");
-let pillCss=readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Pill.module.css"), "utf-8");
+let answerCardCss = readFileSync(join(process.cwd(), "src", "solid", "components", "practice", "AnswerCard.module.css"), "utf-8");
+let topicsSectionCss = readFileSync(join(process.cwd(), "src", "solid", "components", "practice", "TopicsSection.module.css"), "utf-8");
+let pillCss = readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Pill.module.css"), "utf-8");
 describe("AnswerCard stacks answer input at narrow viewports", () => {
 	it("answerInputWrapper switches to flex-direction column at 480px", () => {
 		expect(answerCardCss).toMatch(/@media\s*\(max-width:\s*480px\)\s*\{[\s\S]*?\.answerInputWrapper\s*\{[^}]*flex-direction:\s*column/);

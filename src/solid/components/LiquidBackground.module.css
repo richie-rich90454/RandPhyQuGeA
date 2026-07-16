@@ -34,7 +34,9 @@
 	width: 48vmax;
 	height: 48vmax;
 	background: radial-gradient(circle at 30% 30%, var(--liquid-color-1), color-mix(in srgb, var(--liquid-color-1) 60%, transparent));
-	animation: liquidFloat1 var(--liquid-duration-slow) var(--ease-emphasized) infinite alternate, blobMorph1 15s var(--ease-in-out) infinite alternate;
+	animation:
+		liquidFloat1 var(--liquid-duration-slow) var(--ease-emphasized) infinite alternate,
+		blobMorph1 15s var(--ease-in-out) infinite alternate;
 }
 .blob2 {
 	top: 15%;
@@ -42,7 +44,9 @@
 	width: 42vmax;
 	height: 42vmax;
 	background: radial-gradient(circle at 40% 40%, var(--liquid-color-2), color-mix(in srgb, var(--liquid-color-2) 55%, transparent));
-	animation: liquidFloat2 var(--liquid-duration) var(--ease-decelerated) infinite alternate, blobMorph2 19s var(--ease-in-out) infinite alternate;
+	animation:
+		liquidFloat2 var(--liquid-duration) var(--ease-decelerated) infinite alternate,
+		blobMorph2 19s var(--ease-in-out) infinite alternate;
 }
 .blob3 {
 	bottom: -18%;
@@ -50,7 +54,9 @@
 	width: 52vmax;
 	height: 52vmax;
 	background: radial-gradient(circle at 50% 50%, var(--liquid-color-3), color-mix(in srgb, var(--liquid-color-3) 50%, transparent));
-	animation: liquidFloat3 var(--liquid-duration-slow) var(--ease-accelerated) infinite alternate, blobMorph3 24s var(--ease-in-out) infinite alternate;
+	animation:
+		liquidFloat3 var(--liquid-duration-slow) var(--ease-accelerated) infinite alternate,
+		blobMorph3 24s var(--ease-in-out) infinite alternate;
 }
 .blob4 {
 	bottom: 8%;
@@ -58,7 +64,9 @@
 	width: 38vmax;
 	height: 38vmax;
 	background: radial-gradient(circle at 35% 35%, var(--liquid-color-4), color-mix(in srgb, var(--liquid-color-4) 65%, transparent));
-	animation: liquidFloat4 var(--liquid-duration) var(--ease-standard) infinite alternate, blobMorph4 30s var(--ease-in-out) infinite alternate;
+	animation:
+		liquidFloat4 var(--liquid-duration) var(--ease-standard) infinite alternate,
+		blobMorph4 30s var(--ease-in-out) infinite alternate;
 }
 .veil {
 	position: absolute;
@@ -158,7 +166,10 @@
 	.blob {
 		animation: none;
 	}
-	.blob1, .blob2, .blob3, .blob4 {
+	.blob1,
+	.blob2,
+	.blob3,
+	.blob4 {
 		transform: none;
 		border-radius: var(--radius-full);
 	}

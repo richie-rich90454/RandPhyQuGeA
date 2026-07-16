@@ -18,7 +18,7 @@ function createMatchMedia(initialMatches: boolean): Window["matchMedia"] {
 beforeEach(() => {
 	useUiStore.setState(useUiStore.getInitialState());
 	useSettingsStore.setState(useSettingsStore.getInitialState());
-	window.matchMedia=createMatchMedia(false);
+	window.matchMedia = createMatchMedia(false);
 });
 describe("SettingsModal", () => {
 	it("renders when the settings modal is open", () => {
@@ -42,7 +42,7 @@ describe("SettingsModal", () => {
 	it("updates the theme setting", async () => {
 		useUiStore.getState().openModal("settings");
 		render(() => <SettingsModal />);
-		let select=screen.getByLabelText("Theme");
+		let select = screen.getByLabelText("Theme");
 		fireEvent.change(select, {target: {value: "dark"}});
 		await waitFor(() => expect(useSettingsStore.getState().themeMode).toBe("dark"));
 	});
@@ -50,21 +50,21 @@ describe("SettingsModal", () => {
 		useSettingsStore.setState({adaptiveEnabled: false});
 		useUiStore.getState().openModal("settings");
 		render(() => <SettingsModal />);
-		let switchInput=screen.getByRole("switch", {name: /adaptive learning/i});
+		let switchInput = screen.getByRole("switch", {name: /adaptive learning/i});
 		fireEvent.click(switchInput);
 		await waitFor(() => expect(useSettingsStore.getState().adaptiveEnabled).toBe(true));
 	});
 	it("updates a numeric input", async () => {
 		useUiStore.getState().openModal("settings");
 		render(() => <SettingsModal />);
-		let input=screen.getByLabelText("Timer");
+		let input = screen.getByLabelText("Timer");
 		fireEvent.change(input, {target: {value: "45"}});
 		await waitFor(() => expect(useSettingsStore.getState().mentalDurationSec).toBe(45));
 	});
 	it("switches tabs with arrow keys", async () => {
 		useUiStore.getState().openModal("settings");
 		render(() => <SettingsModal />);
-		let tablist=screen.getByRole("tablist", {name: /settings sections/i});
+		let tablist = screen.getByRole("tablist", {name: /settings sections/i});
 		fireEvent.keyDown(tablist, {key: "ArrowRight"});
 		await waitFor(() => expect(screen.getByText("Performance")).toBeInTheDocument());
 		fireEvent.keyDown(tablist, {key: "ArrowLeft"});
@@ -95,7 +95,7 @@ describe("SettingsModal", () => {
 		render(() => <SettingsModal />);
 		fireEvent.click(screen.getByRole("tab", {name: /advanced/i}));
 		await waitFor(() => expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument());
-		let input=screen.getByLabelText("Generate question") as HTMLInputElement;
+		let input = screen.getByLabelText("Generate question") as HTMLInputElement;
 		expect(input.value).toBe("Ctrl+G");
 	});
 	it("persists shortcut customization on input without requiring blur (regression)", async () => {
@@ -103,7 +103,7 @@ describe("SettingsModal", () => {
 		render(() => <SettingsModal />);
 		fireEvent.click(screen.getByRole("tab", {name: /advanced/i}));
 		await waitFor(() => expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument());
-		let input=screen.getByLabelText("Generate question");
+		let input = screen.getByLabelText("Generate question");
 		fireEvent.input(input, {target: {value: "Ctrl+H"}});
 		await waitFor(() => expect(useSettingsStore.getState().customShortcuts.generate).toBe("Ctrl+H"));
 	});
@@ -112,7 +112,7 @@ describe("SettingsModal", () => {
 		render(() => <SettingsModal />);
 		fireEvent.click(screen.getByRole("tab", {name: /advanced/i}));
 		await waitFor(() => expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument());
-		let input=screen.getByLabelText("Toggle theme");
+		let input = screen.getByLabelText("Toggle theme");
 		fireEvent.input(input, {target: {value: "Ctrl+J"}});
 		expect(useSettingsStore.getState().customShortcuts.toggleTheme).toBe("Ctrl+J");
 		expect(useSettingsStore.getState().customShortcuts.generate).toBeUndefined();

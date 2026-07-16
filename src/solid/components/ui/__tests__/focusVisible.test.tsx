@@ -5,9 +5,9 @@ import {join} from "node:path";
 import {Input} from "../Input";
 import {Select} from "../Select";
 import {Slider} from "../Slider";
-let inputCss=readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Input.module.css"), "utf-8");
-let selectCss=readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Select.module.css"), "utf-8");
-let sliderCss=readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Slider.module.css"), "utf-8");
+let inputCss = readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Input.module.css"), "utf-8");
+let selectCss = readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Select.module.css"), "utf-8");
+let sliderCss = readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Slider.module.css"), "utf-8");
 describe("focus-visible on primary controls (task 5.22)", () => {
 	describe("Input uses :focus-visible instead of bare :focus", () => {
 		it(".input rule uses :focus-visible", () => {
@@ -19,11 +19,11 @@ describe("focus-visible on primary controls (task 5.22)", () => {
 			expect(inputCss).not.toMatch(/\.errorInput:focus\s*\{/);
 		});
 		it("forced-colors override uses :focus-visible", () => {
-			expect(inputCss).toContain(".input:focus-visible { border-color: Highlight; }");
+			expect(inputCss).toMatch(/\.input:focus-visible\s*\{\s*border-color:\s*Highlight;?\s*\}/);
 		});
 		it("input element is keyboard-focusable", () => {
 			render(() => <Input label="Name" />);
-			let input=screen.getByLabelText("Name");
+			let input = screen.getByLabelText("Name");
 			input.focus();
 			expect(document.activeElement).toBe(input);
 		});
@@ -39,7 +39,7 @@ describe("focus-visible on primary controls (task 5.22)", () => {
 		});
 		it("select element is keyboard-focusable", () => {
 			render(() => <Select label="Scope" options={[{value: "a", label: "Alpha"}]} />);
-			let select=screen.getByLabelText("Scope");
+			let select = screen.getByLabelText("Scope");
 			select.focus();
 			expect(document.activeElement).toBe(select);
 		});
@@ -56,7 +56,7 @@ describe("focus-visible on primary controls (task 5.22)", () => {
 		});
 		it("slider inputs are keyboard-focusable", () => {
 			render(() => <Slider min={0} max={100} value={[20, 80]} onChange={() => {}} label="Range" />);
-			let inputs=screen.getAllByRole("slider");
+			let inputs = screen.getAllByRole("slider");
 			expect(inputs).toHaveLength(2);
 			inputs[0]!.focus();
 			expect(document.activeElement).toBe(inputs[0]);

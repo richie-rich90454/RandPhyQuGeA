@@ -237,7 +237,8 @@
 	.statValue {
 		font-size: var(--font-size-xl);
 	}
-	.weakHeader, .historyHeader {
+	.weakHeader,
+	.historyHeader {
 		flex-direction: column;
 		align-items: flex-start;
 		gap: var(--space-1);

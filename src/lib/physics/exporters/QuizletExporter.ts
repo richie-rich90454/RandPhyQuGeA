@@ -16,10 +16,12 @@ export class QuizletExporter implements Exporter {
 	/** Build the Term (card front): the question text, followed by lettered choices when the question carries an MCQ choice list. */
 	private renderTerm(q: GeneratedQuestion): string {
 		if (q.choices !== undefined && q.choices.length > 0) {
-			const listed = q.choices.map((choice, i) => {
-				const letter = String.fromCharCode("A".charCodeAt(0) + i);
-				return `${letter}) ${choice}`;
-			}).join(" ");
+			const listed = q.choices
+				.map((choice, i) => {
+					const letter = String.fromCharCode("A".charCodeAt(0) + i);
+					return `${letter}) ${choice}`;
+				})
+				.join(" ");
 			return `${q.text} ${listed}`;
 		}
 		return q.text;

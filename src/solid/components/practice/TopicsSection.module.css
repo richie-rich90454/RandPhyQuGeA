@@ -16,7 +16,9 @@
 	background: var(--surface);
 	color: var(--text);
 	font-size: var(--font-size-sm);
-	transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+	transition:
+		border-color var(--duration-fast) var(--ease-standard),
+		box-shadow var(--duration-fast) var(--ease-standard);
 }
 .search::placeholder {
 	color: var(--text-subtle);

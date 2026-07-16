@@ -6,7 +6,7 @@ import {useSpecStore} from "../../stores/specStore";
 import type {IAnalyticsService, WeakTopic, SessionSummary} from "../../../services/contracts";
 import type {StreakData} from "../../../services/streakService";
 import type {PracticeResult, Specification} from "../../../types/models";
-function makeResult(overrides: Partial<PracticeResult>={}): PracticeResult {
+function makeResult(overrides: Partial<PracticeResult> = {}): PracticeResult {
 	return {
 		id: "r1",
 		question_id: "q1",
@@ -21,7 +21,7 @@ function makeResult(overrides: Partial<PracticeResult>={}): PracticeResult {
 		...overrides,
 	};
 }
-function makeSpec(overrides: Partial<Specification>={}): Specification {
+function makeSpec(overrides: Partial<Specification> = {}): Specification {
 	return {
 		units: [],
 		topics: [{id: "t1", unit_id: "u1", name: "Linear Equations", description: ""}],
@@ -31,10 +31,17 @@ function makeSpec(overrides: Partial<Specification>={}): Specification {
 	};
 }
 class FakeAnalyticsService implements IAnalyticsService {
-	public getStreak=vi.fn<(results: PracticeResult[]) => StreakData>(() => ({currentStreak: 3, bestStreak: 5, totalActiveDays: 4}));
-	public getWeakTopics=vi.fn<(results: PracticeResult[], spec: Specification, threshold?: number) => WeakTopic[]>(() => []);
-	public getAccuracy=vi.fn<(results: PracticeResult[]) => number>(() => 80);
-	public getSessionSummary=vi.fn<(results: PracticeResult[]) => SessionSummary>(() => ({totalQuestions: 1, correctCount: 1, accuracy: 100, totalTimeMs: 1500, averageTimeMs: 1500, mode: "Single"}));
+	public getStreak = vi.fn<(results: PracticeResult[]) => StreakData>(() => ({currentStreak: 3, bestStreak: 5, totalActiveDays: 4}));
+	public getWeakTopics = vi.fn<(results: PracticeResult[], spec: Specification, threshold?: number) => WeakTopic[]>(() => []);
+	public getAccuracy = vi.fn<(results: PracticeResult[]) => number>(() => 80);
+	public getSessionSummary = vi.fn<(results: PracticeResult[]) => SessionSummary>(() => ({
+		totalQuestions: 1,
+		correctCount: 1,
+		accuracy: 100,
+		totalTimeMs: 1500,
+		averageTimeMs: 1500,
+		mode: "Single",
+	}));
 }
 beforeEach(() => {
 	useProgressStore.setState(useProgressStore.getInitialState());
@@ -48,7 +55,7 @@ describe("ProgressPanel", () => {
 	});
 	it("renders accuracy and streak stats when results exist", () => {
 		useProgressStore.setState({results: [makeResult()]});
-		let analytics=new FakeAnalyticsService();
+		let analytics = new FakeAnalyticsService();
 		render(() => <ProgressPanel analytics={analytics} />);
 		expect(screen.getByText("Accuracy")).toBeInTheDocument();
 		expect(screen.getByText("Streak")).toBeInTheDocument();
@@ -65,7 +72,7 @@ describe("ProgressPanel", () => {
 	it("renders weak topics when present", () => {
 		useProgressStore.setState({results: [makeResult()]});
 		useSpecStore.setState({specification: makeSpec(), empty: false});
-		let analytics=new FakeAnalyticsService();
+		let analytics = new FakeAnalyticsService();
 		analytics.getWeakTopics.mockReturnValue([{topicId: "t1", topicName: "Linear Equations", accuracy: 40, attempts: 3}]);
 		render(() => <ProgressPanel analytics={analytics} />);
 		expect(screen.getByText("Weak Topics")).toBeInTheDocument();
@@ -86,9 +93,9 @@ describe("ProgressPanel", () => {
 		expect(screen.getByText(/Single · D2 ·/)).toBeInTheDocument();
 	});
 	it("paginates history when more than page size results exist", () => {
-		let results: PracticeResult[]=[];
-		for (let i=0; i<7; i++) {
-			results.push(makeResult({id: `r${i}`, timestamp: `2026-07-0${i+1}T10:00:00.000Z`}));
+		let results: PracticeResult[] = [];
+		for (let i = 0; i < 7; i++) {
+			results.push(makeResult({id: `r${i}`, timestamp: `2026-07-0${i + 1}T10:00:00.000Z`}));
 		}
 		useProgressStore.setState({results});
 		render(() => <ProgressPanel analytics={new FakeAnalyticsService()} />);
@@ -99,9 +106,9 @@ describe("ProgressPanel", () => {
 		expect(screen.getByText("Page 1 of 2")).toBeInTheDocument();
 	});
 	it("disables Previous on the first page and Next on the last page", () => {
-		let results: PracticeResult[]=[];
-		for (let i=0; i<7; i++) {
-			results.push(makeResult({id: `r${i}`, timestamp: `2026-07-0${i+1}T10:00:00.000Z`}));
+		let results: PracticeResult[] = [];
+		for (let i = 0; i < 7; i++) {
+			results.push(makeResult({id: `r${i}`, timestamp: `2026-07-0${i + 1}T10:00:00.000Z`}));
 		}
 		useProgressStore.setState({results});
 		render(() => <ProgressPanel analytics={new FakeAnalyticsService()} />);

@@ -23,7 +23,7 @@ export interface ConfirmDialogProps {
 }
 /** Controlled confirmation dialog built on top of Modal. */
 export function ConfirmDialog(props: ConfirmDialogProps): JSX.Element {
-	let confirmVariant: ButtonVariant=props.destructive ? "danger" : "primary";
+	let confirmVariant: ButtonVariant = props.destructive ? "danger" : "primary";
 	return (
 		<Modal
 			open={props.open}
@@ -32,8 +32,12 @@ export function ConfirmDialog(props: ConfirmDialogProps): JSX.Element {
 			ariaLabel={props.title}
 			footer={
 				<>
-					<Button variant="secondary" onClick={props.onCancel}>{props.cancelLabel ?? "Cancel"}</Button>
-					<Button variant={confirmVariant} onClick={props.onConfirm}>{props.confirmLabel ?? "Confirm"}</Button>
+					<Button variant="secondary" onClick={props.onCancel}>
+						{props.cancelLabel ?? "Cancel"}
+					</Button>
+					<Button variant={confirmVariant} onClick={props.onConfirm}>
+						{props.confirmLabel ?? "Confirm"}
+					</Button>
 				</>
 			}
 		>

@@ -13,13 +13,13 @@ import type {Accessor} from "solid-js";
  * first render reflects the current match before the deferred effect runs.
  */
 export function createMediaQuery(query: string | Accessor<string>): Accessor<boolean> {
-	let queryAccessor: Accessor<string>=typeof query === "function" ? query : () => query;
-	let [matches, setMatches]=createSignal<boolean>(window.matchMedia(queryAccessor()).matches);
+	let queryAccessor: Accessor<string> = typeof query === "function" ? query : () => query;
+	let [matches, setMatches] = createSignal<boolean>(window.matchMedia(queryAccessor()).matches);
 	createEffect(() => {
-		let q=queryAccessor();
-		let mql=window.matchMedia(q);
+		let q = queryAccessor();
+		let mql = window.matchMedia(q);
 		setMatches(mql.matches);
-		let handler=(event: MediaQueryListEvent) => {
+		let handler = (event: MediaQueryListEvent) => {
 			setMatches(event.matches);
 		};
 		mql.addEventListener("change", handler);

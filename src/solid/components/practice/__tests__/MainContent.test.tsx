@@ -22,12 +22,12 @@ describe("MainContent", () => {
 		expect(screen.getByTestId("analytics")).toBeInTheDocument();
 	});
 	it("renders without children or analytics", () => {
-		let {container}=render(() => <MainContent />);
+		let {container} = render(() => <MainContent />);
 		expect(container.firstChild).not.toBeNull();
 	});
 	it("applies an extra class", () => {
-		let {container}=render(() => <MainContent class="extra">x</MainContent>);
-		let wrapper=container.firstChild as HTMLElement;
+		let {container} = render(() => <MainContent class="extra">x</MainContent>);
+		let wrapper = container.firstChild as HTMLElement;
 		expect(wrapper.className).toContain("extra");
 	});
 });

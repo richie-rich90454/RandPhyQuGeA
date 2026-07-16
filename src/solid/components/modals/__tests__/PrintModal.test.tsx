@@ -8,7 +8,10 @@ import type {IPhysicsService, IExportService, GenerateOptions, ExportMetadata} f
 import type {GeneratedQuestion, Specification} from "../../../../types/models";
 function makeSpecification(): Specification {
 	return {
-		units: [{id: "u1", name: "Algebra", description: ""}, {id: "u2", name: "Simple Math", description: ""}],
+		units: [
+			{id: "u1", name: "Algebra", description: ""},
+			{id: "u2", name: "Simple Math", description: ""},
+		],
 		topics: [
 			{id: "t1", unit_id: "u1", name: "Linear Equations", description: ""},
 			{id: "t2", unit_id: "u2", name: "Arithmetic", description: ""},
@@ -34,13 +37,25 @@ function makeQuestion(overrides?: Partial<GeneratedQuestion>): GeneratedQuestion
 	};
 }
 class FakePhysicsService implements IPhysicsService {
-	public generateBatch=vi.fn<(spec: Specification, count: number, options?: GenerateOptions) => Promise<GeneratedQuestion[]>>().mockResolvedValue([makeQuestion()]);
-	public async parseSpecification(): Promise<Specification> { return makeSpecification(); }
-	public async generateQuestion(): Promise<GeneratedQuestion> { return makeQuestion(); }
-	public async generateUnique(): Promise<GeneratedQuestion[]> { return []; }
-	public async evaluate(): Promise<number> { return 0; }
-	public async exportQuestions(): Promise<string> { return ""; }
-	public async getFormulaLibrary(): Promise<import("../../../../types/models").FormulaEntry[]> { return []; }
+	public generateBatch = vi.fn<(spec: Specification, count: number, options?: GenerateOptions) => Promise<GeneratedQuestion[]>>().mockResolvedValue([makeQuestion()]);
+	public async parseSpecification(): Promise<Specification> {
+		return makeSpecification();
+	}
+	public async generateQuestion(): Promise<GeneratedQuestion> {
+		return makeQuestion();
+	}
+	public async generateUnique(): Promise<GeneratedQuestion[]> {
+		return [];
+	}
+	public async evaluate(): Promise<number> {
+		return 0;
+	}
+	public async exportQuestions(): Promise<string> {
+		return "";
+	}
+	public async getFormulaLibrary(): Promise<import("../../../../types/models").FormulaEntry[]> {
+		return [];
+	}
 }
 class FakeExportService implements IExportService {
 	public getExportMetadata(): ExportMetadata {
@@ -48,8 +63,10 @@ class FakeExportService implements IExportService {
 	}
 	public downloadText(): void {}
 	public downloadBlob(): void {}
-	public buildWorksheetHtml(): string { return ""; }
-	public printWorksheet=vi.fn<(questions: GeneratedQuestion[], includeAnswerKey: boolean) => void>();
+	public buildWorksheetHtml(): string {
+		return "";
+	}
+	public printWorksheet = vi.fn<(questions: GeneratedQuestion[], includeAnswerKey: boolean) => void>();
 }
 function renderWithServices(physics?: IPhysicsService, exportService?: IExportService) {
 	return render(() => (
@@ -76,7 +93,7 @@ describe("PrintModal", () => {
 	it("generates a worksheet through the physics service", async () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");
-		let physics=new FakePhysicsService();
+		let physics = new FakePhysicsService();
 		renderWithServices(physics);
 		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
 		await waitFor(() => expect(physics.generateBatch).toHaveBeenCalledTimes(1));
@@ -85,9 +102,9 @@ describe("PrintModal", () => {
 	it("passes topicId when exactly one topic is selected", async () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");
-		let physics=new FakePhysicsService();
+		let physics = new FakePhysicsService();
 		renderWithServices(physics);
-		let topicPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		let topicPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
 		fireEvent.click(topicPills[0]!);
 		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
 		await waitFor(() => expect(physics.generateBatch).toHaveBeenCalledTimes(1));
@@ -96,17 +113,17 @@ describe("PrintModal", () => {
 	it("generates from each selected topic when multiple topics are selected", async () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");
-		let physics=new FakePhysicsService();
-		physics.generateBatch=vi.fn<(spec: Specification, count: number, options?: GenerateOptions) => Promise<GeneratedQuestion[]>>().mockImplementation(async (_spec, count, options) => {
-			let topicId=options?.topicId ?? "none";
-			let questions: GeneratedQuestion[]=[];
-			for (let i=0; i<count; i++) {
+		let physics = new FakePhysicsService();
+		physics.generateBatch = vi.fn<(spec: Specification, count: number, options?: GenerateOptions) => Promise<GeneratedQuestion[]>>().mockImplementation(async (_spec, count, options) => {
+			let topicId = options?.topicId ?? "none";
+			let questions: GeneratedQuestion[] = [];
+			for (let i = 0; i < count; i++) {
 				questions.push(makeQuestion({id: `${topicId}-q${i}`, topic_id: topicId}));
 			}
 			return questions;
 		});
 		renderWithServices(physics);
-		let topicPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		let topicPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
 		fireEvent.click(topicPills[0]!);
 		fireEvent.click(topicPills[1]!);
 		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
@@ -118,19 +135,19 @@ describe("PrintModal", () => {
 	it("truncates combined batch to requested count when topics over-deliver", async () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");
-		let physics=new FakePhysicsService();
-		physics.generateBatch=vi.fn<(spec: Specification, count: number, options?: GenerateOptions) => Promise<GeneratedQuestion[]>>().mockImplementation(async (_spec, count, options) => {
-			let topicId=options?.topicId ?? "none";
-			let questions: GeneratedQuestion[]=[];
-			for (let i=0; i<count; i++) {
+		let physics = new FakePhysicsService();
+		physics.generateBatch = vi.fn<(spec: Specification, count: number, options?: GenerateOptions) => Promise<GeneratedQuestion[]>>().mockImplementation(async (_spec, count, options) => {
+			let topicId = options?.topicId ?? "none";
+			let questions: GeneratedQuestion[] = [];
+			for (let i = 0; i < count; i++) {
 				questions.push(makeQuestion({id: `${topicId}-q${i}`, topic_id: topicId}));
 			}
 			return questions;
 		});
 		renderWithServices(physics);
-		let numberInput=screen.getByRole("spinbutton", {name: "Number of questions"}) as HTMLInputElement;
+		let numberInput = screen.getByRole("spinbutton", {name: "Number of questions"}) as HTMLInputElement;
 		fireEvent.input(numberInput, {target: {value: "5"}});
-		let topicPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		let topicPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
 		fireEvent.click(topicPills[0]!);
 		fireEvent.click(topicPills[1]!);
 		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
@@ -142,7 +159,7 @@ describe("PrintModal", () => {
 	it("prints the worksheet through the export service", async () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");
-		let exportService=new FakeExportService();
+		let exportService = new FakeExportService();
 		renderWithServices(new FakePhysicsService(), exportService);
 		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
 		await waitFor(() => expect(screen.getByRole("button", {name: /print worksheet/i})).toBeInTheDocument());
@@ -153,12 +170,12 @@ describe("PrintModal", () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");
 		renderWithServices();
-		let topicPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		let topicPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
 		fireEvent.click(topicPills[0]!);
 		await waitFor(() => expect(topicPills[0]).toHaveAttribute("aria-pressed", "true"));
-		let scopeSelect=screen.getByRole("combobox", {name: "Topic scope"}) as HTMLSelectElement;
+		let scopeSelect = screen.getByRole("combobox", {name: "Topic scope"}) as HTMLSelectElement;
 		fireEvent.change(scopeSelect, {target: {value: "simple"}});
-		let remainingPills=screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
+		let remainingPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
 		for (let pill of remainingPills) {
 			expect(pill).toHaveAttribute("aria-pressed", "false");
 		}
@@ -167,7 +184,7 @@ describe("PrintModal", () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");
 		renderWithServices();
-		let switchInput=screen.getByRole("switch", {name: /include answer key/i}) as HTMLInputElement;
+		let switchInput = screen.getByRole("switch", {name: /include answer key/i}) as HTMLInputElement;
 		expect(switchInput.checked).toBe(true);
 		fireEvent.click(switchInput);
 		await waitFor(() => expect(switchInput.checked).toBe(false));
@@ -183,16 +200,19 @@ describe("PrintModal loading skeleton (task 5.32)", () => {
 	it("shows a loading skeleton with aria-busy while generating and no questions exist", async () => {
 		useSpecStore.setState({specification: makeSpecification()});
 		useUiStore.getState().openModal("print");
-		let physics=new FakePhysicsService();
-		let resolveGeneration: (value: GeneratedQuestion[]) => void=() => {};
-		physics.generateBatch=vi.fn(() => new Promise<GeneratedQuestion[]>(resolve => {
-			resolveGeneration=resolve;
-		}));
+		let physics = new FakePhysicsService();
+		let resolveGeneration: (value: GeneratedQuestion[]) => void = () => {};
+		physics.generateBatch = vi.fn<() => Promise<GeneratedQuestion[]>>(
+			() =>
+				new Promise<GeneratedQuestion[]>(resolve => {
+					resolveGeneration = resolve;
+				}),
+		);
 		renderWithServices(physics);
 		fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
 		await waitFor(() => expect(screen.getByText("Generating…")).toBeInTheDocument());
 		expect(screen.getByText("Generating worksheet questions…")).toBeInTheDocument();
-		let busyRegion=screen.getByText("Generating worksheet questions…").closest("[aria-busy='true']");
+		let busyRegion = screen.getByText("Generating worksheet questions…").closest("[aria-busy='true']");
 		expect(busyRegion).toBeInTheDocument();
 		resolveGeneration([makeQuestion()]);
 		await waitFor(() => expect(screen.getByText("Preview (1 questions)")).toBeInTheDocument());

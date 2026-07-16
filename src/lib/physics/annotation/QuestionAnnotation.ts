@@ -101,7 +101,9 @@ export class QuestionAnnotationStore {
 	}
 	/** Return the tag values attached to `questionId` (annotations of kind "tag"), in insertion order. */
 	public tags(questionId: string): string[] {
-		return this.getForQuestion(questionId).filter(e => e.kind === "tag").map(e => e.value);
+		return this.getForQuestion(questionId)
+			.filter(e => e.kind === "tag")
+			.map(e => e.value);
 	}
 	/** Return the average numeric rating for `questionId`, or undefined when there are no finite numeric ratings. */
 	public rating(questionId: string): number | undefined {

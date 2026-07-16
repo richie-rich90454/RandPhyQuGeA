@@ -29,7 +29,7 @@ export interface ControlToolbarTopProps {
  * the layout tokens live in the module CSS (task 4.4).
  */
 export function ControlToolbarTop(props: ControlToolbarTopProps): JSX.Element {
-	let hasNamedSlots=() => props.leading !== undefined || props.center !== undefined || props.trailing !== undefined;
+	let hasNamedSlots = () => props.leading !== undefined || props.center !== undefined || props.trailing !== undefined;
 	return (
 		<ToolbarRow position="top" class={`glass ${styles.row} ${props.class ?? ""}`}>
 			<Show when={props.leading}>
@@ -41,9 +41,7 @@ export function ControlToolbarTop(props: ControlToolbarTopProps): JSX.Element {
 			<Show when={props.trailing}>
 				<div class={styles.trailing}>{props.trailing}</div>
 			</Show>
-			<Show when={!hasNamedSlots()}>
-				{props.children}
-			</Show>
+			<Show when={!hasNamedSlots()}>{props.children}</Show>
 		</ToolbarRow>
 	);
 }

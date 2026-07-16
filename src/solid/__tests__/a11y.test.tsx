@@ -2,7 +2,24 @@ import {render, screen, fireEvent} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach, vi} from "vitest";
 import {AppShell} from "../components/layout/AppShell";
 import {A11yLiveRegion} from "../components/A11yLiveRegion";
-import {Button, Modal, Tabs, TabsList, TabsTrigger, TabsContent, Switch, ProgressBar, Toolbar, ToolbarGroup, ToolbarItem, ToolbarSeparator, Accordion, AccordionItem, AccordionTrigger, AccordionContent} from "../components/ui";
+import {
+	Button,
+	Modal,
+	Tabs,
+	TabsList,
+	TabsTrigger,
+	TabsContent,
+	Switch,
+	ProgressBar,
+	Toolbar,
+	ToolbarGroup,
+	ToolbarItem,
+	ToolbarSeparator,
+	Accordion,
+	AccordionItem,
+	AccordionTrigger,
+	AccordionContent,
+} from "../components/ui";
 import {QuestionCard} from "../components/practice/QuestionCard";
 import {usePracticeStore} from "../stores/practiceStore";
 import {useProgressStore} from "../stores/progressStore";
@@ -13,8 +30,8 @@ import type {Session} from "../../services/contracts";
 import type {GeneratedQuestion, Specification} from "../../types/models";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
-let globalsCss=readFileSync(join(process.cwd(), "src", "solid", "styles", "globals.css"), "utf-8");
-let glassCss=readFileSync(join(process.cwd(), "src", "solid", "styles", "glass.css"), "utf-8");
+let globalsCss = readFileSync(join(process.cwd(), "src", "solid", "styles", "globals.css"), "utf-8");
+let glassCss = readFileSync(join(process.cwd(), "src", "solid", "styles", "glass.css"), "utf-8");
 function makeSpec(): Specification {
 	return {
 		units: [{id: "u1", name: "Mechanics", description: ""}],
@@ -41,7 +58,7 @@ function makeMcqQuestion(): GeneratedQuestion {
 	};
 }
 function makeSession(question: GeneratedQuestion): Session {
-	let now=Date.now();
+	let now = Date.now();
 	return {
 		id: "sess1",
 		specification: makeSpec(),
@@ -72,7 +89,7 @@ describe("accessibility", () => {
 				<div>Content</div>
 			</AppShell>
 		));
-		let skipLink=screen.getByRole("link", {name: /skip to main content/i});
+		let skipLink = screen.getByRole("link", {name: /skip to main content/i});
 		expect(skipLink.getAttribute("href")).toBe("#main-content");
 	});
 	it("AppShell exposes header, nav, main, and contentinfo landmarks", () => {
@@ -95,7 +112,7 @@ describe("accessibility", () => {
 	});
 	it("A11yLiveRegion renders role=status with aria-live=polite by default", () => {
 		render(() => <A11yLiveRegion message="Loaded" />);
-		let region=screen.getByTestId("a11y-live-region");
+		let region = screen.getByTestId("a11y-live-region");
 		expect(region).toHaveAttribute("role", "status");
 		expect(region).toHaveAttribute("aria-live", "polite");
 	});
@@ -104,12 +121,20 @@ describe("accessibility", () => {
 		expect(screen.getByTestId("a11y-live-region")).toHaveAttribute("aria-live", "assertive");
 	});
 	it("Modal exposes role=dialog with aria-modal=true", () => {
-		render(() => <Modal open={true} onClose={() => {}} title="Dialog"><p>Body</p></Modal>);
-		let dialog=screen.getByRole("dialog");
+		render(() => (
+			<Modal open={true} onClose={() => {}} title="Dialog">
+				<p>Body</p>
+			</Modal>
+		));
+		let dialog = screen.getByRole("dialog");
 		expect(dialog).toHaveAttribute("aria-modal", "true");
 	});
 	it("Modal close button has an accessible name", () => {
-		render(() => <Modal open={true} onClose={() => {}} title="Dialog"><p>Body</p></Modal>);
+		render(() => (
+			<Modal open={true} onClose={() => {}} title="Dialog">
+				<p>Body</p>
+			</Modal>
+		));
 		expect(screen.getByRole("button", {name: /close dialog/i})).toBeInTheDocument();
 	});
 	it("Button renders as a button element with accessible name", () => {
@@ -128,23 +153,23 @@ describe("accessibility", () => {
 			</Tabs>
 		));
 		expect(screen.getByRole("tablist")).toBeInTheDocument();
-		let tabs=screen.getAllByRole("tab");
+		let tabs = screen.getAllByRole("tab");
 		expect(tabs).toHaveLength(2);
 		expect(tabs[0]).toHaveAttribute("aria-selected", "true");
 		expect(tabs[1]).toHaveAttribute("aria-selected", "false");
 		expect(screen.getByRole("tabpanel")).toBeInTheDocument();
 	});
 	it("Switch exposes role=switch with aria-checked reflecting state", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(checked: boolean) => void>();
 		render(() => <Switch label="Auto" onCheckedChange={handler} />);
-		let sw=screen.getByRole("switch");
+		let sw = screen.getByRole("switch");
 		expect(sw).toHaveAttribute("aria-checked", "false");
 		fireEvent.click(sw);
 		expect(sw).toHaveAttribute("aria-checked", "true");
 	});
 	it("ProgressBar exposes role=progressbar with aria-valuenow/min/max", () => {
 		render(() => <ProgressBar value={60} ariaLabel="Progress" />);
-		let bar=screen.getByRole("progressbar");
+		let bar = screen.getByRole("progressbar");
 		expect(bar).toHaveAttribute("aria-valuenow", "60");
 		expect(bar).toHaveAttribute("aria-valuemin", "0");
 		expect(bar).toHaveAttribute("aria-valuemax", "100");
@@ -169,7 +194,7 @@ describe("accessibility", () => {
 				</AccordionItem>
 			</Accordion>
 		));
-		let trigger=screen.getByRole("button", {name: /section a/i});
+		let trigger = screen.getByRole("button", {name: /section a/i});
 		expect(trigger).toHaveAttribute("aria-expanded", "true");
 		fireEvent.click(trigger);
 		expect(trigger).toHaveAttribute("aria-expanded", "false");
@@ -178,7 +203,7 @@ describe("accessibility", () => {
 		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeMcqQuestion())});
 		render(() => <QuestionCard />);
 		expect(screen.getByRole("radiogroup")).toBeInTheDocument();
-		let radios=screen.getAllByRole("radio");
+		let radios = screen.getAllByRole("radio");
 		expect(radios).toHaveLength(4);
 		expect(radios[0]).toHaveAttribute("aria-checked", "false");
 		fireEvent.click(radios[1]!);

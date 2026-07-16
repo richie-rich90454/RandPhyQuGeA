@@ -21,11 +21,9 @@ export interface LiquidBackgroundProps {
  * for. The container is marked `aria-hidden` because it is purely decorative.
  */
 export function LiquidBackground(props: LiquidBackgroundProps): JSX.Element {
-	let reducedDataMode=useSettingsStore(s => s.reducedDataMode);
+	let reducedDataMode = useSettingsStore(s => s.reducedDataMode);
 	return (
-		<Show when={!reducedDataMode()} fallback={
-			<div class={`${styles.root} ${styles.reducedData} ${props.class ?? ""}`} aria-hidden="true" />
-		}>
+		<Show when={!reducedDataMode()} fallback={<div class={`${styles.root} ${styles.reducedData} ${props.class ?? ""}`} aria-hidden="true" />}>
 			<div class={`${styles.root} ${props.class ?? ""}`} aria-hidden="true">
 				<div class={`${styles.blob} ${styles.blob1}`} />
 				<div class={`${styles.blob} ${styles.blob2}`} />

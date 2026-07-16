@@ -45,7 +45,7 @@ describe("Tooltip", () => {
 		expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
 	});
 	it("calls onOpenChange when open changes", () => {
-		let handler=vi.fn();
+		let handler = vi.fn<(open: boolean) => void>();
 		render(() => (
 			<Tooltip delay={0} onOpenChange={handler}>
 				<TooltipTrigger>Hover me</TooltipTrigger>
@@ -64,8 +64,8 @@ describe("Tooltip", () => {
 				<TooltipContent>Tip text</TooltipContent>
 			</Tooltip>
 		));
-		let trigger=screen.getByText("Hover me");
-		let tooltip=screen.getByRole("tooltip");
+		let trigger = screen.getByText("Hover me");
+		let tooltip = screen.getByRole("tooltip");
 		expect(trigger).toHaveAttribute("aria-describedby", tooltip.id);
 	});
 	it("supports defaultOpen for uncontrolled initial state", () => {

@@ -35,11 +35,11 @@ export interface CreateA11yInspectorReturn {
  * or hide the panel. The scan runs once on mount and again on `refresh()`.
  */
 export function createA11yInspector(options: CreateA11yInspectorOptions = {}): CreateA11yInspectorReturn {
-	let checker=options.checker ?? new A11yChecker();
-	let getRoot=options.root ?? (() => document);
-	let [issues, setIssues]=createSignal<A11yIssue[]>([]);
-	let [isOpen, setOpen]=createSignal<boolean>(options.initiallyOpen ?? false);
-	let refresh=() => {
+	let checker = options.checker ?? new A11yChecker();
+	let getRoot = options.root ?? (() => document);
+	let [issues, setIssues] = createSignal<A11yIssue[]>([]);
+	let [isOpen, setOpen] = createSignal<boolean>(options.initiallyOpen ?? false);
+	let refresh = () => {
 		try {
 			setIssues(checker.check(getRoot()));
 		} catch {
@@ -49,8 +49,8 @@ export function createA11yInspector(options: CreateA11yInspectorOptions = {}): C
 	onMount(() => {
 		refresh();
 	});
-	let errorCount=() => issues().filter(i => i.severity==="error").length;
-	let warningCount=() => issues().filter(i => i.severity==="warning").length;
-	let toggle=() => setOpen(!isOpen());
+	let errorCount = () => issues().filter(i => i.severity === "error").length;
+	let warningCount = () => issues().filter(i => i.severity === "warning").length;
+	let toggle = () => setOpen(!isOpen());
 	return {issues, errorCount, warningCount, isOpen, toggle, setOpen, refresh, checker};
 }

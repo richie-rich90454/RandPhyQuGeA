@@ -14,29 +14,19 @@ beforeEach(() => {
 });
 describe("ControlToolbarBottom", () => {
 	it("renders single controls when default mode is Single and no session", () => {
-		render(() => (
-			<ControlToolbarBottom
-				singleControls={<span data-testid="single">Single</span>}
-				mentalControls={<span data-testid="mental">Mental</span>}
-			/>
-		));
+		render(() => <ControlToolbarBottom singleControls={<span data-testid="single">Single</span>} mentalControls={<span data-testid="mental">Mental</span>} />);
 		expect(screen.getByTestId("single")).toBeInTheDocument();
 		expect(screen.queryByTestId("mental")).not.toBeInTheDocument();
 	});
 	it("renders mental controls when default mode is Mental", () => {
 		useSettingsStore.setState({...useSettingsStore.getState(), defaultMode: "Mental"});
-		render(() => (
-			<ControlToolbarBottom
-				singleControls={<span data-testid="single">Single</span>}
-				mentalControls={<span data-testid="mental">Mental</span>}
-			/>
-		));
+		render(() => <ControlToolbarBottom singleControls={<span data-testid="single">Single</span>} mentalControls={<span data-testid="mental">Mental</span>} />);
 		expect(screen.getByTestId("mental")).toBeInTheDocument();
 		expect(screen.queryByTestId("single")).not.toBeInTheDocument();
 	});
 	it("uses the active session mode over the default mode", () => {
 		useSettingsStore.setState({...useSettingsStore.getState(), defaultMode: "Single"});
-		let session: Session={
+		let session: Session = {
 			id: "s1",
 			specification: emptySpec(),
 			questions: [],
@@ -49,12 +39,7 @@ describe("ControlToolbarBottom", () => {
 			sessionStartTime: 0,
 		};
 		usePracticeStore.setState({session});
-		render(() => (
-			<ControlToolbarBottom
-				singleControls={<span data-testid="single">Single</span>}
-				mentalControls={<span data-testid="mental">Mental</span>}
-			/>
-		));
+		render(() => <ControlToolbarBottom singleControls={<span data-testid="single">Single</span>} mentalControls={<span data-testid="mental">Mental</span>} />);
 		expect(screen.getByTestId("mental")).toBeInTheDocument();
 	});
 	it("renders nothing for a mode when its slot is not provided", () => {

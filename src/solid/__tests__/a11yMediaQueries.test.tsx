@@ -1,8 +1,8 @@
 import {describe, it, expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
-let globalsCss=readFileSync(join(process.cwd(), "src", "solid", "styles", "globals.css"), "utf-8");
-let switchCss=readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Switch.module.css"), "utf-8");
+let globalsCss = readFileSync(join(process.cwd(), "src", "solid", "styles", "globals.css"), "utf-8");
+let switchCss = readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Switch.module.css"), "utf-8");
 describe("prefers-reduced-motion honored globally", () => {
 	it("globals.css defines a prefers-reduced-motion media query", () => {
 		expect(globalsCss).toContain("@media (prefers-reduced-motion: reduce)");

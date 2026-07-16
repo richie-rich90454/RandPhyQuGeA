@@ -11,54 +11,56 @@ export interface SliderProps {
 	hint?: JSXElement;
 	class?: string;
 }
-let idCounter=0;
+let idCounter = 0;
 function generateId(): string {
-	idCounter=idCounter+1;
+	idCounter = idCounter + 1;
 	return `solid-slider-${idCounter}`;
 }
 /** Dual-thumb range slider with a filled track between the two thumbs. */
 export function Slider(props: SliderProps): JSX.Element {
-	let [local]=splitProps(props, ["min", "max", "value", "onChange", "label", "error", "hint", "class"]);
-	let baseId=generateId();
-	let labelId=() => `${baseId}-label`;
-	let minInputId=() => `${baseId}-min`;
-	let maxInputId=() => `${baseId}-max`;
-	let errorId=() => `${baseId}-error`;
-	let hintId=() => `${baseId}-hint`;
-	let isCollapsed=createMemo(() => local.min === local.max);
-	let minValue=createMemo(() => isCollapsed() ? local.min : (local.value[0] ?? local.min));
-	let maxValue=createMemo(() => isCollapsed() ? local.max : (local.value[1] ?? local.max));
-	let left=createMemo(() => {
-		let range=local.max-local.min;
+	let [local] = splitProps(props, ["min", "max", "value", "onChange", "label", "error", "hint", "class"]);
+	let baseId = generateId();
+	let labelId = () => `${baseId}-label`;
+	let minInputId = () => `${baseId}-min`;
+	let maxInputId = () => `${baseId}-max`;
+	let errorId = () => `${baseId}-error`;
+	let hintId = () => `${baseId}-hint`;
+	let isCollapsed = createMemo(() => local.min === local.max);
+	let minValue = createMemo(() => (isCollapsed() ? local.min : (local.value[0] ?? local.min)));
+	let maxValue = createMemo(() => (isCollapsed() ? local.max : (local.value[1] ?? local.max)));
+	let left = createMemo(() => {
+		let range = local.max - local.min;
 		if (range === 0) return 0;
-		return ((minValue()-local.min)/range)*100;
+		return ((minValue() - local.min) / range) * 100;
 	});
-	let width=createMemo(() => {
-		let range=local.max-local.min;
+	let width = createMemo(() => {
+		let range = local.max - local.min;
 		if (range === 0) return 0;
-		return ((maxValue()-minValue())/range)*100;
+		return ((maxValue() - minValue()) / range) * 100;
 	});
-	let describedBy=() => [local.error ? errorId() : null, local.hint ? hintId() : null].filter(Boolean).join(" ") || undefined;
-	let minText=() => isCollapsed() ? `${local.min}` : `${minValue()}`;
-	let maxText=() => isCollapsed() ? `${local.max}` : `${maxValue()}`;
-	let minAriaLabel=() => local.label ? `Minimum ${local.label}` : "Minimum value";
-	let maxAriaLabel=() => local.label ? `Maximum ${local.label}` : "Maximum value";
-	let handleMinChange=(event: Event) => {
+	let describedBy = () => [local.error ? errorId() : null, local.hint ? hintId() : null].filter(Boolean).join(" ") || undefined;
+	let minText = () => (isCollapsed() ? `${local.min}` : `${minValue()}`);
+	let maxText = () => (isCollapsed() ? `${local.max}` : `${maxValue()}`);
+	let minAriaLabel = () => (local.label ? `Minimum ${local.label}` : "Minimum value");
+	let maxAriaLabel = () => (local.label ? `Maximum ${local.label}` : "Maximum value");
+	let handleMinChange = (event: Event) => {
 		if (isCollapsed()) return;
-		let target=event.target as HTMLInputElement;
-		let next=Math.min(Number(target.value), maxValue()-1);
+		let target = event.target as HTMLInputElement;
+		let next = Math.min(Number(target.value), maxValue() - 1);
 		local.onChange([next, maxValue()]);
 	};
-	let handleMaxChange=(event: Event) => {
+	let handleMaxChange = (event: Event) => {
 		if (isCollapsed()) return;
-		let target=event.target as HTMLInputElement;
-		let next=Math.max(Number(target.value), minValue()+1);
+		let target = event.target as HTMLInputElement;
+		let next = Math.max(Number(target.value), minValue() + 1);
 		local.onChange([minValue(), next]);
 	};
 	return (
 		<div class={`${styles.slider} ${local.class ?? ""}`}>
 			<Show when={local.label}>
-				<label id={labelId()} for={minInputId()} class={styles.label}>{local.label}</label>
+				<label id={labelId()} for={minInputId()} class={styles.label}>
+					{local.label}
+				</label>
 			</Show>
 			<div class={styles.trackWrap}>
 				<div class={styles.track} />
@@ -97,10 +99,14 @@ export function Slider(props: SliderProps): JSX.Element {
 				/>
 			</div>
 			<Show when={local.error}>
-				<p id={errorId()} class={styles.error}>{local.error}</p>
+				<p id={errorId()} class={styles.error}>
+					{local.error}
+				</p>
 			</Show>
 			<Show when={local.hint}>
-				<p id={hintId()} class={styles.hint}>{local.hint}</p>
+				<p id={hintId()} class={styles.hint}>
+					{local.hint}
+				</p>
 			</Show>
 		</div>
 	);

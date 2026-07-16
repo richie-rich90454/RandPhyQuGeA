@@ -3,10 +3,12 @@ import {describe, it, expect, vi, beforeEach, afterEach} from "vitest";
 import type {JSX} from "solid-js";
 import {ToastProvider, useToast} from "../Toast";
 function ToastConsumer(props: {message: string; variant?: "success" | "error" | "info" | "warning"; duration?: number}): JSX.Element {
-	let api=useToast();
-	let handleClick=() => api.toast({message: props.message, variant: props.variant, duration: props.duration});
+	let api = useToast();
+	let handleClick = () => api.toast({message: props.message, variant: props.variant, duration: props.duration});
 	return (
-		<button type="button" onClick={handleClick}>Push</button>
+		<button type="button" onClick={handleClick}>
+			Push
+		</button>
 	);
 }
 describe("Toast", () => {
@@ -17,7 +19,11 @@ describe("Toast", () => {
 		vi.useRealTimers();
 	});
 	it("renders nothing initially", () => {
-		render(() => <ToastProvider><div>No toast yet</div></ToastProvider>);
+		render(() => (
+			<ToastProvider>
+				<div>No toast yet</div>
+			</ToastProvider>
+		));
 		expect(screen.queryByRole("status")).not.toBeInTheDocument();
 	});
 	it("shows a toast when toast() is called", () => {

@@ -9,19 +9,21 @@ function makeSpec(): Specification {
 		units: [{id: "u1", name: "Unit", description: ""}],
 		topics: [{id: "t1", name: "Topic", unit_id: "u1", description: ""}],
 		skills: [{id: "s1", name: "Skill", topic_id: "t1", description: ""}],
-		templates: [{
-			id: "tpl1",
-			topic_id: "t1",
-			skill_id: "s1",
-			question_type: "SA",
-			difficulty: 1,
-			text_template: "Question",
-			answer_expression: "1",
-			solution_template: "",
-			solution_latex_template: "",
-			variable_definitions: [],
-			distractor_expressions: [],
-		}],
+		templates: [
+			{
+				id: "tpl1",
+				topic_id: "t1",
+				skill_id: "s1",
+				question_type: "SA",
+				difficulty: 1,
+				text_template: "Question",
+				answer_expression: "1",
+				solution_template: "",
+				solution_latex_template: "",
+				variable_definitions: [],
+				distractor_expressions: [],
+			},
+		],
 	};
 }
 function LoadingView(): JSX.Element {
@@ -34,7 +36,7 @@ describe("solid specStore", () => {
 	});
 	describe("initial state", () => {
 		it("has null specification and defaults", () => {
-			const state: SpecState=useSpecStore.getState();
+			const state: SpecState = useSpecStore.getState();
 			expect(state.specification).toBeNull();
 			expect(state.loading).toBe(false);
 			expect(state.error).toBeNull();
@@ -43,7 +45,7 @@ describe("solid specStore", () => {
 	});
 	describe("setSpecification", () => {
 		it("updates the specification", () => {
-			const spec=makeSpec();
+			const spec = makeSpec();
 			useSpecStore.getState().setSpecification(spec);
 			expect(useSpecStore.getState().specification).toBe(spec);
 		});
@@ -56,7 +58,7 @@ describe("solid specStore", () => {
 	});
 	describe("setError", () => {
 		it("updates the typed error", () => {
-			const error: SpecError={type: "parse", message: "bad spec", details: "line 1"};
+			const error: SpecError = {type: "parse", message: "bad spec", details: "line 1"};
 			useSpecStore.getState().setError(error);
 			expect(useSpecStore.getState().error).toBe(error);
 		});
@@ -69,13 +71,13 @@ describe("solid specStore", () => {
 	});
 	describe("reset", () => {
 		it("restores the initial state", () => {
-			const spec=makeSpec();
+			const spec = makeSpec();
 			useSpecStore.getState().setSpecification(spec);
 			useSpecStore.getState().setLoading(true);
 			useSpecStore.getState().setError({type: "network", message: "fail"});
 			useSpecStore.getState().setEmpty(false);
 			useSpecStore.getState().reset();
-			const state=useSpecStore.getState();
+			const state = useSpecStore.getState();
 			expect(state.specification).toBeNull();
 			expect(state.loading).toBe(false);
 			expect(state.error).toBeNull();

@@ -31,28 +31,30 @@ export interface CreatePerfBudgetReturn {
  * observer is disconnected on owner disposal.
  */
 export function createPerfBudget(options: CreatePerfBudgetOptions = {}): CreatePerfBudgetReturn {
-	let budget=new PerfBudget(options.budget ?? PerfBudget.defaultBudget());
-	let getEntries=options.getEntries ?? (() => {
-		if (typeof performance === "undefined") return [];
-		return performance.getEntriesByType("resource") as PerformanceResourceTiming[];
-	});
-	let [results, setResults]=createSignal<BudgetResult[]>(budget.check([]));
-	let compute=(): BudgetResult[] => {
-		let raw=getEntries();
-		let measurements: ResourceMeasurement[]=raw.map(entry => ({
+	let budget = new PerfBudget(options.budget ?? PerfBudget.defaultBudget());
+	let getEntries =
+		options.getEntries ??
+		(() => {
+			if (typeof performance === "undefined") return [];
+			return performance.getEntriesByType("resource") as PerformanceResourceTiming[];
+		});
+	let [results, setResults] = createSignal<BudgetResult[]>(budget.check([]));
+	let compute = (): BudgetResult[] => {
+		let raw = getEntries();
+		let measurements: ResourceMeasurement[] = raw.map(entry => ({
 			category: PerfBudget.classifyUrl(entry.name),
 			bytes: entry.transferSize || entry.encodedBodySize || 0,
 			label: entry.name,
 		}));
 		return budget.check(measurements);
 	};
-	let refresh=() => {
+	let refresh = () => {
 		setResults(compute());
 	};
 	onMount(() => {
 		refresh();
 		if (options.observe && typeof PerformanceObserver !== "undefined") {
-			let observer=new PerformanceObserver(() => {
+			let observer = new PerformanceObserver(() => {
 				refresh();
 			});
 			observer.observe({type: "resource", buffered: false});
@@ -61,6 +63,6 @@ export function createPerfBudget(options: CreatePerfBudgetOptions = {}): CreateP
 			});
 		}
 	});
-	let allPassed=() => results().every(r => r.passed);
+	let allPassed = () => results().every(r => r.passed);
 	return {results, allPassed, refresh, budget};
 }

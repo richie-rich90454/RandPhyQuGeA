@@ -8,7 +8,7 @@ describe("AppShell", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let skipLink=screen.getByRole("link", {name: /skip to main content/i});
+		let skipLink = screen.getByRole("link", {name: /skip to main content/i});
 		expect(skipLink.getAttribute("href")).toBe("#main-content");
 	});
 	it("renders top navigation bar with wordmark", () => {
@@ -25,7 +25,7 @@ describe("AppShell", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let main=screen.getByRole("main");
+		let main = screen.getByRole("main");
 		expect(main.id).toBe("main-content");
 		expect(main.getAttribute("tabindex")).toBe("-1");
 	});
@@ -35,7 +35,7 @@ describe("AppShell", () => {
 				<div>Main child</div>
 			</AppShell>
 		));
-		let footer=screen.getByRole("contentinfo");
+		let footer = screen.getByRole("contentinfo");
 		expect(footer.textContent).toContain("RandPhyQuGeA v");
 		expect(footer.textContent).toContain("2026 Richard");
 	});
@@ -46,7 +46,7 @@ describe("AppShell", () => {
 			</AppShell>
 		));
 		expect(screen.getByTestId("toolbar")).toBeInTheDocument();
-		let main=screen.getByRole("main");
+		let main = screen.getByRole("main");
 		expect(main.contains(screen.getByTestId("main-child"))).toBe(true);
 	});
 });

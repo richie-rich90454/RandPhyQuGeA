@@ -2,11 +2,11 @@ import {render, screen, fireEvent, waitFor} from "@solidjs/testing-library";
 import {describe, it, expect, beforeEach, afterEach, vi} from "vitest";
 import type {JSX} from "solid-js";
 import {ToastProvider} from "../../components/ui/ToastProvider";
-vi.mock("../../../services/physicsCore", async (importOriginal) => {
-	let actual=await importOriginal<typeof import("../../../services/physicsCore")>();
+vi.mock("../../../services/physicsCore", async importOriginal => {
+	let actual = await importOriginal<typeof import("../../../services/physicsCore")>();
 	return {
 		...actual,
-		loadDefaultSpec: vi.fn(actual.loadDefaultSpec),
+		loadDefaultSpec: vi.fn<() => Promise<string>>(actual.loadDefaultSpec),
 	};
 });
 import {loadDefaultSpec} from "../../../services/physicsCore";
@@ -14,7 +14,7 @@ import {SpecEditor} from "../SpecEditor";
 function renderWithProvider(fn: () => JSX.Element): ReturnType<typeof render> {
 	return render(() => <ToastProvider>{fn()}</ToastProvider>);
 }
-const BASIC_MC_SPEC=[
+const BASIC_MC_SPEC = [
 	"[UNIT]",
 	"Id: U1",
 	"Name: Mechanics",
@@ -41,10 +41,10 @@ const BASIC_MC_SPEC=[
 	"Distractor: (v + v0) / t",
 	"Distractor: v / t",
 ].join("\n");
-const INVALID_SPEC="[UNIT]\nId: U1\nName: M\n[BOGUS]\nKey: value";
+const INVALID_SPEC = "[UNIT]\nId: U1\nName: M\n[BOGUS]\nKey: value";
 beforeEach(() => {
 	localStorage.clear();
-	window.location.hash="";
+	window.location.hash = "";
 });
 afterEach(() => {
 	vi.mocked(loadDefaultSpec).mockClear();
@@ -80,13 +80,13 @@ describe("SpecEditor page", () => {
 	});
 	it("updates the textarea value when typing", () => {
 		renderWithProvider(() => <SpecEditor />);
-		let textarea=screen.getByLabelText(/specification text editor/i);
+		let textarea = screen.getByLabelText(/specification text editor/i);
 		fireEvent.input(textarea, {target: {value: "[UNIT]"}});
 		expect((textarea as HTMLTextAreaElement).value).toBe("[UNIT]");
 	});
 	it("clears the textarea when the Clear button is clicked", () => {
 		renderWithProvider(() => <SpecEditor />);
-		let textarea=screen.getByLabelText(/specification text editor/i);
+		let textarea = screen.getByLabelText(/specification text editor/i);
 		fireEvent.input(textarea, {target: {value: "[UNIT]"}});
 		fireEvent.click(screen.getByRole("button", {name: /^clear$/i}));
 		expect((textarea as HTMLTextAreaElement).value).toBe("");
@@ -94,14 +94,17 @@ describe("SpecEditor page", () => {
 	it("loads the default spec when the Load default spec button is clicked", async () => {
 		renderWithProvider(() => <SpecEditor />);
 		fireEvent.click(screen.getByRole("button", {name: /load default spec/i}));
-		await waitFor(() => {
-			let textarea=screen.getByLabelText(/specification text editor/i);
-			expect((textarea as HTMLTextAreaElement).value.length).toBeGreaterThan(0);
-		}, {timeout: 3000});
+		await waitFor(
+			() => {
+				let textarea = screen.getByLabelText(/specification text editor/i);
+				expect((textarea as HTMLTextAreaElement).value.length).toBeGreaterThan(0);
+			},
+			{timeout: 3000},
+		);
 	});
 	it("parses a valid spec and shows the valid status with stats", async () => {
 		renderWithProvider(() => <SpecEditor />);
-		let textarea=screen.getByLabelText(/specification text editor/i);
+		let textarea = screen.getByLabelText(/specification text editor/i);
 		fireEvent.input(textarea, {target: {value: BASIC_MC_SPEC}});
 		await waitFor(() => expect(screen.getByText("Parsed successfully")).toBeInTheDocument(), {timeout: 3000});
 		expect(screen.getByText("Units")).toBeInTheDocument();
@@ -111,20 +114,20 @@ describe("SpecEditor page", () => {
 	});
 	it("generates and shows a sample question for a valid spec", async () => {
 		renderWithProvider(() => <SpecEditor />);
-		let textarea=screen.getByLabelText(/specification text editor/i);
+		let textarea = screen.getByLabelText(/specification text editor/i);
 		fireEvent.input(textarea, {target: {value: BASIC_MC_SPEC}});
 		await waitFor(() => expect(screen.getByText(/A car accelerates from/)).toBeInTheDocument(), {timeout: 3000});
 		expect(screen.getByText("Answer:")).toBeInTheDocument();
 	});
 	it("shows an error status for an invalid spec", async () => {
 		renderWithProvider(() => <SpecEditor />);
-		let textarea=screen.getByLabelText(/specification text editor/i);
+		let textarea = screen.getByLabelText(/specification text editor/i);
 		fireEvent.input(textarea, {target: {value: INVALID_SPEC}});
 		await waitFor(() => expect(screen.getByText("Error")).toBeInTheDocument(), {timeout: 3000});
 		expect(screen.getByText("Generation failed")).toBeInTheDocument();
 	});
 	it("clears the hash when the back link is clicked", () => {
-		window.location.hash="/spec-editor";
+		window.location.hash = "/spec-editor";
 		renderWithProvider(() => <SpecEditor />);
 		fireEvent.click(screen.getByRole("button", {name: /back to app/i}));
 		expect(window.location.hash).toBe("");
@@ -133,9 +136,12 @@ describe("SpecEditor page", () => {
 		vi.mocked(loadDefaultSpec).mockRejectedValueOnce(new Error("network error"));
 		renderWithProvider(() => <SpecEditor />);
 		fireEvent.click(screen.getByRole("button", {name: /load default spec/i}));
-		await waitFor(() => {
-			expect(screen.getByText(/Failed to load default spec: network error/)).toBeInTheDocument();
-		}, {timeout: 3000});
+		await waitFor(
+			() => {
+				expect(screen.getByText(/Failed to load default spec: network error/)).toBeInTheDocument();
+			},
+			{timeout: 3000},
+		);
 	});
 	it("renders the Notifications toast region when mounted in ToastProvider (preventive fix, task 5.45)", () => {
 		renderWithProvider(() => <SpecEditor />);

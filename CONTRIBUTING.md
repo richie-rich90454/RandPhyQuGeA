@@ -36,20 +36,20 @@ npm install
 
 ### Common Commands
 
-| Command                 | Description                                                                |
-| ----------------------- | -------------------------------------------------------------------------- |
-| `npm run dev:solid`     | Start the Solid Vite dev server                                            |
-| `npm run build:solid`   | Build the Solid app into `dist/`                                           |
-| `npm run preview`       | Preview the production build locally                                       |
-| `npm test`              | Run the full Vitest suite                                                  |
-| `npm run test:coverage` | Run tests with coverage                                                    |
-| `npm run test:watch`    | Run Vitest in watch mode                                                   |
-| `npm run typecheck:solid` | `tsc --noEmit -p tsconfig.solid.json` (Solid tsconfig)                   |
-| `npm run typecheck`     | `tsc --noEmit` (root tsconfig)                                             |
-| `npm run lint`          | oxlint over `src/`                                                         |
-| `npm run lint:fix`      | oxlint over `src/` with `--fix`                                            |
-| `npm run format:check`  | oxfmt check over the repository                                            |
-| `npm run format:write`  | oxfmt write over the repository                                            |
+| Command                   | Description                                            |
+| ------------------------- | ------------------------------------------------------ |
+| `npm run dev:solid`       | Start the Solid Vite dev server                        |
+| `npm run build:solid`     | Build the Solid app into `dist/`                       |
+| `npm run preview`         | Preview the production build locally                   |
+| `npm test`                | Run the full Vitest suite                              |
+| `npm run test:coverage`   | Run tests with coverage                                |
+| `npm run test:watch`      | Run Vitest in watch mode                               |
+| `npm run typecheck:solid` | `tsc --noEmit -p tsconfig.solid.json` (Solid tsconfig) |
+| `npm run typecheck`       | `tsc --noEmit` (root tsconfig)                         |
+| `npm run lint`            | oxlint over `src/`                                     |
+| `npm run lint:fix`        | oxlint over `src/` with `--fix`                        |
+| `npm run format:check`    | oxfmt check over the repository                        |
+| `npm run format:write`    | oxfmt write over the repository                        |
 
 The Solid tsconfig (`tsconfig.solid.json`) sets `jsx: "preserve"` and `jsxImportSource: "solid-js"` and includes `src/solid`. Keep both tsconfigs green.
 
@@ -168,7 +168,7 @@ export interface MyComponentProps {
 	disabled?: boolean;
 }
 export function MyComponent(props: MyComponentProps): JSX.Element {
-	let [local, rest]=splitProps(props, ["label", "disabled"]);
+	let [local, rest] = splitProps(props, ["label", "disabled"]);
 	return (
 		<button class={styles.root} disabled={local.disabled} {...rest}>
 			{local.label}
@@ -265,15 +265,15 @@ Do not commit while any gate is failing. Run `npm run build:solid` as well befor
 
 ## Keyboard Shortcuts (DX)
 
-| Shortcut       | Action                         |
-| -------------- | ------------------------------ |
-| `Ctrl+K`       | Open command palette           |
-| `Ctrl+G`       | Generate new question          |
-| `Shift+Enter`  | Check answer                   |
-| `Ctrl+1`       | Switch to Single mode          |
-| `Ctrl+2`       | Switch to Mental mode          |
-| `Ctrl+,`       | Open Settings                  |
-| `Ctrl+Shift+T` | Toggle theme                   |
+| Shortcut       | Action                |
+| -------------- | --------------------- |
+| `Ctrl+K`       | Open command palette  |
+| `Ctrl+G`       | Generate new question |
+| `Shift+Enter`  | Check answer          |
+| `Ctrl+1`       | Switch to Single mode |
+| `Ctrl+2`       | Switch to Mental mode |
+| `Ctrl+,`       | Open Settings         |
+| `Ctrl+Shift+T` | Toggle theme          |
 
 ## License
 

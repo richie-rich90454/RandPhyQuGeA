@@ -33,22 +33,22 @@ export interface CreateSpecLoaderReturn {
  * lazily from the {@link useServiceProvider} core.
  */
 export function createSpecLoader(options: CreateSpecLoaderOptions = {}): CreateSpecLoaderReturn {
-	let store=options.specStore ?? useSpecStore;
-	let loadDefault=options.loadDefaultSpec ?? loadDefaultSpec;
-	let cachedSpecService: ISpecService | null=null;
-	let resolveSpecService=(): ISpecService => {
+	let store = options.specStore ?? useSpecStore;
+	let loadDefault = options.loadDefaultSpec ?? loadDefaultSpec;
+	let cachedSpecService: ISpecService | null = null;
+	let resolveSpecService = (): ISpecService => {
 		if (options.specService) {
 			return options.specService;
 		}
 		if (!cachedSpecService) {
-			let {core}=useServiceProvider();
-			cachedSpecService=new SpecService(new PhysicsService(core));
+			let {core} = useServiceProvider();
+			cachedSpecService = new SpecService(new PhysicsService(core));
 		}
 		return cachedSpecService;
 	};
-	let [loading, setLoading]=createSignal(false);
-	let [error, setError]=createSignal<SpecError | null>(null);
-	let load=async () => {
+	let [loading, setLoading] = createSignal(false);
+	let [error, setError] = createSignal<SpecError | null>(null);
+	let load = async () => {
 		setLoading(true);
 		setError(null);
 		store.getState().setLoading(true);
@@ -56,10 +56,10 @@ export function createSpecLoader(options: CreateSpecLoaderOptions = {}): CreateS
 		store.getState().setEmpty(false);
 		let text: string;
 		try {
-			text=await loadDefault();
+			text = await loadDefault();
 		} catch (err) {
-			let message=err instanceof Error ? err.message : String(err);
-			let specError: SpecError={type: err instanceof Error ? "network" : "unknown", message};
+			let message = err instanceof Error ? err.message : String(err);
+			let specError: SpecError = {type: err instanceof Error ? "network" : "unknown", message};
 			setError(specError);
 			store.getState().setError(specError);
 			store.getState().setLoading(false);
@@ -67,16 +67,16 @@ export function createSpecLoader(options: CreateSpecLoaderOptions = {}): CreateS
 			return;
 		}
 		try {
-			let specService=resolveSpecService();
-			let specification: Specification=await specService.loadSpec(text);
+			let specService = resolveSpecService();
+			let specification: Specification = await specService.loadSpec(text);
 			store.getState().setSpecification(specification);
 			store.getState().setLoading(false);
-			store.getState().setEmpty(specification.topics.length===0 && specification.templates.length===0);
+			store.getState().setEmpty(specification.topics.length === 0 && specification.templates.length === 0);
 			setLoading(false);
 		} catch (err) {
-			let message=err instanceof Error ? err.message : String(err);
-			let details=err instanceof Error ? err.stack : undefined;
-			let specError: SpecError={type: err instanceof Error ? "parse" : "unknown", message, details};
+			let message = err instanceof Error ? err.message : String(err);
+			let details = err instanceof Error ? err.stack : undefined;
+			let specError: SpecError = {type: err instanceof Error ? "parse" : "unknown", message, details};
 			setError(specError);
 			store.getState().setError(specError);
 			store.getState().setLoading(false);

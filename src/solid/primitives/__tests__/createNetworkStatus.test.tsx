@@ -3,15 +3,15 @@ import {describe, it, expect, beforeEach, vi} from "vitest";
 import type {JSX} from "solid-js";
 import {createNetworkStatus} from "../createNetworkStatus";
 import type {CreateNetworkStatusReturn} from "../createNetworkStatus";
-let captured: CreateNetworkStatusReturn | null=null;
+let captured: CreateNetworkStatusReturn | null = null;
 function makeRoot(opts?: Parameters<typeof createNetworkStatus>[0]): () => JSX.Element {
 	return () => {
-		captured=createNetworkStatus(opts);
+		captured = createNetworkStatus(opts);
 		return <div>ns</div>;
 	};
 }
 beforeEach(() => {
-	captured=null;
+	captured = null;
 	Object.defineProperty(navigator, "onLine", {value: true, configurable: true, writable: true});
 });
 describe("createNetworkStatus", () => {
@@ -77,14 +77,14 @@ describe("createNetworkStatus", () => {
 		expect(captured!.online()).toBe(false);
 	});
 	it("subscribes to window online/offline events when listen is true", () => {
-		let addSpy=vi.spyOn(window, "addEventListener");
+		let addSpy = vi.spyOn(window, "addEventListener");
 		render(makeRoot({listen: true}));
 		expect(addSpy).toHaveBeenCalledWith("online", expect.any(Function));
 		expect(addSpy).toHaveBeenCalledWith("offline", expect.any(Function));
 		addSpy.mockRestore();
 	});
 	it("does not subscribe when listen is false", () => {
-		let addSpy=vi.spyOn(window, "addEventListener");
+		let addSpy = vi.spyOn(window, "addEventListener");
 		render(makeRoot({listen: false}));
 		expect(addSpy).not.toHaveBeenCalledWith("online", expect.any(Function));
 		expect(addSpy).not.toHaveBeenCalledWith("offline", expect.any(Function));
@@ -105,8 +105,8 @@ describe("createNetworkStatus", () => {
 		expect(captured!.online()).toBe(true);
 	});
 	it("removes window listeners on unmount", () => {
-		let removeSpy=vi.spyOn(window, "removeEventListener");
-		let rendered=render(makeRoot({listen: true}));
+		let removeSpy = vi.spyOn(window, "removeEventListener");
+		let rendered = render(makeRoot({listen: true}));
 		rendered.unmount();
 		expect(removeSpy).toHaveBeenCalledWith("online", expect.any(Function));
 		expect(removeSpy).toHaveBeenCalledWith("offline", expect.any(Function));

@@ -42,32 +42,32 @@ export interface AchievementsState {
  * notification toast/portal can surface them without re-deriving the diff.
  */
 export function createAchievements(options: CreateAchievementsOptions = {}): AchievementsState {
-	let instance=new Achievements(options.definitions);
+	let instance = new Achievements(options.definitions);
 	for (let id of options.unlockedIds ?? []) {
 		instance.markUnlocked(id);
 	}
-	let onUnlock=options.onUnlock;
-	let [unlockedIds, setUnlockedIds]=createSignal<string[]>(instance.unlockedIds());
-	let sync=() => {
+	let onUnlock = options.onUnlock;
+	let [unlockedIds, setUnlockedIds] = createSignal<string[]>(instance.unlockedIds());
+	let sync = () => {
 		setUnlockedIds(instance.unlockedIds());
 	};
-	let check=(stats: AchievementStats): AchievementDefinition[] => {
-		let newly=instance.check(stats);
+	let check = (stats: AchievementStats): AchievementDefinition[] => {
+		let newly = instance.check(stats);
 		if (newly.length > 0) {
 			sync();
 			onUnlock?.(newly);
 		}
 		return newly;
 	};
-	let markUnlocked=(id: string): boolean => {
-		let wasUnlocked=instance.isUnlocked(id);
-		let ok=instance.markUnlocked(id);
+	let markUnlocked = (id: string): boolean => {
+		let wasUnlocked = instance.isUnlocked(id);
+		let ok = instance.markUnlocked(id);
 		if (ok && !wasUnlocked) {
 			sync();
 		}
 		return ok;
 	};
-	let reset=() => {
+	let reset = () => {
 		instance.reset();
 		sync();
 	};

@@ -8,7 +8,7 @@
  * size. The checker is deterministic and side-effect free so it can be unit
  * tested without a browser.
  */
-export type BudgetCategory="script" | "style" | "font" | "image" | "other";
+export type BudgetCategory = "script" | "style" | "font" | "image" | "other";
 export interface BudgetEntry {
 	/** Resource category the budget applies to. */
 	category: BudgetCategory;
@@ -44,7 +44,7 @@ export class PerfBudget {
 	 * are treated as unlimited (omitted from results).
 	 */
 	constructor(entries: BudgetEntry[]) {
-		this.entries=entries.map(e => ({category: e.category, limitBytes: e.limitBytes}));
+		this.entries = entries.map(e => ({category: e.category, limitBytes: e.limitBytes}));
 	}
 	/** Returns a defensive copy of the budget entries. */
 	getEntries(): BudgetEntry[] {
@@ -53,7 +53,7 @@ export class PerfBudget {
 	/** Returns the budget limit for a category, or 0 when unbounded. */
 	getLimit(category: BudgetCategory): number {
 		for (let entry of this.entries) {
-			if (entry.category===category) return entry.limitBytes;
+			if (entry.category === category) return entry.limitBytes;
 		}
 		return 0;
 	}
@@ -63,25 +63,25 @@ export class PerfBudget {
 	 * budget entry, sorted by category name for stable display.
 	 */
 	check(measurements: ResourceMeasurement[]): BudgetResult[] {
-		let sums=new Map<BudgetCategory, {bytes: number, count: number}>();
+		let sums = new Map<BudgetCategory, {bytes: number; count: number}>();
 		for (let m of measurements) {
-			let entry=sums.get(m.category);
+			let entry = sums.get(m.category);
 			if (entry) {
-				entry.bytes+=m.bytes;
-				entry.count+=1;
+				entry.bytes += m.bytes;
+				entry.count += 1;
 			} else {
 				sums.set(m.category, {bytes: m.bytes, count: 1});
 			}
 		}
-		let results: BudgetResult[]=[];
+		let results: BudgetResult[] = [];
 		for (let budget of this.entries) {
-			let sum=sums.get(budget.category) ?? {bytes: 0, count: 0};
-			let percent=budget.limitBytes>0 ? (sum.bytes/budget.limitBytes)*100 : 0;
+			let sum = sums.get(budget.category) ?? {bytes: 0, count: 0};
+			let percent = budget.limitBytes > 0 ? (sum.bytes / budget.limitBytes) * 100 : 0;
 			results.push({
 				category: budget.category,
 				actualBytes: sum.bytes,
 				limitBytes: budget.limitBytes,
-				passed: sum.bytes<=budget.limitBytes,
+				passed: sum.bytes <= budget.limitBytes,
 				percent,
 				count: sum.count,
 			});
@@ -95,18 +95,18 @@ export class PerfBudget {
 	}
 	/** Format a byte count as a human-readable string (KB or MB). */
 	static formatBytes(bytes: number): string {
-		if (bytes<1024) return `${bytes} B`;
-		if (bytes<1024*1024) return `${(bytes/1024).toFixed(1)} KB`;
-		return `${(bytes/(1024*1024)).toFixed(2)} MB`;
+		if (bytes < 1024) return `${bytes} B`;
+		if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+		return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 	}
 	/** Default budget for the SolidJS surface. */
 	static defaultBudget(): BudgetEntry[] {
 		return [
-			{category: "script", limitBytes: 600*1024},
-			{category: "style", limitBytes: 120*1024},
-			{category: "font", limitBytes: 200*1024},
-			{category: "image", limitBytes: 400*1024},
-			{category: "other", limitBytes: 150*1024},
+			{category: "script", limitBytes: 600 * 1024},
+			{category: "style", limitBytes: 120 * 1024},
+			{category: "font", limitBytes: 200 * 1024},
+			{category: "image", limitBytes: 400 * 1024},
+			{category: "other", limitBytes: 150 * 1024},
 		];
 	}
 	/**
@@ -114,12 +114,13 @@ export class PerfBudget {
 	 * extension. Unknown extensions fall back to "other".
 	 */
 	static classifyUrl(url: string): BudgetCategory {
-		let cleaned=url.split("?")[0] ?? url;
-		let lower=cleaned.toLowerCase();
+		let cleaned = url.split("?")[0] ?? url;
+		let lower = cleaned.toLowerCase();
 		if (lower.endsWith(".js") || lower.endsWith(".mjs") || lower.endsWith(".cjs")) return "script";
 		if (lower.endsWith(".css")) return "style";
 		if (lower.endsWith(".woff") || lower.endsWith(".woff2") || lower.endsWith(".ttf") || lower.endsWith(".otf") || lower.endsWith(".eot")) return "font";
-		if (lower.endsWith(".png") || lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".gif") || lower.endsWith(".svg") || lower.endsWith(".webp") || lower.endsWith(".avif")) return "image";
+		if (lower.endsWith(".png") || lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".gif") || lower.endsWith(".svg") || lower.endsWith(".webp") || lower.endsWith(".avif"))
+			return "image";
 		return "other";
 	}
 }

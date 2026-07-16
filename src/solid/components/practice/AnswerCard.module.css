@@ -36,7 +36,9 @@
 	border: 1px solid var(--border);
 	border-radius: var(--radius-md);
 	resize: vertical;
-	transition: border-color var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+	transition:
+		border-color var(--duration-fast) var(--ease-standard),
+		box-shadow var(--duration-fast) var(--ease-standard);
 }
 .answerInput::placeholder {
 	color: var(--text-subtle);
@@ -96,7 +98,10 @@
 	border-radius: var(--radius-sm);
 	cursor: pointer;
 	align-self: stretch;
-	transition: color var(--duration-fast) var(--ease-out), background var(--duration-fast) var(--ease-out), border-color var(--duration-fast) var(--ease-out);
+	transition:
+		color var(--duration-fast) var(--ease-out),
+		background var(--duration-fast) var(--ease-out),
+		border-color var(--duration-fast) var(--ease-out);
 }
 .clearAnswerBtn:hover {
 	color: var(--text);
@@ -116,7 +121,10 @@
 	border-radius: var(--radius-md);
 	font-size: var(--font-size-md);
 	line-height: var(--line-height-normal);
-	transition: color var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
+	transition:
+		color var(--duration-fast) var(--ease-standard),
+		border-color var(--duration-fast) var(--ease-standard),
+		background var(--duration-fast) var(--ease-standard);
 }
 .mathPreview.hasContent {
 	color: var(--text);
@@ -152,11 +160,22 @@
 	animation: shake 0.4s ease-in-out;
 }
 @keyframes shake {
-	0%, 100% { transform: translateX(0); }
-	20% { transform: translateX(-6px); }
-	40% { transform: translateX(6px); }
-	60% { transform: translateX(-4px); }
-	80% { transform: translateX(4px); }
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	20% {
+		transform: translateX(-6px);
+	}
+	40% {
+		transform: translateX(6px);
+	}
+	60% {
+		transform: translateX(-4px);
+	}
+	80% {
+		transform: translateX(4px);
+	}
 }
 @media (prefers-reduced-motion: reduce) {
 	.shake {

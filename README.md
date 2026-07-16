@@ -25,18 +25,18 @@ A pure-TypeScript physics practice question generator with a SolidJS + CSS Modul
 
 ## Tech Stack
 
-| Layer            | Technology                              | Description                                                                                                                  |
-| ---------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| **UI**           | SolidJS + TypeScript                    | Signals, `createStore`, `Show`/`For`/`Portal`/`Dynamic`, CSS Modules per component                                           |
-| **Styling**      | Vanilla CSS + CSS Modules               | Co-located `*.module.css`; design tokens as CSS custom properties in `globals.css` (light/dark/dim/system). No Tailwind.     |
-| **State**        | Zustand (vanilla) + Solid bridge        | `practiceStore`, `progressStore`, `settingsStore`, `specStore`, `uiStore` consumed via a `createSolidStore` accessor bridge |
-| **Math**         | KaTeX                                   | Fast LaTeX rendering; single engine on main + print                                                                          |
-| **Motion**       | GSAP + CSS transitions                  | `prefers-reduced-motion` guarded                                                                                             |
-| **Physics core** | Pure TypeScript (OOP)                   | `src/lib/physics/` — zero JSX, zero Solid imports                                                                            |
-| **Build**        | Vite                                    | Web build and dev server; `vite-plugin-solid` for the Solid app                                                              |
-| **Testing**      | Vitest + `@solidjs/testing-library`     | Unit tests for the core; smoke tests for Solid components                                                                    |
-| **Linting**      | oxlint                                  | `oxlint src` with a `src/solid/**` override                                                                                  |
-| **Formatting**   | oxfmt                                   | `oxfmt .`                                                                                                                    |
+| Layer            | Technology                          | Description                                                                                                                 |
+| ---------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **UI**           | SolidJS + TypeScript                | Signals, `createStore`, `Show`/`For`/`Portal`/`Dynamic`, CSS Modules per component                                          |
+| **Styling**      | Vanilla CSS + CSS Modules           | Co-located `*.module.css`; design tokens as CSS custom properties in `globals.css` (light/dark/dim/system). No Tailwind.    |
+| **State**        | Zustand (vanilla) + Solid bridge    | `practiceStore`, `progressStore`, `settingsStore`, `specStore`, `uiStore` consumed via a `createSolidStore` accessor bridge |
+| **Math**         | KaTeX                               | Fast LaTeX rendering; single engine on main + print                                                                         |
+| **Motion**       | GSAP + CSS transitions              | `prefers-reduced-motion` guarded                                                                                            |
+| **Physics core** | Pure TypeScript (OOP)               | `src/lib/physics/` — zero JSX, zero Solid imports                                                                           |
+| **Build**        | Vite                                | Web build and dev server; `vite-plugin-solid` for the Solid app                                                             |
+| **Testing**      | Vitest + `@solidjs/testing-library` | Unit tests for the core; smoke tests for Solid components                                                                   |
+| **Linting**      | oxlint                              | `oxlint src` with a `src/solid/**` override                                                                                 |
+| **Formatting**   | oxfmt                               | `oxfmt .`                                                                                                                   |
 
 ## Quick Start
 
@@ -145,15 +145,15 @@ src/
 
 ## Keyboard Shortcuts
 
-| Shortcut       | Action                         |
-| -------------- | ------------------------------ |
-| `Ctrl+K`       | Open command palette           |
-| `Ctrl+G`       | Generate new question          |
-| `Shift+Enter`  | Check answer                   |
-| `Ctrl+1`       | Switch to Single mode          |
-| `Ctrl+2`       | Switch to Mental mode          |
-| `Ctrl+,`       | Open Settings                  |
-| `Ctrl+Shift+T` | Toggle theme                   |
+| Shortcut       | Action                |
+| -------------- | --------------------- |
+| `Ctrl+K`       | Open command palette  |
+| `Ctrl+G`       | Generate new question |
+| `Shift+Enter`  | Check answer          |
+| `Ctrl+1`       | Switch to Single mode |
+| `Ctrl+2`       | Switch to Mental mode |
+| `Ctrl+,`       | Open Settings         |
+| `Ctrl+Shift+T` | Toggle theme          |
 
 ## Contributing
 

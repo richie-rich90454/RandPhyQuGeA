@@ -7,7 +7,7 @@ import {MathRenderer} from "../MathRenderer";
 import {usePracticeStore, selectCurrentQuestion, type AnswerFeedback} from "../../stores/practiceStore";
 import type {WorkedSolution} from "../../../lib/physics/solution/WorkedSolution";
 import styles from "./ResultsCard.module.css";
-type SolutionRender={kind: "katex"; latex: string} | {kind: "text"; text: string};
+type SolutionRender = {kind: "katex"; latex: string} | {kind: "text"; text: string};
 function EnvelopeIcon(): JSX.Element {
 	return (
 		<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
@@ -57,13 +57,13 @@ export interface ResultsCardProps {
  * Reduced-motion preference is handled via CSS media queries.
  */
 export function ResultsCard(props: ResultsCardProps): JSX.Element {
-	let showFeedback=usePracticeStore(s => s.showFeedback);
-	let lastResult=usePracticeStore(s => s.lastResult);
-	let currentQuestion=usePracticeStore(selectCurrentQuestion);
-	let solutionRender=createMemo((): SolutionRender | null => {
-		let q=currentQuestion();
+	let showFeedback = usePracticeStore(s => s.showFeedback);
+	let lastResult = usePracticeStore(s => s.lastResult);
+	let currentQuestion = usePracticeStore(selectCurrentQuestion);
+	let solutionRender = createMemo((): SolutionRender | null => {
+		let q = currentQuestion();
 		if (!q) return null;
-		let latex=q.solution_latex;
+		let latex = q.solution_latex;
 		if (latex && latex.trim() !== "") {
 			return {kind: "katex", latex};
 		}
@@ -72,7 +72,7 @@ export function ResultsCard(props: ResultsCardProps): JSX.Element {
 		}
 		return null;
 	});
-	let hasFeedback=createMemo(() => showFeedback() && lastResult() !== null && currentQuestion() !== null);
+	let hasFeedback = createMemo(() => showFeedback() && lastResult() !== null && currentQuestion() !== null);
 	return (
 		<Card class={styles.resultsCard} variant="default" padding="none">
 			<CardHeader>
@@ -80,9 +80,7 @@ export function ResultsCard(props: ResultsCardProps): JSX.Element {
 			</CardHeader>
 			<CardContent>
 				<div id="answer-results" class={styles.resultsDisplay} role="status" aria-live="polite" aria-atomic="true">
-					<Show when={hasFeedback()} fallback={
-						<EmptyState illustration={<EnvelopeIcon />} title="Your results will appear here after checking" />
-					}>
+					<Show when={hasFeedback()} fallback={<EmptyState illustration={<EnvelopeIcon />} title="Your results will appear here after checking" />}>
 						<FeedbackContent lastResult={lastResult()!} solutionRender={solutionRender()} workedSolution={props.workedSolution} />
 					</Show>
 				</div>
@@ -96,37 +94,45 @@ interface FeedbackContentProps {
 	workedSolution?: WorkedSolution;
 }
 function FeedbackContent(props: FeedbackContentProps): JSX.Element {
-	let isCorrect=props.lastResult.isCorrect;
-	let isPartial=!isCorrect && props.lastResult.partial === true;
-	let correctAnswer=props.lastResult.correctAnswer;
-	let userAnswer=props.lastResult.userAnswer;
-	let displayClass=`${styles.resultsDisplay} ${styles.hasContent} ${isCorrect ? styles.correct : isPartial ? styles.partial : styles.incorrect}`;
-	let bannerClass=`${isCorrect ? styles.resultSuccess : isPartial ? styles.resultWarning : styles.resultError} ${styles.bannerSlideIn}`;
-	let heading=isCorrect ? "Correct!" : isPartial ? "Close!" : "Not quite";
-	let solKind=createMemo(() => props.solutionRender?.kind);
-	let solLatex=createMemo(() => {
-		let sr=props.solutionRender;
+	let isCorrect = props.lastResult.isCorrect;
+	let isPartial = !isCorrect && props.lastResult.partial === true;
+	let correctAnswer = props.lastResult.correctAnswer;
+	let userAnswer = props.lastResult.userAnswer;
+	let displayClass = `${styles.resultsDisplay} ${styles.hasContent} ${isCorrect ? styles.correct : isPartial ? styles.partial : styles.incorrect}`;
+	let bannerClass = `${isCorrect ? styles.resultSuccess : isPartial ? styles.resultWarning : styles.resultError} ${styles.bannerSlideIn}`;
+	let heading = isCorrect ? "Correct!" : isPartial ? "Close!" : "Not quite";
+	let solKind = createMemo(() => props.solutionRender?.kind);
+	let solLatex = createMemo(() => {
+		let sr = props.solutionRender;
 		return sr && sr.kind === "katex" ? sr.latex : "";
 	});
-	let solText=createMemo(() => {
-		let sr=props.solutionRender;
+	let solText = createMemo(() => {
+		let sr = props.solutionRender;
 		return sr && sr.kind === "text" ? sr.text : "";
 	});
 	return (
 		<div class={displayClass}>
 			<div class={bannerClass}>
-				<Show when={isCorrect} fallback={
-					<Show when={isPartial} fallback={<XIcon />}>
-						<WarningIcon />
-					</Show>
-				}>
+				<Show
+					when={isCorrect}
+					fallback={
+						<Show when={isPartial} fallback={<XIcon />}>
+							<WarningIcon />
+						</Show>
+					}
+				>
 					<CheckIcon />
 				</Show>
 				<div>
 					<h3>{heading}</h3>
-					<Show when={!isCorrect && userAnswer !== undefined} fallback={
-						<p>Correct answer: <MathText text={correctAnswer} /></p>
-					}>
+					<Show
+						when={!isCorrect && userAnswer !== undefined}
+						fallback={
+							<p>
+								Correct answer: <MathText text={correctAnswer} />
+							</p>
+						}
+					>
 						<div class={styles.answerComparison}>
 							<div class={styles.comparisonItem}>
 								<span class={styles.comparisonLabel}>Your answer:</span>
@@ -154,28 +160,30 @@ function FeedbackContent(props: FeedbackContentProps): JSX.Element {
 						<h4>{props.workedSolution!.title}</h4>
 					</Show>
 					<ol class={styles.stepList}>
-						<For each={props.workedSolution!.steps}>{(step) => (
-							<li class={styles.step}>
-								<p class={styles.stepDescription}>
-									<MathText text={step.description} />
-								</p>
-								<Show when={step.latex}>
-									<div class={styles.stepExpression}>
-										<MathRenderer display={true} tex={step.latex!} />
-									</div>
-								</Show>
-								<Show when={step.substitution}>
-									<div class={styles.stepSubstitution}>
-										<MathRenderer display={true} tex={step.substitution!} />
-									</div>
-								</Show>
-								<Show when={step.result}>
-									<div class={styles.stepResult}>
-										<MathText text={step.result!} />
-									</div>
-								</Show>
-							</li>
-						)}</For>
+						<For each={props.workedSolution!.steps}>
+							{step => (
+								<li class={styles.step}>
+									<p class={styles.stepDescription}>
+										<MathText text={step.description} />
+									</p>
+									<Show when={step.latex}>
+										<div class={styles.stepExpression}>
+											<MathRenderer display={true} tex={step.latex!} />
+										</div>
+									</Show>
+									<Show when={step.substitution}>
+										<div class={styles.stepSubstitution}>
+											<MathRenderer display={true} tex={step.substitution!} />
+										</div>
+									</Show>
+									<Show when={step.result}>
+										<div class={styles.stepResult}>
+											<MathText text={step.result!} />
+										</div>
+									</Show>
+								</li>
+							)}
+						</For>
 					</ol>
 					<Show when={props.workedSolution!.finalAnswer}>
 						<div class={styles.finalAnswer}>

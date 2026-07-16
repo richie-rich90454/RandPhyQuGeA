@@ -24,43 +24,43 @@ export interface CreateCountUpOptions {
 export function createCountUp(options: CreateCountUpOptions): Accessor<number> {
 	let targetAcc: Accessor<number>;
 	if (typeof options.target === "function") {
-		targetAcc=options.target;
+		targetAcc = options.target;
 	} else {
-		let t=options.target;
-		targetAcc=() => t;
+		let t = options.target;
+		targetAcc = () => t;
 	}
 	let durationAcc: Accessor<number>;
 	if (typeof options.duration === "function") {
-		durationAcc=options.duration;
+		durationAcc = options.duration;
 	} else {
-		let d=options.duration;
-		durationAcc=() => d ?? 800;
+		let d = options.duration;
+		durationAcc = () => d ?? 800;
 	}
-	let reducedMotion=options.reducedMotion ?? createReducedMotion();
-	let [value, setValue]=createSignal<number>(reducedMotion() ? targetAcc() : 0);
+	let reducedMotion = options.reducedMotion ?? createReducedMotion();
+	let [value, setValue] = createSignal<number>(reducedMotion() ? targetAcc() : 0);
 	createEffect(() => {
-		let target=targetAcc();
-		let duration=durationAcc();
-		let reduced=reducedMotion();
+		let target = targetAcc();
+		let duration = durationAcc();
+		let reduced = reducedMotion();
 		if (reduced) {
 			setValue(target);
 			return;
 		}
 		setValue(0);
-		let rafId: number | null=null;
-		let startTime: number | null=null;
-		let step=(timestamp: number) => {
+		let rafId: number | null = null;
+		let startTime: number | null = null;
+		let step = (timestamp: number) => {
 			if (startTime === null) {
-				startTime=timestamp;
+				startTime = timestamp;
 			}
-			let elapsed=timestamp-startTime;
-			let progress=Math.min(elapsed/duration, 1);
-			setValue(Math.round(progress*target));
-			if (progress<1) {
-				rafId=requestAnimationFrame(step);
+			let elapsed = timestamp - startTime;
+			let progress = Math.min(elapsed / duration, 1);
+			setValue(Math.round(progress * target));
+			if (progress < 1) {
+				rafId = requestAnimationFrame(step);
 			}
 		};
-		rafId=requestAnimationFrame(step);
+		rafId = requestAnimationFrame(step);
 		onCleanup(() => {
 			if (rafId !== null) {
 				cancelAnimationFrame(rafId);

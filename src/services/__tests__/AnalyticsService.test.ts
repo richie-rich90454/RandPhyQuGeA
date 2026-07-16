@@ -47,11 +47,7 @@ describe("AnalyticsService", () => {
 		});
 		it("tracks a multi-day current streak", () => {
 			let service = new AnalyticsService();
-			let results = [
-				makeResult({timestamp: "2024-01-10T10:00:00.000Z"}),
-				makeResult({timestamp: "2024-01-09T10:00:00.000Z"}),
-				makeResult({timestamp: "2024-01-08T10:00:00.000Z"}),
-			];
+			let results = [makeResult({timestamp: "2024-01-10T10:00:00.000Z"}), makeResult({timestamp: "2024-01-09T10:00:00.000Z"}), makeResult({timestamp: "2024-01-08T10:00:00.000Z"})];
 			expect(service.getStreak(results)).toEqual({currentStreak: 3, bestStreak: 3, totalActiveDays: 3});
 		});
 		it("continues a streak from yesterday", () => {
@@ -61,10 +57,7 @@ describe("AnalyticsService", () => {
 		});
 		it("breaks a streak when a day is skipped", () => {
 			let service = new AnalyticsService();
-			let results = [
-				makeResult({timestamp: "2024-01-10T10:00:00.000Z"}),
-				makeResult({timestamp: "2024-01-08T10:00:00.000Z"}),
-			];
+			let results = [makeResult({timestamp: "2024-01-10T10:00:00.000Z"}), makeResult({timestamp: "2024-01-08T10:00:00.000Z"})];
 			expect(service.getStreak(results)).toEqual({currentStreak: 1, bestStreak: 1, totalActiveDays: 2});
 		});
 		it("records the best streak separately from current streak", () => {
@@ -97,22 +90,14 @@ describe("AnalyticsService", () => {
 		});
 		it("respects a custom threshold", () => {
 			let service = new AnalyticsService();
-			let results = [
-				makeResult({topic_id: "t1", is_correct: true}),
-				makeResult({topic_id: "t1", is_correct: true}),
-				makeResult({topic_id: "t1", is_correct: false}),
-			];
+			let results = [makeResult({topic_id: "t1", is_correct: true}), makeResult({topic_id: "t1", is_correct: true}), makeResult({topic_id: "t1", is_correct: false})];
 			let weak = service.getWeakTopics(results, makeSpec(), 80);
 			expect(weak).toHaveLength(1);
 			expect(weak[0]!.accuracy).toBeCloseTo(66.67, 1);
 		});
 		it("excludes topics above the threshold", () => {
 			let service = new AnalyticsService();
-			let results = [
-				makeResult({topic_id: "t1", is_correct: true}),
-				makeResult({topic_id: "t1", is_correct: true}),
-				makeResult({topic_id: "t1", is_correct: false}),
-			];
+			let results = [makeResult({topic_id: "t1", is_correct: true}), makeResult({topic_id: "t1", is_correct: true}), makeResult({topic_id: "t1", is_correct: false})];
 			let weak = service.getWeakTopics(results, makeSpec(), 50);
 			expect(weak).toHaveLength(0);
 		});
@@ -157,11 +142,7 @@ describe("AnalyticsService", () => {
 		});
 		it("filters by topic id when provided", () => {
 			let service = new AnalyticsService();
-			let results = [
-				makeResult({topic_id: "t1", is_correct: true}),
-				makeResult({topic_id: "t1", is_correct: false}),
-				makeResult({topic_id: "t2", is_correct: false}),
-			];
+			let results = [makeResult({topic_id: "t1", is_correct: true}), makeResult({topic_id: "t1", is_correct: false}), makeResult({topic_id: "t2", is_correct: false})];
 			expect(service.getAccuracy(results, "t1")).toBe(50);
 			expect(service.getAccuracy(results, "t2")).toBe(0);
 		});
@@ -197,11 +178,7 @@ describe("AnalyticsService", () => {
 		});
 		it("summarizes a mixed session", () => {
 			let service = new AnalyticsService();
-			let results = [
-				makeResult({is_correct: true, time_taken_ms: 1000}),
-				makeResult({is_correct: false, time_taken_ms: 2000}),
-				makeResult({is_correct: true, time_taken_ms: 3000}),
-			];
+			let results = [makeResult({is_correct: true, time_taken_ms: 1000}), makeResult({is_correct: false, time_taken_ms: 2000}), makeResult({is_correct: true, time_taken_ms: 3000})];
 			expect(service.getSessionSummary(results)).toEqual({
 				totalQuestions: 3,
 				correctCount: 2,
@@ -213,11 +190,7 @@ describe("AnalyticsService", () => {
 		});
 		it("derives the mode from the most frequent result mode", () => {
 			let service = new AnalyticsService();
-			let results = [
-				makeResult({mode: "Mental"}),
-				makeResult({mode: "Mental"}),
-				makeResult({mode: "Single"}),
-			];
+			let results = [makeResult({mode: "Mental"}), makeResult({mode: "Mental"}), makeResult({mode: "Single"})];
 			expect(service.getSessionSummary(results).mode).toBe("Mental");
 		});
 		it("defaults to Single when modes are tied", () => {

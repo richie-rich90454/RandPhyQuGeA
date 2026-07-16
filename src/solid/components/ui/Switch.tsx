@@ -19,24 +19,24 @@ export interface SwitchProps {
 	/** Extra class for the wrapper label. */
 	class?: string;
 }
-let idCounter=0;
+let idCounter = 0;
 function generateId(): string {
-	idCounter=idCounter+1;
+	idCounter = idCounter + 1;
 	return `solid-switch-${idCounter}`;
 }
 /** Toggle switch primitive with controlled and uncontrolled support. */
 export function Switch(props: SwitchProps): JSX.Element {
-	let [local]=splitProps(props, ["checked", "defaultChecked", "onCheckedChange", "label", "hint", "disabled", "id", "class"]);
-	let generatedId=generateId();
-	let switchId=() => local.id ?? generatedId;
-	let hintId=() => `${switchId()}-hint`;
-	let isControlled=() => local.checked !== undefined;
-	let [internalChecked, setInternalChecked]=createSignal(Boolean(local.defaultChecked));
-	let currentChecked=createMemo(() => isControlled() ? Boolean(local.checked) : internalChecked());
-	let handleChange=(event: Event) => {
-		let target=event.target as HTMLInputElement;
+	let [local] = splitProps(props, ["checked", "defaultChecked", "onCheckedChange", "label", "hint", "disabled", "id", "class"]);
+	let generatedId = generateId();
+	let switchId = () => local.id ?? generatedId;
+	let hintId = () => `${switchId()}-hint`;
+	let isControlled = () => local.checked !== undefined;
+	let [internalChecked, setInternalChecked] = createSignal(Boolean(local.defaultChecked));
+	let currentChecked = createMemo(() => (isControlled() ? Boolean(local.checked) : internalChecked()));
+	let handleChange = (event: Event) => {
+		let target = event.target as HTMLInputElement;
 		if (target.disabled) return;
-		let next=target.checked;
+		let next = target.checked;
 		if (!isControlled()) {
 			setInternalChecked(next);
 		}
@@ -65,7 +65,9 @@ export function Switch(props: SwitchProps): JSX.Element {
 						<span class={styles.label}>{local.label}</span>
 					</Show>
 					<Show when={local.hint}>
-						<span id={hintId()} class={styles.hint}>{local.hint}</span>
+						<span id={hintId()} class={styles.hint}>
+							{local.hint}
+						</span>
 					</Show>
 				</span>
 			</Show>

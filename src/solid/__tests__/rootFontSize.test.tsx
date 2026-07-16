@@ -1,9 +1,9 @@
 import {describe, it, expect} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
-let globalsCss=readFileSync(join(process.cwd(), "src", "solid", "styles", "globals.css"), "utf-8");
-let modalCss=readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Modal.module.css"), "utf-8");
-let selectCss=readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Select.module.css"), "utf-8");
+let globalsCss = readFileSync(join(process.cwd(), "src", "solid", "styles", "globals.css"), "utf-8");
+let modalCss = readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Modal.module.css"), "utf-8");
+let selectCss = readFileSync(join(process.cwd(), "src", "solid", "components", "ui", "Select.module.css"), "utf-8");
 describe("root font-size enables browser font scaling", () => {
 	it("globals.css sets html font-size to 100%", () => {
 		expect(globalsCss).toMatch(/html\s*\{[^}]*font-size:\s*100%/);

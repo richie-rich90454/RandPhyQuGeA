@@ -21,7 +21,8 @@
 	align-items: center;
 	gap: var(--space-1);
 }
-.summary, .statsPanel {
+.summary,
+.statsPanel {
 	display: inline-flex;
 	align-items: center;
 	gap: var(--space-1);
@@ -57,7 +58,10 @@
 	border: 1px solid transparent;
 	border-radius: var(--radius-full);
 	cursor: pointer;
-	transition: color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard);
+	transition:
+		color var(--duration-fast) var(--ease-standard),
+		background var(--duration-fast) var(--ease-standard),
+		border-color var(--duration-fast) var(--ease-standard);
 }
 .difficultyPill:hover:not(:disabled) {
 	color: var(--text);
@@ -106,7 +110,9 @@
 	font-weight: var(--font-weight-semibold);
 	font-size: var(--font-size-sm);
 	color: var(--text);
-	transition: color var(--duration-fast) var(--ease-standard), background var(--duration-fast) var(--ease-standard);
+	transition:
+		color var(--duration-fast) var(--ease-standard),
+		background var(--duration-fast) var(--ease-standard);
 }
 .timerUrgent {
 	color: var(--error);
@@ -123,8 +129,13 @@
 	color: var(--success);
 }
 @keyframes pulseUrgent {
-	0%, 100% { opacity: 1; }
-	50% { opacity: 0.6; }
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.6;
+	}
 }
 @media (prefers-reduced-motion: reduce) {
 	.timerUrgent {
@@ -176,7 +187,12 @@
 	}
 }
 @media (max-width: 480px) {
-	.summary, .statsPanel, .difficultyPills, .sessionControls, .optionControls, .startWrapper {
+	.summary,
+	.statsPanel,
+	.difficultyPills,
+	.sessionControls,
+	.optionControls,
+	.startWrapper {
 		width: 100%;
 		justify-content: center;
 	}

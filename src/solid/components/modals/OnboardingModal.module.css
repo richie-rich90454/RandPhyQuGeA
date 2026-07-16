@@ -20,14 +20,17 @@
 	gap: var(--space-3);
 	animation: onboardingSlideIn var(--duration-normal) var(--ease-decelerated);
 }
-.stepWelcome, .stepFinish {
+.stepWelcome,
+.stepFinish {
 	justify-content: center;
 	min-height: 240px;
 }
-.stepWelcome .headline, .stepFinish .headline {
+.stepWelcome .headline,
+.stepFinish .headline {
 	font-size: var(--font-size-2xl);
 }
-.stepWelcome .heroIcon, .stepFinish .heroIcon {
+.stepWelcome .heroIcon,
+.stepFinish .heroIcon {
 	width: 96px;
 	height: 96px;
 }
@@ -74,7 +77,10 @@
 	border: 1px solid var(--border-subtle);
 	border-radius: var(--radius-md);
 	text-align: left;
-	transition: border-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
+	transition:
+		border-color var(--duration-fast) var(--ease-standard),
+		transform var(--duration-fast) var(--ease-standard),
+		box-shadow var(--duration-fast) var(--ease-standard);
 }
 .featureCard:hover {
 	border-color: var(--accent);
@@ -133,7 +139,10 @@
 	border-radius: var(--radius-md);
 	color: var(--text);
 	cursor: pointer;
-	transition: background var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+	transition:
+		background var(--duration-fast) var(--ease-standard),
+		border-color var(--duration-fast) var(--ease-standard),
+		transform var(--duration-fast) var(--ease-standard);
 }
 .themeOption:hover {
 	border-color: var(--border-strong);
@@ -170,7 +179,10 @@
 	color: var(--text);
 	cursor: pointer;
 	text-align: left;
-	transition: background var(--duration-fast) var(--ease-standard), border-color var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+	transition:
+		background var(--duration-fast) var(--ease-standard),
+		border-color var(--duration-fast) var(--ease-standard),
+		transform var(--duration-fast) var(--ease-standard);
 }
 .modeOption:hover {
 	border-color: var(--border-strong);
@@ -222,7 +234,10 @@
 	padding: 0;
 	background: var(--border-strong);
 	cursor: pointer;
-	transition: background var(--duration-normal) var(--ease-standard), transform var(--duration-normal) var(--ease-standard), width var(--duration-normal) var(--ease-standard);
+	transition:
+		background var(--duration-normal) var(--ease-standard),
+		transform var(--duration-normal) var(--ease-standard),
+		width var(--duration-normal) var(--ease-standard);
 }
 .dot:hover {
 	transform: scale(1.25);
@@ -269,10 +284,12 @@
 	.dot:hover {
 		transform: none;
 	}
-	.themeOption, .modeOption {
+	.themeOption,
+	.modeOption {
 		transition: none;
 	}
-	.themeOption:hover, .modeOption:hover {
+	.themeOption:hover,
+	.modeOption:hover {
 		transform: none;
 	}
 	.featureCard {
@@ -301,14 +318,16 @@
 	.headline {
 		font-size: var(--font-size-lg);
 	}
-	.stepWelcome .headline, .stepFinish .headline {
+	.stepWelcome .headline,
+	.stepFinish .headline {
 		font-size: var(--font-size-xl);
 	}
 	.heroIcon {
 		width: 64px;
 		height: 64px;
 	}
-	.stepWelcome .heroIcon, .stepFinish .heroIcon {
+	.stepWelcome .heroIcon,
+	.stepFinish .heroIcon {
 		width: 72px;
 		height: 72px;
 	}

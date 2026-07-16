@@ -102,10 +102,15 @@
 	.shortcuts {
 		width: 100%;
 	}
-	.actionHeader, .shortcutHeader, .descriptionHeader {
+	.actionHeader,
+	.shortcutHeader,
+	.descriptionHeader {
 		width: auto;
 	}
-	.table, .table tbody, .table tr, .table td {
+	.table,
+	.table tbody,
+	.table tr,
+	.table td {
 		display: block;
 	}
 	.table thead {

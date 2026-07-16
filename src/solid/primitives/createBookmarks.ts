@@ -49,42 +49,42 @@ export interface BookmarksState {
  * question for another attempt. The underlying store is reset on disposal.
  */
 export function createBookmarks(options: CreateBookmarksOptions = {}): BookmarksState {
-	let instance=new Bookmarks();
+	let instance = new Bookmarks();
 	for (let entry of options.entries ?? []) {
 		instance.add(entry.questionId, entry.note, entry.createdAt);
 	}
-	let onAdd=options.onAdd;
-	let onRemove=options.onRemove;
-	let onReattempt=options.onReattempt;
-	let [entries, setEntries]=createSignal<BookmarkEntry[]>(instance.getAll());
-	let [count, setCount]=createSignal<number>(instance.count());
-	let sync=() => {
+	let onAdd = options.onAdd;
+	let onRemove = options.onRemove;
+	let onReattempt = options.onReattempt;
+	let [entries, setEntries] = createSignal<BookmarkEntry[]>(instance.getAll());
+	let [count, setCount] = createSignal<number>(instance.count());
+	let sync = () => {
 		setEntries(instance.getAll());
 		setCount(instance.count());
 	};
-	let add=(questionId: string, note?: string): BookmarkEntry => {
-		let entry=instance.add(questionId, note);
+	let add = (questionId: string, note?: string): BookmarkEntry => {
+		let entry = instance.add(questionId, note);
 		sync();
 		onAdd?.(entry);
 		return entry;
 	};
-	let remove=(questionId: string): boolean => {
-		let had=instance.remove(questionId);
+	let remove = (questionId: string): boolean => {
+		let had = instance.remove(questionId);
 		if (had) {
 			sync();
 			onRemove?.(questionId);
 		}
 		return had;
 	};
-	let updateNote=(questionId: string, note?: string): boolean => {
-		let ok=instance.updateNote(questionId, note);
+	let updateNote = (questionId: string, note?: string): boolean => {
+		let ok = instance.updateNote(questionId, note);
 		if (ok) {
 			sync();
 		}
 		return ok;
 	};
-	let toggle=(questionId: string, note?: string): boolean => {
-		let nowBookmarked=instance.toggle(questionId, note);
+	let toggle = (questionId: string, note?: string): boolean => {
+		let nowBookmarked = instance.toggle(questionId, note);
 		sync();
 		if (nowBookmarked) {
 			onAdd?.(instance.get(questionId)!);
@@ -93,11 +93,11 @@ export function createBookmarks(options: CreateBookmarksOptions = {}): Bookmarks
 		}
 		return nowBookmarked;
 	};
-	let clear=() => {
+	let clear = () => {
 		instance.clear();
 		sync();
 	};
-	let reattempt=(questionId: string): boolean => {
+	let reattempt = (questionId: string): boolean => {
 		if (!instance.has(questionId)) return false;
 		onReattempt?.(questionId);
 		return true;

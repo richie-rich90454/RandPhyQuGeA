@@ -48,7 +48,7 @@ describe("TopicsSection", () => {
 	it("filters pills by the search query", () => {
 		useSpecStore.setState({specification: makeSpec(), loading: false, error: null, empty: false});
 		render(() => <TopicsSection />);
-		let input=screen.getByLabelText("Search topics");
+		let input = screen.getByLabelText("Search topics");
 		fireEvent.input(input, {target: {value: "forc"}});
 		expect(screen.queryByRole("button", {name: /Kinematics/i})).not.toBeInTheDocument();
 		expect(screen.getByRole("button", {name: /Forces/i})).toBeInTheDocument();

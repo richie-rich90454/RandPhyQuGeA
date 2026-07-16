@@ -8,7 +8,7 @@ import {usePracticeStore} from "../../../stores/practiceStore";
 import {useSettingsStore} from "../../../stores/settingsStore";
 import type {PracticeResult, Specification} from "../../../../types/models";
 import {SpacedRepetitionQueue} from "../../../../lib/physics/spaced/SpacedRepetitionQueue";
-function makeResult(overrides: Partial<PracticeResult>={}): PracticeResult {
+function makeResult(overrides: Partial<PracticeResult> = {}): PracticeResult {
 	return {
 		id: "r1",
 		question_id: "q1",
@@ -64,15 +64,11 @@ describe("RecommendModal", () => {
 	it("renders weak topics as a list when accuracy is below threshold", () => {
 		useSpecStore.setState({specification: makeSpecification(), empty: false});
 		useProgressStore.setState({
-			results: [
-				makeResult({id: "r1", topic_id: "t1", is_correct: false}),
-				makeResult({id: "r2", topic_id: "t1", is_correct: false}),
-				makeResult({id: "r3", topic_id: "t2", is_correct: true}),
-			],
+			results: [makeResult({id: "r1", topic_id: "t1", is_correct: false}), makeResult({id: "r2", topic_id: "t1", is_correct: false}), makeResult({id: "r3", topic_id: "t2", is_correct: true})],
 		});
 		useUiStore.getState().openModal("recommend");
 		render(() => <RecommendModal />);
-		let list=screen.getByRole("list");
+		let list = screen.getByRole("list");
 		expect(list.tagName).toBe("UL");
 		expect(screen.getByText("Linear Equations")).toBeInTheDocument();
 		expect(screen.queryByText("Quadratics")).not.toBeInTheDocument();
@@ -110,7 +106,7 @@ describe("RecommendModal", () => {
 describe("RecommendModal spaced-repetition surfacing (task 5.72)", () => {
 	it("surfaces due items when spacedRepetition is provided", () => {
 		useSpecStore.setState({specification: makeSpecification(), empty: false});
-		let queue=new SpacedRepetitionQueue();
+		let queue = new SpacedRepetitionQueue();
 		queue.register("t1", 0);
 		queue.register("t2", 0);
 		useUiStore.getState().openModal("recommend");
@@ -128,7 +124,7 @@ describe("RecommendModal spaced-repetition surfacing (task 5.72)", () => {
 	});
 	it("does not render review section when queue has no due items", () => {
 		useSpecStore.setState({specification: makeSpecification(), empty: false});
-		let queue=new SpacedRepetitionQueue();
+		let queue = new SpacedRepetitionQueue();
 		queue.register("t1", Number.MAX_SAFE_INTEGER);
 		useUiStore.getState().openModal("recommend");
 		render(() => <RecommendModal spacedRepetition={queue} />);
@@ -136,7 +132,7 @@ describe("RecommendModal spaced-repetition surfacing (task 5.72)", () => {
 	});
 	it("practices the topic when Review is clicked", () => {
 		useSpecStore.setState({specification: makeSpecification(), empty: false});
-		let queue=new SpacedRepetitionQueue();
+		let queue = new SpacedRepetitionQueue();
 		queue.register("t1", 0);
 		useUiStore.getState().openModal("recommend");
 		render(() => <RecommendModal spacedRepetition={queue} />);
@@ -148,12 +144,9 @@ describe("RecommendModal spaced-repetition surfacing (task 5.72)", () => {
 	it("shows review section alongside weak topics when both are present", () => {
 		useSpecStore.setState({specification: makeSpecification(), empty: false});
 		useProgressStore.setState({
-			results: [
-				makeResult({id: "r1", topic_id: "t1", is_correct: false}),
-				makeResult({id: "r2", topic_id: "t1", is_correct: false}),
-			],
+			results: [makeResult({id: "r1", topic_id: "t1", is_correct: false}), makeResult({id: "r2", topic_id: "t1", is_correct: false})],
 		});
-		let queue=new SpacedRepetitionQueue();
+		let queue = new SpacedRepetitionQueue();
 		queue.register("t2", 0);
 		useUiStore.getState().openModal("recommend");
 		render(() => <RecommendModal spacedRepetition={queue} />);
@@ -163,7 +156,7 @@ describe("RecommendModal spaced-repetition surfacing (task 5.72)", () => {
 	});
 	it("does not show empty state when only due items are present", () => {
 		useSpecStore.setState({specification: makeSpecification(), empty: false});
-		let queue=new SpacedRepetitionQueue();
+		let queue = new SpacedRepetitionQueue();
 		queue.register("t1", 0);
 		useUiStore.getState().openModal("recommend");
 		render(() => <RecommendModal spacedRepetition={queue} />);
@@ -172,7 +165,7 @@ describe("RecommendModal spaced-repetition surfacing (task 5.72)", () => {
 	});
 	it("renders the section with aria-label for accessibility", () => {
 		useSpecStore.setState({specification: makeSpecification(), empty: false});
-		let queue=new SpacedRepetitionQueue();
+		let queue = new SpacedRepetitionQueue();
 		queue.register("t1", 0);
 		useUiStore.getState().openModal("recommend");
 		render(() => <RecommendModal spacedRepetition={queue} />);

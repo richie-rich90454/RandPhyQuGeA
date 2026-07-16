@@ -4,24 +4,24 @@ import {Footer} from "../Footer";
 describe("Footer", () => {
 	it("renders app name and version", () => {
 		render(() => <Footer />);
-		let footer=screen.getByRole("contentinfo");
+		let footer = screen.getByRole("contentinfo");
 		expect(footer.textContent).toContain("RandPhyQuGeA v");
 	});
 	it("renders copyright text", () => {
 		render(() => <Footer />);
-		let footer=screen.getByRole("contentinfo");
+		let footer = screen.getByRole("contentinfo");
 		expect(footer.textContent).toContain("2026 Richard");
 	});
 	it("renders GitHub link with default href", () => {
 		render(() => <Footer />);
-		let link=screen.getByRole("link", {name: /github/i});
+		let link = screen.getByRole("link", {name: /github/i});
 		expect(link.getAttribute("href")).toContain("github.com");
 		expect(link.getAttribute("target")).toBe("_blank");
 		expect(link.getAttribute("rel")).toBe("noopener noreferrer");
 	});
 	it("renders GitHub link with custom href", () => {
 		render(() => <Footer githubUrl="https://example.com/repo" />);
-		let link=screen.getByRole("link", {name: /github/i});
+		let link = screen.getByRole("link", {name: /github/i});
 		expect(link.getAttribute("href")).toBe("https://example.com/repo");
 	});
 	it("does not render quick-action buttons without callbacks", () => {
@@ -31,23 +31,23 @@ describe("Footer", () => {
 		expect(screen.queryByRole("button", {name: /theme/i})).toBeNull();
 	});
 	it("renders shortcuts button and fires callback", () => {
-		let onOpenShortcuts=vi.fn();
+		let onOpenShortcuts = vi.fn<() => void>();
 		render(() => <Footer onOpenShortcuts={onOpenShortcuts} />);
-		let btn=screen.getByRole("button", {name: /shortcuts/i});
+		let btn = screen.getByRole("button", {name: /shortcuts/i});
 		fireEvent.click(btn);
 		expect(onOpenShortcuts).toHaveBeenCalledTimes(1);
 	});
 	it("renders settings button and fires callback", () => {
-		let onOpenSettings=vi.fn();
+		let onOpenSettings = vi.fn<() => void>();
 		render(() => <Footer onOpenSettings={onOpenSettings} />);
-		let btn=screen.getByRole("button", {name: /settings/i});
+		let btn = screen.getByRole("button", {name: /settings/i});
 		fireEvent.click(btn);
 		expect(onOpenSettings).toHaveBeenCalledTimes(1);
 	});
 	it("renders theme toggle button with custom label and fires callback", () => {
-		let onToggleTheme=vi.fn();
+		let onToggleTheme = vi.fn<() => void>();
 		render(() => <Footer onToggleTheme={onToggleTheme} themeLabel="Dim" />);
-		let btn=screen.getByRole("button", {name: /dim/i});
+		let btn = screen.getByRole("button", {name: /dim/i});
 		expect(btn.textContent).toBe("Dim");
 		fireEvent.click(btn);
 		expect(onToggleTheme).toHaveBeenCalledTimes(1);

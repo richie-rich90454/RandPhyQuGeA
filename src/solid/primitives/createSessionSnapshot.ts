@@ -33,45 +33,47 @@ export interface CreateSessionSnapshotReturn {
  * from the {@link useServiceProvider} core.
  */
 export function createSessionSnapshot(options: CreateSessionSnapshotOptions = {}): CreateSessionSnapshotReturn {
-	let practice=options.practiceStore ?? usePracticeStore;
-	let ui=options.uiStore ?? useUiStore;
-	let cachedSessionService: ISessionService | null=null;
-	let resolveSessionService=(): ISessionService => {
+	let practice = options.practiceStore ?? usePracticeStore;
+	let ui = options.uiStore ?? useUiStore;
+	let cachedSessionService: ISessionService | null = null;
+	let resolveSessionService = (): ISessionService => {
 		if (options.sessionService) {
 			return options.sessionService;
 		}
 		if (!cachedSessionService) {
-			let {core}=useServiceProvider();
-			cachedSessionService=new SessionService(new PhysicsService(core), new AnalyticsService());
+			let {core} = useServiceProvider();
+			cachedSessionService = new SessionService(new PhysicsService(core), new AnalyticsService());
 		}
 		return cachedSessionService;
 	};
-	let [snapshot, setSnapshot]=createSignal<SessionSnapshot | null>(null);
-	let disposed=false;
+	let [snapshot, setSnapshot] = createSignal<SessionSnapshot | null>(null);
+	let disposed = false;
 	onCleanup(() => {
-		disposed=true;
+		disposed = true;
 	});
 	onMount(() => {
 		void (async () => {
-			let loaded=await resolveSessionService().loadSessionSnapshot();
+			let loaded = await resolveSessionService().loadSessionSnapshot();
 			if (!disposed && loaded && !loaded.session.isFinished) {
 				setSnapshot(loaded);
 				ui.getState().openModal("resume-session");
 			}
 		})();
 	});
-	let resume=() => {
-		let current=snapshot();
+	let resume = () => {
+		let current = snapshot();
 		if (!current) {
 			return;
 		}
-		void resolveSessionService().resumeSession(current).then(session => {
-			if (!disposed) {
-				practice.getState().setSession(session);
-			}
-		});
+		void resolveSessionService()
+			.resumeSession(current)
+			.then(session => {
+				if (!disposed) {
+					practice.getState().setSession(session);
+				}
+			});
 	};
-	let discard=() => {
+	let discard = () => {
 		resolveSessionService().clearSessionSnapshot();
 		setSnapshot(null);
 	};

@@ -48,50 +48,50 @@ export interface AnswerSectionProps {
  * `@phosphor-icons/react` icons are replaced with inline SVG.
  */
 export function AnswerSection(props: AnswerSectionProps): JSX.Element {
-	let showFeedback=usePracticeStore(s => s.showFeedback);
-	let userAnswer=usePracticeStore(s => s.userAnswer);
-	let selectedChoiceIndex=usePracticeStore(s => s.selectedChoiceIndex);
-	let selectedChoiceIndices=usePracticeStore(s => s.selectedChoiceIndices);
-	let session=usePracticeStore(s => s.session);
-	let currentQuestion=usePracticeStore(selectCurrentQuestion);
-	let [isSubmitting, setIsSubmitting]=createSignal(false);
-	let cachedSession: ISessionService | null=null;
-	let resolveSession=(): ISessionService => {
+	let showFeedback = usePracticeStore(s => s.showFeedback);
+	let userAnswer = usePracticeStore(s => s.userAnswer);
+	let selectedChoiceIndex = usePracticeStore(s => s.selectedChoiceIndex);
+	let selectedChoiceIndices = usePracticeStore(s => s.selectedChoiceIndices);
+	let session = usePracticeStore(s => s.session);
+	let currentQuestion = usePracticeStore(selectCurrentQuestion);
+	let [isSubmitting, setIsSubmitting] = createSignal(false);
+	let cachedSession: ISessionService | null = null;
+	let resolveSession = (): ISessionService => {
 		if (!cachedSession) {
-			let {core}=useServiceProvider();
-			let physics=new PhysicsService(core);
-			cachedSession=new SessionService(physics, new AnalyticsService());
+			let {core} = useServiceProvider();
+			let physics = new PhysicsService(core);
+			cachedSession = new SessionService(physics, new AnalyticsService());
 		}
 		return cachedSession!;
 	};
-	let isMultiSelect=createMemo(() => currentQuestion()?.correct_choice_indices !== undefined);
-	let canSubmit=createMemo(() => {
+	let isMultiSelect = createMemo(() => currentQuestion()?.correct_choice_indices !== undefined);
+	let canSubmit = createMemo(() => {
 		if (!session() || !currentQuestion() || showFeedback()) return false;
 		if (isMultiSelect()) return selectedChoiceIndices().length > 0;
 		return userAnswer().trim() !== "" || selectedChoiceIndex() >= 0;
 	});
-	let canAdvance=createMemo(() => {
-		let s=session();
+	let canAdvance = createMemo(() => {
+		let s = session();
 		if (!s || !showFeedback()) return false;
 		return s.currentIndex < s.questions.length - 1;
 	});
-	let submit=async () => {
-		let store=usePracticeStore.getState();
-		let q=selectCurrentQuestion(store);
+	let submit = async () => {
+		let store = usePracticeStore.getState();
+		let q = selectCurrentQuestion(store);
 		if (!store.session || !q || store.showFeedback) return;
 		if (isSubmitting()) return;
 		setIsSubmitting(true);
 		try {
-			let sessionService=resolveSession();
-			let answer=store.userAnswer;
-			let choiceIndex: number | undefined=undefined;
+			let sessionService = resolveSession();
+			let answer = store.userAnswer;
+			let choiceIndex: number | undefined = undefined;
 			if (q.correct_choice_indices !== undefined) {
-				let sorted=[...store.selectedChoiceIndices].sort((a, b) => a - b);
-				answer=sorted.join(",");
+				let sorted = [...store.selectedChoiceIndices].sort((a, b) => a - b);
+				answer = sorted.join(",");
 			} else {
-				choiceIndex=store.selectedChoiceIndex >= 0 ? store.selectedChoiceIndex : undefined;
+				choiceIndex = store.selectedChoiceIndex >= 0 ? store.selectedChoiceIndex : undefined;
 			}
-			let result=await sessionService.submitAnswer(answer, choiceIndex);
+			let result = await sessionService.submitAnswer(answer, choiceIndex);
 			useProgressStore.getState().addResults([result]);
 			usePracticeStore.setState({
 				session: sessionService.getSession(),
@@ -108,12 +108,12 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 			setIsSubmitting(false);
 		}
 	};
-	let advance=async () => {
-		let store=usePracticeStore.getState();
+	let advance = async () => {
+		let store = usePracticeStore.getState();
 		if (!store.session || !store.showFeedback) return;
 		try {
-			let sessionService=resolveSession();
-			let advanced=await sessionService.advanceQuestion();
+			let sessionService = resolveSession();
+			let advanced = await sessionService.advanceQuestion();
 			if (advanced) {
 				usePracticeStore.setState({
 					session: sessionService.getSession(),
@@ -137,16 +137,16 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 			}
 		}
 	};
-	let handleKeyDown=(event: KeyboardEvent) => {
+	let handleKeyDown = (event: KeyboardEvent) => {
 		if (useUiStore.getState().activeModal) return;
-		let store=usePracticeStore.getState();
-		let q=selectCurrentQuestion(store);
-		let target=event.target as HTMLElement | null;
-		let isTyping=Boolean(target && (target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable));
-		let digit=event.key;
+		let store = usePracticeStore.getState();
+		let q = selectCurrentQuestion(store);
+		let target = event.target as HTMLElement | null;
+		let isTyping = Boolean(target && (target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable));
+		let digit = event.key;
 		if (!isTyping && !store.showFeedback && q?.response_mode === "mcq" && q.choices && q.choices.length > 0 && q.correct_choice_indices === undefined) {
 			if (digit >= "1" && digit <= "9") {
-				let index=parseInt(digit, 10) - 1;
+				let index = parseInt(digit, 10) - 1;
 				if (index < q.choices.length) {
 					event.preventDefault();
 					usePracticeStore.getState().selectChoice(index);
@@ -174,11 +174,14 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
 			<div class={styles.answerCardWrapper}>
 				{props.answerCard}
 				<div class={styles.answerActions}>
-					<Show when={showFeedback()} fallback={
-						<Button variant="primary" size="md" leftIcon={<CheckIcon />} onClick={() => void submit()} disabled={!canSubmit() || isSubmitting()} loading={isSubmitting()}>
-							Check
-						</Button>
-					}>
+					<Show
+						when={showFeedback()}
+						fallback={
+							<Button variant="primary" size="md" leftIcon={<CheckIcon />} onClick={() => void submit()} disabled={!canSubmit() || isSubmitting()} loading={isSubmitting()}>
+								Check
+							</Button>
+						}
+					>
 						<Button variant="primary" size="md" rightIcon={<ArrowRightIcon />} onClick={() => void advance()} disabled={!canAdvance() || isSubmitting()} loading={isSubmitting()}>
 							Next
 						</Button>

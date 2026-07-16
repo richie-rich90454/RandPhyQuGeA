@@ -13,13 +13,13 @@ interface DifficultyMeta {
 	label: string;
 	variant: BadgeVariant;
 }
-const DIFFICULTY_META: Record<number, DifficultyMeta>={
+const DIFFICULTY_META: Record<number, DifficultyMeta> = {
 	1: {label: "Easy", variant: "success"},
 	2: {label: "Medium", variant: "warning"},
 	3: {label: "Hard", variant: "error"},
 };
 function getDifficultyMeta(difficulty: number): DifficultyMeta {
-	if (difficulty<=0) {
+	if (difficulty <= 0) {
 		return {label: "Intro", variant: "default"};
 	}
 	return DIFFICULTY_META[difficulty] ?? {label: "Hard", variant: "error"};
@@ -59,59 +59,59 @@ function BarbellIcon(): JSX.Element {
  * via CSS media queries in this port).
  */
 export function QuestionCard(): JSX.Element {
-	let currentQuestion=usePracticeStore(selectCurrentQuestion);
-	let selectedChoiceIndex=usePracticeStore(s => s.selectedChoiceIndex);
-	let selectedChoiceIndices=usePracticeStore(s => s.selectedChoiceIndices);
-	let showFeedback=usePracticeStore(s => s.showFeedback);
-	let specification=useSpecStore(s => s.specification);
-	let choicesContainerEl: HTMLDivElement | null=null;
-	let topicName=createMemo(() => findTopicName(specification(), currentQuestion()?.topic_id));
-	let difficultyMeta=createMemo(() => {
-		let q=currentQuestion();
+	let currentQuestion = usePracticeStore(selectCurrentQuestion);
+	let selectedChoiceIndex = usePracticeStore(s => s.selectedChoiceIndex);
+	let selectedChoiceIndices = usePracticeStore(s => s.selectedChoiceIndices);
+	let showFeedback = usePracticeStore(s => s.showFeedback);
+	let specification = useSpecStore(s => s.specification);
+	let choicesContainerEl: HTMLDivElement | null = null;
+	let topicName = createMemo(() => findTopicName(specification(), currentQuestion()?.topic_id));
+	let difficultyMeta = createMemo(() => {
+		let q = currentQuestion();
 		return q ? getDifficultyMeta(q.difficulty) : null;
 	});
-	let isMcq=createMemo(() => {
-		let q=currentQuestion();
+	let isMcq = createMemo(() => {
+		let q = currentQuestion();
 		return Boolean(q && q.response_mode === "mcq" && q.choices && q.choices.length > 0);
 	});
-	let isMultiSelect=createMemo(() => {
-		let q=currentQuestion();
+	let isMultiSelect = createMemo(() => {
+		let q = currentQuestion();
 		return Boolean(q && q.correct_choice_indices !== undefined);
 	});
-	let hasQuestion=createMemo(() => currentQuestion() !== null);
-	let choicesDisabled=createMemo(() => !hasQuestion() || showFeedback());
-	let diagramSvg=createMemo(() => {
-		let q=currentQuestion();
-		let svg=q?.diagram_svg;
-		if (!svg || svg.trim()==="") return "";
+	let hasQuestion = createMemo(() => currentQuestion() !== null);
+	let choicesDisabled = createMemo(() => !hasQuestion() || showFeedback());
+	let diagramSvg = createMemo(() => {
+		let q = currentQuestion();
+		let svg = q?.diagram_svg;
+		if (!svg || svg.trim() === "") return "";
 		return svg;
 	});
-	let handleSelectChoice=(index: number) => {
+	let handleSelectChoice = (index: number) => {
 		usePracticeStore.getState().selectChoice(index);
 	};
-	let handleToggleChoice=(index: number) => {
+	let handleToggleChoice = (index: number) => {
 		usePracticeStore.getState().toggleChoice(index);
 	};
-	let handleChoiceKeyDown=(event: KeyboardEvent) => {
+	let handleChoiceKeyDown = (event: KeyboardEvent) => {
 		if (isMultiSelect()) return;
-		let q=currentQuestion();
-		let choices=q?.choices;
-		if (!choices || choices.length===0) return;
-		let count=choices.length;
-		let currentIndex=selectedChoiceIndex()>=0 ? selectedChoiceIndex() : -1;
-		let nextIndex: number | null=null;
-		if (event.key==="ArrowDown" || event.key==="ArrowRight") {
-			nextIndex=currentIndex<0 ? 0 : (currentIndex+1)%count;
-		} else if (event.key==="ArrowUp" || event.key==="ArrowLeft") {
-			nextIndex=currentIndex<0 ? count-1 : (currentIndex-1+count)%count;
+		let q = currentQuestion();
+		let choices = q?.choices;
+		if (!choices || choices.length === 0) return;
+		let count = choices.length;
+		let currentIndex = selectedChoiceIndex() >= 0 ? selectedChoiceIndex() : -1;
+		let nextIndex: number | null = null;
+		if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+			nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % count;
+		} else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+			nextIndex = currentIndex < 0 ? count - 1 : (currentIndex - 1 + count) % count;
 		}
-		if (nextIndex!==null) {
+		if (nextIndex !== null) {
 			event.preventDefault();
 			handleSelectChoice(nextIndex);
-			let container=choicesContainerEl;
+			let container = choicesContainerEl;
 			if (container) {
 				requestAnimationFrame(() => {
-					let target=container!.querySelector<HTMLButtonElement>(`[data-choice-index="${nextIndex}"]`);
+					let target = container!.querySelector<HTMLButtonElement>(`[data-choice-index="${nextIndex}"]`);
 					target?.focus();
 				});
 			}
@@ -123,7 +123,9 @@ export function QuestionCard(): JSX.Element {
 				<CardTitle>Question</CardTitle>
 				<div class={styles.questionMeta}>
 					<Show when={topicName()}>
-						<Badge variant="default" size="sm">{topicName()}</Badge>
+						<Badge variant="default" size="sm">
+							{topicName()}
+						</Badge>
 					</Show>
 					<Show when={difficultyMeta()}>
 						<Badge variant={difficultyMeta()!.variant} size="sm">
@@ -135,67 +137,80 @@ export function QuestionCard(): JSX.Element {
 			</CardHeader>
 			<CardContent>
 				<div class={styles.questionDisplay} aria-live="polite" role="region" aria-label="Question display" aria-atomic="true">
-					<Show when={currentQuestion()} fallback={
-						<EmptyState illustration={<QuestionIcon />} title="Pick a topic and click Generate to start" />
-					}>
+					<Show when={currentQuestion()} fallback={<EmptyState illustration={<QuestionIcon />} title="Pick a topic and click Generate to start" />}>
 						<div class={styles.questionText}>
-						<MathText text={currentQuestion()!.text} />
-					</div>
-					<Show when={diagramSvg()}>
-						<div class={styles.diagram} role="img" aria-label="Question diagram" innerHTML={diagramSvg()} />
-					</Show>
-					<Show when={isMcq() && currentQuestion()!.choices}>
-							<Show when={isMultiSelect()} fallback={
+							<MathText text={currentQuestion()!.text} />
+						</div>
+						<Show when={diagramSvg()}>
+							<div class={styles.diagram} role="img" aria-label="Question diagram" innerHTML={diagramSvg()} />
+						</Show>
+						<Show when={isMcq() && currentQuestion()!.choices}>
+							<Show
+								when={isMultiSelect()}
+								fallback={
+									<div
+										ref={(el: HTMLDivElement) => {
+											choicesContainerEl = el;
+										}}
+										class={`${styles.choicesContainer} ${styles.questionChoices}`}
+										id="mcq-choices-container"
+										role="radiogroup"
+										aria-label="Answer choices"
+										onKeyDown={handleChoiceKeyDown}
+									>
+										<For each={currentQuestion()!.choices!}>
+											{(choice, index) => (
+												<button
+													type="button"
+													role="radio"
+													aria-checked={selectedChoiceIndex() === index()}
+													tabIndex={selectedChoiceIndex() === index() ? 0 : -1}
+													data-choice-index={index()}
+													class={`${styles.choiceButton} ${selectedChoiceIndex() === index() ? styles.selected : ""}`}
+													disabled={choicesDisabled()}
+													onClick={() => handleSelectChoice(index())}
+												>
+													<span class={styles.choiceLetter} aria-hidden="true">
+														{choiceLetter(index())}
+													</span>
+													<span class={styles.choiceText}>
+														<MathText text={choice} />
+													</span>
+												</button>
+											)}
+										</For>
+									</div>
+								}
+							>
 								<div
-									ref={(el: HTMLDivElement) => { choicesContainerEl=el; }}
-									class={`${styles.choicesContainer} ${styles.questionChoices}`}
-									id="mcq-choices-container"
-									role="radiogroup"
-									aria-label="Answer choices"
-									onKeyDown={handleChoiceKeyDown}
-								>
-									<For each={currentQuestion()!.choices!}>{(choice, index) => (
-										<button
-											type="button"
-											role="radio"
-											aria-checked={selectedChoiceIndex()===index()}
-											tabIndex={selectedChoiceIndex()===index() ? 0 : -1}
-											data-choice-index={index()}
-											class={`${styles.choiceButton} ${selectedChoiceIndex()===index() ? styles.selected : ""}`}
-											disabled={choicesDisabled()}
-											onClick={() => handleSelectChoice(index())}
-										>
-											<span class={styles.choiceLetter} aria-hidden="true">{choiceLetter(index())}</span>
-											<span class={styles.choiceText}>
-												<MathText text={choice} />
-											</span>
-										</button>
-									)}</For>
-								</div>
-							}>
-								<div
-									ref={(el: HTMLDivElement) => { choicesContainerEl=el; }}
+									ref={(el: HTMLDivElement) => {
+										choicesContainerEl = el;
+									}}
 									class={`${styles.choicesContainer} ${styles.questionChoices}`}
 									id="mcq-choices-container"
 									role="group"
 									aria-label="Answer choices"
 								>
-									<For each={currentQuestion()!.choices!}>{(choice, index) => (
-										<button
-											type="button"
-											role="checkbox"
-											aria-checked={selectedChoiceIndices().includes(index())}
-											data-choice-index={index()}
-											class={`${styles.choiceButton} ${selectedChoiceIndices().includes(index()) ? styles.selected : ""}`}
-											disabled={choicesDisabled()}
-											onClick={() => handleToggleChoice(index())}
-										>
-											<span class={styles.choiceLetter} aria-hidden="true">{choiceLetter(index())}</span>
-											<span class={styles.choiceText}>
-												<MathText text={choice} />
-											</span>
-										</button>
-									)}</For>
+									<For each={currentQuestion()!.choices!}>
+										{(choice, index) => (
+											<button
+												type="button"
+												role="checkbox"
+												aria-checked={selectedChoiceIndices().includes(index())}
+												data-choice-index={index()}
+												class={`${styles.choiceButton} ${selectedChoiceIndices().includes(index()) ? styles.selected : ""}`}
+												disabled={choicesDisabled()}
+												onClick={() => handleToggleChoice(index())}
+											>
+												<span class={styles.choiceLetter} aria-hidden="true">
+													{choiceLetter(index())}
+												</span>
+												<span class={styles.choiceText}>
+													<MathText text={choice} />
+												</span>
+											</button>
+										)}
+									</For>
 								</div>
 							</Show>
 						</Show>

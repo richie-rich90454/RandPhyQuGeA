@@ -16,7 +16,7 @@ function createMatchMedia(initialMatches: boolean): Window["matchMedia"] {
 }
 beforeEach(() => {
 	useUiStore.setState(useUiStore.getInitialState());
-	window.matchMedia=createMatchMedia(false);
+	window.matchMedia = createMatchMedia(false);
 });
 describe("ShortcutsModal", () => {
 	it("renders when the shortcuts modal is open", () => {

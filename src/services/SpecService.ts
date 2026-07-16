@@ -5,7 +5,7 @@ import type {GeneratedQuestion, Specification} from "../types/models";
 export class SpecService implements ISpecService {
 	private readonly physicsService: IPhysicsService;
 	public constructor(physicsService: IPhysicsService) {
-		this.physicsService=physicsService;
+		this.physicsService = physicsService;
 	}
 	public async loadSpec(input: string): Promise<Specification> {
 		return this.physicsService.parseSpecification(input);
@@ -18,7 +18,7 @@ export class SpecService implements ISpecService {
 			if (error instanceof ParseException) {
 				return {valid: false, errors: error.errors};
 			}
-			let message=error instanceof Error ? error.message : String(error);
+			let message = error instanceof Error ? error.message : String(error);
 			return {valid: false, errors: [{line: 0, message}]};
 		}
 	}

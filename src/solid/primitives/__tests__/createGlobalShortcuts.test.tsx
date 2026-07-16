@@ -11,8 +11,8 @@ function ShortcutsRoot(): JSX.Element {
 	createGlobalShortcuts({settingsStore: useSettingsStore, uiStore: useUiStore});
 	return <div>shortcuts</div>;
 }
-function keydown(key: string, opts: {ctrlKey?: boolean, metaKey?: boolean, shiftKey?: boolean}={}): KeyboardEvent {
-	let event=new KeyboardEvent("keydown", {
+function keydown(key: string, opts: {ctrlKey?: boolean; metaKey?: boolean; shiftKey?: boolean} = {}): KeyboardEvent {
+	let event = new KeyboardEvent("keydown", {
 		key,
 		ctrlKey: opts.ctrlKey ?? false,
 		metaKey: opts.metaKey ?? false,
@@ -59,7 +59,7 @@ describe("createGlobalShortcuts", () => {
 	it("Ctrl+G is not handled globally (delegated to practice page, task 5.15 bug 3)", async () => {
 		render(() => <ShortcutsRoot />);
 		await flush();
-		let event=keydown("g", {ctrlKey: true});
+		let event = keydown("g", {ctrlKey: true});
 		expect(event.defaultPrevented).toBe(false);
 	});
 	it("ignores keys without ctrl or meta", async () => {
@@ -77,7 +77,7 @@ describe("createGlobalShortcuts", () => {
 	});
 	it("removes the listener on disposal", async () => {
 		useUiStore.setState(useUiStore.getInitialState());
-		let result=render(() => <ShortcutsRoot />);
+		let result = render(() => <ShortcutsRoot />);
 		await flush();
 		result.unmount();
 		keydown(",", {ctrlKey: true});
@@ -99,10 +99,10 @@ describe("createGlobalShortcuts", () => {
 		useSettingsStore.setState({defaultMode: "Mental"});
 		render(() => <ShortcutsRoot />);
 		await flush();
-		let ta=document.createElement("textarea");
+		let ta = document.createElement("textarea");
 		document.body.appendChild(ta);
 		ta.focus();
-		let event=new KeyboardEvent("keydown", {key: "1", ctrlKey: true, bubbles: true, cancelable: true});
+		let event = new KeyboardEvent("keydown", {key: "1", ctrlKey: true, bubbles: true, cancelable: true});
 		ta.dispatchEvent(event);
 		expect(useSettingsStore.getState().defaultMode).toBe("Mental");
 		document.body.removeChild(ta);
@@ -111,10 +111,10 @@ describe("createGlobalShortcuts", () => {
 		useSettingsStore.setState({defaultMode: "Single"});
 		render(() => <ShortcutsRoot />);
 		await flush();
-		let input=document.createElement("input");
+		let input = document.createElement("input");
 		document.body.appendChild(input);
 		input.focus();
-		let event=new KeyboardEvent("keydown", {key: "2", ctrlKey: true, bubbles: true, cancelable: true});
+		let event = new KeyboardEvent("keydown", {key: "2", ctrlKey: true, bubbles: true, cancelable: true});
 		input.dispatchEvent(event);
 		expect(useSettingsStore.getState().defaultMode).toBe("Single");
 		document.body.removeChild(input);
@@ -122,10 +122,10 @@ describe("createGlobalShortcuts", () => {
 	it("does not suppress Ctrl+, settings when typing (modifier shortcuts remain global, task 5.15)", async () => {
 		render(() => <ShortcutsRoot />);
 		await flush();
-		let input=document.createElement("input");
+		let input = document.createElement("input");
 		document.body.appendChild(input);
 		input.focus();
-		let event=new KeyboardEvent("keydown", {key: ",", ctrlKey: true, bubbles: true, cancelable: true});
+		let event = new KeyboardEvent("keydown", {key: ",", ctrlKey: true, bubbles: true, cancelable: true});
 		input.dispatchEvent(event);
 		expect(useUiStore.getState().activeModal).toBe("settings");
 		document.body.removeChild(input);

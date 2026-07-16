@@ -10,8 +10,8 @@ import {Wizard} from "./pages/Wizard";
 import {DxDashboard} from "./pages/DxDashboard";
 import styles from "./App.module.css";
 function App(): JSX.Element {
-	let [paletteOpen, setPaletteOpen]=createSignal(false);
-	let router=createHashRouter();
+	let [paletteOpen, setPaletteOpen] = createSignal(false);
+	let router = createHashRouter();
 	return (
 		<ErrorBoundaryRetry>
 			<ToastProvider>
@@ -34,8 +34,13 @@ function App(): JSX.Element {
 							<main class={styles.card}>
 								<h1 class={styles.title}>RandPhyQuGeA</h1>
 								<p class={styles.status}>SolidJS migration in progress</p>
-								<p class={styles.note}>The React application continues to run at the root entry. This Solid preview is available at /src/solid/index.html during development. Phase 0 scaffolding is underway.</p>
-								<p class={styles.note}>Press <kbd>Ctrl+K</kbd> to open the command palette.</p>
+								<p class={styles.note}>
+									The React application continues to run at the root entry. This Solid preview is available at /src/solid/index.html during development. Phase 0 scaffolding is
+									underway.
+								</p>
+								<p class={styles.note}>
+									Press <kbd>Ctrl+K</kbd> to open the command palette.
+								</p>
 							</main>
 						</div>
 					</Match>

@@ -17,28 +17,28 @@ export interface ResumeSessionModalProps {
 }
 /** Format a duration in milliseconds as a human-readable string. */
 function formatDuration(ms: number): string {
-	let seconds=Math.floor(ms/1000);
-	if (seconds<60) return `${seconds}s`;
-	let minutes=Math.floor(seconds/60);
-	let remainingSeconds=seconds%60;
-	if (minutes<60) return `${minutes}m ${remainingSeconds}s`;
-	let hours=Math.floor(minutes/60);
-	let remainingMinutes=minutes%60;
+	let seconds = Math.floor(ms / 1000);
+	if (seconds < 60) return `${seconds}s`;
+	let minutes = Math.floor(seconds / 60);
+	let remainingSeconds = seconds % 60;
+	if (minutes < 60) return `${minutes}m ${remainingSeconds}s`;
+	let hours = Math.floor(minutes / 60);
+	let remainingMinutes = minutes % 60;
 	return `${hours}h ${remainingMinutes}m`;
 }
 /** Format a timestamp as a relative time string (e.g., "2 hours ago"). */
 function formatRelativeTime(timestamp: string): string {
-	let now=Date.now();
-	let then=new Date(timestamp).getTime();
-	let diff=now-then;
-	let seconds=Math.floor(diff/1000);
-	if (seconds<60) return "just now";
-	let minutes=Math.floor(seconds/60);
-	if (minutes<60) return `${minutes} minute${minutes===1 ? "" : "s"} ago`;
-	let hours=Math.floor(minutes/60);
-	if (hours<24) return `${hours} hour${hours===1 ? "" : "s"} ago`;
-	let days=Math.floor(hours/24);
-	if (days<7) return `${days} day${days===1 ? "" : "s"} ago`;
+	let now = Date.now();
+	let then = new Date(timestamp).getTime();
+	let diff = now - then;
+	let seconds = Math.floor(diff / 1000);
+	if (seconds < 60) return "just now";
+	let minutes = Math.floor(seconds / 60);
+	if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+	let hours = Math.floor(minutes / 60);
+	if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+	let days = Math.floor(hours / 24);
+	if (days < 7) return `${days} day${days === 1 ? "" : "s"} ago`;
 	return new Date(timestamp).toLocaleDateString();
 }
 function TrashIcon(): JSX.Element {
@@ -74,33 +74,33 @@ function ClockIcon(): JSX.Element {
  * the caller. Dismissal via Escape or backdrop is treated as a discard.
  */
 export function ResumeSessionModal(props: ResumeSessionModalProps): JSX.Element {
-	let isOpen=useUiStore(s => s.activeModal==="resume-session");
-	let activeSnapshot=createMemo<SessionSnapshot | null>(() => isOpen() ? props.snapshot : null);
-	let close=() => useUiStore.getState().closeModal();
-	let handleDiscard=() => {
+	let isOpen = useUiStore(s => s.activeModal === "resume-session");
+	let activeSnapshot = createMemo<SessionSnapshot | null>(() => (isOpen() ? props.snapshot : null));
+	let close = () => useUiStore.getState().closeModal();
+	let handleDiscard = () => {
 		props.onDiscard();
 		close();
 	};
-	let handleResume=() => {
+	let handleResume = () => {
 		props.onResume();
 		close();
 	};
 	return (
 		<Show when={activeSnapshot()} keyed>
-			{(snap) => {
-				let session=snap.session;
-				let total=session.questions.length;
-				let current=Math.min(session.currentIndex+1, total);
-				let progressText=total===0 ? "No questions generated" : `Question ${current} of ${total}`;
-				let correctCount=session.results.filter(r => r.is_correct).length;
-				let answeredCount=session.results.length;
-				let accuracy=answeredCount===0 ? 0 : Math.round((correctCount/answeredCount)*100);
-				let endTime=session.sessionEndTime ?? Date.now();
-				let elapsedMs=Math.max(0, endTime-session.sessionStartTime);
-				let lastQuestion=session.questions[session.currentIndex];
-				let lastTopicId=lastQuestion?.topic_id ?? "";
-				let lastTopicName=session.specification.topics.find(t => t.id===lastTopicId)?.name ?? (lastTopicId || "N/A");
-				let relativeTime=formatRelativeTime(snap.createdAt);
+			{snap => {
+				let session = snap.session;
+				let total = session.questions.length;
+				let current = Math.min(session.currentIndex + 1, total);
+				let progressText = total === 0 ? "No questions generated" : `Question ${current} of ${total}`;
+				let correctCount = session.results.filter(r => r.is_correct).length;
+				let answeredCount = session.results.length;
+				let accuracy = answeredCount === 0 ? 0 : Math.round((correctCount / answeredCount) * 100);
+				let endTime = session.sessionEndTime ?? Date.now();
+				let elapsedMs = Math.max(0, endTime - session.sessionStartTime);
+				let lastQuestion = session.questions[session.currentIndex];
+				let lastTopicId = lastQuestion?.topic_id ?? "";
+				let lastTopicName = session.specification.topics.find(t => t.id === lastTopicId)?.name ?? (lastTopicId || "N/A");
+				let relativeTime = formatRelativeTime(snap.createdAt);
 				return (
 					<Modal
 						open={true}
@@ -112,13 +112,19 @@ export function ResumeSessionModal(props: ResumeSessionModalProps): JSX.Element 
 						class={styles.resume}
 						footer={
 							<div class={styles.actions}>
-								<Button variant="danger" size="md" leftIcon={<TrashIcon />} onClick={handleDiscard}>Discard</Button>
-								<Button variant="primary" size="md" leftIcon={<ArrowRightIcon />} onClick={handleResume}>Resume</Button>
+								<Button variant="danger" size="md" leftIcon={<TrashIcon />} onClick={handleDiscard}>
+									Discard
+								</Button>
+								<Button variant="primary" size="md" leftIcon={<ArrowRightIcon />} onClick={handleResume}>
+									Resume
+								</Button>
 							</div>
 						}
 					>
 						<div class={styles.body}>
-							<p class={styles.intro}>You have an unfinished practice session from <strong>{relativeTime}</strong>. Pick up where you left off or discard it and start fresh.</p>
+							<p class={styles.intro}>
+								You have an unfinished practice session from <strong>{relativeTime}</strong>. Pick up where you left off or discard it and start fresh.
+							</p>
 							<Card variant="filled" class={styles.card}>
 								<CardContent class={styles.cardContent}>
 									<div class={styles.detail}>
@@ -132,7 +138,9 @@ export function ResumeSessionModal(props: ResumeSessionModalProps): JSX.Element 
 									<div class={styles.detail}>
 										<span class={styles.label}>Started</span>
 										<span class={`${styles.value} ${styles.time}`}>
-											<span class={styles.timeIcon}><ClockIcon /></span>
+											<span class={styles.timeIcon}>
+												<ClockIcon />
+											</span>
 											{relativeTime}
 										</span>
 									</div>

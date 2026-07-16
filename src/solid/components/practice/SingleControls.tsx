@@ -21,7 +21,7 @@ import type {Session} from "../../../services/contracts";
 import type {IPhysicsService, ISessionService} from "../../../services/contracts";
 import styles from "./SingleControls.module.css";
 function buildScopeOptions(specification: Specification | null): {value: string; label: string}[] {
-	let options: {value: string; label: string}[]=[{value: "all", label: "All"}];
+	let options: {value: string; label: string}[] = [{value: "all", label: "All"}];
 	if (specification) {
 		for (let unit of specification.units) {
 			options.push({value: unit.id, label: unit.name});
@@ -58,50 +58,50 @@ function CheckIcon(): JSX.Element {
  * inline SVG.
  */
 export function SingleControls(): JSX.Element {
-	let selectedTopicId=usePracticeStore(s => s.selectedTopicId);
-	let autoEnabled=useSettingsStore(s => s.autoContinueEnabled);
-	let scope=useSettingsStore(s => s.defaultScope);
-	let shuffle=useSettingsStore(s => s.shuffleByDefault);
-	let responseMode=useSettingsStore(s => s.defaultResponseMode);
-	let isActive=usePracticeStore(selectIsActive);
-	let showFeedback=usePracticeStore(s => s.showFeedback);
-	let userAnswer=usePracticeStore(s => s.userAnswer);
-	let selectedChoiceIndex=usePracticeStore(s => s.selectedChoiceIndex);
-	let selectedChoiceIndices=usePracticeStore(s => s.selectedChoiceIndices);
-	let currentQuestion=usePracticeStore(selectCurrentQuestion);
-	let specification=useSpecStore(s => s.specification);
-	let {toast}=useToast();
-	let [isGenerating, setIsGenerating]=createSignal(false);
-	let canCheck=createMemo(() => {
+	let selectedTopicId = usePracticeStore(s => s.selectedTopicId);
+	let autoEnabled = useSettingsStore(s => s.autoContinueEnabled);
+	let scope = useSettingsStore(s => s.defaultScope);
+	let shuffle = useSettingsStore(s => s.shuffleByDefault);
+	let responseMode = useSettingsStore(s => s.defaultResponseMode);
+	let isActive = usePracticeStore(selectIsActive);
+	let showFeedback = usePracticeStore(s => s.showFeedback);
+	let userAnswer = usePracticeStore(s => s.userAnswer);
+	let selectedChoiceIndex = usePracticeStore(s => s.selectedChoiceIndex);
+	let selectedChoiceIndices = usePracticeStore(s => s.selectedChoiceIndices);
+	let currentQuestion = usePracticeStore(selectCurrentQuestion);
+	let specification = useSpecStore(s => s.specification);
+	let {toast} = useToast();
+	let [isGenerating, setIsGenerating] = createSignal(false);
+	let canCheck = createMemo(() => {
 		if (!isActive() || showFeedback()) return false;
 		if (currentQuestion()?.correct_choice_indices !== undefined) {
 			return selectedChoiceIndices().length > 0;
 		}
 		return userAnswer().trim() !== "" || selectedChoiceIndex() >= 0;
 	});
-	let scopeOptions=createMemo(() => buildScopeOptions(specification()));
-	let cachedPhysics: IPhysicsService | null=null;
-	let cachedSession: ISessionService | null=null;
-	let resolveServices=(): {physics: IPhysicsService; session: ISessionService} => {
+	let scopeOptions = createMemo(() => buildScopeOptions(specification()));
+	let cachedPhysics: IPhysicsService | null = null;
+	let cachedSession: ISessionService | null = null;
+	let resolveServices = (): {physics: IPhysicsService; session: ISessionService} => {
 		if (!cachedSession) {
-			let {core}=useServiceProvider();
-			cachedPhysics=new PhysicsService(core);
-			cachedSession=new SessionService(cachedPhysics, new AnalyticsService());
+			let {core} = useServiceProvider();
+			cachedPhysics = new PhysicsService(core);
+			cachedSession = new SessionService(cachedPhysics, new AnalyticsService());
 		}
 		return {physics: cachedPhysics!, session: cachedSession!};
 	};
-	let generate=async () => {
+	let generate = async () => {
 		if (isGenerating()) return;
-		let spec=specification();
+		let spec = specification();
 		if (!spec) return;
 		setIsGenerating(true);
-		let topicId=resolveTopicId(spec, scope(), shuffle(), selectedTopicId());
-		let questionType=responseMode() === "mcq" ? QUESTION_TYPES.MC : undefined;
+		let topicId = resolveTopicId(spec, scope(), shuffle(), selectedTopicId());
+		let questionType = responseMode() === "mcq" ? QUESTION_TYPES.MC : undefined;
 		try {
-			let {physics, session}=resolveServices();
-			let question=await physics.generateQuestion(spec, {topicId, questionType});
-			let now=Date.now();
-			let sessionObj: Session={
+			let {physics, session} = resolveServices();
+			let question = await physics.generateQuestion(spec, {topicId, questionType});
+			let now = Date.now();
+			let sessionObj: Session = {
 				id: crypto.randomUUID(),
 				specification: spec,
 				questions: [question],
@@ -114,25 +114,25 @@ export function SingleControls(): JSX.Element {
 				sessionStartTime: now,
 			};
 			await session.resumeSession({session: sessionObj, createdAt: new Date().toISOString()});
-			let store=usePracticeStore.getState();
+			let store = usePracticeStore.getState();
 			store.setSession(sessionObj);
 			store.resetAnswerUi();
 		} catch (err) {
-			let message=err instanceof Error ? err.message : String(err);
+			let message = err instanceof Error ? err.message : String(err);
 			toast({variant: "error", message: "Failed to generate question: " + message});
 		} finally {
 			setIsGenerating(false);
 		}
 	};
-	let {check}=createPracticeActions({mode: "Single", onError: (message) => toast({variant: "error", message: "Failed to check answer: " + message})});
+	let {check} = createPracticeActions({mode: "Single", onError: message => toast({variant: "error", message: "Failed to check answer: " + message})});
 	createEffect(() => {
 		if (!showFeedback() || !autoEnabled()) return;
-		let id=window.setTimeout(() => {
+		let id = window.setTimeout(() => {
 			void generate();
 		}, 3000);
 		onCleanup(() => window.clearTimeout(id));
 	});
-	let handleKeyDown=(event: KeyboardEvent) => {
+	let handleKeyDown = (event: KeyboardEvent) => {
 		if (event.ctrlKey && (event.key === "g" || event.key === "G")) {
 			event.preventDefault();
 			void generate();
@@ -144,8 +144,8 @@ export function SingleControls(): JSX.Element {
 	onCleanup(() => {
 		window.removeEventListener("keydown", handleKeyDown);
 	});
-	let handleScope=(e: Event) => {
-		let target=e.target as HTMLSelectElement;
+	let handleScope = (e: Event) => {
+		let target = e.target as HTMLSelectElement;
 		useSettingsStore.getState().setDefaultScope(target.value);
 	};
 	return (
@@ -175,14 +175,14 @@ export function SingleControls(): JSX.Element {
 			<ToolbarGroup label="Options" class={styles.options}>
 				<Tooltip delay={300}>
 					<TooltipTrigger>
-						<Switch label="Auto" checked={autoEnabled()} onCheckedChange={(checked) => useSettingsStore.getState().setAutoContinueEnabled(checked)} />
+						<Switch label="Auto" checked={autoEnabled()} onCheckedChange={checked => useSettingsStore.getState().setAutoContinueEnabled(checked)} />
 					</TooltipTrigger>
 					<TooltipContent side="bottom">Auto-generate next question after 3 seconds</TooltipContent>
 				</Tooltip>
 				<Select id="scope-select" variant="scope" aria-label="Scope" options={scopeOptions()} value={scope()} onInput={handleScope} />
 				<Tooltip delay={300}>
 					<TooltipTrigger>
-						<Switch label="Shuffle" checked={shuffle()} onCheckedChange={(checked) => useSettingsStore.getState().setShuffleByDefault(checked)} />
+						<Switch label="Shuffle" checked={shuffle()} onCheckedChange={checked => useSettingsStore.getState().setShuffleByDefault(checked)} />
 					</TooltipTrigger>
 					<TooltipContent side="bottom">Randomly pick topics</TooltipContent>
 				</Tooltip>

@@ -31,7 +31,7 @@ function makeQuestion(overrides?: Partial<GeneratedQuestion>): GeneratedQuestion
 	};
 }
 function makeSession(question: GeneratedQuestion): Session {
-	let now=Date.now();
+	let now = Date.now();
 	return {
 		id: "sess1",
 		specification: makeSpec(),
@@ -51,7 +51,7 @@ beforeEach(() => {
 });
 describe("QuestionCard: Matching/Ordering MCQ rendering (task 5.59 bug 1)", () => {
 	it("renders radio choices for a Matching question in MCQ mode", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MATCHING",
 			choices: ["Velocity", "Force", "Energy"],
 			correct_choice_index: 1,
@@ -64,7 +64,7 @@ describe("QuestionCard: Matching/Ordering MCQ rendering (task 5.59 bug 1)", () =
 		expect(screen.getByText("Force")).toBeInTheDocument();
 	});
 	it("renders radio choices for an Ordering question in MCQ mode", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "ORDERING",
 			choices: ["A, B, C", "C, B, A", "B, A, C"],
 			correct_choice_index: 0,
@@ -76,7 +76,7 @@ describe("QuestionCard: Matching/Ordering MCQ rendering (task 5.59 bug 1)", () =
 		expect(screen.getAllByRole("radio")).toHaveLength(3);
 	});
 	it("does NOT render choices when a Matching question is in FRQ mode", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MATCHING",
 			response_mode: "frq",
 		});
@@ -88,7 +88,7 @@ describe("QuestionCard: Matching/Ordering MCQ rendering (task 5.59 bug 1)", () =
 });
 describe("QuestionCard: MultipleResponse multi-select rendering (task 5.59 bug 2)", () => {
 	it("renders checkbox choices (not radios) for a MultipleResponse question", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MULTI_RESPONSE",
 			choices: ["Force", "Energy", "Momentum", "Mass"],
 			correct_choice_indices: [0, 2],
@@ -101,7 +101,7 @@ describe("QuestionCard: MultipleResponse multi-select rendering (task 5.59 bug 2
 		expect(screen.getAllByRole("checkbox")).toHaveLength(4);
 	});
 	it("toggles a checkbox selection on click without clearing other selections", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MULTI_RESPONSE",
 			choices: ["Force", "Energy", "Momentum", "Mass"],
 			correct_choice_indices: [0, 2],
@@ -109,7 +109,7 @@ describe("QuestionCard: MultipleResponse multi-select rendering (task 5.59 bug 2
 		});
 		usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(q)});
 		render(() => <QuestionCard />);
-		let checkboxes=screen.getAllByRole("checkbox");
+		let checkboxes = screen.getAllByRole("checkbox");
 		fireEvent.click(checkboxes[0]!);
 		expect(usePracticeStore.getState().selectedChoiceIndices).toEqual([0]);
 		expect(checkboxes[0]).toHaveAttribute("aria-checked", "true");
@@ -124,7 +124,7 @@ describe("QuestionCard: MultipleResponse multi-select rendering (task 5.59 bug 2
 		expect(checkboxes[2]).toHaveAttribute("aria-checked", "true");
 	});
 	it("does not affect selectedChoiceIndex for single-select MCQ questions", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MC",
 			choices: ["2 N", "4 N"],
 			correct_choice_index: 1,
@@ -138,7 +138,7 @@ describe("QuestionCard: MultipleResponse multi-select rendering (task 5.59 bug 2
 });
 describe("AnswerCard: multi-select summary (task 5.59 bug 2)", () => {
 	it("shows a placeholder when no multi-select option is chosen", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MULTI_RESPONSE",
 			choices: ["Force", "Energy", "Momentum"],
 			correct_choice_indices: [0, 2],
@@ -153,7 +153,7 @@ describe("AnswerCard: multi-select summary (task 5.59 bug 2)", () => {
 		expect(screen.getByText("Select options in the question card")).toBeInTheDocument();
 	});
 	it("lists the selected options in the multi-select summary", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MULTI_RESPONSE",
 			choices: ["Force", "Energy", "Momentum"],
 			correct_choice_indices: [0, 2],
@@ -170,7 +170,7 @@ describe("AnswerCard: multi-select summary (task 5.59 bug 2)", () => {
 		expect(screen.getByText("Momentum")).toBeInTheDocument();
 	});
 	it("clears all multi-select options when the clear button is clicked", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MULTI_RESPONSE",
 			choices: ["Force", "Energy", "Momentum"],
 			correct_choice_indices: [0, 2],
@@ -186,7 +186,7 @@ describe("AnswerCard: multi-select summary (task 5.59 bug 2)", () => {
 		expect(usePracticeStore.getState().selectedChoiceIndices).toEqual([]);
 	});
 	it("hides the textarea for a MultipleResponse MCQ question", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MULTI_RESPONSE",
 			choices: ["Force", "Energy"],
 			correct_choice_indices: [0],
@@ -197,7 +197,7 @@ describe("AnswerCard: multi-select summary (task 5.59 bug 2)", () => {
 		expect(screen.queryByRole("textbox", {name: "Answer"})).not.toBeInTheDocument();
 	});
 	it("shows the multi-select hint for MultipleResponse MCQ questions", () => {
-		let q=makeQuestion({
+		let q = makeQuestion({
 			question_type: "MULTI_RESPONSE",
 			choices: ["Force", "Energy"],
 			correct_choice_indices: [0],
@@ -213,7 +213,7 @@ describe("practiceStore: multi-select state (task 5.59 bug 3)", () => {
 		expect(usePracticeStore.getState().selectedChoiceIndices).toEqual([]);
 	});
 	it("toggleChoice adds and removes indices", () => {
-		let store=usePracticeStore.getState();
+		let store = usePracticeStore.getState();
 		store.toggleChoice(0);
 		expect(usePracticeStore.getState().selectedChoiceIndices).toEqual([0]);
 		store.toggleChoice(2);

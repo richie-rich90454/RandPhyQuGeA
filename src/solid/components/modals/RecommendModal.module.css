@@ -47,7 +47,9 @@
 }
 .topicCard {
 	width: 100%;
-	transition: transform 0.15s ease, box-shadow 0.15s ease;
+	transition:
+		transform 0.15s ease,
+		box-shadow 0.15s ease;
 }
 .topicCard:hover {
 	transform: translateY(-1px);
