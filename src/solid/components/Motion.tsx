@@ -44,7 +44,7 @@ export function Motion(props: MotionProps): JSX.Element {
     return (
         <div
             class={`${styles.root} ${hiddenClass[variant()] ?? ""} ${visible() ? (styles.visible ?? "") : ""} ${local.class ?? ""}`}
-            style={`--motion-duration: ${duration()}ms; --motion-delay: ${delay()}ms;`}
+            style={{["--motion-duration"]: `${duration()}ms`, ["--motion-delay"]: `${delay()}ms`}}
             data-testid="motion"
             {...others}
         >

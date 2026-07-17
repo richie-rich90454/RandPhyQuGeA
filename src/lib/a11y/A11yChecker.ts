@@ -171,7 +171,7 @@ export class A11yChecker {
     getAccessibleName(el: Element): string {
         let labelledby = el.getAttribute("aria-labelledby");
         if (labelledby && el.ownerDocument) {
-            let parts = labelledby.split(/\s+/).map(id => el.ownerDocument!.getElementById(id));
+            let parts = labelledby.split(/\s+/).map(id => el.ownerDocument.getElementById(id));
             let text = parts.map(p => p?.textContent?.trim() ?? "").join(" ");
             if (text.length > 0) return text;
         }

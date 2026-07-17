@@ -27,10 +27,8 @@ export interface ServiceProviderProps {
     core?: PhysicsCore;
     grader?: AnswerGrader;
 }
-export function ServiceProvider(props: ParentProps<ServiceProviderProps>): JSX.Element {
-    let core = props.core ?? PhysicsCore.default();
-    let grader = props.grader ?? new AnswerGrader();
-    let value: SolidServiceContextValue = {
+function createServiceValue(core: PhysicsCore, grader: AnswerGrader): SolidServiceContextValue {
+    return {
         core,
         grader,
         practiceStore: usePracticeStore,
@@ -39,6 +37,11 @@ export function ServiceProvider(props: ParentProps<ServiceProviderProps>): JSX.E
         specStore: useSpecStore,
         uiStore: useUiStore,
     };
+}
+export function ServiceProvider(props: ParentProps<ServiceProviderProps>): JSX.Element {
+    let core = props.core ?? PhysicsCore.default();
+    let grader = props.grader ?? new AnswerGrader();
+    let value = createServiceValue(core, grader);
     return <ServiceContext.Provider value={value}>{props.children}</ServiceContext.Provider>;
 }
 export function useServiceProvider(): SolidServiceContextValue {

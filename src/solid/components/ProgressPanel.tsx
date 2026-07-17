@@ -15,6 +15,12 @@ import styles from "./ProgressPanel.module.css";
 const MAX_WEAK_TOPICS = 5;
 /** Number of recent results shown per page. */
 const HISTORY_PAGE_SIZE = 5;
+function formatTime(ms: number): string {
+    return (ms / 1000).toFixed(1) + "s";
+}
+function formatTimestamp(timestamp: string): string {
+    return new Date(timestamp).toLocaleString();
+}
 function TrendUpIcon(): JSX.Element {
     return (
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -82,7 +88,7 @@ export function ProgressPanel(props: ProgressPanelProps): JSX.Element {
     });
     let totalAttempts = () => results().length;
     let correctCount = () => results().filter(r => r.is_correct).length;
-    let sortedResults = createMemo(() => [...results()].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
+    let sortedResults = createMemo(() => [...results()].toSorted((a, b) => b.timestamp.localeCompare(a.timestamp)));
     let totalPages = () => Math.max(1, Math.ceil(sortedResults().length / HISTORY_PAGE_SIZE));
     let currentPage = () => Math.min(page(), totalPages() - 1);
     let pageResults = createMemo(() => {
@@ -101,8 +107,6 @@ export function ProgressPanel(props: ProgressPanelProps): JSX.Element {
         if (a >= 50) return "warning";
         return "error";
     };
-    let formatTime = (ms: number): string => (ms / 1000).toFixed(1) + "s";
-    let formatTimestamp = (timestamp: string): string => new Date(timestamp).toLocaleString();
     let handlePrev = () => setPage(p => Math.max(0, p - 1));
     let handleNext = () => setPage(p => Math.min(totalPages() - 1, p + 1));
     return (

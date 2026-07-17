@@ -171,7 +171,8 @@ export function CommandPalette(props: CommandPaletteProps): JSX.Element {
         }
     };
     let handleQueryInput = (event: InputEvent) => {
-        let target = event.target as HTMLInputElement;
+        let target = event.target;
+        if (!(target instanceof HTMLInputElement)) throw new Error("Expected HTMLInputElement");
         setQuery(target.value);
         setSelected(0);
     };
@@ -196,8 +197,8 @@ export function CommandPalette(props: CommandPaletteProps): JSX.Element {
         let idx = selected();
         let list = listEl;
         if (!list) return;
-        let child = list.children[idx] as HTMLElement | undefined;
-        if (child && typeof child.scrollIntoView === "function") child.scrollIntoView({block: "nearest"});
+        let child = list.children[idx];
+        if (child instanceof HTMLElement && typeof child.scrollIntoView === "function") child.scrollIntoView({block: "nearest"});
     });
     return (
         <Show when={local.open}>

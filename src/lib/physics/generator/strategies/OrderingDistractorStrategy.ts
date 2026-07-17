@@ -41,7 +41,7 @@ export class OrderingDistractorStrategy implements ResponseFormatStrategy {
     /** Build systematic alternative orderings: the reverse, every adjacent-pair swap, and every non-zero rotation. */
     private systematicPermutations(items: readonly string[]): string[][] {
         const result: string[][] = [];
-        result.push([...items].reverse());
+        result.push(items.toReversed());
         for (let i = 0; i < items.length - 1; i++) {
             const copy = [...items];
             const tmp = copy[i]!;

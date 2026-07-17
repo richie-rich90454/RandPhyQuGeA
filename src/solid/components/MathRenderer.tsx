@@ -24,7 +24,8 @@ export function MathRenderer(props: MathRendererProps): JSX.Element {
         if (cached !== undefined) {
             return cached;
         }
-        let rendered = katex.renderToString(local.tex, {
+        let renderToString: (tex: string, opts?: object) => string = Reflect.get(katex, "renderToString");
+        let rendered = renderToString(local.tex, {
             displayMode: local.display ?? false,
             throwOnError: false,
         });
