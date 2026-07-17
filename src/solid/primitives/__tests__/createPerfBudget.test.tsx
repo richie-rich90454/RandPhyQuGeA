@@ -9,15 +9,37 @@ interface FakeEntry {
     transferSize: number;
     encodedBodySize: number;
 }
+function makeEntry(e: FakeEntry): PerformanceResourceTiming {
+    let base: PerformanceResourceTiming = {
+        name: e.name,
+        entryType: "resource",
+        startTime: 0,
+        duration: 0,
+        initiatorType: "script",
+        nextHopProtocol: "",
+        workerStart: 0,
+        redirectStart: 0,
+        redirectEnd: 0,
+        fetchStart: 0,
+        domainLookupStart: 0,
+        domainLookupEnd: 0,
+        connectStart: 0,
+        connectEnd: 0,
+        secureConnectionStart: 0,
+        requestStart: 0,
+        responseStart: 0,
+        responseEnd: 0,
+        transferSize: e.transferSize,
+        encodedBodySize: e.encodedBodySize,
+        decodedBodySize: 0,
+        responseStatus: 0,
+        serverTiming: [],
+        toJSON: () => base,
+    };
+    return base;
+}
 function makeEntries(list: FakeEntry[]): PerformanceResourceTiming[] {
-    return list.map(
-        e =>
-            ({
-                name: e.name,
-                transferSize: e.transferSize,
-                encodedBodySize: e.encodedBodySize,
-            }) as unknown as PerformanceResourceTiming,
-    );
+    return list.map(makeEntry);
 }
 let captured: CreatePerfBudgetReturn | null = null;
 function makeRoot(entries: FakeEntry[], budget?: BudgetEntry[], observe?: boolean): () => JSX.Element {
@@ -47,7 +69,7 @@ describe("createPerfBudget", () => {
         let budget: BudgetEntry[] = [{category: "script", limitBytes: 1000}];
         render(makeRoot([], budget));
         expect(captured!.results()).toHaveLength(1);
-        expect(captured!.results()[0]!.category).toBe("script");
+        expect(captured!.results()[0]?.category).toBe("script");
     });
     it("defaults to PerfBudget.defaultBudget when no budget is passed", () => {
         render(makeRoot([]));
@@ -109,8 +131,9 @@ describe("createPerfBudget", () => {
         let observerCalls: {type: string; buffered: boolean}[] = [];
         let disconnect = vi.fn<() => void>();
         class FakeObserver {
+            cb: PerformanceObserverCallback;
             constructor(cb: PerformanceObserverCallback) {
-                (this as unknown as {cb: PerformanceObserverCallback}).cb = cb;
+                this.cb = cb;
             }
             observe(opts: {type: string; buffered: boolean}) {
                 observerCalls.push(opts);
@@ -119,16 +142,15 @@ describe("createPerfBudget", () => {
                 disconnect();
             }
         }
-        let original = globalThis.PerformanceObserver;
-        globalThis.PerformanceObserver = FakeObserver as unknown as typeof PerformanceObserver;
+        vi.stubGlobal("PerformanceObserver", FakeObserver);
         try {
             let rendered = render(makeRoot([], [{category: "script", limitBytes: 1000}], true));
             expect(observerCalls).toHaveLength(1);
-            expect(observerCalls[0]!.type).toBe("resource");
+            expect(observerCalls[0]?.type).toBe("resource");
             rendered.unmount();
             expect(disconnect).toHaveBeenCalled();
         } finally {
-            globalThis.PerformanceObserver = original;
+            vi.unstubAllGlobals();
         }
     });
     it("does not subscribe when observe is false", () => {
@@ -139,13 +161,12 @@ describe("createPerfBudget", () => {
             }
             disconnect() {}
         }
-        let original = globalThis.PerformanceObserver;
-        globalThis.PerformanceObserver = FakeObserver as unknown as typeof PerformanceObserver;
+        vi.stubGlobal("PerformanceObserver", FakeObserver);
         try {
             render(makeRoot([], [{category: "script", limitBytes: 1000}], false));
             expect(observeCalls).toBe(0);
         } finally {
-            globalThis.PerformanceObserver = original;
+            vi.unstubAllGlobals();
         }
     });
 });

@@ -129,7 +129,7 @@ describe("createHistory reattempt queue + callback (task 5.74)", () => {
         state!.record({questionId: "Q1", correct: false, response: "x", mode: "frq"});
         state!.record({questionId: "Q2", correct: true, response: "y", mode: "frq"});
         state!.record({questionId: "Q3", correct: false, response: "z", mode: "frq"});
-        expect(state!.reattemptQueue().sort()).toEqual(["Q1", "Q3"]);
+        expect(state!.reattemptQueue().toSorted()).toEqual(["Q1", "Q3"]);
     });
     it("reattemptQueue excludes questions whose latest attempt became correct", () => {
         render(makeRoot());

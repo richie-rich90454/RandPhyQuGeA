@@ -165,7 +165,7 @@ describe("createPracticeActions", () => {
         );
         await result!.check();
         expect(mock.submitAnswerCalls.length).toBe(1);
-        expect(mock.submitAnswerCalls[0]!.answer).toBe("4");
+        expect(mock.submitAnswerCalls[0]?.answer).toBe("4");
         expect(mock.getSessionCalls).toBe(1);
         expect(useProgressStore.getState().results.length).toBe(1);
         expect(usePracticeStore.getState().showFeedback).toBe(true);
@@ -192,7 +192,7 @@ describe("createPracticeActions", () => {
             }),
         );
         await result!.check();
-        expect(mock.submitAnswerCalls[0]!.choiceIndex).toBe(1);
+        expect(mock.submitAnswerCalls[0]?.choiceIndex).toBe(1);
     });
     it("check does nothing when there is no session", async () => {
         let mock = createMockSessionService({result: makeResult()});

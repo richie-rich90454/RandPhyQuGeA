@@ -56,7 +56,7 @@ function createMatchMediaMock(): MatchMediaMock {
             setMatches: (query: string, value: boolean) => {
                 let entry = ensure(query);
                 entry.matches = value;
-                entry.listeners.forEach(listener => listener({matches: value, media: query} as MediaQueryListEvent));
+                entry.listeners.forEach(listener => listener(Object.assign(new Event("change"), {matches: value, media: query})));
             },
         },
     );

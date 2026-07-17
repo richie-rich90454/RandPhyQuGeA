@@ -19,11 +19,7 @@ interface SpeechRecognitionEventLike {
     readonly resultIndex: number;
     readonly results: SpeechRecognitionResultList;
 }
-interface SpeechRecognitionErrorEventLike {
-    readonly error: string;
-    readonly message: string;
-}
-interface SpeechRecognitionInstanceLike {
+interface SpeechRecognitionInstanceLike extends EventTarget {
     lang: string;
     continuous: boolean;
     interimResults: boolean;
@@ -32,40 +28,56 @@ interface SpeechRecognitionInstanceLike {
     stop: () => void;
     abort: () => void;
     onresult: ((event: SpeechRecognitionEventLike) => void) | null;
-    onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
     onend: (() => void) | null;
 }
 interface SpeechRecognitionConstructorLike {
     new (): SpeechRecognitionInstanceLike;
 }
+class FakeErrorEvent extends Event {
+    readonly error: string;
+    readonly message: string;
+    constructor(error: string, message: string = "") {
+        super("error");
+        this.error = error;
+        this.message = message;
+    }
+}
 function makeFakeCtor(): SpeechRecognitionConstructorLike & {instances: SpeechRecognitionInstanceLike[]} {
     let instances: SpeechRecognitionInstanceLike[] = [];
-    let Ctor = function (this: SpeechRecognitionInstanceLike) {
-        let instance: SpeechRecognitionInstanceLike = {
-            lang: "",
-            continuous: false,
-            interimResults: false,
-            maxAlternatives: 1,
-            start: vi.fn<() => void>(),
-            stop: vi.fn<() => void>(),
-            abort: vi.fn<() => void>(),
-            onresult: null,
-            onerror: null,
-            onend: null,
-        };
-        instances.push(instance);
-        return instance;
-    };
-    return Object.assign(Ctor as unknown as SpeechRecognitionConstructorLike, {instances});
+    class FakeInstance extends EventTarget implements SpeechRecognitionInstanceLike {
+        lang = "";
+        continuous = false;
+        interimResults = false;
+        maxAlternatives = 1;
+        start = vi.fn<() => void>();
+        stop = vi.fn<() => void>();
+        abort = vi.fn<() => void>();
+        onresult: ((event: SpeechRecognitionEventLike) => void) | null = null;
+        onend: (() => void) | null = null;
+        constructor() {
+            super();
+            instances.push(this);
+        }
+    }
+    return Object.assign(FakeInstance, {instances});
+}
+function getInstance(ctor: {instances: SpeechRecognitionInstanceLike[]}, index: number = 0): SpeechRecognitionInstanceLike {
+    let instance = ctor.instances[index];
+    if (!instance) throw new Error(`Expected instance at index ${index}`);
+    return instance;
 }
 function makeResultEvent(transcript: string, isFinal: boolean, resultIndex: number = 0): SpeechRecognitionEventLike {
     let alt: SpeechRecognitionAlternative = {transcript};
-    let result = {0: alt, isFinal} as SpeechRecognitionResult;
-    let results = {length: 1, item: () => result, 0: result} as unknown as SpeechRecognitionResultList;
+    let result: SpeechRecognitionResult = {0: alt, isFinal};
+    let results: SpeechRecognitionResultList = {
+        length: 1,
+        item: () => result,
+        0: result,
+    };
     return {resultIndex, results};
 }
-function makeErrorEvent(code: string, message: string = ""): SpeechRecognitionErrorEventLike {
-    return {error: code, message};
+function makeErrorEvent(code: string, message: string = ""): FakeErrorEvent {
+    return new FakeErrorEvent(code, message);
 }
 let state: VoiceInputState | null = null;
 function makeRoot(setup: () => VoiceInputState): () => JSX.Element {
@@ -77,9 +89,9 @@ function makeRoot(setup: () => VoiceInputState): () => JSX.Element {
 beforeEach(() => {
     state = null;
     if (typeof window !== "undefined") {
-        let w = window as unknown as {SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown};
-        delete w.SpeechRecognition;
-        delete w.webkitSpeechRecognition;
+        vi.stubGlobal("SpeechRecognition", undefined);
+        vi.stubGlobal("webkitSpeechRecognition", undefined);
+        vi.unstubAllGlobals();
     }
 });
 describe("createVoiceInput fallback (preventive fix, task 5.66)", () => {
@@ -113,7 +125,7 @@ describe("createVoiceInput with a constructor", () => {
         render(makeRoot(() => createVoiceInput({ctor, lang: "en-US", continuous: false, interimResults: true})));
         state!.start();
         expect(ctor.instances.length).toBe(1);
-        let instance = ctor.instances[0]!;
+        let instance = getInstance(ctor);
         expect(instance.lang).toBe("en-US");
         expect(instance.continuous).toBe(false);
         expect(instance.interimResults).toBe(true);
@@ -132,7 +144,7 @@ describe("createVoiceInput with a constructor", () => {
         let ctor = makeFakeCtor();
         render(makeRoot(() => createVoiceInput({ctor})));
         state!.start();
-        let instance = ctor.instances[0]!;
+        let instance = getInstance(ctor);
         state!.stop();
         expect(instance.stop).toHaveBeenCalled();
         expect(state!.listening()).toBe(false);
@@ -147,28 +159,28 @@ describe("createVoiceInput with a constructor", () => {
         let ctor = makeFakeCtor();
         render(makeRoot(() => createVoiceInput({ctor, interimResults: true})));
         state!.start();
-        let instance = ctor.instances[0]!;
-        instance.onresult!(makeResultEvent("hello", false));
+        let instance = getInstance(ctor);
+        instance.onresult?.(makeResultEvent("hello", false));
         expect(state!.transcript()).toBe("hello");
-        instance.onresult!(makeResultEvent("hello world", true));
+        instance.onresult?.(makeResultEvent("hello world", true));
         expect(state!.transcript()).toBe("hello world");
     });
     it("transcript ignores interim results when interimResults=false", () => {
         let ctor = makeFakeCtor();
         render(makeRoot(() => createVoiceInput({ctor, interimResults: false})));
         state!.start();
-        let instance = ctor.instances[0]!;
-        instance.onresult!(makeResultEvent("partial", false));
+        let instance = getInstance(ctor);
+        instance.onresult?.(makeResultEvent("partial", false));
         expect(state!.transcript()).toBe("");
-        instance.onresult!(makeResultEvent("final answer", true));
+        instance.onresult?.(makeResultEvent("final answer", true));
         expect(state!.transcript()).toBe("final answer");
     });
     it("error accessor surfaces onerror code and stops listening", () => {
         let ctor = makeFakeCtor();
         render(makeRoot(() => createVoiceInput({ctor})));
         state!.start();
-        let instance = ctor.instances[0]!;
-        instance.onerror!(makeErrorEvent("not-allowed"));
+        let instance = getInstance(ctor);
+        instance.dispatchEvent(makeErrorEvent("not-allowed"));
         expect(state!.error()).toBe("not-allowed");
         expect(state!.listening()).toBe(false);
     });
@@ -176,13 +188,13 @@ describe("createVoiceInput with a constructor", () => {
         let ctor = makeFakeCtor();
         render(makeRoot(() => createVoiceInput({ctor})));
         state!.start();
-        let instance = ctor.instances[0]!;
-        instance.onend!();
+        let instance = getInstance(ctor);
+        instance.onend?.();
         expect(state!.listening()).toBe(false);
         expect(state!.error()).toBe(null);
     });
     it("start() that throws is caught and surfaces start-failed error", () => {
-        class ThrowingCtor {
+        let ThrowingCtor: SpeechRecognitionConstructorLike = class extends EventTarget implements SpeechRecognitionInstanceLike {
             lang = "";
             continuous = false;
             interimResults = false;
@@ -193,12 +205,11 @@ describe("createVoiceInput with a constructor", () => {
             stop = vi.fn<() => void>();
             abort = vi.fn<() => void>();
             onresult: ((event: SpeechRecognitionEventLike) => void) | null = null;
-            onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null = null;
             onend: (() => void) | null = null;
-        }
+        };
         let state2: VoiceInputState | null = null;
         render(() => {
-            state2 = createVoiceInput({ctor: ThrowingCtor as unknown as SpeechRecognitionConstructorLike});
+            state2 = createVoiceInput({ctor: ThrowingCtor});
             return <div>throwing</div>;
         });
         state2!.start();
@@ -211,12 +222,11 @@ describe("createVoiceInput cleanup (preventive fix, task 5.66)", () => {
         let ctor = makeFakeCtor();
         let rendered = render(makeRoot(() => createVoiceInput({ctor})));
         state!.start();
-        let instance = ctor.instances[0]!;
+        let instance = getInstance(ctor);
         expect(instance.abort).not.toHaveBeenCalled();
         rendered.unmount();
         expect(instance.abort).toHaveBeenCalled();
         expect(instance.onresult).toBeNull();
-        expect(instance.onerror).toBeNull();
         expect(instance.onend).toBeNull();
     });
     it("cleanup is a no-op when recognition was never started", () => {

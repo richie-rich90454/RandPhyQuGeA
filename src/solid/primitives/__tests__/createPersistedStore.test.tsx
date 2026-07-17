@@ -59,7 +59,7 @@ describe("createPersistedStore", () => {
         captured!.setStore("count", 12);
         await flush();
         expect(captured!.store.count).toBe(12);
-        let stored = JSON.parse(localStorage.getItem("store-key") ?? "{}") as CountState;
+        let stored = JSON.parse(localStorage.getItem("store-key") ?? "{}");
         expect(stored.count).toBe(12);
     });
     it("persists nested changes to localStorage", async () => {
@@ -75,7 +75,7 @@ describe("createPersistedStore", () => {
         captured!.setStore("nested", "value", 42);
         await flush();
         expect(captured!.store.nested.value).toBe(42);
-        let stored = JSON.parse(localStorage.getItem("store-key") ?? "{}") as CountState;
+        let stored = JSON.parse(localStorage.getItem("store-key") ?? "{}");
         expect(stored.nested.value).toBe(42);
     });
     it("falls back to default when stored JSON is malformed", async () => {
@@ -103,7 +103,7 @@ describe("createPersistedStore", () => {
         await flush();
         captured!.setStore({count: 99, nested: {value: 100}});
         await flush();
-        let stored = JSON.parse(localStorage.getItem("store-key") ?? "{}") as CountState;
+        let stored = JSON.parse(localStorage.getItem("store-key") ?? "{}");
         expect(stored.count).toBe(99);
         expect(stored.nested.value).toBe(100);
     });

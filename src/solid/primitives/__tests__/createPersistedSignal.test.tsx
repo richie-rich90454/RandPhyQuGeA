@@ -6,7 +6,7 @@ import {createPersistedSignal} from "../createPersistedSignal";
 function flush(): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, 0));
 }
-function SignalHost<T>(props: {key: string; defaultValue: unknown; onReady: (value: Accessor<T>, set: Setter<T>) => void}): JSX.Element {
+function SignalHost<T>(props: {key: string; defaultValue: T; onReady: (value: Accessor<T>, set: Setter<T>) => void}): JSX.Element {
     let [value, set] = createPersistedSignal<T>({key: props.key, defaultValue: props.defaultValue});
     props.onReady(value, set);
     return <div>signal</div>;
