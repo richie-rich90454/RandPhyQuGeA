@@ -1,6 +1,5 @@
 import {describe, it, expect} from "vitest";
 import {UnitRegistry} from "../units/UnitRegistry";
-import type {DimensionVector} from "../units/UnitRegistry";
 import {UnitComparator} from "../units/UnitComparator";
 describe("UnitRegistry.resolve", () => {
     const reg = UnitRegistry.createDefault();
@@ -148,7 +147,10 @@ describe("UnitRegistry constructor and get", () => {
 });
 describe("UnitRegistry.resolve prefix edge cases", () => {
     it("continues when a custom prefix maps to undefined", () => {
-        const reg = new UnitRegistry(undefined, {x: undefined} as unknown as Record<string, number>);
+        const prefixes: Record<string, number> = {};
+        const wide: Record<string, number | undefined> = prefixes;
+        wide["x"] = undefined;
+        const reg = new UnitRegistry(undefined, prefixes);
         expect(reg.resolve("xm")).toBeNull();
     });
     it("returns null when token equals a prefix string exactly", () => {
@@ -183,7 +185,7 @@ describe("UnitComparator.parse and resolveCompound edge cases", () => {
         expect(p?.dimensions.L).toBe(2);
     });
     it("ignores undefined dimension values during merge", () => {
-        const reg = new UnitRegistry([{symbol: "weird", name: "weird", factor: 1, dimensions: {L: undefined} as DimensionVector}]);
+        const reg = new UnitRegistry([{symbol: "weird", name: "weird", factor: 1, dimensions: {L: undefined}}]);
         const cmpW = new UnitComparator(reg);
         const p = cmpW.parse("1 weird");
         expect(p).not.toBeNull();

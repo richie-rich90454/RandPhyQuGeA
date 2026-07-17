@@ -81,7 +81,7 @@ describe("SeededRandom", () => {
             const rng = new SeededRandom(5);
             const items = [1, 2, 3, 4, 5];
             const shuffled = rng.shuffle([...items]);
-            expect(shuffled.sort()).toEqual(items);
+            expect(shuffled.toSorted()).toEqual(items);
         });
     });
     describe("RandomGenerator contract", () => {

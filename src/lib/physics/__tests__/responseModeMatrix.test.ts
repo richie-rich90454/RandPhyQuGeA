@@ -4,7 +4,7 @@ import {QuestionGenerator} from "../generator/QuestionGenerator";
 import {ExpressionEvaluator} from "../ExpressionEvaluator";
 import {SeededRandomGenerator} from "../random";
 import {AnswerGrader} from "../grader/AnswerGrader";
-import type {GeneratedQuestion, ResponseMode} from "../types";
+import type {ResponseMode} from "../types";
 const MATRIX_SPEC = [
     "[UNIT]",
     "Id: U1",
@@ -112,13 +112,13 @@ describe("ResponseMode matrix: every question type x every response mode", () =>
             });
             it("FRQ grading: correct answer accepted, wrong answer rejected", () => {
                 const gen = buildGenerator(1);
-                const q = gen.generate({templateIds: [c.templateId], responseMode: "frq"}) as GeneratedQuestion;
+                const q = gen.generate({templateIds: [c.templateId], responseMode: "frq"})!;
                 expect(grader.grade(q, c.answer).is_correct).toBe(true);
                 expect(grader.grade(q, wrongResponseFor(c)).is_correct).toBe(false);
             });
             it("MCQ grading: correct choice index accepted, wrong index rejected", () => {
                 const gen = buildGenerator(1);
-                const q = gen.generate({templateIds: [c.templateId], responseMode: "mcq"}) as GeneratedQuestion;
+                const q = gen.generate({templateIds: [c.templateId], responseMode: "mcq"})!;
                 const correctIndex = q.correct_choice_index ?? -1;
                 const wrongIndex = (correctIndex + 1) % (q.choices?.length ?? 1);
                 expect(grader.grade(q, c.answer, correctIndex).is_correct).toBe(true);

@@ -12,6 +12,12 @@ import {
 } from "../random";
 import type {VariableDefinition} from "../types";
 import type {RandomGenerator} from "../contracts";
+function asNumber(v: unknown): number {
+    if (typeof v !== "number") {
+        throw new Error("expected number");
+    }
+    return v;
+}
 describe("UniformRandomGenerator", () => {
     it("generates ints within [1,10] over 100 iterations", () => {
         const rng = new UniformRandomGenerator();
@@ -51,7 +57,7 @@ describe("UniformRandomGenerator", () => {
         const rng = new UniformRandomGenerator();
         const items = [1, 2, 3, 4, 5];
         const shuffled = rng.shuffle([...items]);
-        expect(shuffled.sort()).toEqual(items);
+        expect(shuffled.toSorted()).toEqual(items);
     });
 });
 describe("SeededRandomGenerator", () => {
@@ -74,7 +80,7 @@ describe("Variable type handlers", () => {
         const rng = new SeededRandomGenerator(1);
         const def: VariableDefinition = {name: "x", var_type: "int", min: 1, max: 100};
         for (let i = 0; i < 50; i++) {
-            const v = handler.generate(def, rng) as number;
+            const v = asNumber(handler.generate(def, rng));
             expect(v).toBeGreaterThanOrEqual(1);
             expect(v).toBeLessThanOrEqual(100);
         }
@@ -83,7 +89,7 @@ describe("Variable type handlers", () => {
         const handler = new IntVariableHandler();
         const rng = new SeededRandomGenerator(1);
         const def: VariableDefinition = {name: "x", var_type: "int"};
-        const v = handler.generate(def, rng) as number;
+        const v = asNumber(handler.generate(def, rng));
         expect(v).toBeGreaterThanOrEqual(0);
         expect(v).toBeLessThanOrEqual(100);
     });
@@ -92,7 +98,7 @@ describe("Variable type handlers", () => {
         const rng = new SeededRandomGenerator(1);
         const def: VariableDefinition = {name: "x", var_type: "double", min: 0, max: 10, step: 0.5};
         for (let i = 0; i < 50; i++) {
-            const v = handler.generate(def, rng) as number;
+            const v = asNumber(handler.generate(def, rng));
             expect(v).toBeGreaterThanOrEqual(0);
             expect(v).toBeLessThanOrEqual(10);
             expect((v * 2) % 1).toBeCloseTo(0, 10);
@@ -138,7 +144,7 @@ describe("BoolVariableHandler", () => {
         const rng = new SeededRandomGenerator(1);
         const def: VariableDefinition = {name: "b", var_type: "bool"};
         for (let i = 0; i < 100; i++) {
-            const v = handler.generate(def, rng) as number;
+            const v = asNumber(handler.generate(def, rng));
             expect(v === 0 || v === 1).toBe(true);
         }
     });
@@ -148,7 +154,7 @@ describe("BoolVariableHandler", () => {
         const def: VariableDefinition = {name: "b", var_type: "bool"};
         const seen = new Set<number>();
         for (let i = 0; i < 200; i++) {
-            seen.add(handler.generate(def, rng) as number);
+            seen.add(asNumber(handler.generate(def, rng)));
         }
         expect(seen.has(0)).toBe(true);
         expect(seen.has(1)).toBe(true);
@@ -255,7 +261,7 @@ describe("Random handler edge cases", () => {
             next: () => 0,
             nextInt: (_min: number, max: number) => max,
             nextDouble: (min: number, max: number) => (min < max ? min : max),
-            pick: <T>(items: T[]) => items[0] as T,
+            pick: <T>(items: T[]) => items[0]!,
             shuffle: <T>(items: T[]) => items,
         };
         const def: VariableDefinition = {name: "x", var_type: "double", min: 0, max: 3, step: 0.6};
@@ -265,7 +271,7 @@ describe("Random handler edge cases", () => {
         const handler = new DoubleVariableHandler();
         const rng = new SeededRandomGenerator(1);
         const def: VariableDefinition = {name: "x", var_type: "double"};
-        const v = handler.generate(def, rng) as number;
+        const v = asNumber(handler.generate(def, rng));
         expect(v).toBeGreaterThanOrEqual(0);
         expect(v).toBeLessThanOrEqual(100);
     });
@@ -274,7 +280,7 @@ describe("Random handler edge cases", () => {
         const rng = new SeededRandomGenerator(1);
         const def: VariableDefinition = {name: "x", var_type: "int", min: 1.9, max: 5.7};
         for (let i = 0; i < 20; i++) {
-            const v = handler.generate(def, rng) as number;
+            const v = asNumber(handler.generate(def, rng));
             expect(v).toBeGreaterThanOrEqual(1);
             expect(v).toBeLessThanOrEqual(5);
         }
