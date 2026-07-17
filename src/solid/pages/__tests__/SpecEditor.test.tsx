@@ -81,15 +81,17 @@ describe("SpecEditor page", () => {
     it("updates the textarea value when typing", () => {
         renderWithProvider(() => <SpecEditor />);
         let textarea = screen.getByLabelText(/specification text editor/i);
+        if (!(textarea instanceof HTMLTextAreaElement)) throw new Error("Expected textarea");
         fireEvent.input(textarea, {target: {value: "[UNIT]"}});
-        expect((textarea as HTMLTextAreaElement).value).toBe("[UNIT]");
+        expect(textarea.value).toBe("[UNIT]");
     });
     it("clears the textarea when the Clear button is clicked", () => {
         renderWithProvider(() => <SpecEditor />);
         let textarea = screen.getByLabelText(/specification text editor/i);
+        if (!(textarea instanceof HTMLTextAreaElement)) throw new Error("Expected textarea");
         fireEvent.input(textarea, {target: {value: "[UNIT]"}});
         fireEvent.click(screen.getByRole("button", {name: /^clear$/i}));
-        expect((textarea as HTMLTextAreaElement).value).toBe("");
+        expect(textarea.value).toBe("");
     });
     it("loads the default spec when the Load default spec button is clicked", async () => {
         renderWithProvider(() => <SpecEditor />);
@@ -97,7 +99,8 @@ describe("SpecEditor page", () => {
         await waitFor(
             () => {
                 let textarea = screen.getByLabelText(/specification text editor/i);
-                expect((textarea as HTMLTextAreaElement).value.length).toBeGreaterThan(0);
+                if (!(textarea instanceof HTMLTextAreaElement)) throw new Error("Expected textarea");
+                expect(textarea.value.length).toBeGreaterThan(0);
             },
             {timeout: 3000},
         );

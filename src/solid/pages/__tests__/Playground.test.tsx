@@ -89,7 +89,7 @@ describe("Playground page", () => {
         let {container} = render(() => <Playground />);
         let pres = container.querySelectorAll("pre");
         expect(pres.length).toBeGreaterThan(0);
-        expect(pres[0]!.textContent).toContain("Button");
+        expect(pres[0]?.textContent).toContain("Button");
     });
     it("renders copy-code buttons for each section", () => {
         render(() => <Playground />);

@@ -56,7 +56,8 @@ describe("Wizard page", () => {
     });
     it("derives question-type options from the canonical QUESTION_TYPE_ALIASES (regression 5.42)", () => {
         render(() => <Wizard />);
-        let typeSelect = screen.getByRole("combobox", {name: /question type/i}) as HTMLSelectElement;
+        let typeSelect = screen.getByRole("combobox", {name: /question type/i});
+        if (!(typeSelect instanceof HTMLSelectElement)) throw new Error("Expected select element");
         let optionValues = Array.from(typeSelect.options).map(o => o.value);
         let expected = Object.keys(QUESTION_TYPE_ALIASES).filter(k => k !== QUESTION_TYPE_ALIASES[k]);
         expect(optionValues).toEqual(expected);
@@ -64,8 +65,9 @@ describe("Wizard page", () => {
     it("updates the question type when the select changes", () => {
         render(() => <Wizard />);
         let typeSelect = screen.getByRole("combobox", {name: /question type/i});
+        if (!(typeSelect instanceof HTMLSelectElement)) throw new Error("Expected select element");
         fireEvent.change(typeSelect, {target: {value: "ShortAnswer"}});
-        expect((typeSelect as HTMLSelectElement).value).toBe("ShortAnswer");
+        expect(typeSelect.value).toBe("ShortAnswer");
     });
     it("shows the Distractors field when the question type is MultipleChoice", () => {
         render(() => <Wizard />);
