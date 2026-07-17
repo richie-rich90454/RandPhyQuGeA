@@ -18,4 +18,5 @@ declare module "node:path" {
 declare const process: {
     cwd(): string;
 };
+// eslint-disable-next-line eslint/no-underscore-dangle
 declare const __dirname: string;
