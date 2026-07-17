@@ -79,7 +79,8 @@ describe("layout smoke", () => {
     });
     it("LiquidBackground renders a decorative root marked aria-hidden", () => {
         let {container} = render(() => <LiquidBackground />);
-        let root = container.firstChild as HTMLElement;
+        let root = container.firstChild;
+        if (!(root instanceof HTMLElement)) throw new Error("Expected HTMLElement root");
         expect(root).toBeTruthy();
         expect(root.getAttribute("aria-hidden")).toBe("true");
     });

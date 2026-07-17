@@ -22,7 +22,17 @@ function flush(): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, 0));
 }
 type MqlListener = (event: MediaQueryListEvent) => void;
-function createMatchMediaMock(): (query: string) => MediaQueryList {
+interface MqlMock {
+    matches: boolean;
+    media: string;
+    onchange: null;
+    addEventListener: (type: string, listener: MqlListener) => void;
+    removeEventListener: (type: string, listener: MqlListener) => void;
+    addListener: () => void;
+    removeListener: () => void;
+    dispatchEvent: () => boolean;
+}
+function createMatchMediaMock(): (query: string) => MqlMock {
     let byQuery = new Map<string, {matches: boolean; listeners: Set<MqlListener>}>();
     let ensure = (query: string) => {
         let entry = byQuery.get(query);
@@ -49,7 +59,7 @@ function createMatchMediaMock(): (query: string) => MediaQueryList {
             addListener: () => {},
             removeListener: () => {},
             dispatchEvent: () => false,
-        } as MediaQueryList;
+        };
     };
 }
 function resetStores() {
@@ -59,15 +69,58 @@ function resetStores() {
     useSpecStore.setState(useSpecStore.getInitialState());
     useUiStore.setState(useUiStore.getInitialState());
 }
+function fakeSession(): Session {
+    return {
+        id: "smoke",
+        specification: {units: [], topics: [], skills: [], templates: []},
+        questions: [],
+        mode: "Single",
+        currentIndex: 0,
+        results: [],
+        isActive: false,
+        isFinished: false,
+        questionStartTime: 0,
+        sessionStartTime: 0,
+    };
+}
+function fakePracticeResult(): PracticeResult {
+    return {
+        id: "smoke",
+        question_id: "",
+        topic_id: "",
+        skill_id: "",
+        is_correct: false,
+        time_taken_ms: 0,
+        user_answer: "",
+        timestamp: "",
+        mode: "Single",
+        difficulty: 1,
+    };
+}
+function fakeGeneratedQuestion(): GeneratedQuestion {
+    return {
+        id: "smoke",
+        topic_id: "",
+        skill_id: "",
+        question_type: "MC",
+        difficulty: 1,
+        text: "",
+        answer: "",
+        response_mode: "mcq",
+        solution_text: "",
+        solution_latex: "",
+        variables: {},
+    };
+}
 function fakeSessionService(): ISessionService {
     return {
-        startSession: vi.fn<() => Promise<Session>>(async () => ({}) as Session),
-        submitAnswer: vi.fn<() => Promise<PracticeResult>>(async () => ({}) as PracticeResult),
+        startSession: vi.fn<() => Promise<Session>>(async () => fakeSession()),
+        submitAnswer: vi.fn<() => Promise<PracticeResult>>(async () => fakePracticeResult()),
         advanceQuestion: vi.fn<() => Promise<boolean>>(async () => true),
-        regenerateCurrentQuestionAs: vi.fn<() => Promise<GeneratedQuestion>>(async () => ({}) as GeneratedQuestion),
-        finishSession: vi.fn<() => Promise<PracticeResult[]>>(async () => [] as PracticeResult[]),
-        getSession: vi.fn<() => Session>(() => ({}) as Session),
-        resumeSession: vi.fn<() => Promise<Session>>(async () => ({}) as Session),
+        regenerateCurrentQuestionAs: vi.fn<() => Promise<GeneratedQuestion>>(async () => fakeGeneratedQuestion()),
+        finishSession: vi.fn<() => Promise<PracticeResult[]>>(async () => []),
+        getSession: vi.fn<() => Session>(() => fakeSession()),
+        resumeSession: vi.fn<() => Promise<Session>>(async () => fakeSession()),
         saveSessionSnapshot: vi.fn<() => Promise<null>>(async () => null),
         loadSessionSnapshot: vi.fn<() => Promise<null>>(async () => null),
         clearSessionSnapshot: vi.fn<() => void>(() => {}),

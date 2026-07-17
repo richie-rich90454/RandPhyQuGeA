@@ -206,7 +206,9 @@ describe("accessibility", () => {
         let radios = screen.getAllByRole("radio");
         expect(radios).toHaveLength(4);
         expect(radios[0]).toHaveAttribute("aria-checked", "false");
-        fireEvent.click(radios[1]!);
+        let secondRadio = radios[1];
+        expect(secondRadio).toBeDefined();
+        if (secondRadio) fireEvent.click(secondRadio);
         expect(radios[1]).toHaveAttribute("aria-checked", "true");
     });
 });

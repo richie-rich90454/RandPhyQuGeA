@@ -48,8 +48,8 @@ describe("solid progressStore", () => {
             useProgressStore.getState().addResults(results);
             const stored = useProgressStore.getState().results;
             expect(stored.length).toBe(2000);
-            expect(stored[0]!.id).toBe("r5");
-            expect(stored[stored.length - 1]!.id).toBe("r2004");
+            expect(stored[0]?.id).toBe("r5");
+            expect(stored[stored.length - 1]?.id).toBe("r2004");
         });
     });
     describe("deleteResult", () => {

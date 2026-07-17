@@ -90,7 +90,8 @@ describe("ui primitives smoke", () => {
                 onChange={handler}
             />
         ));
-        let select = screen.getByLabelText("Scope") as HTMLSelectElement;
+        let select = screen.getByLabelText("Scope");
+        if (!(select instanceof HTMLSelectElement)) throw new Error("Expected select element");
         expect(select.options.length).toBe(2);
         fireEvent.change(select, {target: {value: "u1"}});
         expect(handler).toHaveBeenCalledTimes(1);
