@@ -92,7 +92,9 @@ describe("QuestionCard", () => {
         usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq)});
         render(() => <QuestionCard />);
         let radios = screen.getAllByRole("radio");
-        fireEvent.click(radios[1]!);
+        let radio1 = radios[1];
+        if (!radio1) throw new Error("Expected radio at index 1");
+        fireEvent.click(radio1);
         expect(usePracticeStore.getState().selectedChoiceIndex).toBe(1);
         expect(radios[1]).toHaveAttribute("aria-checked", "true");
     });
@@ -175,7 +177,9 @@ describe("QuestionCard", () => {
         render(() => <QuestionCard />);
         let radios = screen.getAllByRole("radio");
         expect(radios[0]).toHaveAttribute("aria-checked", "true");
-        fireEvent.click(radios[2]!);
+        let radio2 = radios[2];
+        if (!radio2) throw new Error("Expected radio at index 2");
+        fireEvent.click(radio2);
         expect(radios[0]).toHaveAttribute("aria-checked", "false");
         expect(radios[2]).toHaveAttribute("aria-checked", "true");
     });
@@ -202,7 +206,9 @@ describe("QuestionCard", () => {
         usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq), selectedChoiceIndex: 0});
         render(() => <QuestionCard />);
         let radios = screen.getAllByRole("radio");
-        radios[0]!.focus();
+        let radio0 = radios[0];
+        if (!radio0) throw new Error("Expected radio at index 0");
+        radio0.focus();
         fireEvent.keyDown(screen.getByRole("radiogroup"), {key: "ArrowDown"});
         expect(usePracticeStore.getState().selectedChoiceIndex).toBe(1);
         expect(radios[1]).toHaveAttribute("aria-checked", "true");
@@ -217,7 +223,9 @@ describe("QuestionCard", () => {
         usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(mcq), selectedChoiceIndex: 0});
         render(() => <QuestionCard />);
         let radios = screen.getAllByRole("radio");
-        radios[0]!.focus();
+        let radio0 = radios[0];
+        if (!radio0) throw new Error("Expected radio at index 0");
+        radio0.focus();
         fireEvent.keyDown(screen.getByRole("radiogroup"), {key: "ArrowUp"});
         expect(usePracticeStore.getState().selectedChoiceIndex).toBe(2);
         expect(radios[2]).toHaveAttribute("aria-checked", "true");

@@ -2,6 +2,12 @@ import {render, waitFor} from "@solidjs/testing-library";
 import {describe, it, expect} from "vitest";
 import {Motion} from "../Motion";
 import styles from "../Motion.module.css";
+function asHTMLElement(node: Node | null): HTMLElement {
+    if (node instanceof HTMLElement) {
+        return node;
+    }
+    throw new Error("Expected HTMLElement");
+}
 describe("Motion", () => {
     it("renders children inside the motion root", () => {
         let {container} = render(() => (
@@ -9,7 +15,7 @@ describe("Motion", () => {
                 <span>content</span>
             </Motion>
         ));
-        let root = container.firstChild as HTMLElement;
+        let root = asHTMLElement(container.firstChild);
         expect(root).toBeTruthy();
         expect(root.getAttribute("data-testid")).toBe("motion");
         expect(root.textContent).toBe("content");
@@ -20,7 +26,7 @@ describe("Motion", () => {
                 <span>x</span>
             </Motion>
         ));
-        let root = container.firstChild as HTMLElement;
+        let root = asHTMLElement(container.firstChild);
         expect(root.classList.contains(styles.root ?? "")).toBe(true);
         expect(root.classList.contains(styles.fadeHidden ?? "")).toBe(true);
     });
@@ -30,7 +36,7 @@ describe("Motion", () => {
                 <span>x</span>
             </Motion>
         ));
-        let root = container.firstChild as HTMLElement;
+        let root = asHTMLElement(container.firstChild);
         expect(root.classList.contains(styles.slideHidden ?? "")).toBe(true);
     });
     it("applies the scale-in hidden class for the scale-in variant", () => {
@@ -39,7 +45,7 @@ describe("Motion", () => {
                 <span>x</span>
             </Motion>
         ));
-        let root = container.firstChild as HTMLElement;
+        let root = asHTMLElement(container.firstChild);
         expect(root.classList.contains(styles.scaleHidden ?? "")).toBe(true);
     });
     it("adds the visible class after mount", async () => {
@@ -48,7 +54,7 @@ describe("Motion", () => {
                 <span>x</span>
             </Motion>
         ));
-        let root = container.firstChild as HTMLElement;
+        let root = asHTMLElement(container.firstChild);
         await waitFor(() => {
             expect(root.classList.contains(styles.visible ?? "")).toBe(true);
         });
@@ -59,7 +65,7 @@ describe("Motion", () => {
                 <span>x</span>
             </Motion>
         ));
-        let root = container.firstChild as HTMLElement;
+        let root = asHTMLElement(container.firstChild);
         let style = root.getAttribute("style") ?? "";
         expect(style).toContain("--motion-duration: 500ms");
         expect(style).toContain("--motion-delay: 120ms");
@@ -70,7 +76,7 @@ describe("Motion", () => {
                 <span>x</span>
             </Motion>
         ));
-        let root = container.firstChild as HTMLElement;
+        let root = asHTMLElement(container.firstChild);
         expect(root.classList.contains("custom")).toBe(true);
         expect(root.classList.contains(styles.root ?? "")).toBe(true);
     });
@@ -80,7 +86,7 @@ describe("Motion", () => {
                 <span>x</span>
             </Motion>
         ));
-        let root = container.firstChild as HTMLElement;
+        let root = asHTMLElement(container.firstChild);
         expect(root.classList.contains(styles.visible ?? "")).toBe(false);
     });
 });

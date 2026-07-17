@@ -27,7 +27,8 @@ describe("MainContent", () => {
     });
     it("applies an extra class", () => {
         let {container} = render(() => <MainContent class="extra">x</MainContent>);
-        let wrapper = container.firstChild as HTMLElement;
+        let wrapper = container.firstChild;
+        if (!(wrapper instanceof HTMLElement)) throw new Error("Expected HTMLElement wrapper");
         expect(wrapper.className).toContain("extra");
     });
 });

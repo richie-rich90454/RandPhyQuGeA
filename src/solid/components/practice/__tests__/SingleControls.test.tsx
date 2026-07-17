@@ -38,19 +38,22 @@ describe("SingleControls", () => {
     });
     it("renders the scope select with a default All option", () => {
         renderWithToast();
-        let select = screen.getByRole("combobox", {name: "Scope"}) as HTMLSelectElement;
+        let select = screen.getByRole("combobox", {name: "Scope"});
+        if (!(select instanceof HTMLSelectElement)) throw new Error("Expected HTMLSelectElement");
         let optionValues = Array.from(select.options).map(o => o.value);
         expect(optionValues).toEqual(["all"]);
     });
     it("toggles autoContinueEnabled when the Auto switch is clicked", () => {
         renderWithToast();
-        let autoSwitch = screen.getAllByRole("switch")[0]!;
+        let autoSwitch = screen.getAllByRole("switch")[0];
+        if (!autoSwitch) throw new Error("Expected auto switch");
         fireEvent.click(autoSwitch);
         expect(useSettingsStore.getState().autoContinueEnabled).toBe(true);
     });
     it("toggles shuffleByDefault when the Shuffle switch is clicked", () => {
         renderWithToast();
-        let shuffleSwitch = screen.getAllByRole("switch")[1]!;
+        let shuffleSwitch = screen.getAllByRole("switch")[1];
+        if (!shuffleSwitch) throw new Error("Expected shuffle switch");
         fireEvent.click(shuffleSwitch);
         expect(useSettingsStore.getState().shuffleByDefault).toBe(true);
     });

@@ -85,7 +85,7 @@ describe("MentalControls", () => {
         let group = screen.getByRole("radiogroup", {name: "Difficulty"});
         expect(group).toBeInTheDocument();
         let radios = screen.getAllByRole("radio");
-        let labels = radios.map(r => (r as HTMLElement).getAttribute("aria-label"));
+        let labels = radios.map(r => r.getAttribute("aria-label"));
         expect(labels).toEqual(["Easy", "Medium", "Hard"]);
     });
     it("marks the active difficulty pill as checked", () => {
@@ -137,7 +137,8 @@ describe("MentalControls", () => {
     it("reflects the mental scope options from the loaded specification", () => {
         useSpecStore.setState({specification: {units: [{id: "u1", name: "Mechanics", description: ""}], topics: [], skills: [], templates: []}, loading: false, error: null, empty: false});
         renderWithToast(() => <MentalControls />);
-        let select = screen.getByRole("combobox", {name: "Mental scope"}) as HTMLSelectElement;
+        let select = screen.getByRole("combobox", {name: "Mental scope"});
+        if (!(select instanceof HTMLSelectElement)) throw new Error("Expected HTMLSelectElement");
         let optionValues = Array.from(select.options).map(o => o.value);
         expect(optionValues).toEqual(["all", "u1"]);
     });

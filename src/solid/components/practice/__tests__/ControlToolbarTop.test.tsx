@@ -18,7 +18,8 @@ describe("ControlToolbarTop", () => {
     });
     it("applies an extra class", () => {
         let {container} = render(() => <ControlToolbarTop class="extra">x</ControlToolbarTop>);
-        let row = container.firstChild as HTMLElement;
+        let row = container.firstChild;
+        if (!(row instanceof HTMLElement)) throw new Error("Expected HTMLElement");
         expect(row.className).toContain("extra");
     });
 });

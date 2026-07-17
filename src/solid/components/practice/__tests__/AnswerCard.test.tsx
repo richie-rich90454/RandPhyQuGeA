@@ -57,7 +57,8 @@ describe("AnswerCard", () => {
     it("updates the practice store when typing in the answer textarea", () => {
         usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion())});
         render(() => <AnswerCard />);
-        let textarea = screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+        let textarea = screen.getByRole("textbox", {name: "Answer"});
+        if (!(textarea instanceof HTMLTextAreaElement)) throw new Error("Expected HTMLTextAreaElement");
         fireEvent.input(textarea, {target: {value: "42 N"}});
         expect(usePracticeStore.getState().userAnswer).toBe("42 N");
     });
@@ -141,7 +142,8 @@ describe("AnswerCard", () => {
     it("inserts a math symbol at the cursor via the fallback path (undo/redo regression)", () => {
         usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "abc"});
         render(() => <AnswerCard />);
-        let textarea = screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+        let textarea = screen.getByRole("textbox", {name: "Answer"});
+        if (!(textarea instanceof HTMLTextAreaElement)) throw new Error("Expected HTMLTextAreaElement");
         textarea.focus();
         textarea.setSelectionRange(1, 1);
         fireEvent.click(screen.getByText("\u221a"));
@@ -152,7 +154,8 @@ describe("AnswerCard", () => {
         Object.defineProperty(document, "execCommand", {value: execSpy, configurable: true, writable: true});
         usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "abc"});
         render(() => <AnswerCard />);
-        let textarea = screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+        let textarea = screen.getByRole("textbox", {name: "Answer"});
+        if (!(textarea instanceof HTMLTextAreaElement)) throw new Error("Expected HTMLTextAreaElement");
         textarea.focus();
         textarea.setSelectionRange(1, 1);
         fireEvent.click(screen.getByText("\u221a"));
@@ -163,7 +166,8 @@ describe("AnswerCard", () => {
         Object.defineProperty(document, "execCommand", {value: execSpy, configurable: true, writable: true});
         usePracticeStore.setState({...usePracticeStore.getState(), session: makeSession(makeQuestion()), userAnswer: "abc"});
         render(() => <AnswerCard />);
-        let textarea = screen.getByRole("textbox", {name: "Answer"}) as HTMLTextAreaElement;
+        let textarea = screen.getByRole("textbox", {name: "Answer"});
+        if (!(textarea instanceof HTMLTextAreaElement)) throw new Error("Expected HTMLTextAreaElement");
         textarea.focus();
         textarea.setSelectionRange(2, 2);
         fireEvent.click(screen.getByText("\u221a"));
