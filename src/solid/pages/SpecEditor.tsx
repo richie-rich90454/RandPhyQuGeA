@@ -34,6 +34,9 @@ function downloadFile(filename: string, content: string): void {
     document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
 }
+let handleBack = () => {
+    window.location.hash = "";
+};
 interface ParseState {
     status: "idle" | "parsing" | "success" | "error";
     spec?: Specification;
@@ -110,9 +113,6 @@ export function SpecEditor(): JSX.Element {
     let topicCount = () => parseState().spec?.topics.length ?? 0;
     let skillCount = () => parseState().spec?.skills.length ?? 0;
     let templateCount = () => parseState().spec?.templates.length ?? 0;
-    let handleBack = () => {
-        window.location.hash = "";
-    };
     return (
         <div class={styles.root}>
             <header class={styles.header}>

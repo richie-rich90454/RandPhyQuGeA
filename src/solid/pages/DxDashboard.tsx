@@ -41,6 +41,9 @@ function formatMs(ms: number): string {
     if (ms < 1) return `${ms.toFixed(2)} ms`;
     return `${ms.toFixed(1)} ms`;
 }
+let handleBack = () => {
+    window.location.hash = "";
+};
 export function DxDashboard(): JSX.Element {
     let [envInfo] = createSignal<EnvInfo>(getEnvInfo());
     let [results, setResults] = createSignal<BenchmarkResult[]>([]);
@@ -87,9 +90,6 @@ export function DxDashboard(): JSX.Element {
         } finally {
             setRunning(false);
         }
-    };
-    let handleBack = () => {
-        window.location.hash = "";
     };
     return (
         <div class={styles.root}>

@@ -102,10 +102,10 @@ function Section(props: SectionProps): JSX.Element {
         </Card>
     );
 }
+let handleBack = () => {
+    window.location.hash = "";
+};
 function BackLink(): JSX.Element {
-    let handleBack = () => {
-        window.location.hash = "";
-    };
     return (
         <button type="button" class={styles.backLink} onClick={handleBack} aria-label="Back to app">
             <svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true">
@@ -117,6 +117,20 @@ function BackLink(): JSX.Element {
 }
 const BUTTON_VARIANTS: ButtonVariant[] = ["primary", "secondary", "ghost", "danger"];
 const BUTTON_SIZES: ButtonSize[] = ["xs", "sm", "md", "lg"];
+const BUTTON_VARIANT_SET = new Set<string>(BUTTON_VARIANTS);
+const BUTTON_SIZE_SET = new Set<string>(BUTTON_SIZES);
+function isButtonVariant(value: string): value is ButtonVariant {
+    return BUTTON_VARIANT_SET.has(value);
+}
+function toButtonVariant(value: string): ButtonVariant {
+    return isButtonVariant(value) ? value : "primary";
+}
+function isButtonSize(value: string): value is ButtonSize {
+    return BUTTON_SIZE_SET.has(value);
+}
+function toButtonSize(value: string): ButtonSize {
+    return isButtonSize(value) ? value : "md";
+}
 const BADGE_VARIANTS = ["default", "success", "warning", "error", "info"] as const;
 const PILL_VARIANTS = ["default", "active", "outline"] as const;
 const CARD_VARIANTS = ["default", "hover", "filled", "outline", "layer-02"] as const;
@@ -155,13 +169,13 @@ export function Playground(): JSX.Element {
                 <div class={styles.liveControls}>
                     <label class={styles.controlLabel}>
                         Variant
-                        <select class={styles.controlSelect} value={buttonVariant()} onChange={e => setButtonVariant(e.currentTarget.value as ButtonVariant)}>
+                        <select class={styles.controlSelect} value={buttonVariant()} onChange={e => setButtonVariant(toButtonVariant(e.currentTarget.value))}>
                             <For each={BUTTON_VARIANTS}>{v => <option value={v}>{v}</option>}</For>
                         </select>
                     </label>
                     <label class={styles.controlLabel}>
                         Size
-                        <select class={styles.controlSelect} value={buttonSize()} onChange={e => setButtonSize(e.currentTarget.value as ButtonSize)}>
+                        <select class={styles.controlSelect} value={buttonSize()} onChange={e => setButtonSize(toButtonSize(e.currentTarget.value))}>
                             <For each={BUTTON_SIZES}>{s => <option value={s}>{s}</option>}</For>
                         </select>
                     </label>

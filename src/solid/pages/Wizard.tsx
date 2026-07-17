@@ -77,6 +77,9 @@ function downloadFile(filename: string, content: string): void {
     document.body.removeChild(anchor);
     URL.revokeObjectURL(url);
 }
+let handleBackToApp = () => {
+    window.location.hash = "";
+};
 export function Wizard(): JSX.Element {
     let [state, setState] = createSignal<WizardState>(DEFAULT_STATE);
     let [currentStep, setCurrentStep] = createSignal(0);
@@ -132,9 +135,6 @@ export function Wizard(): JSX.Element {
     };
     let handleExport = () => {
         downloadFile("wizard-template.txt", specPreview());
-    };
-    let handleBackToApp = () => {
-        window.location.hash = "";
     };
     return (
         <div class={styles.root}>
