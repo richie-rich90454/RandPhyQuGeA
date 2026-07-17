@@ -9,6 +9,7 @@
  */
 export type DimensionKey = "L" | "M" | "T" | "I" | "Theta" | "N" | "J";
 export type DimensionVector = Partial<Record<DimensionKey, number>>;
+export const DIMENSION_KEYS: readonly DimensionKey[] = ["L", "M", "T", "I", "Theta", "N", "J"];
 export interface UnitDefinition {
     /** Unit symbol (e.g. "m", "kg", "N", "J"). */
     symbol: string;

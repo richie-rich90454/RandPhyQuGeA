@@ -1,4 +1,4 @@
-import {UnitRegistry} from "./UnitRegistry";
+import {DIMENSION_KEYS, UnitRegistry} from "./UnitRegistry";
 import type {DimensionVector, ResolvedUnit} from "./UnitRegistry";
 /**
  * Unit-aware answer comparator.
@@ -152,7 +152,7 @@ export class UnitComparator {
     }
     /** Merge `src` dimensions into `dest`, multiplying each exponent by `multiplier`. */
     private mergeDimensions(dest: DimensionVector, src: DimensionVector, multiplier: number): void {
-        for (const key of Object.keys(src) as Array<keyof DimensionVector>) {
+        for (const key of DIMENSION_KEYS) {
             const v = src[key];
             if (v === undefined) {
                 continue;
@@ -168,11 +168,9 @@ export class UnitComparator {
     }
     /** Return `true` when two dimension vectors have the same exponents for every dimension key. */
     private dimensionsEqual(a: DimensionVector, b: DimensionVector): boolean {
-        const keys = new Set<string>([...Object.keys(a), ...Object.keys(b)]);
-        for (const k of keys) {
-            const ka = k as keyof DimensionVector;
-            const av = a[ka] ?? 0;
-            const bv = b[ka] ?? 0;
+        for (const k of DIMENSION_KEYS) {
+            const av = a[k] ?? 0;
+            const bv = b[k] ?? 0;
             if (av !== bv) {
                 return false;
             }

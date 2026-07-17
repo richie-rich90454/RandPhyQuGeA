@@ -82,12 +82,12 @@ export class ExpressionNormalizer implements ExpressionNormalizerLike {
     }
     private sortCommutativeTerms(s: string): string {
         const byPlus = this.splitTopLevel(s, "+");
-        const sortedPlus = byPlus.map(term => this.sortTerm(term)).sort();
+        const sortedPlus = byPlus.map(term => this.sortTerm(term)).toSorted();
         return sortedPlus.join("+");
     }
     private sortTerm(term: string): string {
         const byStar = this.splitTopLevel(term, "*");
-        return byStar.sort().join("*");
+        return byStar.toSorted().join("*");
     }
     private splitTopLevel(s: string, sep: string): string[] {
         const parts: string[] = [];

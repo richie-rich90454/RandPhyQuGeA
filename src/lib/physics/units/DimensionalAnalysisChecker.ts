@@ -1,4 +1,5 @@
 import {UnitComparator} from "./UnitComparator";
+import {DIMENSION_KEYS} from "./UnitRegistry";
 import type {DimensionVector} from "./UnitRegistry";
 /**
  * Dimensional-analysis checker.
@@ -80,11 +81,9 @@ export class DimensionalAnalysisChecker {
     }
     /** Return `true` when two dimension vectors have the same exponents for every dimension key. */
     private vectorsEqual(a: DimensionVector, b: DimensionVector): boolean {
-        const keys = new Set<string>([...Object.keys(a), ...Object.keys(b)]);
-        for (const k of keys) {
-            const ka = k as keyof DimensionVector;
-            const av = a[ka] ?? 0;
-            const bv = b[ka] ?? 0;
+        for (const k of DIMENSION_KEYS) {
+            const av = a[k] ?? 0;
+            const bv = b[k] ?? 0;
             if (av !== bv) {
                 return false;
             }

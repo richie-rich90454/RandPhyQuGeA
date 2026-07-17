@@ -54,8 +54,8 @@ export class AnswerGrader implements AnswerGraderLike {
         const correctSet: Set<number> = new Set(correctIndices);
         const selectedSet: Set<number> = new Set(selected);
         const isCorrect = this.setsEqual(selectedSet, correctSet);
-        const normalizedResponse = [...selectedSet].sort((a, b) => a - b).join(",");
-        const normalizedAnswer = [...correctSet].sort((a, b) => a - b).join(",");
+        const normalizedResponse = [...selectedSet].toSorted((a, b) => a - b).join(",");
+        const normalizedAnswer = [...correctSet].toSorted((a, b) => a - b).join(",");
         return {is_correct: isCorrect, normalized_response: normalizedResponse, normalized_answer: normalizedAnswer};
     }
     /** Return true when both sets contain exactly the same elements. */

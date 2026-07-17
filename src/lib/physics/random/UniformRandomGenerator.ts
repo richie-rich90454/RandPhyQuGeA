@@ -25,14 +25,14 @@ export class UniformRandomGenerator implements RandomGenerator {
             throw new Error("Cannot pick from an empty array");
         }
         const idx = this.nextInt(0, items.length - 1);
-        return items[idx] as T;
+        return items[idx]!;
     }
     /** Shuffles an array in place (Fisher-Yates) and returns it. */
     public shuffle<T>(items: T[]): T[] {
         for (let i = items.length - 1; i > 0; i--) {
             const j = this.nextInt(0, i);
-            const tmp = items[i] as T;
-            items[i] = items[j] as T;
+            const tmp = items[i]!;
+            items[i] = items[j]!;
             items[j] = tmp;
         }
         return items;
