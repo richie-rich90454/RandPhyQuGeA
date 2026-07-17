@@ -1,5 +1,5 @@
 /** Browser-safe export service with centralized format metadata. */
-import katex from "katex";
+import {renderToString as renderKatexToString} from "katex";
 import type {IExportService, ExportMetadata} from "./contracts";
 import type {ExportFormat, GeneratedQuestion} from "../types/models";
 const EXPORT_REGISTRY: Record<ExportFormat, ExportMetadata> = {
@@ -108,13 +108,13 @@ export class ExportService implements IExportService {
         while ((match = pattern.exec(text)) !== null) {
             html += this.escapeHtml(text.slice(lastIndex, match.index));
             if (match[1] !== undefined) {
-                html += katex.renderToString(match[1], {displayMode: true, throwOnError: false});
+                html += renderKatexToString(match[1], {displayMode: true, throwOnError: false});
             } else if (match[2] !== undefined) {
-                html += katex.renderToString(match[2], {displayMode: true, throwOnError: false});
+                html += renderKatexToString(match[2], {displayMode: true, throwOnError: false});
             } else if (match[3] !== undefined) {
-                html += katex.renderToString(match[3], {displayMode: false, throwOnError: false});
+                html += renderKatexToString(match[3], {displayMode: false, throwOnError: false});
             } else if (match[4] !== undefined) {
-                html += katex.renderToString(match[4], {displayMode: false, throwOnError: false});
+                html += renderKatexToString(match[4], {displayMode: false, throwOnError: false});
             } else {
                 html += "$";
             }

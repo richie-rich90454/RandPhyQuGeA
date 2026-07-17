@@ -27,7 +27,7 @@ export function computeStreak(results: PracticeResult[]): StreakData {
     }
     // Get unique active days sorted
     const activeDays = new Set(results.map(r => toDateKey(r.timestamp)));
-    const sortedDays = Array.from(activeDays).sort();
+    const sortedDays = Array.from(activeDays).toSorted();
     const totalActiveDays = sortedDays.length;
     // Compute best streak
     let bestStreak = 1;

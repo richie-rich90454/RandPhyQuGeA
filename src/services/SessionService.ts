@@ -18,11 +18,14 @@ function shuffleArray<T>(array: T[]): T[] {
     }
     return array;
 }
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null;
+}
 function isSession(value: unknown): value is Session {
-    if (typeof value !== "object" || value === null) {
+    if (!isRecord(value)) {
         return false;
     }
-    let v = value as Record<string, unknown>;
+    let v = value;
     return (
         typeof v.id === "string" &&
         typeof v.specification === "object" &&
@@ -38,13 +41,13 @@ function isSession(value: unknown): value is Session {
     );
 }
 function isSessionSnapshot(value: unknown): value is SessionSnapshot {
-    if (typeof value !== "object" || value === null) {
+    if (!isRecord(value)) {
         return false;
     }
     if (!("session" in value) || !("createdAt" in value)) {
         return false;
     }
-    let v = value as Record<string, unknown>;
+    let v = value;
     return isSession(v.session) && typeof v.createdAt === "string";
 }
 function createResult(question: GeneratedQuestion, userAnswer: string, isCorrect: boolean, timeTakenMs: number, mode: Session["mode"]): PracticeResult {
