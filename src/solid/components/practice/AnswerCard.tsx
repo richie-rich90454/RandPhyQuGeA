@@ -1,6 +1,6 @@
 import type {JSX} from "solid-js";
 import {Show, createMemo, For} from "solid-js";
-import katex from "katex";
+import {renderToString} from "katex";
 import {Card, CardHeader, CardTitle, CardContent} from "../ui/Card";
 import {MathToolbar} from "./MathToolbar";
 import {MathText} from "../MathText";
@@ -8,13 +8,18 @@ import {usePracticeStore, selectCurrentQuestion} from "../../stores/practiceStor
 import {choiceLetter} from "../../../lib/utils";
 import styles from "./AnswerCard.module.css";
 const MATH_DELIMITER_PATTERN = /\$\$([\s\S]+?)\$\$|\$([^$]+?)\$|\\\(([\s\S]+?)\\\)|\\\[([\s\S]+?)\\\]/g;
+function handleAnswerInput(e: InputEvent): void {
+    let target = e.target;
+    if (!(target instanceof HTMLTextAreaElement)) throw new Error("Expected HTMLTextAreaElement");
+    usePracticeStore.getState().setUserAnswer(target.value);
+}
 function hasKatexError(text: string): boolean {
     MATH_DELIMITER_PATTERN.lastIndex = 0;
     let match: RegExpExecArray | null;
     while ((match = MATH_DELIMITER_PATTERN.exec(text)) !== null) {
         let math = match[1] ?? match[2] ?? match[3] ?? match[4] ?? "";
         try {
-            katex.renderToString(math, {throwOnError: true});
+            renderToString(math, {throwOnError: true});
         } catch {
             return true;
         }
@@ -122,10 +127,6 @@ export function AnswerCard(): JSX.Element {
         } else {
             usePracticeStore.getState().selectChoice(-1);
         }
-    };
-    let handleAnswerInput = (e: InputEvent) => {
-        let target = e.target as HTMLTextAreaElement;
-        usePracticeStore.getState().setUserAnswer(target.value);
     };
     return (
         <Card class={styles.answerCard} variant="default" padding="none">

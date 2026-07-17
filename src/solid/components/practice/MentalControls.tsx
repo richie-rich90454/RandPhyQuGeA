@@ -28,7 +28,7 @@ const DIFFICULTY_RANGES: Record<"easy" | "medium" | "hard", {minDifficulty: numb
     hard: {minDifficulty: 6, maxDifficulty: 7},
 };
 const AUTO_ADVANCE_DELAY_MS = 1500;
-const DIFFICULTY_OPTIONS = [
+const DIFFICULTY_OPTIONS: {value: "easy" | "medium" | "hard"; label: string}[] = [
     {value: "easy", label: "Easy"},
     {value: "medium", label: "Medium"},
     {value: "hard", label: "Hard"},
@@ -46,6 +46,14 @@ function formatTime(seconds: number): string {
     let mins = Math.floor(seconds / 60);
     let secs = seconds % 60;
     return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+}
+function handleDifficulty(value: "easy" | "medium" | "hard"): void {
+    useSettingsStore.getState().setMentalDifficulty(value);
+}
+function handleScope(e: Event): void {
+    let target = e.target;
+    if (!(target instanceof HTMLSelectElement)) throw new Error("Expected HTMLSelectElement");
+    useSettingsStore.getState().setMentalScope(target.value);
 }
 function ClockIcon(): JSX.Element {
     return (
@@ -130,7 +138,7 @@ export function MentalControls(): JSX.Element {
         let avgTimeMs = total === 0 ? 0 : totalTimeMs / total;
         let streak = 0;
         for (let i = list.length - 1; i >= 0; i = i - 1) {
-            if (list[i]!.is_correct) {
+            if (list[i]?.is_correct) {
                 streak = streak + 1;
             } else {
                 break;
@@ -151,7 +159,7 @@ export function MentalControls(): JSX.Element {
             cachedPhysics = new PhysicsService(core);
             cachedSession = new SessionService(cachedPhysics, new AnalyticsService());
         }
-        return {physics: cachedPhysics!, session: cachedSession!};
+        return {physics: cachedPhysics!, session: cachedSession};
     };
     let buildOptions = () => {
         let range = DIFFICULTY_RANGES[difficulty()];
@@ -229,15 +237,15 @@ export function MentalControls(): JSX.Element {
     let pauseSession = () => {
         timer.pause();
         requestAnimationFrame(() => {
-            let btn = document.querySelector('#mental-controls button[aria-label="Resume session"]') as HTMLButtonElement | null;
-            if (btn) btn.focus();
+            let el = document.querySelector('#mental-controls button[aria-label="Resume session"]');
+            if (el instanceof HTMLButtonElement) el.focus();
         });
     };
     let resumeSession = () => {
         timer.resume();
         requestAnimationFrame(() => {
-            let btn = document.querySelector('#mental-controls button[aria-label="Pause session"]') as HTMLButtonElement | null;
-            if (btn) btn.focus();
+            let el = document.querySelector('#mental-controls button[aria-label="Pause session"]');
+            if (el instanceof HTMLButtonElement) el.focus();
         });
     };
     let skipQuestion = async () => {
@@ -273,13 +281,6 @@ export function MentalControls(): JSX.Element {
         }, AUTO_ADVANCE_DELAY_MS);
         onCleanup(() => window.clearTimeout(id));
     });
-    let handleDifficulty = (value: "easy" | "medium" | "hard") => {
-        useSettingsStore.getState().setMentalDifficulty(value);
-    };
-    let handleScope = (e: Event) => {
-        let target = e.target as HTMLSelectElement;
-        useSettingsStore.getState().setMentalScope(target.value);
-    };
     return (
         <div id="mental-controls" class={styles.wrapper}>
             <ToolbarGroup label="Session stats" class={styles.stats}>
@@ -294,7 +295,7 @@ export function MentalControls(): JSX.Element {
                                 aria-label={option.label}
                                 data-difficulty={option.value}
                                 disabled={isSessionActive()}
-                                onClick={() => handleDifficulty(option.value as "easy" | "medium" | "hard")}
+                                onClick={() => handleDifficulty(option.value)}
                             >
                                 {option.label}
                             </button>

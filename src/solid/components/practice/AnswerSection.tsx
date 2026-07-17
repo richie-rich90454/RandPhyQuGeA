@@ -62,7 +62,7 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
             let physics = new PhysicsService(core);
             cachedSession = new SessionService(physics, new AnalyticsService());
         }
-        return cachedSession!;
+        return cachedSession;
     };
     let isMultiSelect = createMemo(() => currentQuestion()?.correct_choice_indices !== undefined);
     let canSubmit = createMemo(() => {
@@ -86,7 +86,7 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
             let answer = store.userAnswer;
             let choiceIndex: number | undefined = undefined;
             if (q.correct_choice_indices !== undefined) {
-                let sorted = [...store.selectedChoiceIndices].sort((a, b) => a - b);
+                let sorted = [...store.selectedChoiceIndices].toSorted((a, b) => a - b);
                 answer = sorted.join(",");
             } else {
                 choiceIndex = store.selectedChoiceIndex >= 0 ? store.selectedChoiceIndex : undefined;
@@ -141,8 +141,8 @@ export function AnswerSection(props: AnswerSectionProps): JSX.Element {
         if (useUiStore.getState().activeModal) return;
         let store = usePracticeStore.getState();
         let q = selectCurrentQuestion(store);
-        let target = event.target as HTMLElement | null;
-        let isTyping = Boolean(target && (target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable));
+        let target = event.target;
+        let isTyping = target instanceof HTMLElement && (target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable);
         let digit = event.key;
         if (!isTyping && !store.showFeedback && q?.response_mode === "mcq" && q.choices && q.choices.length > 0 && q.correct_choice_indices === undefined) {
             if (digit >= "1" && digit <= "9") {

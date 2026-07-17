@@ -5,6 +5,9 @@ import {Tooltip, TooltipContent, TooltipTrigger} from "../ui/Tooltip";
 import {useSettingsStore} from "../../stores/settingsStore";
 import type {PracticeMode} from "../../../types/models";
 import styles from "./ModeSelector.module.css";
+function selectMode(id: PracticeMode): void {
+    useSettingsStore.getState().setDefaultMode(id);
+}
 interface ModeOption {
     id: PracticeMode;
     label: string;
@@ -27,9 +30,6 @@ const MODES: readonly ModeOption[] = [
  */
 export function ModeSelector(): JSX.Element {
     let mode = useSettingsStore(s => s.defaultMode);
-    let selectMode = (id: PracticeMode) => {
-        useSettingsStore.getState().setDefaultMode(id);
-    };
     return (
         <Toolbar label="Practice mode" class={styles.toolbar}>
             <For each={MODES}>

@@ -7,6 +7,15 @@ import {usePracticeStore} from "../../stores/practiceStore";
 import {useUiStore} from "../../stores/uiStore";
 import type {Specification, Topic, Unit} from "../../../types/models";
 import styles from "./TopicsSection.module.css";
+function handlePillClick(topicId: string): void {
+    let current = usePracticeStore.getState().selectedTopicId;
+    usePracticeStore.getState().setSelectedTopicId(current === topicId ? null : topicId);
+}
+function handleSearch(e: Event): void {
+    let target = e.target;
+    if (!(target instanceof HTMLInputElement)) throw new Error("Expected HTMLInputElement");
+    useUiStore.getState().setSearchQuery(target.value);
+}
 /** Derive a short uppercase abbreviation from a unit name for the topic-pill icon. */
 function getUnitAbbreviation(unitName: string): string {
     let trimmed = unitName.trim();
@@ -63,14 +72,6 @@ export function TopicsSection(): JSX.Element {
             return entry.topic.name.toLowerCase().includes(query) || entry.unitName.toLowerCase().includes(query);
         });
     });
-    let handlePillClick = (topicId: string) => {
-        let current = usePracticeStore.getState().selectedTopicId;
-        usePracticeStore.getState().setSelectedTopicId(current === topicId ? null : topicId);
-    };
-    let handleSearch = (e: Event) => {
-        let target = e.target as HTMLInputElement;
-        useUiStore.getState().setSearchQuery(target.value);
-    };
     return (
         <ToolbarSection class={styles.section}>
             <ToolbarTitle id="topics-heading">Topics</ToolbarTitle>

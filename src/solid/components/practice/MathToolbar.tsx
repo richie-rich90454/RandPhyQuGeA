@@ -301,7 +301,8 @@ export function MathToolbar(props: MathToolbarProps): JSX.Element {
     createEffect(() => {
         if (!dropdownOpen()) return;
         let handleOutside = (event: MouseEvent) => {
-            if (dropdownEl && !dropdownEl.contains(event.target as Node)) {
+            let target = event.target;
+            if (dropdownEl && target instanceof Node && !dropdownEl.contains(target)) {
                 setDropdownOpen(false);
             }
         };

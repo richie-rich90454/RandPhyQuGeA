@@ -20,6 +20,11 @@ import type {Specification} from "../../../types/models";
 import type {Session} from "../../../services/contracts";
 import type {IPhysicsService, ISessionService} from "../../../services/contracts";
 import styles from "./SingleControls.module.css";
+function handleScope(e: Event): void {
+    let target = e.target;
+    if (!(target instanceof HTMLSelectElement)) throw new Error("Expected HTMLSelectElement");
+    useSettingsStore.getState().setDefaultScope(target.value);
+}
 function buildScopeOptions(specification: Specification | null): {value: string; label: string}[] {
     let options: {value: string; label: string}[] = [{value: "all", label: "All"}];
     if (specification) {
@@ -88,7 +93,7 @@ export function SingleControls(): JSX.Element {
             cachedPhysics = new PhysicsService(core);
             cachedSession = new SessionService(cachedPhysics, new AnalyticsService());
         }
-        return {physics: cachedPhysics!, session: cachedSession!};
+        return {physics: cachedPhysics!, session: cachedSession};
     };
     let generate = async () => {
         if (isGenerating()) return;
@@ -144,10 +149,6 @@ export function SingleControls(): JSX.Element {
     onCleanup(() => {
         window.removeEventListener("keydown", handleKeyDown);
     });
-    let handleScope = (e: Event) => {
-        let target = e.target as HTMLSelectElement;
-        useSettingsStore.getState().setDefaultScope(target.value);
-    };
     return (
         <div id="single-controls" class={styles.wrapper}>
             <ToolbarGroup label="Actions" class={styles.actions}>

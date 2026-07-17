@@ -9,6 +9,12 @@ import {usePracticeStore, selectCurrentQuestion} from "../../stores/practiceStor
 import {useSpecStore} from "../../stores/specStore";
 import {findTopicName, choiceLetter} from "../../../lib/utils";
 import styles from "./QuestionCard.module.css";
+function handleSelectChoice(index: number): void {
+    usePracticeStore.getState().selectChoice(index);
+}
+function handleToggleChoice(index: number): void {
+    usePracticeStore.getState().toggleChoice(index);
+}
 interface DifficultyMeta {
     label: string;
     variant: BadgeVariant;
@@ -86,12 +92,6 @@ export function QuestionCard(): JSX.Element {
         if (!svg || svg.trim() === "") return "";
         return svg;
     });
-    let handleSelectChoice = (index: number) => {
-        usePracticeStore.getState().selectChoice(index);
-    };
-    let handleToggleChoice = (index: number) => {
-        usePracticeStore.getState().toggleChoice(index);
-    };
     let handleChoiceKeyDown = (event: KeyboardEvent) => {
         if (isMultiSelect()) return;
         let q = currentQuestion();
@@ -111,7 +111,7 @@ export function QuestionCard(): JSX.Element {
             let container = choicesContainerEl;
             if (container) {
                 requestAnimationFrame(() => {
-                    let target = container!.querySelector<HTMLButtonElement>(`[data-choice-index="${nextIndex}"]`);
+                    let target = container.querySelector<HTMLButtonElement>(`[data-choice-index="${nextIndex}"]`);
                     target?.focus();
                 });
             }
@@ -158,7 +158,7 @@ export function QuestionCard(): JSX.Element {
                                         aria-label="Answer choices"
                                         onKeyDown={handleChoiceKeyDown}
                                     >
-                                        <For each={currentQuestion()!.choices!}>
+                                        <For each={currentQuestion()!.choices}>
                                             {(choice, index) => (
                                                 <button
                                                     type="button"
@@ -191,7 +191,7 @@ export function QuestionCard(): JSX.Element {
                                     role="group"
                                     aria-label="Answer choices"
                                 >
-                                    <For each={currentQuestion()!.choices!}>
+                                    <For each={currentQuestion()!.choices}>
                                         {(choice, index) => (
                                             <button
                                                 type="button"

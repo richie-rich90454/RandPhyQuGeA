@@ -4,6 +4,9 @@ import {Switch} from "../ui/Switch";
 import {Tooltip, TooltipContent, TooltipTrigger} from "../ui/Tooltip";
 import {useSettingsStore} from "../../stores/settingsStore";
 import styles from "./McqToggle.module.css";
+function handleChange(checked: boolean): void {
+    useSettingsStore.getState().setDefaultResponseMode(checked ? "mcq" : "frq");
+}
 /**
  * Multiple-choice (response-mode) toggle.
  *
@@ -16,9 +19,6 @@ import styles from "./McqToggle.module.css";
  */
 export function McqToggle(): JSX.Element {
     let responseMode = useSettingsStore(s => s.defaultResponseMode);
-    let handleChange = (checked: boolean) => {
-        useSettingsStore.getState().setDefaultResponseMode(checked ? "mcq" : "frq");
-    };
     return (
         <ToolbarGroup label="Question format" class={styles.group}>
             <Tooltip delay={300}>
