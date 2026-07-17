@@ -130,10 +130,10 @@ describe("PhysicsCore hardening: every question type x every response mode (end-
             it("grades a correct response as correct and a wrong response as incorrect in both modes via the facade grader", () => {
                 const core = buildCore(7);
                 const grader = core.getGrader();
-                const frq = core.generateQuestion(spec, {templateIds: [c.templateId], responseMode: "frq"}) as GeneratedQuestion;
+                const frq = core.generateQuestion(spec, {templateIds: [c.templateId], responseMode: "frq"})!;
                 expect(grader.grade(frq, frq.answer).is_correct).toBe(true);
                 expect(grader.grade(frq, wrongResponseFor(c, frq)).is_correct).toBe(false);
-                const mcq = core.generateQuestion(spec, {templateIds: [c.templateId], responseMode: "mcq"}) as GeneratedQuestion;
+                const mcq = core.generateQuestion(spec, {templateIds: [c.templateId], responseMode: "mcq"})!;
                 const correctIndex = mcq.correct_choice_index ?? -1;
                 expect(grader.grade(mcq, mcq.answer, correctIndex).is_correct).toBe(true);
                 const wrongIndex = (correctIndex + 1) % (mcq.choices?.length ?? 1);

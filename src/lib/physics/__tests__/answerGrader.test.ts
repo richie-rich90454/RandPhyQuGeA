@@ -1,6 +1,6 @@
 import {describe, it, expect} from "vitest";
 import {AnswerGrader} from "../grader/AnswerGrader";
-import type {GeneratedQuestion, ResponseMode} from "../types";
+import type {GeneratedQuestion} from "../types";
 function buildQuestion(overrides: Partial<GeneratedQuestion>): GeneratedQuestion {
     const base: GeneratedQuestion = {
         id: "q1",
@@ -23,7 +23,7 @@ describe("AnswerGrader", () => {
         const mcqQuestion = buildQuestion({
             question_type: "MC",
             answer: "5",
-            response_mode: "mcq" as ResponseMode,
+            response_mode: "mcq",
             choices: ["4", "5", "6", "7"],
             correct_choice_index: 1,
         });
@@ -165,7 +165,7 @@ describe("AnswerGrader", () => {
             const q = buildQuestion({
                 question_type: "MC",
                 answer: "42",
-                response_mode: "mcq" as ResponseMode,
+                response_mode: "mcq",
                 correct_choice_index: 0,
             });
             const result = grader.grade(q, "42");
@@ -175,7 +175,7 @@ describe("AnswerGrader", () => {
             const q = buildQuestion({
                 question_type: "MC",
                 answer: "42",
-                response_mode: "mcq" as ResponseMode,
+                response_mode: "mcq",
                 choices: ["10", "20", "30"],
                 correct_choice_index: 0,
             });
@@ -188,7 +188,7 @@ describe("AnswerGrader", () => {
             const q = buildQuestion({
                 question_type: "MC",
                 answer: "0,2",
-                response_mode: "mcq" as ResponseMode,
+                response_mode: "mcq",
                 choices: ["a", "b", "c", "d"],
                 correct_choice_indices: [0, 2],
             });
