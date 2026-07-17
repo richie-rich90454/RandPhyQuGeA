@@ -17,7 +17,7 @@ interface SpeechRecognitionEvent {
     readonly resultIndex: number;
     readonly results: SpeechRecognitionResultList;
 }
-interface SpeechRecognitionErrorEvent {
+interface SpeechRecognitionErrorEvent extends Event {
     readonly error: string;
     readonly message: string;
 }
@@ -26,7 +26,7 @@ interface SpeechRecognitionConstructor {
     new (): SpeechRecognitionInstance;
 }
 /** Subset of the SpeechRecognition DOM API surface used by this primitive. */
-interface SpeechRecognitionInstance {
+interface SpeechRecognitionInstance extends EventTarget {
     lang: string;
     continuous: boolean;
     interimResults: boolean;
@@ -35,8 +35,17 @@ interface SpeechRecognitionInstance {
     stop: () => void;
     abort: () => void;
     onresult: ((event: SpeechRecognitionEvent) => void) | null;
-    onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
     onend: (() => void) | null;
+}
+/** Type guard narrowing an `Event` to {@link SpeechRecognitionErrorEvent}. */
+function isSpeechRecognitionErrorEvent(event: Event): event is SpeechRecognitionErrorEvent {
+    return "error" in event && "message" in event;
+}
+declare global {
+    interface Window {
+        SpeechRecognition?: SpeechRecognitionConstructor;
+        webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    }
 }
 /** Options accepted by {@link createVoiceInput}. */
 export interface CreateVoiceInputOptions {
@@ -66,8 +75,7 @@ export interface VoiceInputState {
 }
 function resolveCtor(): SpeechRecognitionConstructor | null {
     if (typeof window === "undefined") return null;
-    let w = window as unknown as {SpeechRecognition?: SpeechRecognitionConstructor; webkitSpeechRecognition?: SpeechRecognitionConstructor};
-    return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null;
+    return window.SpeechRecognition ?? window.webkitSpeechRecognition ?? null;
 }
 /**
  * Solid primitive wrapping the vendor-prefixed Web Speech API.
@@ -87,12 +95,13 @@ export function createVoiceInput(options: CreateVoiceInputOptions = {}): VoiceIn
     let [transcript, setTranscript] = createSignal<string>("");
     let [error, setError] = createSignal<string | null>(null);
     let recognition: SpeechRecognitionInstance | null = null;
+    let errorHandler: EventListener | null = null;
     let baseLang = options.lang ?? (typeof document !== "undefined" && document.documentElement.lang ? document.documentElement.lang : "en-US");
     let shouldUseInterim = options.interimResults ?? true;
     let cleanup = () => {
         if (recognition) {
             recognition.onresult = null;
-            recognition.onerror = null;
+            if (errorHandler) recognition.removeEventListener("error", errorHandler);
             recognition.onend = null;
             try {
                 recognition.abort();
@@ -125,10 +134,13 @@ export function createVoiceInput(options: CreateVoiceInputOptions = {}): VoiceIn
             }
             if (text) setTranscript(text);
         };
-        instance.onerror = (event: SpeechRecognitionErrorEvent) => {
+        let onError: EventListener = (event: Event) => {
+            if (!isSpeechRecognitionErrorEvent(event)) return;
             setError(event.error);
             setListening(false);
         };
+        errorHandler = onError;
+        instance.addEventListener("error", onError);
         instance.onend = () => {
             setListening(false);
         };

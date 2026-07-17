@@ -17,6 +17,12 @@ let isRtlLocale = (locale: string): boolean => {
     let lang = locale.split("-")[0]?.toLowerCase() ?? "";
     return RTL_LANGS.has(lang);
 };
+let updateMetaThemeColor = (content: string) => {
+    let meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+        meta.setAttribute("content", content);
+    }
+};
 export interface CreateThemeOptions {
     settingsStore?: SolidStore<SettingsState>;
 }
@@ -46,12 +52,6 @@ export function createTheme(options: CreateThemeOptions = {}): void {
     let root = document.documentElement;
     let colorSchemeMql = window.matchMedia("(prefers-color-scheme: dark)");
     let reducedMotionMql = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let updateMetaThemeColor = (content: string) => {
-        let meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) {
-            meta.setAttribute("content", content);
-        }
-    };
     let applyTheme = (isDark: boolean) => {
         root.setAttribute("data-theme", isDark ? "dark" : "light");
         updateMetaThemeColor(isDark ? "#1a1f2e" : "#F8FAFC");

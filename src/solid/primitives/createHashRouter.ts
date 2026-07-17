@@ -18,6 +18,9 @@ function currentHash(): string {
     let hash = window.location.hash.replace(/^#/, "");
     return hash === "" ? "/" : hash;
 }
+let navigate = (path: string) => {
+    window.location.hash = path;
+};
 export function createHashRouter(): HashRouter {
     let [route, setRoute] = createSignal<string>(currentHash());
     let handleHashChange = () => {
@@ -29,8 +32,5 @@ export function createHashRouter(): HashRouter {
     onCleanup(() => {
         window.removeEventListener("hashchange", handleHashChange);
     });
-    let navigate = (path: string) => {
-        window.location.hash = path;
-    };
     return {route, navigate};
 }

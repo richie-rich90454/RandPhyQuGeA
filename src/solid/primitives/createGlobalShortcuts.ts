@@ -8,6 +8,11 @@ export interface CreateGlobalShortcutsOptions {
     settingsStore?: SolidStore<SettingsState>;
     uiStore?: SolidStore<UiState>;
 }
+let isTyping = (event: KeyboardEvent): boolean => {
+    let target = event.target;
+    if (!(target instanceof HTMLElement)) return false;
+    return target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable;
+};
 /**
  * Wire global keyboard shortcuts for app-level actions.
  *
@@ -26,11 +31,6 @@ export interface CreateGlobalShortcutsOptions {
 export function createGlobalShortcuts(options: CreateGlobalShortcutsOptions = {}): void {
     let settings = options.settingsStore ?? useSettingsStore;
     let ui = options.uiStore ?? useUiStore;
-    let isTyping = (event: KeyboardEvent): boolean => {
-        let target = event.target;
-        if (!(target instanceof HTMLElement)) return false;
-        return target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable;
-    };
     let handleKeyDown = (event: KeyboardEvent) => {
         if (!event.ctrlKey && !event.metaKey) {
             return;

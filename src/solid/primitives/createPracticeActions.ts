@@ -80,7 +80,7 @@ export function createPracticeActions(options: CreatePracticeActionsOptions = {}
             let answer = store.userAnswer;
             let choiceIndex: number | undefined = undefined;
             if (currentQuestion.correct_choice_indices !== undefined) {
-                let sorted = [...store.selectedChoiceIndices].sort((a, b) => a - b);
+                let sorted = [...store.selectedChoiceIndices].toSorted((a, b) => a - b);
                 answer = sorted.join(",");
             } else {
                 choiceIndex = store.selectedChoiceIndex >= 0 ? store.selectedChoiceIndex : undefined;
@@ -111,8 +111,8 @@ export function createPracticeActions(options: CreatePracticeActionsOptions = {}
                 if (practice.getState().showFeedback) {
                     return;
                 }
-                let target = event.target as HTMLElement | null;
-                if (target && (target.tagName === "TEXTAREA" || target.tagName === "INPUT")) {
+                let target = event.target;
+                if (target instanceof HTMLElement && (target.tagName === "TEXTAREA" || target.tagName === "INPUT")) {
                     event.preventDefault();
                     void check();
                 }

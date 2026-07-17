@@ -1,18 +1,18 @@
 import {createEffect} from "solid-js";
 import {createStore} from "solid-js/store";
 import type {SetStoreFunction} from "solid-js/store";
-export interface CreatePersistedStoreOptions {
+export interface CreatePersistedStoreOptions<T extends object> {
     /** Storage key. */
     key: string;
     /** Store shape used when nothing is stored or parsing fails. */
-    defaultValue: object;
+    defaultValue: T;
 }
 function readStored<T extends object>(key: string, defaultValue: T): T {
     if (typeof window === "undefined") return defaultValue;
     try {
         let raw = window.localStorage.getItem(key);
         if (raw === null) return defaultValue;
-        return JSON.parse(raw) as T;
+        return JSON.parse(raw);
     } catch {
         return defaultValue;
     }
@@ -36,9 +36,9 @@ function writeStored(key: string, value: object): void {
  * persisted automatically. The returned setter is Solid's
  * {@link SetStoreFunction}, allowing path-based updates.
  */
-export function createPersistedStore<T extends object>(options: CreatePersistedStoreOptions): [T, SetStoreFunction<T>] {
+export function createPersistedStore<T extends object>(options: CreatePersistedStoreOptions<T>): [T, SetStoreFunction<T>] {
     let {key, defaultValue} = options;
-    let initial = readStored(key, defaultValue) as T;
+    let initial = readStored<T>(key, defaultValue);
     let [store, setStore] = createStore<T>(initial);
     createEffect(() => {
         writeStored(key, store);

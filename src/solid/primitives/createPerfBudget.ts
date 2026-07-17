@@ -36,7 +36,7 @@ export function createPerfBudget(options: CreatePerfBudgetOptions = {}): CreateP
         options.getEntries ??
         (() => {
             if (typeof performance === "undefined") return [];
-            return performance.getEntriesByType("resource") as PerformanceResourceTiming[];
+            return performance.getEntriesByType("resource").filter((entry): entry is PerformanceResourceTiming => entry instanceof PerformanceResourceTiming);
         });
     let [results, setResults] = createSignal<BudgetResult[]>(budget.check([]));
     let compute = (): BudgetResult[] => {
