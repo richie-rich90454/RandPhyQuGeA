@@ -39,6 +39,23 @@ function multiResponseTemplate(): QuestionTemplate {
         distractor_expressions: ["Force=true", "Energy=false", "Momentum=true", "Mass=false"],
     };
 }
+function multiSelectQuestion(indices: number[]): GeneratedQuestion {
+    return {
+        id: "g1",
+        topic_id: "t1",
+        skill_id: "s1",
+        question_type: "MULTI_RESPONSE",
+        difficulty: 3,
+        text: "Which are vectors?",
+        answer: "Force, Momentum",
+        choices: ["Force", "Energy", "Momentum", "Mass"],
+        response_mode: "mcq",
+        correct_choice_indices: indices,
+        solution_text: "",
+        solution_latex: "",
+        variables: {},
+    };
+}
 describe("parseMultipleResponseOptions", () => {
     it("parses label=true/false entries", () => {
         expect(parseMultipleResponseOptions(multiResponseTemplate())).toEqual([
@@ -133,7 +150,7 @@ describe("QuestionGenerator end-to-end MULTI_RESPONSE", () => {
         const gen = new QuestionGenerator([multiResponseTemplate()], stubEvaluator(), new StubRandom());
         const q = gen.generate({questionType: "MULTI_RESPONSE", responseMode: "mcq"});
         expect(q).not.toBeNull();
-        const mcq = q as GeneratedQuestion;
+        const mcq = q!;
         expect(mcq.response_mode).toBe("mcq");
         expect(mcq.choices).toEqual(["Force", "Energy", "Momentum", "Mass"]);
         expect(mcq.correct_choice_indices).toEqual([0, 2]);
@@ -142,30 +159,13 @@ describe("QuestionGenerator end-to-end MULTI_RESPONSE", () => {
         const gen = new QuestionGenerator([multiResponseTemplate()], stubEvaluator(), new StubRandom());
         const q = gen.generate({questionType: "MULTI_RESPONSE"});
         expect(q).not.toBeNull();
-        const frq = q as GeneratedQuestion;
+        const frq = q!;
         expect(frq.response_mode).toBe("frq");
         expect(frq.choices).toBeUndefined();
         expect(frq.answer).toBe("Force, Momentum");
     });
 });
 describe("AnswerGrader multi-select", () => {
-    function multiSelectQuestion(indices: number[]): GeneratedQuestion {
-        return {
-            id: "g1",
-            topic_id: "t1",
-            skill_id: "s1",
-            question_type: "MULTI_RESPONSE",
-            difficulty: 3,
-            text: "Which are vectors?",
-            answer: "Force, Momentum",
-            choices: ["Force", "Energy", "Momentum", "Mass"],
-            response_mode: "mcq",
-            correct_choice_indices: indices,
-            solution_text: "",
-            solution_latex: "",
-            variables: {},
-        };
-    }
     it("grades correct when the selected set equals the correct set", () => {
         const grader = new AnswerGrader();
         const q = multiSelectQuestion([0, 2]);

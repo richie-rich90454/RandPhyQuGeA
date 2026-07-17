@@ -48,7 +48,11 @@ describe("SetVariableHandler", () => {
         const def: VariableDefinition = {name: "u", var_type: "set", enum_values: ["N", "J", "W"]};
         const allowed = new Set(["N", "J", "W"]);
         for (let i = 0; i < 50; i++) {
-            expect(allowed.has(handler.generate(def, rng) as string)).toBe(true);
+            const v = handler.generate(def, rng);
+            if (typeof v !== "string") {
+                throw new Error("expected string");
+            }
+            expect(allowed.has(v)).toBe(true);
         }
     });
 });

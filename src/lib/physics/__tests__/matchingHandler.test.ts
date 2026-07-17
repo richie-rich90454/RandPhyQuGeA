@@ -97,7 +97,7 @@ describe("MatchingDistractorStrategy", () => {
     it("returns the other right items excluding the answer", () => {
         const strategy = new MatchingDistractorStrategy();
         const context = {answer: "Newton", answerValue: Number.NaN, template: matchingTemplate(), variables: {}, evaluator: stubEvaluator()};
-        expect(strategy.generateDistractors(context, 5, new StubRandom()).sort()).toEqual(["Joule", "Watt"]);
+        expect(strategy.generateDistractors(context, 5, new StubRandom()).toSorted()).toEqual(["Joule", "Watt"]);
     });
     it("respects the count limit", () => {
         const strategy = new MatchingDistractorStrategy();

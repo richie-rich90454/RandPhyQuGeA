@@ -95,7 +95,7 @@ describe("OrderingDistractorStrategy", () => {
         expect(new Set(distractors).size).toBe(distractors.length);
         for (const d of distractors) {
             const parts = d.split(", ");
-            expect(parts.sort()).toEqual(["Gas", "Liquid", "Solid"]);
+            expect(parts.toSorted()).toEqual(["Gas", "Liquid", "Solid"]);
         }
     });
     it("respects the count limit", () => {

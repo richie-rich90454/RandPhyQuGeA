@@ -2,7 +2,7 @@ import {describe, it, expect} from "vitest";
 import {SpecificationParser} from "../SpecificationParser";
 import {AnswerGrader} from "../grader/AnswerGrader";
 import {QUESTION_TYPES, QUESTION_TYPE_ALIASES, normalizeQuestionType} from "../types";
-import type {GeneratedQuestion, ResponseMode} from "../types";
+import type {GeneratedQuestion} from "../types";
 function buildQuestion(overrides: Partial<GeneratedQuestion>): GeneratedQuestion {
     const base: GeneratedQuestion = {
         id: "q1",
@@ -54,33 +54,33 @@ describe("QUESTION_TYPES constant (task 5.6)", () => {
         expect(normalizeQuestionType("CustomType")).toBe("CustomType");
     });
 });
+const BASE_SPEC = (questionTypeLine: string): string =>
+    [
+        "[UNIT]",
+        "Id: U1",
+        "Name: Mechanics",
+        "[TOPIC]",
+        "Id: T1",
+        "Name: Kinematics",
+        "UnitId: U1",
+        "[SKILL]",
+        "Id: S1",
+        "Name: Skill",
+        "TopicId: T1",
+        "[TEMPLATE]",
+        "Id: Q1",
+        "TopicId: T1",
+        "SkillId: S1",
+        questionTypeLine,
+        "Difficulty: 2",
+        "TextTemplate: A car accelerates.",
+        "AnswerExpression: (v - v0) / t",
+        "SolutionTemplate: Use a = (v - v0) / t.",
+        "Var.v0: Type=double;Min=0;Max=20;Step=1",
+        "Var.v: Type=double;Min=20;Max=40;Step=1",
+        "Var.t: Type=double;Min=1;Max=10;Step=0.5",
+    ].join("\n");
 describe("Parser uses canonical QUESTION_TYPES (regression 5.6)", () => {
-    const BASE_SPEC = (questionTypeLine: string): string =>
-        [
-            "[UNIT]",
-            "Id: U1",
-            "Name: Mechanics",
-            "[TOPIC]",
-            "Id: T1",
-            "Name: Kinematics",
-            "UnitId: U1",
-            "[SKILL]",
-            "Id: S1",
-            "Name: Skill",
-            "TopicId: T1",
-            "[TEMPLATE]",
-            "Id: Q1",
-            "TopicId: T1",
-            "SkillId: S1",
-            questionTypeLine,
-            "Difficulty: 2",
-            "TextTemplate: A car accelerates.",
-            "AnswerExpression: (v - v0) / t",
-            "SolutionTemplate: Use a = (v - v0) / t.",
-            "Var.v0: Type=double;Min=0;Max=20;Step=1",
-            "Var.v: Type=double;Min=20;Max=40;Step=1",
-            "Var.t: Type=double;Min=1;Max=10;Step=0.5",
-        ].join("\n");
     it("parses 'QuestionType: MultipleChoice' to canonical MC code", () => {
         const parser = new SpecificationParser();
         const spec = parser.parse(BASE_SPEC("QuestionType: MultipleChoice"));
@@ -102,19 +102,19 @@ describe("Parser uses canonical QUESTION_TYPES (regression 5.6)", () => {
 describe("Grader reaches the MC numeric branch (regression 5.6 - Bug 2)", () => {
     const grader = new AnswerGrader();
     it("grades an MC question via numeric tolerance (within tolerance is correct)", () => {
-        const q = buildQuestion({question_type: QUESTION_TYPES.MC, answer: "5", response_mode: "frq" as ResponseMode});
+        const q = buildQuestion({question_type: QUESTION_TYPES.MC, answer: "5", response_mode: "frq"});
         const result = grader.grade(q, "5.005");
         expect(result.is_correct).toBe(true);
         expect(result.normalized_response).toBe("5.005");
         expect(result.normalized_answer).toBe("5");
     });
     it("grades an MC question via numeric tolerance (outside tolerance is incorrect)", () => {
-        const q = buildQuestion({question_type: QUESTION_TYPES.MC, answer: "5", response_mode: "frq" as ResponseMode});
+        const q = buildQuestion({question_type: QUESTION_TYPES.MC, answer: "5", response_mode: "frq"});
         const result = grader.grade(q, "6");
         expect(result.is_correct).toBe(false);
     });
     it("grades a TF question via the boolean branch (not numeric)", () => {
-        const q = buildQuestion({question_type: QUESTION_TYPES.TF, answer: "True", response_mode: "frq" as ResponseMode});
+        const q = buildQuestion({question_type: QUESTION_TYPES.TF, answer: "True", response_mode: "frq"});
         const result = grader.grade(q, "1");
         expect(result.is_correct).toBe(true);
         expect(result.normalized_response).toBe("true");
