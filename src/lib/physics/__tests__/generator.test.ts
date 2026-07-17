@@ -115,7 +115,7 @@ describe("QuestionGenerator", () => {
     it("generates a TF question with choices True, False, and a 'None of the above' pad", () => {
         const gen = buildGenerator(42);
         const q = gen.generate({templateIds: ["QTF"], responseMode: "mcq"});
-        expect(q?.choices?.slice().sort()).toEqual(["False", "None of the above", "True"]);
+        expect(q?.choices?.slice().toSorted()).toEqual(["False", "None of the above", "True"]);
         expect(["True", "False"]).toContain(q?.answer);
         expect(q?.response_mode).toBe("mcq");
     });
@@ -320,7 +320,7 @@ describe("Question type handlers", () => {
         const q = gen.generate({templateIds: ["QTF0"], responseMode: "mcq"});
         expect(q?.question_type).toBe("TF");
         expect(q?.answer).toBe("False");
-        expect(q?.choices?.slice().sort()).toEqual(["False", "None of the above", "True"]);
+        expect(q?.choices?.slice().toSorted()).toEqual(["False", "None of the above", "True"]);
         expect(q?.response_mode).toBe("mcq");
     });
     it("MultipleChoiceHandler skips a distractor that throws during evaluation", () => {

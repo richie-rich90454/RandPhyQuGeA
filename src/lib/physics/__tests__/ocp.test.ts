@@ -112,10 +112,10 @@ describe("Open-Closed Principle", () => {
         const handler = registry.getOrDefault("CustomType");
         expect(handler).toBe(custom);
         const spec = new SpecificationParser().parse(CUSTOM_SPEC);
-        const template = spec.templates[0];
+        const template = spec.templates[0]!;
         const evaluator = new ExpressionEvaluator();
         const random = new SeededRandomGenerator(1);
-        const q = handler.handle(template as QuestionTemplate, {x: 7}, evaluator, random);
+        const q = handler.handle(template, {x: 7}, evaluator, random);
         expect(q.text).toContain("custom:");
         expect(q.text).toBe("custom: 7");
         expect(q.answer).toBe("42");

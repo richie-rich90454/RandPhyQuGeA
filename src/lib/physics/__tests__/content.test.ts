@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import katex from "katex";
+import {renderToString} from "katex";
 import {PhysicsCore} from "../PhysicsCore";
 import {SpecificationParser} from "../SpecificationParser";
 import {QuestionGenerator} from "../generator/QuestionGenerator";
@@ -35,7 +35,7 @@ function buildGenerator(seed: number): QuestionGenerator {
 }
 function renderLatex(tex: string): {ok: boolean; error?: string} {
     try {
-        katex.renderToString(tex, {displayMode: true, throwOnError: true});
+        renderToString(tex, {displayMode: true, throwOnError: true});
         return {ok: true};
     } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
@@ -168,7 +168,7 @@ describe("Template generation", () => {
             const gen = buildGenerator(1);
             const q = gen.generate({templateIds: [tpl.id], responseMode: "mcq"});
             expect(q).not.toBeNull();
-            expect(q?.choices?.slice().sort()).toEqual(["False", "None of the above", "True"]);
+            expect(q?.choices?.slice().toSorted()).toEqual(["False", "None of the above", "True"]);
         }
     });
     it("every SA/FB/NE template produces no choices", () => {

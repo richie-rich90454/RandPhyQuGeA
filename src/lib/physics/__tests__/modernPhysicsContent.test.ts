@@ -18,10 +18,10 @@ describe("Modern physics content (task 2.31)", () => {
         const unit = spec.units.find(u => u.id === "modern-physics");
         expect(unit).toBeDefined();
         const topics = spec.topics.filter(t => t.unit_id === "modern-physics");
-        expect(topics.map(t => t.id).sort()).toEqual(["nuclear", "quantum"]);
+        expect(topics.map(t => t.id).toSorted()).toEqual(["nuclear", "quantum"]);
         const skills = spec.skills.filter(s => s.topic_id === "quantum" || s.topic_id === "nuclear");
         expect(skills.length).toBe(4);
-        expect(skills.map(s => s.id).sort()).toEqual(["nu-halflife", "nu-massenergy", "qu-photoelectric", "qu-photons"]);
+        expect(skills.map(s => s.id).toSorted()).toEqual(["nu-halflife", "nu-massenergy", "qu-photoelectric", "qu-photons"]);
     });
     it("contains all 11 new modern-physics templates referencing valid topics/skills", () => {
         const parser = new SpecificationParser();

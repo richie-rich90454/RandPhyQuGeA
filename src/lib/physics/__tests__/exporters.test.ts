@@ -94,7 +94,7 @@ describe("ExporterRegistry and exporters", () => {
     });
     it("register overrides an existing exporter (open-closed)", () => {
         const registry = ExporterRegistry.createDefault();
-        const custom: Exporter = {format: "html" as ExportFormat, export: () => "CUSTOM EXPORT"};
+        const custom: Exporter = {format: "html", export: () => "CUSTOM EXPORT"};
         registry.register(custom);
         expect(registry.get("html")).toBe(custom);
         expect(registry.export([], "html")).toBe("CUSTOM EXPORT");

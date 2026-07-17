@@ -1,5 +1,5 @@
 import {describe, it, expect} from "vitest";
-import katex from "katex";
+import {renderToString} from "katex";
 import {FormulaLibrary} from "../FormulaLibrary";
 const EXPECTED_TOPIC_IDS = [
     "kinematics",
@@ -19,7 +19,7 @@ const EXPECTED_TOPIC_IDS = [
 ];
 function renderLatex(tex: string): boolean {
     try {
-        katex.renderToString(tex, {displayMode: true, throwOnError: true});
+        renderToString(tex, {displayMode: true, throwOnError: true});
         return true;
     } catch {
         return false;

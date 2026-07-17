@@ -18,10 +18,10 @@ describe("Thermodynamics content (task 2.30)", () => {
         const unit = spec.units.find(u => u.id === "thermodynamics");
         expect(unit).toBeDefined();
         const topics = spec.topics.filter(t => t.unit_id === "thermodynamics");
-        expect(topics.map(t => t.id).sort()).toEqual(["gas-laws", "temperature-heat"]);
+        expect(topics.map(t => t.id).toSorted()).toEqual(["gas-laws", "temperature-heat"]);
         const skills = spec.skills.filter(s => s.topic_id === "temperature-heat" || s.topic_id === "gas-laws");
         expect(skills.length).toBe(4);
-        expect(skills.map(s => s.id).sort()).toEqual(["gl-ideal", "gl-processes", "th-heat", "th-temp"]);
+        expect(skills.map(s => s.id).toSorted()).toEqual(["gl-ideal", "gl-processes", "th-heat", "th-temp"]);
     });
     it("contains all 11 new thermodynamics templates referencing valid topics/skills", () => {
         const parser = new SpecificationParser();
