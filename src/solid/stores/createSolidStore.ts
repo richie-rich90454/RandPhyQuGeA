@@ -65,11 +65,12 @@ export function createSolidStore<T>(store: StoreApi<T>): SolidStore<T> {
         }
         return slice;
     }
-    const bound = useStore as SolidStore<T>;
-    bound.getState = store.getState;
-    bound.setState = store.setState;
-    bound.subscribe = store.subscribe;
-    bound.getInitialState = store.getInitialState;
+    const bound: SolidStore<T> = Object.assign(useStore, {
+        getState: store.getState,
+        setState: store.setState,
+        subscribe: store.subscribe,
+        getInitialState: store.getInitialState,
+    });
     const persisted = store as StoreApi<T> & {persist?: StorePersistApi<T>};
     if (persisted.persist) {
         bound.persist = persisted.persist;

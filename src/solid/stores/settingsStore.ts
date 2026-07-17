@@ -97,21 +97,28 @@ export interface SettingsState {
     clearSpecification: () => void;
     resetToDefaults: () => void;
 }
-const defaultState = {
-    themeMode: "system" as ThemeMode,
-    fontMode: "default" as FontMode,
+type SettingsData = {
+    [K in keyof SettingsState as SettingsState[K] extends Function ? never : K]: SettingsState[K];
+};
+type SettingsPersistedState = Omit<SettingsData, "appVersion">;
+function isRecordLike(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+const defaultState: SettingsPersistedState = {
+    themeMode: "system",
+    fontMode: "default",
     specificationContent: "",
     specificationPath: "",
     defaultDifficulties: [1, 2, 3, 4, 5, 6, 7],
     defaultQuestionCount: 10,
-    defaultMode: "Single" as PracticeMode,
+    defaultMode: "Single",
     defaultScope: "all",
     adaptiveEnabled: true,
     autoContinueEnabled: false,
     shuffleByDefault: false,
     notificationsEnabled: true,
     mentalDurationSec: 60,
-    mentalDifficulty: "medium" as "easy" | "medium" | "hard",
+    mentalDifficulty: "medium",
     mentalMaxQuestions: 5,
     mentalScope: "all",
     mentalShuffle: false,
@@ -121,7 +128,7 @@ const defaultState = {
     autoCheckDelay: 800,
     decimalPlaces: 2,
     mcqChoices: 4,
-    defaultResponseMode: "frq" as ResponseMode,
+    defaultResponseMode: "frq",
     sigFigs: 3,
     perfMode: false,
     waveBackground: true,
@@ -130,13 +137,13 @@ const defaultState = {
     animations: true,
     fpsCap: 0,
     reducedDataMode: false,
-    customShortcuts: {} as Record<string, string>,
+    customShortcuts: {},
     onboardingCompleted: false,
     locale: "en",
     accentHue: 210,
-    fontSize: "medium" as FontSize,
+    fontSize: "medium",
     reducedMotion: false,
-} as Omit<SettingsState, "appVersion">;
+};
 /** Current persisted-store schema version. Bump when adding/removing/renaming fields so {@link migrateSettingsState} can apply incremental migrations. */
 export const SETTINGS_SCHEMA_VERSION = 2;
 const VALID_RESPONSE_MODES: ReadonlySet<string> = new Set(["mcq", "frq"]);
@@ -151,14 +158,13 @@ const VALID_RESPONSE_MODES: ReadonlySet<string> = new Set(["mcq", "frq"]);
  * accepted for incremental migrations (v0 had no `responseMode`/`sigFigs`;
  * v1 added them; v2 added validation of those fields' values).
  */
-export function migrateSettingsState(persistedState: unknown, version: number): Omit<SettingsState, "appVersion"> {
-    const merged: Omit<SettingsState, "appVersion"> = {...defaultState};
-    if (!persistedState || typeof persistedState !== "object" || Array.isArray(persistedState)) {
+export function migrateSettingsState(persistedState: unknown, version: number): SettingsPersistedState {
+    const merged: SettingsPersistedState = {...defaultState};
+    if (!isRecordLike(persistedState)) {
         return merged;
     }
-    const state = persistedState as Record<string, unknown>;
     const knownKeys = new Set(Object.keys(defaultState));
-    for (const [key, value] of Object.entries(state)) {
+    for (const [key, value] of Object.entries(persistedState)) {
         if (!knownKeys.has(key)) continue;
         if (value === null || value === undefined) continue;
         if (key === "defaultResponseMode") {
@@ -195,7 +201,7 @@ export function migrateSettingsState(persistedState: unknown, version: number): 
             continue;
         }
         if (key === "customShortcuts") {
-            if (value && typeof value === "object" && !Array.isArray(value)) {
+            if (isRecordLike(value)) {
                 (merged as Record<string, unknown>)[key] = value;
             }
             continue;
@@ -261,19 +267,16 @@ const settingsStore = createStore<SettingsState>()(
         {
             name: "physics-quest-settings",
             version: SETTINGS_SCHEMA_VERSION,
-            migrate: (persistedState, version) => {
-                const migrated = migrateSettingsState(persistedState, version);
-                return {...migrated, appVersion: pkg.version} as SettingsState;
-            },
-            partialize: state => {
+            partialize: (state): SettingsPersistedState => {
                 const {appVersion: _appVersion, ...rest} = state;
                 void _appVersion;
                 return rest;
             },
+            migrate: (persistedState, version): SettingsPersistedState => migrateSettingsState(persistedState, version),
             storage: createJSONStorage(() => localStorage, {
                 reviver: (key, value) => {
-                    if (key === "" && value && typeof value === "object" && !Array.isArray(value) && typeof (value as {version?: unknown}).version !== "number") {
-                        (value as {version: number}).version = 0;
+                    if (key === "" && isRecordLike(value) && typeof value.version !== "number") {
+                        value.version = 0;
                     }
                     return value;
                 },

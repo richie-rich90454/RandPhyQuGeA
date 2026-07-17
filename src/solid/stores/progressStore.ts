@@ -28,6 +28,28 @@ export interface ProgressState {
     getResultsByMode: (mode: PracticeMode) => PracticeResult[];
 }
 const MAX_RESULTS = 2000;
+type ProgressPersistedState = {results: PracticeResult[]};
+function isRecordLike(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+function isPracticeResult(value: unknown): value is PracticeResult {
+    if (!isRecordLike(value)) return false;
+    return (
+        typeof value.id === "string" &&
+        typeof value.question_id === "string" &&
+        typeof value.topic_id === "string" &&
+        typeof value.skill_id === "string" &&
+        typeof value.is_correct === "boolean" &&
+        typeof value.time_taken_ms === "number" &&
+        typeof value.user_answer === "string" &&
+        typeof value.timestamp === "string" &&
+        (value.mode === "Single" || value.mode === "Mental") &&
+        typeof value.difficulty === "number"
+    );
+}
+function toPracticeResults(value: unknown): PracticeResult[] {
+    return Array.isArray(value) ? value.filter(isPracticeResult) : [];
+}
 const progressStore = createStore<ProgressState>()(
     persist(
         (set, get) => ({
@@ -45,26 +67,25 @@ const progressStore = createStore<ProgressState>()(
         {
             name: "physics-quest-progress",
             version: 1,
-            migrate: (persistedState, version) => {
-                if (!persistedState || typeof persistedState !== "object" || Array.isArray(persistedState)) {
-                    return {results: []} as unknown as ProgressState;
+            partialize: (state): ProgressPersistedState => ({results: state.results}),
+            migrate: (persistedState, version): ProgressPersistedState => {
+                if (!isRecordLike(persistedState)) {
+                    return {results: []};
                 }
-                const state = persistedState as Record<string, unknown>;
-                if (version === 0) {
-                    if ("history" in state && Array.isArray(state.history)) {
-                        state.results = state.history;
-                        delete state.history;
-                    }
+                let rawResults: unknown;
+                if (version === 0 && "history" in persistedState) {
+                    rawResults = persistedState.history;
+                } else if ("results" in persistedState) {
+                    rawResults = persistedState.results;
+                } else {
+                    rawResults = [];
                 }
-                if (!state.results || !Array.isArray(state.results)) {
-                    state.results = [];
-                }
-                return {results: state.results as PracticeResult[]} as unknown as ProgressState;
+                return {results: toPracticeResults(rawResults)};
             },
             storage: createJSONStorage(() => localStorage, {
                 reviver: (key, value) => {
-                    if (key === "" && value && typeof value === "object" && !Array.isArray(value) && typeof (value as {version?: unknown}).version !== "number") {
-                        (value as {version: number}).version = 0;
+                    if (key === "" && isRecordLike(value) && typeof value.version !== "number") {
+                        value.version = 0;
                     }
                     return value;
                 },
@@ -99,6 +120,6 @@ export const selectStats = (state: ProgressState): PracticeStats => {
     return cachedStats;
 };
 /** Return the most recent `n` results, newest first. */
-export const selectRecentResults = (state: ProgressState, n: number): PracticeResult[] => [...state.results].reverse().slice(0, n);
+export const selectRecentResults = (state: ProgressState, n: number): PracticeResult[] => [...state.results].toReversed().slice(0, n);
 /** Return all results for a specific practice mode. */
 export const selectResultsByMode = (state: ProgressState, mode: PracticeMode): PracticeResult[] => state.results.filter(r => r.mode === mode);
