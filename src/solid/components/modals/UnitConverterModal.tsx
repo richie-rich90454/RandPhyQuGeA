@@ -22,6 +22,9 @@ function SwapIcon(): JSX.Element {
         </svg>
     );
 }
+function closeUnitConverterModal(): void {
+    useUiStore.getState().closeModal();
+}
 export interface UnitConverterModalProps {
     /** Override the unit converter used (defaults to a standard registry instance). */
     converter?: UnitConverter;
@@ -40,7 +43,6 @@ export interface UnitConverterModalProps {
  */
 export function UnitConverterModal(props: UnitConverterModalProps): JSX.Element {
     let isOpen = useUiStore(s => s.activeModal === "unit-converter");
-    let close = () => useUiStore.getState().closeModal();
     let registry = () => props.registry ?? UnitConverterModal.defaultRegistry;
     let converter = () => props.converter ?? UnitConverterModal.defaultConverter;
     let [value, setValue] = createSignal<string>("");
@@ -79,6 +81,14 @@ export function UnitConverterModal(props: UnitConverterModalProps): JSX.Element 
         }
         return {ok: true, value: formatResult(converted), unit: to};
     });
+    let successResult = createMemo(() => {
+        let r = result();
+        return r.ok ? r : null;
+    });
+    let errorMessage = createMemo(() => {
+        let r = result();
+        return !r.ok ? r.error : "";
+    });
     let swap = () => {
         let from = fromUnit();
         let to = toUnit();
@@ -87,25 +97,27 @@ export function UnitConverterModal(props: UnitConverterModalProps): JSX.Element 
         setToUnit(from);
     };
     let onPickFrom = (e: Event) => {
-        let target = e.currentTarget as HTMLSelectElement;
+        let target = e.currentTarget;
+        if (!(target instanceof HTMLSelectElement)) throw new Error("Expected HTMLSelectElement");
         setFromUnit(target.value);
         setToUnit(NONE);
     };
     let onPickTo = (e: Event) => {
-        let target = e.currentTarget as HTMLSelectElement;
+        let target = e.currentTarget;
+        if (!(target instanceof HTMLSelectElement)) throw new Error("Expected HTMLSelectElement");
         setToUnit(target.value);
     };
     return (
         <Modal
             open={isOpen()}
-            onClose={close}
+            onClose={closeUnitConverterModal}
             modalId="unit-converter-modal"
             title="Unit Converter"
             titleId="unit-converter-title"
             ariaLabel="Unit converter"
             class={styles.unitConverter}
             footer={
-                <Button variant="primary" size="md" onClick={close}>
+                <Button variant="primary" size="md" onClick={closeUnitConverterModal}>
                     Close
                 </Button>
             }
@@ -146,17 +158,20 @@ export function UnitConverterModal(props: UnitConverterModalProps): JSX.Element 
             </div>
             <div class={styles.resultRow} aria-live="polite">
                 <Show
-                    when={result().ok}
+                    when={successResult()}
+                    keyed
                     fallback={
                         <p class={styles.resultError} role="status">
-                            {(result() as {ok: false; error: string}).error}
+                            {errorMessage()}
                         </p>
                     }
                 >
-                    <p class={styles.resultText}>
-                        <span class={styles.resultValue}>{(result() as {ok: true; value: string}).value}</span>
-                        <span class={styles.resultUnit}>{(result() as {ok: true; unit: string}).unit}</span>
-                    </p>
+                    {r => (
+                        <p class={styles.resultText}>
+                            <span class={styles.resultValue}>{r.value}</span>
+                            <span class={styles.resultUnit}>{r.unit}</span>
+                        </p>
+                    )}
                 </Show>
             </div>
             <p class={styles.hint}>Units share the same physical dimension (length, mass, time, etc.). The target dropdown only shows units convertible from the source.</p>

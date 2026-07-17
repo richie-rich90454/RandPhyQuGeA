@@ -75,6 +75,7 @@ function renderWithServices(physics?: IPhysicsService, exportService?: IExportSe
         </ToastProvider>
     ));
 }
+function noopResolve(): void {}
 beforeEach(() => {
     useUiStore.setState(useUiStore.getInitialState());
     useSpecStore.setState(useSpecStore.getInitialState());
@@ -105,7 +106,9 @@ describe("PrintModal", () => {
         let physics = new FakePhysicsService();
         renderWithServices(physics);
         let topicPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
-        fireEvent.click(topicPills[0]!);
+        let pill0 = topicPills[0];
+        if (!pill0) throw new Error("topic pill 0 not found");
+        fireEvent.click(pill0);
         fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
         await waitFor(() => expect(physics.generateBatch).toHaveBeenCalledTimes(1));
         expect(physics.generateBatch).toHaveBeenCalledWith(expect.any(Object), 10, {minDifficulty: 3, maxDifficulty: 5, topicId: "t1"});
@@ -124,13 +127,17 @@ describe("PrintModal", () => {
         });
         renderWithServices(physics);
         let topicPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
-        fireEvent.click(topicPills[0]!);
-        fireEvent.click(topicPills[1]!);
+        let pill0 = topicPills[0];
+        if (!pill0) throw new Error("topic pill 0 not found");
+        fireEvent.click(pill0);
+        let pill1 = topicPills[1];
+        if (!pill1) throw new Error("topic pill 1 not found");
+        fireEvent.click(pill1);
         fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
         await waitFor(() => expect(physics.generateBatch).toHaveBeenCalledTimes(2));
         expect(physics.generateBatch).toHaveBeenNthCalledWith(1, expect.any(Object), 5, {minDifficulty: 3, maxDifficulty: 5, topicId: "t1"});
         expect(physics.generateBatch).toHaveBeenNthCalledWith(2, expect.any(Object), 5, {minDifficulty: 3, maxDifficulty: 5, topicId: "t2"});
-        expect(screen.getByText("Preview (10 questions)")).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByText("Preview (10 questions)")).toBeInTheDocument());
     });
     it("truncates combined batch to requested count when topics over-deliver", async () => {
         useSpecStore.setState({specification: makeSpecification()});
@@ -145,16 +152,20 @@ describe("PrintModal", () => {
             return questions;
         });
         renderWithServices(physics);
-        let numberInput = screen.getByRole("spinbutton", {name: "Number of questions"}) as HTMLInputElement;
+        let numberInput = screen.getByRole("spinbutton", {name: "Number of questions"});
         fireEvent.input(numberInput, {target: {value: "5"}});
         let topicPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
-        fireEvent.click(topicPills[0]!);
-        fireEvent.click(topicPills[1]!);
+        let pill0 = topicPills[0];
+        if (!pill0) throw new Error("topic pill 0 not found");
+        fireEvent.click(pill0);
+        let pill1 = topicPills[1];
+        if (!pill1) throw new Error("topic pill 1 not found");
+        fireEvent.click(pill1);
         fireEvent.click(screen.getByRole("button", {name: /generate worksheet/i}));
         await waitFor(() => expect(physics.generateBatch).toHaveBeenCalledTimes(2));
         expect(physics.generateBatch).toHaveBeenNthCalledWith(1, expect.any(Object), 3, {minDifficulty: 3, maxDifficulty: 5, topicId: "t1"});
         expect(physics.generateBatch).toHaveBeenNthCalledWith(2, expect.any(Object), 3, {minDifficulty: 3, maxDifficulty: 5, topicId: "t2"});
-        expect(screen.getByText("Preview (5 questions)")).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByText("Preview (5 questions)")).toBeInTheDocument());
     });
     it("prints the worksheet through the export service", async () => {
         useSpecStore.setState({specification: makeSpecification()});
@@ -171,9 +182,11 @@ describe("PrintModal", () => {
         useUiStore.getState().openModal("print");
         renderWithServices();
         let topicPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
-        fireEvent.click(topicPills[0]!);
+        let pill0 = topicPills[0];
+        if (!pill0) throw new Error("topic pill 0 not found");
+        fireEvent.click(pill0);
         await waitFor(() => expect(topicPills[0]).toHaveAttribute("aria-pressed", "true"));
-        let scopeSelect = screen.getByRole("combobox", {name: "Topic scope"}) as HTMLSelectElement;
+        let scopeSelect = screen.getByRole("combobox", {name: "Topic scope"});
         fireEvent.change(scopeSelect, {target: {value: "simple"}});
         let remainingPills = screen.getAllByRole("button", {name: /Algebra -|Simple Math -/});
         for (let pill of remainingPills) {
@@ -184,7 +197,8 @@ describe("PrintModal", () => {
         useSpecStore.setState({specification: makeSpecification()});
         useUiStore.getState().openModal("print");
         renderWithServices();
-        let switchInput = screen.getByRole("switch", {name: /include answer key/i}) as HTMLInputElement;
+        let switchInput = screen.getByRole("switch", {name: /include answer key/i});
+        if (!(switchInput instanceof HTMLInputElement)) throw new Error("switch input not found");
         expect(switchInput.checked).toBe(true);
         fireEvent.click(switchInput);
         await waitFor(() => expect(switchInput.checked).toBe(false));
@@ -201,7 +215,7 @@ describe("PrintModal loading skeleton (task 5.32)", () => {
         useSpecStore.setState({specification: makeSpecification()});
         useUiStore.getState().openModal("print");
         let physics = new FakePhysicsService();
-        let resolveGeneration: (value: GeneratedQuestion[]) => void = () => {};
+        let resolveGeneration: (value: GeneratedQuestion[]) => void = noopResolve;
         physics.generateBatch = vi.fn<() => Promise<GeneratedQuestion[]>>(
             () =>
                 new Promise<GeneratedQuestion[]>(resolve => {

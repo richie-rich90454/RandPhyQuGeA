@@ -63,6 +63,9 @@ function ClockIcon(): JSX.Element {
         </svg>
     );
 }
+function closeResumeSessionModal(): void {
+    useUiStore.getState().closeModal();
+}
 /**
  * Resume/discard prompt for an unfinished session snapshot.
  *
@@ -76,14 +79,13 @@ function ClockIcon(): JSX.Element {
 export function ResumeSessionModal(props: ResumeSessionModalProps): JSX.Element {
     let isOpen = useUiStore(s => s.activeModal === "resume-session");
     let activeSnapshot = createMemo<SessionSnapshot | null>(() => (isOpen() ? props.snapshot : null));
-    let close = () => useUiStore.getState().closeModal();
     let handleDiscard = () => {
         props.onDiscard();
-        close();
+        closeResumeSessionModal();
     };
     let handleResume = () => {
         props.onResume();
-        close();
+        closeResumeSessionModal();
     };
     return (
         <Show when={activeSnapshot()} keyed>

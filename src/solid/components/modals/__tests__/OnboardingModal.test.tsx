@@ -69,7 +69,9 @@ describe("OnboardingModal", () => {
         render(() => <OnboardingModal />);
         await flush();
         let dots = screen.getAllByRole("tab");
-        fireEvent.click(dots[2]!);
+        let dot = dots[2];
+        if (!dot) throw new Error("dot not found");
+        fireEvent.click(dot);
         expect(screen.getByText("Quick setup")).toBeInTheDocument();
     });
     it("advances with ArrowRight and goes back with ArrowLeft", async () => {

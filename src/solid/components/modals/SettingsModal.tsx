@@ -62,6 +62,48 @@ const FPS_OPTIONS: {value: number; label: string}[] = [
     {value: 120, label: "120"},
     {value: 0, label: "Screen (no cap)"},
 ];
+function isThemeMode(v: string): v is ThemeMode {
+    return v === "system" || v === "light" || v === "dark" || v === "dim";
+}
+function isFontMode(v: string): v is FontMode {
+    return v === "default" || v === "opendyslexic";
+}
+function isFontSize(v: string): v is FontSize {
+    return v === "small" || v === "medium" || v === "large";
+}
+function isPracticeMode(v: string): v is PracticeMode {
+    return v === "Single" || v === "Mental";
+}
+function isResponseMode(v: string): v is ResponseMode {
+    return v === "frq" || v === "mcq";
+}
+function isEasyMediumHard(v: string): v is "easy" | "medium" | "hard" {
+    return v === "easy" || v === "medium" || v === "hard";
+}
+function handleSelect(setter: (value: string) => void) {
+    return (event: Event) => {
+        let target = event.target;
+        if (!(target instanceof HTMLSelectElement)) throw new Error("Expected HTMLSelectElement");
+        setter(target.value);
+    };
+}
+function handleNumber(setter: (value: number) => void) {
+    return (event: Event) => {
+        let target = event.target;
+        if (!(target instanceof HTMLInputElement)) throw new Error("Expected HTMLInputElement");
+        setter(Number(target.value));
+    };
+}
+function handleShortcutChange(action: string) {
+    return (event: Event) => {
+        let target = event.target;
+        if (!(target instanceof HTMLInputElement)) throw new Error("Expected HTMLInputElement");
+        useSettingsStore.getState().setCustomShortcut(action, target.value);
+    };
+}
+function closeSettingsModal(): void {
+    useUiStore.getState().closeModal();
+}
 interface SettingsSectionProps {
     title: string;
     children?: JSXElement;
@@ -114,36 +156,23 @@ export function SettingsModal(): JSX.Element {
     let isOpen = useUiStore(s => s.activeModal === "settings");
     let settings = useSettingsStore();
     let [confirmReset, setConfirmReset] = createSignal<boolean>(false);
-    let handleSelect = (setter: (value: string) => void) => (event: Event) => {
-        let target = event.target as HTMLSelectElement;
-        setter(target.value);
-    };
-    let handleNumber = (setter: (value: number) => void) => (event: Event) => {
-        let target = event.target as HTMLInputElement;
-        setter(Number(target.value));
-    };
-    let handleShortcutChange = (action: string) => (event: Event) => {
-        let target = event.target as HTMLInputElement;
-        useSettingsStore.getState().setCustomShortcut(action, target.value);
-    };
     let getShortcut = (action: string, fallback: string): string => settings().customShortcuts[action] ?? fallback;
     let handleConfirmReset = () => {
         useSettingsStore.getState().resetToDefaults();
         setConfirmReset(false);
     };
-    let close = () => useUiStore.getState().closeModal();
     return (
         <>
             <Modal
                 open={isOpen()}
-                onClose={close}
+                onClose={closeSettingsModal}
                 modalId="settings-modal"
                 title="Settings"
                 titleId="settings-title"
                 ariaLabel="Settings"
                 class={styles.settings}
                 footer={
-                    <Button variant="primary" size="md" onClick={close}>
+                    <Button variant="primary" size="md" onClick={closeSettingsModal}>
                         Save &amp; Close
                     </Button>
                 }
@@ -166,7 +195,10 @@ export function SettingsModal(): JSX.Element {
                                         variant="scope"
                                         options={THEME_OPTIONS}
                                         value={settings().themeMode}
-                                        onChange={handleSelect(v => useSettingsStore.getState().setThemeMode(v as ThemeMode))}
+                                        onChange={handleSelect(v => {
+                                            if (!isThemeMode(v)) throw new Error(`Invalid theme: ${v}`);
+                                            useSettingsStore.getState().setThemeMode(v);
+                                        })}
                                     />
                                 </SettingsRow>
                                 <SettingsRow label="Font" hint="Use OpenDyslexic for improved readability." controlId="settings-font">
@@ -175,7 +207,10 @@ export function SettingsModal(): JSX.Element {
                                         variant="scope"
                                         options={FONT_OPTIONS}
                                         value={settings().fontMode}
-                                        onChange={handleSelect(v => useSettingsStore.getState().setFontMode(v as FontMode))}
+                                        onChange={handleSelect(v => {
+                                            if (!isFontMode(v)) throw new Error(`Invalid font mode: ${v}`);
+                                            useSettingsStore.getState().setFontMode(v);
+                                        })}
                                     />
                                 </SettingsRow>
                                 <SettingsRow label="Font size" hint="Scale the base text size for readability." controlId="settings-font-size">
@@ -184,7 +219,10 @@ export function SettingsModal(): JSX.Element {
                                         variant="scope"
                                         options={FONT_SIZE_OPTIONS}
                                         value={settings().fontSize}
-                                        onChange={handleSelect(v => useSettingsStore.getState().setFontSize(v as FontSize))}
+                                        onChange={handleSelect(v => {
+                                            if (!isFontSize(v)) throw new Error(`Invalid font size: ${v}`);
+                                            useSettingsStore.getState().setFontSize(v);
+                                        })}
                                     />
                                 </SettingsRow>
                             </SettingsSection>
@@ -195,7 +233,10 @@ export function SettingsModal(): JSX.Element {
                                         variant="scope"
                                         options={MODE_OPTIONS}
                                         value={settings().defaultMode}
-                                        onChange={handleSelect(v => useSettingsStore.getState().setDefaultMode(v as PracticeMode))}
+                                        onChange={handleSelect(v => {
+                                            if (!isPracticeMode(v)) throw new Error(`Invalid practice mode: ${v}`);
+                                            useSettingsStore.getState().setDefaultMode(v);
+                                        })}
                                     />
                                 </SettingsRow>
                                 <SettingsRow label="Default scope" hint="Limit generated questions to a subject area." controlId="settings-scope">
@@ -213,7 +254,10 @@ export function SettingsModal(): JSX.Element {
                                         variant="scope"
                                         options={DIFFICULTY_OPTIONS}
                                         value={settings().mentalDifficulty}
-                                        onChange={handleSelect(v => useSettingsStore.getState().setMentalDifficulty(v as "easy" | "medium" | "hard"))}
+                                        onChange={handleSelect(v => {
+                                            if (!isEasyMediumHard(v)) throw new Error(`Invalid difficulty: ${v}`);
+                                            useSettingsStore.getState().setMentalDifficulty(v);
+                                        })}
                                     />
                                 </SettingsRow>
                                 <SettingsRow label="Timer" hint="Duration of each mental math drill in seconds." controlId="settings-timer">
@@ -244,7 +288,10 @@ export function SettingsModal(): JSX.Element {
                                         variant="scope"
                                         options={RESPONSE_MODE_OPTIONS}
                                         value={settings().defaultResponseMode}
-                                        onChange={handleSelect(v => useSettingsStore.getState().setDefaultResponseMode(v as ResponseMode))}
+                                        onChange={handleSelect(v => {
+                                            if (!isResponseMode(v)) throw new Error(`Invalid response mode: ${v}`);
+                                            useSettingsStore.getState().setDefaultResponseMode(v);
+                                        })}
                                     />
                                 </SettingsRow>
                                 <Show when={settings().defaultResponseMode === "mcq"}>

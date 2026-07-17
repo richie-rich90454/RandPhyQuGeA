@@ -88,11 +88,14 @@ function DatabaseIcon(): JSX.Element {
         </svg>
     );
 }
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null;
+}
 function isValidResult(value: unknown): value is PracticeResult {
-    if (!value || typeof value !== "object") {
+    if (!isRecord(value)) {
         return false;
     }
-    let result = value as Record<string, unknown>;
+    let result = value;
     return (
         typeof result.id === "string" &&
         typeof result.question_id === "string" &&
@@ -105,6 +108,12 @@ function isValidResult(value: unknown): value is PracticeResult {
         (result.mode === "Single" || result.mode === "Mental") &&
         typeof result.difficulty === "number"
     );
+}
+function isPracticeResultArray(value: unknown[]): value is PracticeResult[] {
+    return value.every(isValidResult);
+}
+function closeManageDataModal(): void {
+    useUiStore.getState().closeModal();
 }
 export interface ManageDataModalProps {
     /** Override the export service used for downloads. */
@@ -136,7 +145,7 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
     let [storageVersion, setStorageVersion] = createSignal<number>(0);
     let fileInput: HTMLInputElement | null = null;
     let exportService: IExportService = props.exportService ?? new ExportService();
-    let sortedResults = createMemo(() => [...results()].sort((a, b) => b.timestamp.localeCompare(a.timestamp)));
+    let sortedResults = createMemo(() => [...results()].toSorted((a, b) => b.timestamp.localeCompare(a.timestamp)));
     let totalPages = createMemo(() => Math.max(1, Math.ceil(sortedResults().length / PAGE_SIZE)));
     let currentPage = createMemo(() => Math.min(page(), totalPages() - 1));
     let pageResults = createMemo(() => {
@@ -171,26 +180,29 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
         fileInput?.click();
     };
     let handleFileChange = (event: Event) => {
-        let target = event.target as HTMLInputElement;
+        let target = event.target;
+        if (!(target instanceof HTMLInputElement)) throw new Error("Expected HTMLInputElement");
         let file = target.files?.[0];
         if (!file) {
             return;
         }
         let reader = new FileReader();
-        reader.onload = () => {
+        reader.addEventListener("load", () => {
             try {
                 let text = String(reader.result);
-                let parsed = JSON.parse(text) as unknown;
-                let imported = Array.isArray((parsed as Record<string, unknown>)?.results) ? ((parsed as Record<string, unknown>).results as unknown[]) : [];
-                let valid = imported.every(isValidResult);
-                if (!valid) {
+                let parsed: unknown = JSON.parse(text);
+                let imported: unknown[] = [];
+                if (isRecord(parsed) && Array.isArray(parsed.results)) {
+                    imported = parsed.results;
+                }
+                if (!isPracticeResultArray(imported)) {
                     throw new Error("Invalid data format");
                 }
                 if (imported.length === 0) {
                     toast({variant: "warning", message: "No practice records found in file."});
                     return;
                 }
-                setPendingImport(imported as PracticeResult[]);
+                setPendingImport(imported);
             } catch {
                 toast({variant: "error", message: "Failed to import data. File is not valid JSON."});
             } finally {
@@ -198,7 +210,7 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
                     fileInput.value = "";
                 }
             }
-        };
+        });
         reader.readAsText(file);
     };
     let handleConfirmImport = () => {
@@ -246,19 +258,18 @@ export function ManageDataModal(props: ManageDataModalProps): JSX.Element {
         let topic = spec?.topics.find(t => t.id === topicId);
         return topic?.name ?? topicId;
     };
-    let close = () => useUiStore.getState().closeModal();
     return (
         <>
             <Modal
                 open={isOpen()}
-                onClose={close}
+                onClose={closeManageDataModal}
                 modalId="data-modal"
                 title="Manage Performance Data"
                 titleId="data-title"
                 ariaLabel="Manage data"
                 class={styles.manage}
                 footer={
-                    <Button variant="secondary" size="md" onClick={close}>
+                    <Button variant="secondary" size="md" onClick={closeManageDataModal}>
                         Close
                     </Button>
                 }

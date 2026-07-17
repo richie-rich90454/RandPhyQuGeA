@@ -149,7 +149,7 @@ describe("GlossaryModal (task 5.79)", () => {
         let optionValues = Array.from(select.querySelectorAll("option"))
             .map(o => o.value)
             .filter(v => v !== ALL_CATEGORIES_SENTINEL);
-        let sorted = [...optionValues].sort((a, b) => a.localeCompare(b));
+        let sorted = optionValues.toSorted((a, b) => a.localeCompare(b));
         expect(optionValues).toEqual(sorted);
     });
 });

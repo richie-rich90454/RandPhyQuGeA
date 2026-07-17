@@ -59,16 +59,20 @@ function KeyboardIcon(): JSX.Element {
 }
 /** Navigate between rows within a group using arrow keys. */
 function handleRowKeyDown(event: KeyboardEvent): void {
-    let current = event.currentTarget as HTMLElement;
+    let current = event.currentTarget;
+    if (!(current instanceof HTMLElement)) return;
     if (event.key === "ArrowDown") {
         event.preventDefault();
-        let next = current.nextElementSibling as HTMLElement | null;
-        next?.focus();
+        let next = current.nextElementSibling;
+        if (next instanceof HTMLElement) next.focus();
     } else if (event.key === "ArrowUp") {
         event.preventDefault();
-        let prev = current.previousElementSibling as HTMLElement | null;
-        prev?.focus();
+        let prev = current.previousElementSibling;
+        if (prev instanceof HTMLElement) prev.focus();
     }
+}
+function closeShortcutsModal(): void {
+    useUiStore.getState().closeModal();
 }
 /**
  * Keyboard shortcuts reference overlay mapped to `#shortcuts-modal`.
@@ -81,18 +85,17 @@ function handleRowKeyDown(event: KeyboardEvent): void {
  */
 export function ShortcutsModal(): JSX.Element {
     let isOpen = useUiStore(s => s.activeModal === "shortcuts");
-    let close = () => useUiStore.getState().closeModal();
     return (
         <Modal
             open={isOpen()}
-            onClose={close}
+            onClose={closeShortcutsModal}
             modalId="shortcuts-modal"
             title="Keyboard Shortcuts"
             titleId="shortcuts-title"
             ariaLabel="Keyboard shortcuts"
             class={styles.shortcuts}
             footer={
-                <Button variant="primary" size="md" onClick={close}>
+                <Button variant="primary" size="md" onClick={closeShortcutsModal}>
                     Got it
                 </Button>
             }

@@ -60,6 +60,19 @@ function ClockIcon(): JSX.Element {
         </svg>
     );
 }
+function handlePractice(topicId: string): void {
+    usePracticeStore.getState().setSelectedTopicId(topicId);
+    useSettingsStore.getState().setDefaultMode("Single");
+    useUiStore.getState().closeModal();
+}
+function handlePracticeAll(): void {
+    usePracticeStore.getState().setSelectedTopicId(null);
+    useSettingsStore.getState().setDefaultMode("Single");
+    useUiStore.getState().closeModal();
+}
+function closeRecommendModal(): void {
+    useUiStore.getState().closeModal();
+}
 export interface RecommendModalProps {
     /** Override the analytics service used for weak-topic computation. */
     analytics?: IAnalyticsService;
@@ -94,21 +107,10 @@ export function RecommendModal(props: RecommendModalProps): JSX.Element {
         return props.spacedRepetition.getDue();
     });
     let totalAttempts = () => results().length;
-    let handlePractice = (topicId: string) => {
-        usePracticeStore.getState().setSelectedTopicId(topicId);
-        useSettingsStore.getState().setDefaultMode("Single");
-        useUiStore.getState().closeModal();
-    };
-    let handlePracticeAll = () => {
-        usePracticeStore.getState().setSelectedTopicId(null);
-        useSettingsStore.getState().setDefaultMode("Single");
-        useUiStore.getState().closeModal();
-    };
-    let close = () => useUiStore.getState().closeModal();
     return (
         <Modal
             open={isOpen()}
-            onClose={close}
+            onClose={closeRecommendModal}
             modalId="weak-topics-modal"
             title="Recommended Practice"
             titleId="weak-topics-title"
@@ -116,7 +118,7 @@ export function RecommendModal(props: RecommendModalProps): JSX.Element {
             class={styles.recommend}
             footer={
                 <>
-                    <Button variant="secondary" size="md" onClick={close}>
+                    <Button variant="secondary" size="md" onClick={closeRecommendModal}>
                         Dismiss
                     </Button>
                     <Show when={weakTopics().length > 0}>

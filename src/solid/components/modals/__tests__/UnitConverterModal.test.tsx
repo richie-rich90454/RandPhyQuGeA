@@ -62,7 +62,7 @@ describe("UnitConverterModal (task 5.78)", () => {
         render(() => <UnitConverterModal />);
         fireEvent.change(screen.getByLabelText("Source unit"), {target: {value: "kg"}});
         fireEvent.change(screen.getByLabelText("Target unit"), {target: {value: "g"}});
-        let input = screen.getByLabelText("Numeric value to convert") as HTMLInputElement;
+        let input = screen.getByLabelText("Numeric value to convert");
         // JSDOM does not coerce non-numeric values on type=number inputs the
         // way real browsers do, so 'abc' reaches the converter signal intact
         // and the modal's Number.isFinite guard kicks in.
@@ -87,8 +87,10 @@ describe("UnitConverterModal (task 5.78)", () => {
     it("swaps source and target units when Swap is clicked", () => {
         useUiStore.getState().openModal("unit-converter");
         render(() => <UnitConverterModal />);
-        let fromSelect = screen.getByLabelText("Source unit") as HTMLSelectElement;
-        let toSelect = screen.getByLabelText("Target unit") as HTMLSelectElement;
+        let fromSelect = screen.getByLabelText("Source unit");
+        if (!(fromSelect instanceof HTMLSelectElement)) throw new Error("from select not found");
+        let toSelect = screen.getByLabelText("Target unit");
+        if (!(toSelect instanceof HTMLSelectElement)) throw new Error("to select not found");
         fireEvent.change(fromSelect, {target: {value: "kg"}});
         fireEvent.change(toSelect, {target: {value: "g"}});
         expect(fromSelect.value).toBe("kg");
@@ -100,7 +102,8 @@ describe("UnitConverterModal (task 5.78)", () => {
     it("disables Swap when source or target is unset", () => {
         useUiStore.getState().openModal("unit-converter");
         render(() => <UnitConverterModal />);
-        let swapBtn = screen.getByRole("button", {name: /swap source and target units/i}) as HTMLButtonElement;
+        let swapBtn = screen.getByRole("button", {name: /swap source and target units/i});
+        if (!(swapBtn instanceof HTMLButtonElement)) throw new Error("swap button not found");
         expect(swapBtn.disabled).toBe(true);
         fireEvent.change(screen.getByLabelText("Source unit"), {target: {value: "kg"}});
         expect(swapBtn.disabled).toBe(true);
@@ -131,14 +134,16 @@ describe("UnitConverterModal (task 5.78)", () => {
             .map(o => o.value)
             .filter(v => v !== "");
         // The modal sorts with localeCompare for natural case-aware ordering.
-        let sortedFrom = [...fromOptions].sort((a, b) => a.localeCompare(b));
+        let sortedFrom = fromOptions.toSorted((a, b) => a.localeCompare(b));
         expect(fromOptions).toEqual(sortedFrom);
     });
     it("resets the target unit when the source unit changes", () => {
         useUiStore.getState().openModal("unit-converter");
         render(() => <UnitConverterModal />);
-        let fromSelect = screen.getByLabelText("Source unit") as HTMLSelectElement;
-        let toSelect = screen.getByLabelText("Target unit") as HTMLSelectElement;
+        let fromSelect = screen.getByLabelText("Source unit");
+        if (!(fromSelect instanceof HTMLSelectElement)) throw new Error("from select not found");
+        let toSelect = screen.getByLabelText("Target unit");
+        if (!(toSelect instanceof HTMLSelectElement)) throw new Error("to select not found");
         fireEvent.change(fromSelect, {target: {value: "kg"}});
         fireEvent.change(toSelect, {target: {value: "g"}});
         expect(toSelect.value).toBe("g");

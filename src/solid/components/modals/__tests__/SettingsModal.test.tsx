@@ -95,7 +95,8 @@ describe("SettingsModal", () => {
         render(() => <SettingsModal />);
         fireEvent.click(screen.getByRole("tab", {name: /advanced/i}));
         await waitFor(() => expect(screen.getByText("Keyboard Shortcuts")).toBeInTheDocument());
-        let input = screen.getByLabelText("Generate question") as HTMLInputElement;
+        let input = screen.getByLabelText("Generate question");
+        if (!(input instanceof HTMLInputElement)) throw new Error("shortcut input not found");
         expect(input.value).toBe("Ctrl+G");
     });
     it("persists shortcut customization on input without requiring blur (regression)", async () => {

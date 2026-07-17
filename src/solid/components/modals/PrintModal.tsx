@@ -52,6 +52,12 @@ function scopeMatchesUnit(scope: string, unit: {id: string; name: string}): bool
     if (scope === "calc") return haystack.includes("calc") && !haystack.includes("precalc") && !haystack.includes("pre-calc");
     return true;
 }
+function isDifficulty(v: string): v is "easy" | "hard" | "medium" | "mixed" {
+    return v === "easy" || v === "hard" || v === "medium" || v === "mixed";
+}
+function closePrintModal(): void {
+    useUiStore.getState().closeModal();
+}
 export interface PrintModalProps {
     /** Override the physics service used for worksheet generation. */
     physics?: IPhysicsService;
@@ -145,11 +151,8 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
             let batch: GeneratedQuestion[];
             if (selected.length > 1) {
                 let perTopic = Math.ceil(count / selected.length);
-                let combined: GeneratedQuestion[] = [];
-                for (let topicId of selected) {
-                    let topicBatch = await resolvePhysics().generateBatch(spec, perTopic, {...baseOptions, topicId});
-                    combined.push(...topicBatch);
-                }
+                let topicBatches = await Promise.all(selected.map(topicId => resolvePhysics().generateBatch(spec, perTopic, {...baseOptions, topicId})));
+                let combined: GeneratedQuestion[] = topicBatches.flat();
                 batch = combined.slice(0, count);
             } else {
                 let options: GenerateOptions = {...baseOptions};
@@ -177,16 +180,20 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
         }
     };
     let handleScope = (event: Event) => {
-        let target = event.target as HTMLSelectElement;
+        let target = event.target;
+        if (!(target instanceof HTMLSelectElement)) throw new Error("Expected HTMLSelectElement");
         setScope(target.value);
         setSelectedTopicIds([]);
     };
     let handleDifficulty = (event: Event) => {
-        let target = event.target as HTMLSelectElement;
-        setDifficulty(target.value as "easy" | "medium" | "hard" | "mixed");
+        let target = event.target;
+        if (!(target instanceof HTMLSelectElement)) throw new Error("Expected HTMLSelectElement");
+        if (!isDifficulty(target.value)) throw new Error(`Invalid difficulty: ${target.value}`);
+        setDifficulty(target.value);
     };
     let handleCountInput = (event: Event) => {
-        let target = event.target as HTMLInputElement;
+        let target = event.target;
+        if (!(target instanceof HTMLInputElement)) throw new Error("Expected HTMLInputElement");
         let next = Number(target.value);
         if (Number.isFinite(next)) {
             let clamped = Math.max(MIN_COUNT, Math.min(MAX_COUNT, Math.round(next)));
@@ -194,15 +201,15 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
         }
     };
     let handleCountSlider = (event: Event) => {
-        let target = event.target as HTMLInputElement;
+        let target = event.target;
+        if (!(target instanceof HTMLInputElement)) throw new Error("Expected HTMLInputElement");
         let next = Number(target.value);
         setQuestionCount(next);
     };
-    let close = () => useUiStore.getState().closeModal();
     return (
         <Modal
             open={isOpen()}
-            onClose={close}
+            onClose={closePrintModal}
             modalId="print-modal"
             title="Print Worksheet"
             titleId="print-title"
@@ -210,7 +217,7 @@ export function PrintModal(props: PrintModalProps): JSX.Element {
             class={styles.print}
             footer={
                 <>
-                    <Button variant="secondary" size="md" onClick={close}>
+                    <Button variant="secondary" size="md" onClick={closePrintModal}>
                         Close
                     </Button>
                     <Show when={questions().length > 0}>

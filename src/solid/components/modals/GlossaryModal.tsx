@@ -26,6 +26,9 @@ function GlossaryIcon(): JSX.Element {
         </svg>
     );
 }
+function closeGlossaryModal(): void {
+    useUiStore.getState().closeModal();
+}
 export interface GlossaryModalProps {
     /** Override the glossary used to source entries (defaults to standard). */
     glossary?: Glossary;
@@ -43,7 +46,6 @@ export interface GlossaryModalProps {
  */
 export function GlossaryModal(props: GlossaryModalProps): JSX.Element {
     let isOpen = useUiStore(s => s.activeModal === "glossary");
-    let close = () => useUiStore.getState().closeModal();
     let glossary = () => props.glossary ?? GlossaryModal.defaultGlossary;
     let [query, setQuery] = createSignal<string>("");
     let [category, setCategory] = createSignal<string>(ALL_CATEGORIES);
@@ -55,7 +57,7 @@ export function GlossaryModal(props: GlossaryModalProps): JSX.Element {
             seen.add(e.category);
             list.push(e.category);
         }
-        return list.sort((a, b) => a.localeCompare(b));
+        return list.toSorted((a, b) => a.localeCompare(b));
     });
     let filtered = createMemo<GlossaryEntry[]>(() => {
         let g = glossary();
@@ -73,14 +75,14 @@ export function GlossaryModal(props: GlossaryModalProps): JSX.Element {
     return (
         <Modal
             open={isOpen()}
-            onClose={close}
+            onClose={closeGlossaryModal}
             modalId="glossary-modal"
             title="Glossary"
             titleId="glossary-title"
             ariaLabel="Glossary of physics terms"
             class={styles.glossary}
             footer={
-                <Button variant="primary" size="md" onClick={close}>
+                <Button variant="primary" size="md" onClick={closeGlossaryModal}>
                     Close
                 </Button>
             }

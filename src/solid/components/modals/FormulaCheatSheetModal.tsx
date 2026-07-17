@@ -26,6 +26,9 @@ function BookIcon(): JSX.Element {
         </svg>
     );
 }
+function closeFormulaCheatSheetModal(): void {
+    useUiStore.getState().closeModal();
+}
 export interface FormulaCheatSheetModalProps {
     /** Override the formula library used to source entries (defaults to standard). */
     library?: FormulaLibrary;
@@ -42,7 +45,6 @@ export interface FormulaCheatSheetModalProps {
  */
 export function FormulaCheatSheetModal(props: FormulaCheatSheetModalProps): JSX.Element {
     let isOpen = useUiStore(s => s.activeModal === "formulas");
-    let close = () => useUiStore.getState().closeModal();
     let library = () => props.library ?? FormulaCheatSheetModal.defaultLibrary;
     let [query, setQuery] = createSignal<string>("");
     let [topic, setTopic] = createSignal<string>(ALL_TOPICS);
@@ -55,7 +57,7 @@ export function FormulaCheatSheetModal(props: FormulaCheatSheetModalProps): JSX.
             seen.add(tid);
             list.push(tid);
         }
-        return list.sort((a, b) => a.localeCompare(b));
+        return list.toSorted((a, b) => a.localeCompare(b));
     });
     let filtered = createMemo<FormulaEntry[]>(() => {
         let lib = library();
@@ -73,14 +75,14 @@ export function FormulaCheatSheetModal(props: FormulaCheatSheetModalProps): JSX.
     return (
         <Modal
             open={isOpen()}
-            onClose={close}
+            onClose={closeFormulaCheatSheetModal}
             modalId="formulas-modal"
             title="Formula Cheat Sheet"
             titleId="formulas-title"
             ariaLabel="Formula cheat sheet"
             class={styles.formulas}
             footer={
-                <Button variant="primary" size="md" onClick={close}>
+                <Button variant="primary" size="md" onClick={closeFormulaCheatSheetModal}>
                     Close
                 </Button>
             }

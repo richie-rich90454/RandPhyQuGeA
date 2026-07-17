@@ -80,7 +80,8 @@ describe("ManageDataModal", () => {
         expect(exportService.downloadText).toHaveBeenCalledTimes(1);
         let call = exportService.downloadText.mock.calls[0];
         expect(call).toBeDefined();
-        let content = call![1];
+        if (!call) throw new Error("downloadText call not found");
+        let content = call[1];
         let payload = JSON.parse(content);
         expect(payload.results).toHaveLength(1);
         expect(payload.results[0].id).toBe("r1");
@@ -122,7 +123,9 @@ describe("ManageDataModal", () => {
         useUiStore.getState().openModal("manage-data");
         renderWithServices();
         let buttons = screen.getAllByRole("button", {name: "Delete record"});
-        fireEvent.click(buttons[0]!);
+        let button = buttons[0];
+        if (!button) throw new Error("delete button not found");
+        fireEvent.click(button);
         await waitFor(() => expect(screen.getByText("Delete record?")).toBeInTheDocument());
         fireEvent.click(screen.getByRole("button", {name: "Delete"}));
         await waitFor(() => expect(useProgressStore.getState().results).toHaveLength(1));

@@ -339,7 +339,7 @@ export function OnboardingModal(): JSX.Element {
                 </ol>
             </div>
             <div class={styles.progress} aria-hidden="true">
-                <div class={styles.progressBar} style={`width: ${progressPercent()}%;`} />
+                <div class={styles.progressBar} style={{width: `${progressPercent()}%`}} />
             </div>
         </Modal>
     );
