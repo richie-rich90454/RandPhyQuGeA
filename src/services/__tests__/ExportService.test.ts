@@ -296,8 +296,11 @@ describe("ExportService", () => {
             let service = new ExportService();
             let write = vi.fn<(html: string) => void>();
             let print = vi.fn<() => void>();
-            let mockWindow = {document: {open: vi.fn<() => void>(), write, close: vi.fn<() => void>()}, focus: vi.fn<() => void>(), print} as unknown as Window;
-            vi.stubGlobal("open", vi.fn<() => Window | null>().mockReturnValue(mockWindow));
+            let mockWindow = {document: {open: vi.fn<() => void>(), write, close: vi.fn<() => void>()}, focus: vi.fn<() => void>(), print};
+            vi.stubGlobal(
+                "open",
+                vi.fn(() => mockWindow),
+            );
             let questions: GeneratedQuestion[] = [
                 {
                     id: "q1",

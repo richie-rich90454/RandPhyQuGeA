@@ -133,7 +133,7 @@ describe("PerfBudget.defaultBudget", () => {
     it("returns entries for all five categories", () => {
         let budget = PerfBudget.defaultBudget();
         expect(budget).toHaveLength(5);
-        let categories = budget.map(b => b.category).sort();
+        let categories = budget.map(b => b.category).toSorted();
         expect(categories).toEqual(["font", "image", "other", "script", "style"]);
     });
     it("returns positive limits for every category", () => {
