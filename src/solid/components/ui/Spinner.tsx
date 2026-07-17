@@ -21,8 +21,8 @@ export function Spinner(props: SpinnerProps): JSX.Element {
     let size = local.size ?? "md";
     let px = sizePx[size] ?? 24;
     return (
-        <Show when={local.standalone} fallback={<div class={`${styles.spinner} ${local.class ?? ""}`} style={`width: ${px}px; height: ${px}px;`} aria-hidden="true" />}>
-            <div class={`${styles.spinner} ${local.class ?? ""}`} style={`width: ${px}px; height: ${px}px;`} role="status">
+        <Show when={local.standalone} fallback={<div class={`${styles.spinner} ${local.class ?? ""}`} style={{width: `${px}px`, height: `${px}px`}} aria-hidden="true" />}>
+            <div class={`${styles.spinner} ${local.class ?? ""}`} style={{width: `${px}px`, height: `${px}px`}} role="status">
                 <span class={styles.visuallyHidden}>Loading</span>
             </div>
         </Show>

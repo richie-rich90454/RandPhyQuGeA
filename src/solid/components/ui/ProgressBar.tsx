@@ -26,7 +26,7 @@ export function ProgressBar(props: ProgressBarProps): JSX.Element {
             aria-valuetext={local.indeterminate ? undefined : `${rounded()}%`}
             aria-label={local.ariaLabel ?? "Progress"}
         >
-            <Show when={local.indeterminate} fallback={<div class={styles.fill} style={`width: ${clamped()}%;`} />}>
+            <Show when={local.indeterminate} fallback={<div class={styles.fill} style={{width: `${clamped()}%`}} />}>
                 <div class={`${styles.fill} ${styles.indeterminate}`} />
             </Show>
         </div>

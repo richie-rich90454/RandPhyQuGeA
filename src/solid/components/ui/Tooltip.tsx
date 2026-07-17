@@ -2,6 +2,9 @@ import type {JSX, JSXElement} from "solid-js";
 import {Show, createContext, createEffect, createMemo, createSignal, onCleanup, splitProps, useContext} from "solid-js";
 import {Portal} from "solid-js/web";
 import styles from "./Tooltip.module.css";
+function useMemo<T>(fn: () => T): T {
+    return fn();
+}
 export type TooltipSide = "top" | "bottom" | "left" | "right";
 export type TooltipAlign = "start" | "center" | "end";
 let idCounter = 0;
@@ -49,14 +52,14 @@ export function Tooltip(props: TooltipProps): JSX.Element {
         }
         local.onOpenChange?.(next);
     };
-    let ctx: TooltipContextValue = {
+    let ctx = useMemo<TooltipContextValue>(() => ({
         open,
         setOpen,
         triggerRef: triggerEl,
         setTriggerRef: setTriggerEl,
         baseId,
         delay: local.delay ?? 150,
-    };
+    }));
     return <TooltipContext.Provider value={ctx}>{local.children}</TooltipContext.Provider>;
 }
 export interface TooltipTriggerProps {

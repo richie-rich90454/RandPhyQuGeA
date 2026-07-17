@@ -35,7 +35,8 @@ describe("Select", () => {
                 onChange={handler}
             />
         ));
-        let select = screen.getByRole("combobox") as HTMLSelectElement;
+        let select = screen.getByRole("combobox");
+        if (!(select instanceof HTMLSelectElement)) throw new Error("select element not found");
         fireEvent.change(select, {target: {value: "b"}});
         expect(handler).toHaveBeenCalledTimes(1);
         expect(select.value).toBe("b");

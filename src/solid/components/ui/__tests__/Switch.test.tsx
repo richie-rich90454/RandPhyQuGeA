@@ -13,7 +13,7 @@ describe("Switch", () => {
     it("calls onCheckedChange with next value when toggled", () => {
         let handler = vi.fn<(checked: boolean) => void>();
         render(() => <Switch checked={false} onCheckedChange={handler} />);
-        let input = screen.getByRole("switch") as HTMLInputElement;
+        let input = screen.getByRole("switch");
         fireEvent.click(input);
         expect(handler).toHaveBeenCalledWith(true);
     });
@@ -24,7 +24,7 @@ describe("Switch", () => {
     it("updates internal state in uncontrolled mode", () => {
         let handler = vi.fn<(checked: boolean) => void>();
         render(() => <Switch defaultChecked={false} onCheckedChange={handler} />);
-        let input = screen.getByRole("switch") as HTMLInputElement;
+        let input = screen.getByRole("switch");
         fireEvent.click(input);
         expect(handler).toHaveBeenCalledWith(true);
         expect(input).toHaveAttribute("aria-checked", "true");
@@ -41,7 +41,7 @@ describe("Switch", () => {
     it("does not fire onCheckedChange when disabled", () => {
         let handler = vi.fn<(checked: boolean) => void>();
         render(() => <Switch checked={false} onCheckedChange={handler} disabled={true} />);
-        let input = screen.getByRole("switch") as HTMLInputElement;
+        let input = screen.getByRole("switch");
         fireEvent.click(input);
         expect(handler).not.toHaveBeenCalled();
     });

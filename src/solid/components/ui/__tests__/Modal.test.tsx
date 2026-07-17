@@ -109,12 +109,14 @@ describe("Modal", () => {
         await flush();
         let buttons = screen.getAllByRole("button");
         let contentBtns = buttons.filter(b => b.textContent === "First" || b.textContent === "Second");
-        let lastBtn = contentBtns[contentBtns.length - 1]!;
+        let lastBtn = contentBtns[contentBtns.length - 1];
+        if (!lastBtn) throw new Error("last button not found");
         lastBtn.focus();
         expect(document.activeElement).toBe(lastBtn);
         fireEvent.keyDown(document, {key: "Tab"});
         expect(document.activeElement).not.toBe(lastBtn);
-        let firstBtn = contentBtns[0]!;
+        let firstBtn = contentBtns[0];
+        if (!firstBtn) throw new Error("first button not found");
         expect(document.activeElement === firstBtn || document.activeElement === screen.getByRole("button", {name: /close dialog/i})).toBe(true);
     });
     it("traps Shift+Tab focus inside the modal (wraps from first to last) (task 5.12 bug 1)", async () => {
@@ -131,7 +133,8 @@ describe("Modal", () => {
         fireEvent.keyDown(document, {key: "Tab", shiftKey: true});
         let buttons = screen.getAllByRole("button");
         let contentBtns = buttons.filter(b => b.textContent === "First" || b.textContent === "Second");
-        let lastBtn = contentBtns[contentBtns.length - 1]!;
+        let lastBtn = contentBtns[contentBtns.length - 1];
+        if (!lastBtn) throw new Error("last button not found");
         expect(document.activeElement).toBe(lastBtn);
     });
     it("moves focus into the modal when it opens (task 5.12 bug 1)", async () => {
@@ -177,7 +180,8 @@ describe("Modal", () => {
             </>
         ));
         await flush();
-        let outsideBtn = screen.getByTestId("outside") as HTMLButtonElement;
+        let outsideBtn = screen.getByTestId("outside");
+        if (!(outsideBtn instanceof HTMLButtonElement)) throw new Error("outside button not found");
         outsideBtn.focus();
         expect(document.activeElement).not.toBe(outsideBtn);
         let dialog = screen.getByRole("dialog");

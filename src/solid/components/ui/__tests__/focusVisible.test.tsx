@@ -58,10 +58,13 @@ describe("focus-visible on primary controls (task 5.22)", () => {
             render(() => <Slider min={0} max={100} value={[20, 80]} onChange={() => {}} label="Range" />);
             let inputs = screen.getAllByRole("slider");
             expect(inputs).toHaveLength(2);
-            inputs[0]!.focus();
-            expect(document.activeElement).toBe(inputs[0]);
-            inputs[1]!.focus();
-            expect(document.activeElement).toBe(inputs[1]);
+            let input0 = inputs[0];
+            let input1 = inputs[1];
+            if (!input0 || !input1) throw new Error("slider inputs not found");
+            input0.focus();
+            expect(document.activeElement).toBe(input0);
+            input1.focus();
+            expect(document.activeElement).toBe(input1);
         });
     });
 });

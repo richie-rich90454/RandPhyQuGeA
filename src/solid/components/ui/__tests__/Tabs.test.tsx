@@ -156,7 +156,10 @@ describe("Tabs", () => {
         let tabs = screen.getAllByRole("tab");
         expect(tabs[0]).toHaveAttribute("aria-controls");
         expect(tabs[1]).toHaveAttribute("aria-controls");
-        expect(tabs[0]!.getAttribute("aria-controls")).not.toBe(tabs[1]!.getAttribute("aria-controls"));
+        let tab0 = tabs[0];
+        let tab1 = tabs[1];
+        if (!tab0 || !tab1) throw new Error("tabs not found");
+        expect(tab0.getAttribute("aria-controls")).not.toBe(tab1.getAttribute("aria-controls"));
     });
     it("ArrowRight moves focus and activation to the next tab (task 5.13 bug 2)", async () => {
         render(() => (
@@ -170,7 +173,9 @@ describe("Tabs", () => {
             </Tabs>
         ));
         let tabs = screen.getAllByRole("tab");
-        tabs[0]!.focus();
+        let tab = tabs[0];
+        if (!tab) throw new Error("tab not found");
+        tab.focus();
         expect(document.activeElement).toBe(tabs[0]);
         fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowRight"});
         expect(document.activeElement).toBe(tabs[1]);
@@ -189,7 +194,9 @@ describe("Tabs", () => {
             </Tabs>
         ));
         let tabs = screen.getAllByRole("tab");
-        tabs[1]!.focus();
+        let tab = tabs[1];
+        if (!tab) throw new Error("tab not found");
+        tab.focus();
         expect(document.activeElement).toBe(tabs[1]);
         fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowLeft"});
         expect(document.activeElement).toBe(tabs[0]);
@@ -208,7 +215,9 @@ describe("Tabs", () => {
             </Tabs>
         ));
         let tabs = screen.getAllByRole("tab");
-        tabs[1]!.focus();
+        let tab = tabs[1];
+        if (!tab) throw new Error("tab not found");
+        tab.focus();
         fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowRight"});
         expect(document.activeElement).toBe(tabs[0]);
         expect(tabs[0]).toHaveAttribute("aria-selected", "true");
@@ -225,7 +234,9 @@ describe("Tabs", () => {
             </Tabs>
         ));
         let tabs = screen.getAllByRole("tab");
-        tabs[0]!.focus();
+        let tab = tabs[0];
+        if (!tab) throw new Error("tab not found");
+        tab.focus();
         fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowLeft"});
         expect(document.activeElement).toBe(tabs[1]);
         expect(tabs[1]).toHaveAttribute("aria-selected", "true");
@@ -242,7 +253,9 @@ describe("Tabs", () => {
             </Tabs>
         ));
         let tabs = screen.getAllByRole("tab");
-        tabs[0]!.focus();
+        let tab = tabs[0];
+        if (!tab) throw new Error("tab not found");
+        tab.focus();
         fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowDown"});
         expect(document.activeElement).toBe(tabs[1]);
     });
@@ -258,7 +271,9 @@ describe("Tabs", () => {
             </Tabs>
         ));
         let tabs = screen.getAllByRole("tab");
-        tabs[1]!.focus();
+        let tab = tabs[1];
+        if (!tab) throw new Error("tab not found");
+        tab.focus();
         fireEvent.keyDown(screen.getByRole("tablist"), {key: "ArrowUp"});
         expect(document.activeElement).toBe(tabs[0]);
     });
@@ -276,7 +291,9 @@ describe("Tabs", () => {
             </Tabs>
         ));
         let tabs = screen.getAllByRole("tab");
-        tabs[1]!.focus();
+        let tab = tabs[1];
+        if (!tab) throw new Error("tab not found");
+        tab.focus();
         fireEvent.keyDown(screen.getByRole("tablist"), {key: "Home"});
         expect(document.activeElement).toBe(tabs[0]);
         expect(tabs[0]).toHaveAttribute("aria-selected", "true");
@@ -295,7 +312,9 @@ describe("Tabs", () => {
             </Tabs>
         ));
         let tabs = screen.getAllByRole("tab");
-        tabs[0]!.focus();
+        let tab = tabs[0];
+        if (!tab) throw new Error("tab not found");
+        tab.focus();
         fireEvent.keyDown(screen.getByRole("tablist"), {key: "End"});
         expect(document.activeElement).toBe(tabs[2]);
         expect(tabs[2]).toHaveAttribute("aria-selected", "true");

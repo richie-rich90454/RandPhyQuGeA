@@ -1,6 +1,9 @@
 import type {JSX, JSXElement} from "solid-js";
 import {Show, createContext, createMemo, createSignal, splitProps, useContext} from "solid-js";
 import styles from "./Accordion.module.css";
+function useMemo<T>(fn: () => T): T {
+    return fn();
+}
 let idCounter = 0;
 function generateId(): string {
     idCounter = idCounter + 1;
@@ -51,7 +54,7 @@ export function Accordion(props: AccordionProps): JSX.Element {
         }
         local.onValueChange?.(next ?? "");
     };
-    let ctx: AccordionContextValue = {value: activeValue, setValue, baseId};
+    let ctx = useMemo<AccordionContextValue>(() => ({value: activeValue, setValue, baseId}));
     return (
         <AccordionContext.Provider value={ctx}>
             <div class={`${styles.root} ${local.class ?? ""}`} data-accordion-root="">
@@ -69,7 +72,7 @@ export function AccordionItem(props: AccordionItemProps): JSX.Element {
     let [local] = splitProps(props, ["value", "children", "class"]);
     let ctx = useAccordionContext();
     let isOpen = () => ctx.value() === local.value;
-    let itemCtx: ItemValueContextValue = {value: () => local.value};
+    let itemCtx = useMemo<ItemValueContextValue>(() => ({value: () => local.value}));
     return (
         <ItemValueContext.Provider value={itemCtx}>
             <div class={`${styles.item} ${local.class ?? ""}`} data-accordion-item={local.value} data-state={isOpen() ? "open" : "closed"}>

@@ -51,7 +51,9 @@ describe("Toolbar", () => {
             </Toolbar>
         ));
         let buttons = screen.getAllByRole("button");
-        buttons[0]!.focus();
+        let btn = buttons[0];
+        if (!btn) throw new Error("button not found");
+        btn.focus();
         expect(buttons[0]).toHaveFocus();
         fireEvent.keyDown(screen.getByRole("toolbar"), {key: "ArrowRight"});
         expect(buttons[1]).toHaveFocus();
@@ -64,7 +66,9 @@ describe("Toolbar", () => {
             </Toolbar>
         ));
         let buttons = screen.getAllByRole("button");
-        buttons[1]!.focus();
+        let btn = buttons[1];
+        if (!btn) throw new Error("button not found");
+        btn.focus();
         fireEvent.keyDown(screen.getByRole("toolbar"), {key: "ArrowRight"});
         expect(buttons[0]).toHaveFocus();
     });
@@ -76,7 +80,9 @@ describe("Toolbar", () => {
             </Toolbar>
         ));
         let buttons = screen.getAllByRole("button");
-        buttons[1]!.focus();
+        let btn = buttons[1];
+        if (!btn) throw new Error("button not found");
+        btn.focus();
         fireEvent.keyDown(screen.getByRole("toolbar"), {key: "ArrowLeft"});
         expect(buttons[0]).toHaveFocus();
     });
@@ -89,7 +95,9 @@ describe("Toolbar", () => {
             </Toolbar>
         ));
         let buttons = screen.getAllByRole("button");
-        buttons[2]!.focus();
+        let btn = buttons[2];
+        if (!btn) throw new Error("button not found");
+        btn.focus();
         fireEvent.keyDown(screen.getByRole("toolbar"), {key: "Home"});
         expect(buttons[0]).toHaveFocus();
     });
@@ -102,7 +110,9 @@ describe("Toolbar", () => {
             </Toolbar>
         ));
         let buttons = screen.getAllByRole("button");
-        buttons[0]!.focus();
+        let btn = buttons[0];
+        if (!btn) throw new Error("button not found");
+        btn.focus();
         fireEvent.keyDown(screen.getByRole("toolbar"), {key: "End"});
         expect(buttons[2]).toHaveFocus();
     });

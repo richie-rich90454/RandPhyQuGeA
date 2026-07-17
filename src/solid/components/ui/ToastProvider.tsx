@@ -2,6 +2,9 @@ import type {JSX, JSXElement} from "solid-js";
 import {For, Show, createContext, createSignal, onCleanup, useContext} from "solid-js";
 import {Portal} from "solid-js/web";
 import styles from "./Toast.module.css";
+function useMemo<T>(fn: () => T): T {
+    return fn();
+}
 export type ToastVariant = "success" | "error" | "info" | "warning";
 export interface ToastOptions {
     /** Message text shown in the toast body. */
@@ -66,6 +69,8 @@ function ToastIcon(props: {variant: ToastVariant}): JSX.Element {
                     <path d="M10 9v5M10 6v.5" stroke={color} stroke-width="2" stroke-linecap="round" />
                 </svg>
             );
+        default:
+            return null;
     }
 }
 /**
@@ -106,7 +111,7 @@ export function ToastProvider(props: ToastProviderProps): JSX.Element {
         timers.forEach(timer => clearTimeout(timer));
         timers.clear();
     });
-    let api: ToastApi = {toast, removeToast};
+    let api = useMemo<ToastApi>(() => ({toast, removeToast}));
     return (
         <ToastContext.Provider value={api}>
             {props.children}
@@ -117,14 +122,20 @@ export function ToastProvider(props: ToastProviderProps): JSX.Element {
                             let accent = VARIANT_COLOR[item.variant] ?? "var(--accent)";
                             let live: "assertive" | "polite" = item.variant === "error" || item.variant === "warning" ? "assertive" : "polite";
                             return (
-                                <div class={styles.toast} style={`border-left: 4px solid ${accent}; --toast-duration: ${item.duration}ms;`} role="status" aria-live={live} data-toast-id={item.id}>
+                                <div
+                                    class={styles.toast}
+                                    style={{"border-left": `4px solid ${accent}`, "--toast-duration": `${item.duration}ms`}}
+                                    role="status"
+                                    aria-live={live}
+                                    data-toast-id={item.id}
+                                >
                                     <ToastIcon variant={item.variant} />
                                     <p class={styles.message}>{item.message}</p>
                                     <button type="button" class={styles.close} aria-label="Dismiss notification" onClick={() => removeToast(item.id)}>
                                         <span aria-hidden="true">×</span>
                                     </button>
                                     <Show when={item.duration > 0}>
-                                        <span class={styles.progress} style={`background: ${accent};`} aria-hidden="true" />
+                                        <span class={styles.progress} style={{background: accent}} aria-hidden="true" />
                                     </Show>
                                 </div>
                             );

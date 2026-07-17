@@ -34,7 +34,8 @@ export function Switch(props: SwitchProps): JSX.Element {
     let [internalChecked, setInternalChecked] = createSignal(Boolean(local.defaultChecked));
     let currentChecked = createMemo(() => (isControlled() ? Boolean(local.checked) : internalChecked()));
     let handleChange = (event: Event) => {
-        let target = event.target as HTMLInputElement;
+        let target = event.target;
+        if (!(target instanceof HTMLInputElement)) throw new Error("Switch input is not an HTMLInputElement");
         if (target.disabled) return;
         let next = target.checked;
         if (!isControlled()) {

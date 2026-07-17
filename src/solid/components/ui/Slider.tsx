@@ -45,13 +45,15 @@ export function Slider(props: SliderProps): JSX.Element {
     let maxAriaLabel = () => (local.label ? `Maximum ${local.label}` : "Maximum value");
     let handleMinChange = (event: Event) => {
         if (isCollapsed()) return;
-        let target = event.target as HTMLInputElement;
+        let target = event.target;
+        if (!(target instanceof HTMLInputElement)) throw new Error("Slider min input is not an HTMLInputElement");
         let next = Math.min(Number(target.value), maxValue() - 1);
         local.onChange([next, maxValue()]);
     };
     let handleMaxChange = (event: Event) => {
         if (isCollapsed()) return;
-        let target = event.target as HTMLInputElement;
+        let target = event.target;
+        if (!(target instanceof HTMLInputElement)) throw new Error("Slider max input is not an HTMLInputElement");
         let next = Math.max(Number(target.value), minValue() + 1);
         local.onChange([minValue(), next]);
     };
@@ -64,7 +66,7 @@ export function Slider(props: SliderProps): JSX.Element {
             </Show>
             <div class={styles.trackWrap}>
                 <div class={styles.track} />
-                <div class={styles.filled} data-testid="slider-filled-track" style={`left: ${left()}%; width: ${width()}%;`} />
+                <div class={styles.filled} data-testid="slider-filled-track" style={{left: `${left()}%`, width: `${width()}%`}} />
                 <input
                     id={minInputId()}
                     type="range"

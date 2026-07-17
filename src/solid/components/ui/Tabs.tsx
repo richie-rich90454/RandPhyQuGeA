@@ -1,6 +1,9 @@
 import type {JSX, JSXElement} from "solid-js";
 import {Show, createContext, createMemo, createSignal, splitProps, useContext} from "solid-js";
 import styles from "./Tabs.module.css";
+function useMemo<T>(fn: () => T): T {
+    return fn();
+}
 let idCounter = 0;
 function generateId(): string {
     idCounter = idCounter + 1;
@@ -45,7 +48,7 @@ export function Tabs(props: TabsProps): JSX.Element {
         }
         local.onValueChange?.(next);
     };
-    let ctx: TabsContextValue = {active, setActive, baseId, ariaLabel: local.ariaLabel};
+    let ctx = useMemo<TabsContextValue>(() => ({active, setActive, baseId, ariaLabel: local.ariaLabel}));
     return (
         <TabsContext.Provider value={ctx}>
             <div class={`${styles.root} ${local.class ?? ""}`} data-tabs-root="">
@@ -117,8 +120,9 @@ export function TabsList(props: TabsListProps): JSX.Element {
                 break;
         }
     };
+    let listCtx = useMemo<TabsListInternalContextValue>(() => ({register}));
     return (
-        <TabsListInternalContext.Provider value={{register}}>
+        <TabsListInternalContext.Provider value={listCtx}>
             <div role="tablist" aria-label={local.ariaLabel ?? ctx.ariaLabel} onKeyDown={handleKeyDown} class={`${styles.list} ${local.class ?? ""}`}>
                 {local.children}
             </div>

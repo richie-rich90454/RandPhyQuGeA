@@ -82,11 +82,12 @@ export function Modal(props: ModalProps): JSX.Element {
         let handleFocusIn = (event: FocusEvent) => {
             let node = containerEl();
             if (!node) return;
-            let target = event.target instanceof HTMLElement ? event.target : null;
-            if (target && !node.contains(target)) {
+            let eventTarget = event.target instanceof HTMLElement ? event.target : null;
+            if (eventTarget && !node.contains(eventTarget)) {
                 let items = Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
                 if (items.length > 0) {
-                    items[0]!.focus();
+                    let first = items[0];
+                    if (first) first.focus();
                 } else {
                     node.focus();
                 }

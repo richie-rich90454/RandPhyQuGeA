@@ -21,25 +21,29 @@ describe("Spinner", () => {
     });
     it("applies size via inline style for sm", () => {
         render(() => <Spinner size="sm" />);
-        let el = document.querySelector("[aria-hidden='true']") as HTMLElement;
+        let el = document.querySelector("[aria-hidden='true']");
+        if (!(el instanceof HTMLElement)) throw new Error("spinner element not found");
         expect(el.style.width).toBe("16px");
         expect(el.style.height).toBe("16px");
     });
     it("applies size via inline style for md", () => {
         render(() => <Spinner size="md" />);
-        let el = document.querySelector("[aria-hidden='true']") as HTMLElement;
+        let el = document.querySelector("[aria-hidden='true']");
+        if (!(el instanceof HTMLElement)) throw new Error("spinner element not found");
         expect(el.style.width).toBe("24px");
         expect(el.style.height).toBe("24px");
     });
     it("applies size via inline style for lg", () => {
         render(() => <Spinner size="lg" />);
-        let el = document.querySelector("[aria-hidden='true']") as HTMLElement;
+        let el = document.querySelector("[aria-hidden='true']");
+        if (!(el instanceof HTMLElement)) throw new Error("spinner element not found");
         expect(el.style.width).toBe("32px");
         expect(el.style.height).toBe("32px");
     });
     it("defaults to md size", () => {
         render(() => <Spinner />);
-        let el = document.querySelector("[aria-hidden='true']") as HTMLElement;
+        let el = document.querySelector("[aria-hidden='true']");
+        if (!(el instanceof HTMLElement)) throw new Error("spinner element not found");
         expect(el.style.width).toBe("24px");
     });
 });
