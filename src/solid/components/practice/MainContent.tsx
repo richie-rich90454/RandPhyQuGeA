@@ -1,12 +1,12 @@
 import type {JSX, JSXElement} from "solid-js";
 import styles from "./MainContent.module.css";
 export interface MainContentProps {
-	/** Practice surface composed into the content stack (question card + answer section). */
-	children?: JSXElement;
-	/** Analytics/progress panel rendered below the practice surface. */
-	analytics?: JSXElement;
-	/** Extra class for the main content wrapper. */
-	class?: string;
+    /** Practice surface composed into the content stack (question card + answer section). */
+    children?: JSXElement;
+    /** Analytics/progress panel rendered below the practice surface. */
+    analytics?: JSXElement;
+    /** Extra class for the main content wrapper. */
+    class?: string;
 }
 /**
  * Main content area mapped to `.main-content`.
@@ -21,10 +21,10 @@ export interface MainContentProps {
  * (mirrors the AppShell/ControlToolbarTop slot pattern).
  */
 export function MainContent(props: MainContentProps): JSX.Element {
-	return (
-		<div class={`${styles.mainContent} ${props.class ?? ""}`}>
-			<div class={styles.contentStack}>{props.children}</div>
-			{props.analytics}
-		</div>
-	);
+    return (
+        <div class={`${styles.mainContent} ${props.class ?? ""}`}>
+            <div class={styles.contentStack}>{props.children}</div>
+            {props.analytics}
+        </div>
+    );
 }

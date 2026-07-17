@@ -11,33 +11,33 @@ import {createStore} from "zustand/vanilla";
 import {createSolidStore} from "./createSolidStore";
 import type {Specification} from "../../types/models";
 export interface SpecError {
-	type: "parse" | "network" | "unknown";
-	message: string;
-	details?: string;
+    type: "parse" | "network" | "unknown";
+    message: string;
+    details?: string;
 }
 export interface SpecState {
-	specification: Specification | null;
-	loading: boolean;
-	error: SpecError | null;
-	empty: boolean;
-	setSpecification: (specification: Specification | null) => void;
-	setLoading: (loading: boolean) => void;
-	setError: (error: SpecError | null) => void;
-	setEmpty: (empty: boolean) => void;
-	reset: () => void;
+    specification: Specification | null;
+    loading: boolean;
+    error: SpecError | null;
+    empty: boolean;
+    setSpecification: (specification: Specification | null) => void;
+    setLoading: (loading: boolean) => void;
+    setError: (error: SpecError | null) => void;
+    setEmpty: (empty: boolean) => void;
+    reset: () => void;
 }
 const initialState = {
-	specification: null as Specification | null,
-	loading: false,
-	error: null as SpecError | null,
-	empty: true,
+    specification: null as Specification | null,
+    loading: false,
+    error: null as SpecError | null,
+    empty: true,
 };
 const specStore = createStore<SpecState>()(set => ({
-	...initialState,
-	setSpecification: specification => set({specification}),
-	setLoading: loading => set({loading}),
-	setError: error => set({error}),
-	setEmpty: empty => set({empty}),
-	reset: () => set({...initialState}),
+    ...initialState,
+    setSpecification: specification => set({specification}),
+    setLoading: loading => set({loading}),
+    setError: error => set({error}),
+    setEmpty: empty => set({empty}),
+    reset: () => set({...initialState}),
 }));
 export const useSpecStore = createSolidStore<SpecState>(specStore);

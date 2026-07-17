@@ -1,257 +1,257 @@
 .panel {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
 }
 .emptyCard {
-	margin: 0;
+    margin: 0;
 }
 .emptyContent {
-	display: flex;
-	justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 .statsGrid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: var(--space-3);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
 }
 .statCard {
-	margin: 0;
+    margin: 0;
 }
 .statHeader {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
 }
 .statIcon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
-	border-radius: var(--radius-full);
-	background: var(--info-surface);
-	color: var(--accent);
-	flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    background: var(--info-surface);
+    color: var(--accent);
+    flex-shrink: 0;
 }
 .statTitle {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
 }
 .statContent {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
 }
 .statValue {
-	font-size: var(--font-size-2xl);
-	font-weight: var(--font-weight-bold);
-	color: var(--text);
-	line-height: 1.1;
-	font-variant-numeric: tabular-nums;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
 }
 .statLabel {
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
 }
 .statMeta {
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
-	font-variant-numeric: tabular-nums;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
 }
 .statSubgrid {
-	display: flex;
-	gap: var(--space-3);
+    display: flex;
+    gap: var(--space-3);
 }
 .statSubvalue {
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
-	font-variant-numeric: tabular-nums;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
 }
 .weakCard {
-	margin: 0;
+    margin: 0;
 }
 .weakHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
 }
 .weakTitles {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
 }
 .sectionTitle {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
 }
 .sectionSubtitle {
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
 }
 .weakContent {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
 }
 .weakList {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-3);
-	margin: 0;
-	padding: 0;
-	list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 .weakItem {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
-	padding: var(--space-1) var(--space-2);
-	border-radius: var(--radius-sm);
-	transition: background-color var(--duration-fast) var(--ease-out);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--duration-fast) var(--ease-out);
 }
 .weakItem:hover {
-	background: var(--surface-muted);
+    background: var(--surface-muted);
 }
 .weakInfo {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
 }
 .weakName {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text);
 }
 .weakMeta {
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
-	font-variant-numeric: tabular-nums;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
 }
 .historyCard {
-	margin: 0;
+    margin: 0;
 }
 .historyHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
 }
 .historyTitles {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
 }
 .historyContent {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
 }
 .historyList {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2);
-	margin: 0;
-	padding: 0;
-	list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 .historyItem {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2);
-	padding: var(--space-2) var(--space-1);
-	border-bottom: 1px solid var(--border-subtle);
-	border-radius: var(--radius-sm);
-	flex-wrap: wrap;
-	transition: background-color var(--duration-fast) var(--ease-out);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-1);
+    border-bottom: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    flex-wrap: wrap;
+    transition: background-color var(--duration-fast) var(--ease-out);
 }
 .historyItem:hover {
-	background: var(--surface-muted);
+    background: var(--surface-muted);
 }
 .historyItem:last-child {
-	border-bottom: none;
+    border-bottom: none;
 }
 .historyResult {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 28px;
-	height: 28px;
-	border-radius: var(--radius-full);
-	flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-full);
+    flex-shrink: 0;
 }
 .correct {
-	color: var(--success);
-	background: var(--success-surface);
+    color: var(--success);
+    background: var(--success-surface);
 }
 .incorrect {
-	color: var(--danger);
-	background: var(--error-surface);
+    color: var(--danger);
+    background: var(--error-surface);
 }
 .historyTopic {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text);
-	flex: 1 1 auto;
-	min-width: 0;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text);
+    flex: 1 1 auto;
+    min-width: 0;
 }
 .historyMeta {
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
-	font-variant-numeric: tabular-nums;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
 }
 .historyTime {
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
-	white-space: nowrap;
-	font-variant-numeric: tabular-nums;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
 }
 .pagination {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
 }
 .paginationInfo {
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
-	font-variant-numeric: tabular-nums;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
 }
 @media (max-width: 1024px) {
-	.statSubgrid {
-		flex-wrap: wrap;
-	}
+    .statSubgrid {
+        flex-wrap: wrap;
+    }
 }
 @media (max-width: 768px) {
-	.statsGrid {
-		grid-template-columns: 1fr;
-	}
-	.historyItem {
-		flex-direction: column;
-		align-items: flex-start;
-	}
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+    .historyItem {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
 @media (max-width: 480px) {
-	.statValue {
-		font-size: var(--font-size-xl);
-	}
-	.weakHeader,
-	.historyHeader {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: var(--space-1);
-	}
-	.pagination {
-		gap: var(--space-2);
-	}
+    .statValue {
+        font-size: var(--font-size-xl);
+    }
+    .weakHeader,
+    .historyHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+    }
+    .pagination {
+        gap: var(--space-2);
+    }
 }
 @media (prefers-reduced-motion: reduce) {
-	.weakItem {
-		transition: none;
-	}
-	.historyItem {
-		transition: none;
-	}
+    .weakItem {
+        transition: none;
+    }
+    .historyItem {
+        transition: none;
+    }
 }

@@ -1,113 +1,113 @@
 .resume {
-	width: 480px;
+    width: 480px;
 }
 .body {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
 }
 .intro {
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
-	margin: 0;
-	line-height: 1.5;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
 }
 .card {
-	margin: 0;
+    margin: 0;
 }
 .cardContent {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
 }
 .detail {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
 }
 .label {
-	font-size: var(--font-size-xs);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 .value {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text);
 }
 .time {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-2);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
 }
 .timeIcon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--text-muted);
-	flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    flex-shrink: 0;
 }
 .actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: var(--space-2);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-2);
 }
 .statsGrid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: var(--space-2);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
 }
 .stat {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: var(--space-1);
-	padding: var(--space-3);
-	background: var(--surface-muted);
-	border-radius: var(--radius-md);
-	text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    background: var(--surface-muted);
+    border-radius: var(--radius-md);
+    text-align: center;
 }
 .statLabel {
-	font-size: var(--font-size-xs);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 .statValue {
-	font-size: var(--font-size-lg);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text);
-	font-variant-numeric: tabular-nums;
-	word-break: break-word;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    word-break: break-word;
 }
 @media (max-width: 768px) {
-	.resume {
-		width: 100%;
-	}
-	.detail {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: var(--space-1);
-	}
-	.statsGrid {
-		grid-template-columns: repeat(2, 1fr);
-	}
-	.actions {
-		flex-direction: column-reverse;
-	}
-	.actions button {
-		width: 100%;
-	}
+    .resume {
+        width: 100%;
+    }
+    .detail {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+    }
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .actions {
+        flex-direction: column-reverse;
+    }
+    .actions button {
+        width: 100%;
+    }
 }
 @media (max-width: 480px) {
-	.statsGrid {
-		grid-template-columns: 1fr;
-	}
-	.stat {
-		padding: var(--space-2);
-	}
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+    .stat {
+        padding: var(--space-2);
+    }
 }

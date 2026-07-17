@@ -14,11 +14,11 @@ const VALID_FONT_SIZES = new Set<FontSize>(["small", "medium", "large"]);
  * Unknown / empty locales fall back to LTR.
  */
 let isRtlLocale = (locale: string): boolean => {
-	let lang = locale.split("-")[0]?.toLowerCase() ?? "";
-	return RTL_LANGS.has(lang);
+    let lang = locale.split("-")[0]?.toLowerCase() ?? "";
+    return RTL_LANGS.has(lang);
 };
 export interface CreateThemeOptions {
-	settingsStore?: SolidStore<SettingsState>;
+    settingsStore?: SolidStore<SettingsState>;
 }
 /**
  * Apply the user's theme preference to the document root.
@@ -37,84 +37,84 @@ export interface CreateThemeOptions {
  * units. Listeners are disposed via `onCleanup`.
  */
 export function createTheme(options: CreateThemeOptions = {}): void {
-	let store = options.settingsStore ?? useSettingsStore;
-	let themeMode = store(s => s.themeMode);
-	let reducedMotion = store(s => s.reducedMotion);
-	let locale = store(s => s.locale);
-	let fontSize = store(s => s.fontSize);
-	let reducedDataMode = store(s => s.reducedDataMode);
-	let root = document.documentElement;
-	let colorSchemeMql = window.matchMedia("(prefers-color-scheme: dark)");
-	let reducedMotionMql = window.matchMedia("(prefers-reduced-motion: reduce)");
-	let updateMetaThemeColor = (content: string) => {
-		let meta = document.querySelector('meta[name="theme-color"]');
-		if (meta) {
-			meta.setAttribute("content", content);
-		}
-	};
-	let applyTheme = (isDark: boolean) => {
-		root.setAttribute("data-theme", isDark ? "dark" : "light");
-		updateMetaThemeColor(isDark ? "#1a1f2e" : "#F8FAFC");
-	};
-	let applyReducedMotion = (isReduced: boolean) => {
-		if (isReduced) {
-			root.setAttribute("data-reduce-motion", "");
-		} else {
-			root.removeAttribute("data-reduce-motion");
-		}
-	};
-	let applyFontSize = (size: FontSize) => {
-		if (VALID_FONT_SIZES.has(size)) {
-			root.setAttribute("data-font-size", size);
-		} else {
-			root.setAttribute("data-font-size", "medium");
-		}
-	};
-	let applyReducedData = (isReduced: boolean) => {
-		if (isReduced) {
-			root.setAttribute("data-reduced-data", "");
-		} else {
-			root.removeAttribute("data-reduced-data");
-		}
-	};
-	createEffect(() => {
-		let mode = themeMode();
-		if (mode === "dark") {
-			applyTheme(true);
-		} else if (mode === "light") {
-			applyTheme(false);
-		} else if (mode === "dim") {
-			root.setAttribute("data-theme", "dim");
-			updateMetaThemeColor("#1a2744");
-		} else {
-			root.setAttribute("data-theme", "system");
-			updateMetaThemeColor(colorSchemeMql.matches ? "#1a1f2e" : "#F8FAFC");
-		}
-	});
-	createEffect(() => {
-		applyReducedMotion(reducedMotion() || reducedMotionMql.matches);
-	});
-	createEffect(() => {
-		root.dir = isRtlLocale(locale()) ? "rtl" : "ltr";
-	});
-	createEffect(() => {
-		applyFontSize(fontSize());
-	});
-	createEffect(() => {
-		applyReducedData(reducedDataMode());
-	});
-	let onColorSchemeChange = (event: MediaQueryListEvent) => {
-		if (themeMode() === "system") {
-			updateMetaThemeColor(event.matches ? "#1a1f2e" : "#F8FAFC");
-		}
-	};
-	let onReducedMotionChange = () => {
-		applyReducedMotion(reducedMotion() || reducedMotionMql.matches);
-	};
-	colorSchemeMql.addEventListener("change", onColorSchemeChange);
-	reducedMotionMql.addEventListener("change", onReducedMotionChange);
-	onCleanup(() => {
-		colorSchemeMql.removeEventListener("change", onColorSchemeChange);
-		reducedMotionMql.removeEventListener("change", onReducedMotionChange);
-	});
+    let store = options.settingsStore ?? useSettingsStore;
+    let themeMode = store(s => s.themeMode);
+    let reducedMotion = store(s => s.reducedMotion);
+    let locale = store(s => s.locale);
+    let fontSize = store(s => s.fontSize);
+    let reducedDataMode = store(s => s.reducedDataMode);
+    let root = document.documentElement;
+    let colorSchemeMql = window.matchMedia("(prefers-color-scheme: dark)");
+    let reducedMotionMql = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let updateMetaThemeColor = (content: string) => {
+        let meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) {
+            meta.setAttribute("content", content);
+        }
+    };
+    let applyTheme = (isDark: boolean) => {
+        root.setAttribute("data-theme", isDark ? "dark" : "light");
+        updateMetaThemeColor(isDark ? "#1a1f2e" : "#F8FAFC");
+    };
+    let applyReducedMotion = (isReduced: boolean) => {
+        if (isReduced) {
+            root.setAttribute("data-reduce-motion", "");
+        } else {
+            root.removeAttribute("data-reduce-motion");
+        }
+    };
+    let applyFontSize = (size: FontSize) => {
+        if (VALID_FONT_SIZES.has(size)) {
+            root.setAttribute("data-font-size", size);
+        } else {
+            root.setAttribute("data-font-size", "medium");
+        }
+    };
+    let applyReducedData = (isReduced: boolean) => {
+        if (isReduced) {
+            root.setAttribute("data-reduced-data", "");
+        } else {
+            root.removeAttribute("data-reduced-data");
+        }
+    };
+    createEffect(() => {
+        let mode = themeMode();
+        if (mode === "dark") {
+            applyTheme(true);
+        } else if (mode === "light") {
+            applyTheme(false);
+        } else if (mode === "dim") {
+            root.setAttribute("data-theme", "dim");
+            updateMetaThemeColor("#1a2744");
+        } else {
+            root.setAttribute("data-theme", "system");
+            updateMetaThemeColor(colorSchemeMql.matches ? "#1a1f2e" : "#F8FAFC");
+        }
+    });
+    createEffect(() => {
+        applyReducedMotion(reducedMotion() || reducedMotionMql.matches);
+    });
+    createEffect(() => {
+        root.dir = isRtlLocale(locale()) ? "rtl" : "ltr";
+    });
+    createEffect(() => {
+        applyFontSize(fontSize());
+    });
+    createEffect(() => {
+        applyReducedData(reducedDataMode());
+    });
+    let onColorSchemeChange = (event: MediaQueryListEvent) => {
+        if (themeMode() === "system") {
+            updateMetaThemeColor(event.matches ? "#1a1f2e" : "#F8FAFC");
+        }
+    };
+    let onReducedMotionChange = () => {
+        applyReducedMotion(reducedMotion() || reducedMotionMql.matches);
+    };
+    colorSchemeMql.addEventListener("change", onColorSchemeChange);
+    reducedMotionMql.addEventListener("change", onReducedMotionChange);
+    onCleanup(() => {
+        colorSchemeMql.removeEventListener("change", onColorSchemeChange);
+        reducedMotionMql.removeEventListener("change", onReducedMotionChange);
+    });
 }

@@ -11,16 +11,16 @@ export type {SolidStore, StorePersistApi} from "./createSolidStore";
 export {usePracticeStore} from "./practiceStore";
 export type {PracticeState, AnswerFeedback} from "./practiceStore";
 export {
-	selectCurrentQuestion,
-	selectIsActive,
-	selectIsFinished,
-	selectMode,
-	selectResults,
-	selectCurrentIndex,
-	selectQuestions,
-	selectQuestionStartTime,
-	selectSessionStartTime,
-	selectSpecification,
+    selectCurrentQuestion,
+    selectIsActive,
+    selectIsFinished,
+    selectMode,
+    selectResults,
+    selectCurrentIndex,
+    selectQuestions,
+    selectQuestionStartTime,
+    selectSessionStartTime,
+    selectSpecification,
 } from "./practiceStore";
 export {useProgressStore, selectStats, selectRecentResults, selectResultsByMode} from "./progressStore";
 export type {ProgressState, PracticeStats} from "./progressStore";

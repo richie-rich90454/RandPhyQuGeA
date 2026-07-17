@@ -5,8 +5,8 @@ import {useUiStore} from "../stores/uiStore";
 import type {UiState} from "../stores/uiStore";
 import type {SolidStore} from "../stores/createSolidStore";
 export interface CreateGlobalShortcutsOptions {
-	settingsStore?: SolidStore<SettingsState>;
-	uiStore?: SolidStore<UiState>;
+    settingsStore?: SolidStore<SettingsState>;
+    uiStore?: SolidStore<UiState>;
 }
 /**
  * Wire global keyboard shortcuts for app-level actions.
@@ -24,49 +24,49 @@ export interface CreateGlobalShortcutsOptions {
  * practice page so it only fires on the relevant route.
  */
 export function createGlobalShortcuts(options: CreateGlobalShortcutsOptions = {}): void {
-	let settings = options.settingsStore ?? useSettingsStore;
-	let ui = options.uiStore ?? useUiStore;
-	let isTyping = (event: KeyboardEvent): boolean => {
-		let target = event.target;
-		if (!(target instanceof HTMLElement)) return false;
-		return target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable;
-	};
-	let handleKeyDown = (event: KeyboardEvent) => {
-		if (!event.ctrlKey && !event.metaKey) {
-			return;
-		}
-		if (ui.getState().activeModal !== null) {
-			return;
-		}
-		let key = event.key.toLowerCase();
-		if (key === "1" && !event.shiftKey) {
-			if (isTyping(event)) return;
-			event.preventDefault();
-			settings.getState().setDefaultMode("Single");
-			return;
-		}
-		if (key === "2" && !event.shiftKey) {
-			if (isTyping(event)) return;
-			event.preventDefault();
-			settings.getState().setDefaultMode("Mental");
-			return;
-		}
-		if (key === "," && !event.shiftKey) {
-			event.preventDefault();
-			ui.getState().openModal("settings");
-			return;
-		}
-		if (key === "t" && event.shiftKey) {
-			event.preventDefault();
-			let current = settings.getState().themeMode;
-			settings.getState().setThemeMode(current === "dark" ? "light" : "dark");
-			return;
-		}
-	};
-	onMount(() => {
-		document.addEventListener("keydown", handleKeyDown);
-	});
-	onCleanup(() => {
-		document.removeEventListener("keydown", handleKeyDown);
-	});
+    let settings = options.settingsStore ?? useSettingsStore;
+    let ui = options.uiStore ?? useUiStore;
+    let isTyping = (event: KeyboardEvent): boolean => {
+        let target = event.target;
+        if (!(target instanceof HTMLElement)) return false;
+        return target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable;
+    };
+    let handleKeyDown = (event: KeyboardEvent) => {
+        if (!event.ctrlKey && !event.metaKey) {
+            return;
+        }
+        if (ui.getState().activeModal !== null) {
+            return;
+        }
+        let key = event.key.toLowerCase();
+        if (key === "1" && !event.shiftKey) {
+            if (isTyping(event)) return;
+            event.preventDefault();
+            settings.getState().setDefaultMode("Single");
+            return;
+        }
+        if (key === "2" && !event.shiftKey) {
+            if (isTyping(event)) return;
+            event.preventDefault();
+            settings.getState().setDefaultMode("Mental");
+            return;
+        }
+        if (key === "," && !event.shiftKey) {
+            event.preventDefault();
+            ui.getState().openModal("settings");
+            return;
+        }
+        if (key === "t" && event.shiftKey) {
+            event.preventDefault();
+            let current = settings.getState().themeMode;
+            settings.getState().setThemeMode(current === "dark" ? "light" : "dark");
+            return;
+        }
+    };
+    onMount(() => {
+        document.addEventListener("keydown", handleKeyDown);
+    });
+    onCleanup(() => {
+        document.removeEventListener("keydown", handleKeyDown);
+    });
 }

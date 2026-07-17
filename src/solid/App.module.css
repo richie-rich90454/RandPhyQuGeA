@@ -1,36 +1,36 @@
 .shell {
-	min-height: 100vh;
-	min-height: 100dvh;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: var(--space-4);
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-4);
 }
 .card {
-	max-width: 32rem;
-	padding: var(--space-8);
-	background: var(--surface-glass);
-	border: var(--glass-border);
-	border-radius: var(--radius-xl);
-	box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
-	backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-	-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    max-width: 32rem;
+    padding: var(--space-8);
+    background: var(--surface-glass);
+    border: var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 }
 .title {
-	font-size: var(--font-size-3xl);
-	font-weight: var(--font-weight-bold);
-	color: var(--primary);
-	margin-bottom: var(--space-2);
-	letter-spacing: var(--letter-spacing-tight);
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary);
+    margin-bottom: var(--space-2);
+    letter-spacing: var(--letter-spacing-tight);
 }
 .status {
-	font-size: var(--font-size-md);
-	color: var(--accent);
-	font-weight: var(--font-weight-medium);
-	margin-bottom: var(--space-4);
+    font-size: var(--font-size-md);
+    color: var(--accent);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--space-4);
 }
 .note {
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
-	line-height: var(--line-height-relaxed);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    line-height: var(--line-height-relaxed);
 }

@@ -1,120 +1,120 @@
 .settings {
-	width: 640px;
+    width: 640px;
 }
 .tabs {
-	display: flex;
-	gap: var(--space-1);
-	border-bottom: 1px solid var(--border-subtle);
-	margin-bottom: var(--space-4);
+    display: flex;
+    gap: var(--space-1);
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: var(--space-4);
 }
 .tab {
-	padding: var(--space-2) var(--space-4);
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-muted);
-	background: transparent;
-	border: none;
-	border-bottom: 2px solid transparent;
-	cursor: pointer;
-	transition:
-		color var(--duration-fast) var(--ease-standard),
-		border-color var(--duration-fast) var(--ease-standard);
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition:
+        color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard);
 }
 .tab:hover {
-	color: var(--text);
+    color: var(--text);
 }
 .panel {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-4);
-	animation: settingsPanelIn var(--duration-normal) var(--ease-decelerated);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    animation: settingsPanelIn var(--duration-normal) var(--ease-decelerated);
 }
 .sectionCard {
-	margin: 0;
+    margin: 0;
 }
 .sectionContent {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-4);
-	padding-top: var(--space-2);
-	padding-bottom: var(--space-2);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
 }
 .sectionContent > * + * {
-	padding-top: var(--space-3);
-	border-top: 1px solid var(--border-subtle);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border-subtle);
 }
 .row {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-4);
-	min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-width: 0;
 }
 .rowLabel {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
-	min-width: 0;
-	flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+    flex: 1 1 auto;
 }
 .rowTitle {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text);
 }
 .rowHint {
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
-	line-height: var(--line-height-normal);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    line-height: var(--line-height-normal);
 }
 .rowControl {
-	display: flex;
-	align-items: center;
-	flex: 0 0 auto;
-	min-width: 180px;
-	justify-content: flex-end;
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-width: 180px;
+    justify-content: flex-end;
 }
 @keyframes settingsPanelIn {
-	from {
-		opacity: 0;
-		transform: translateY(6px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 @media (prefers-reduced-motion: reduce) {
-	.panel {
-		animation: none;
-	}
-	.tab {
-		transition: none;
-	}
+    .panel {
+        animation: none;
+    }
+    .tab {
+        transition: none;
+    }
 }
 @media (max-width: 768px) {
-	.settings {
-		width: 100%;
-	}
-	.row {
-		flex-direction: column;
-		gap: var(--space-2);
-		align-items: flex-start;
-	}
-	.rowControl {
-		width: 100%;
-		justify-content: flex-start;
-	}
+    .settings {
+        width: 100%;
+    }
+    .row {
+        flex-direction: column;
+        gap: var(--space-2);
+        align-items: flex-start;
+    }
+    .rowControl {
+        width: 100%;
+        justify-content: flex-start;
+    }
 }
 @media (max-width: 480px) {
-	.tabs {
-		flex-wrap: wrap;
-	}
-	.tab {
-		padding: var(--space-1) var(--space-2);
-		font-size: var(--font-size-xs);
-	}
-	.rowControl {
-		min-width: 0;
-	}
+    .tabs {
+        flex-wrap: wrap;
+    }
+    .tab {
+        padding: var(--space-1) var(--space-2);
+        font-size: var(--font-size-xs);
+    }
+    .rowControl {
+        min-width: 0;
+    }
 }

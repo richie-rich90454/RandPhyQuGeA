@@ -1,205 +1,205 @@
 .wrapper {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2);
-	width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
 }
 .stats {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-1);
-	flex-wrap: wrap;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    flex-wrap: wrap;
 }
 .extra {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-2);
-	flex-wrap: wrap;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
 }
 .gap {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-1);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
 }
 .summary,
 .statsPanel {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-1);
-	flex-wrap: wrap;
-	padding: var(--space-1) var(--space-2);
-	background: var(--surface-glass);
-	border: 1px solid var(--border-glass);
-	border-radius: var(--radius-full);
-	backdrop-filter: blur(var(--glass-blur));
-	-webkit-backdrop-filter: blur(var(--glass-blur));
-	font-variant-numeric: tabular-nums;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+    padding: var(--space-1) var(--space-2);
+    background: var(--surface-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    font-variant-numeric: tabular-nums;
 }
 .difficultyPills {
-	display: inline-flex;
-	align-items: center;
-	gap: 2px;
-	padding: 2px;
-	background: var(--surface-glass);
-	border: 1px solid var(--border-glass);
-	border-radius: var(--radius-full);
-	backdrop-filter: blur(var(--glass-blur));
-	-webkit-backdrop-filter: blur(var(--glass-blur));
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    background: var(--surface-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 .difficultyPill {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: var(--space-1) var(--space-3);
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-muted);
-	background: transparent;
-	border: 1px solid transparent;
-	border-radius: var(--radius-full);
-	cursor: pointer;
-	transition:
-		color var(--duration-fast) var(--ease-standard),
-		background var(--duration-fast) var(--ease-standard),
-		border-color var(--duration-fast) var(--ease-standard);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition:
+        color var(--duration-fast) var(--ease-standard),
+        background var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard);
 }
 .difficultyPill:hover:not(:disabled) {
-	color: var(--text);
-	background: var(--surface-muted);
+    color: var(--text);
+    background: var(--surface-muted);
 }
 .difficultyPill:focus-visible {
-	outline: 2px solid var(--border-focus);
-	outline-offset: 1px;
+    outline: 2px solid var(--border-focus);
+    outline-offset: 1px;
 }
 .difficultyPill:disabled {
-	cursor: not-allowed;
-	opacity: 0.5;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 .difficultyPillActive {
-	color: var(--accent-contrast);
-	background: var(--accent);
-	border-color: var(--accent-active);
-	font-weight: var(--font-weight-semibold);
-	box-shadow: var(--shadow-xs);
+    color: var(--accent-contrast);
+    background: var(--accent);
+    border-color: var(--accent-active);
+    font-weight: var(--font-weight-semibold);
+    box-shadow: var(--shadow-xs);
 }
 .difficultyPillActive:hover:not(:disabled) {
-	color: var(--accent-contrast);
-	background: var(--accent-hover);
+    color: var(--accent-contrast);
+    background: var(--accent-hover);
 }
 .difficultyPill:active:not(:disabled) {
-	transform: translateY(1px);
+    transform: translateY(1px);
 }
 .startWrapper {
-	display: inline-flex;
-	align-items: center;
-	padding: var(--space-1) var(--space-2);
-	background: var(--surface-glass);
-	border: 1px solid var(--border-glass);
-	border-radius: var(--radius-full);
-	backdrop-filter: blur(var(--glass-blur));
-	-webkit-backdrop-filter: blur(var(--glass-blur));
-	box-shadow: var(--glass-shadow);
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-2);
+    background: var(--surface-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    box-shadow: var(--glass-shadow);
 }
 .startBtn {
-	min-width: 132px;
-	font-weight: var(--font-weight-bold);
+    min-width: 132px;
+    font-weight: var(--font-weight-bold);
 }
 .timerBadge {
-	font-family: var(--font-mono);
-	font-variant-numeric: tabular-nums;
-	font-weight: var(--font-weight-semibold);
-	font-size: var(--font-size-sm);
-	color: var(--text);
-	transition:
-		color var(--duration-fast) var(--ease-standard),
-		background var(--duration-fast) var(--ease-standard);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
+    color: var(--text);
+    transition:
+        color var(--duration-fast) var(--ease-standard),
+        background var(--duration-fast) var(--ease-standard);
 }
 .timerUrgent {
-	color: var(--error);
-	background: var(--error-surface);
-	animation: pulseUrgent 1s var(--ease-standard) infinite;
+    color: var(--error);
+    background: var(--error-surface);
+    animation: pulseUrgent 1s var(--ease-standard) infinite;
 }
 .scoreBadge {
-	font-family: var(--font-mono);
-	font-variant-numeric: tabular-nums;
-	font-weight: var(--font-weight-semibold);
-	font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-sm);
 }
 .scoreLive {
-	color: var(--success);
+    color: var(--success);
 }
 @keyframes pulseUrgent {
-	0%,
-	100% {
-		opacity: 1;
-	}
-	50% {
-		opacity: 0.6;
-	}
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
 }
 @media (prefers-reduced-motion: reduce) {
-	.timerUrgent {
-		animation: none;
-	}
+    .timerUrgent {
+        animation: none;
+    }
 }
 .sessionControls {
-	display: inline-flex;
-	align-items: center;
-	gap: 2px;
-	padding: 2px;
-	background: var(--surface-glass);
-	border: 1px solid var(--border-glass);
-	border-radius: var(--radius-full);
-	backdrop-filter: blur(var(--glass-blur));
-	-webkit-backdrop-filter: blur(var(--glass-blur));
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px;
+    background: var(--surface-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 .optionControls {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-2);
-	flex-wrap: wrap;
-	padding: 2px var(--space-2);
-	background: var(--surface-glass);
-	border: 1px solid var(--border-glass);
-	border-radius: var(--radius-full);
-	backdrop-filter: blur(var(--glass-blur));
-	-webkit-backdrop-filter: blur(var(--glass-blur));
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+    padding: 2px var(--space-2);
+    background: var(--surface-glass);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-full);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
 }
 @media (max-width: 1024px) {
-	.stats {
-		gap: var(--space-1);
-	}
-	.extra {
-		gap: var(--space-1);
-	}
+    .stats {
+        gap: var(--space-1);
+    }
+    .extra {
+        gap: var(--space-1);
+    }
 }
 @media (max-width: 768px) {
-	.wrapper {
-		gap: var(--space-1);
-	}
-	.extra {
-		flex-direction: column;
-		align-items: stretch;
-		gap: var(--space-1);
-	}
-	.optionControls {
-		justify-content: center;
-	}
+    .wrapper {
+        gap: var(--space-1);
+    }
+    .extra {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-1);
+    }
+    .optionControls {
+        justify-content: center;
+    }
 }
 @media (max-width: 480px) {
-	.summary,
-	.statsPanel,
-	.difficultyPills,
-	.sessionControls,
-	.optionControls,
-	.startWrapper {
-		width: 100%;
-		justify-content: center;
-	}
-	.startBtn {
-		min-width: 100%;
-	}
-	.difficultyPill {
-		padding: var(--space-1) var(--space-2);
-	}
+    .summary,
+    .statsPanel,
+    .difficultyPills,
+    .sessionControls,
+    .optionControls,
+    .startWrapper {
+        width: 100%;
+        justify-content: center;
+    }
+    .startBtn {
+        min-width: 100%;
+    }
+    .difficultyPill {
+        padding: var(--space-1) var(--space-2);
+    }
 }

@@ -8,40 +8,40 @@
  * the blur for readability; forced-colors mode strips shadows.
  */
 :root {
-	--glass-bg: color-mix(in srgb, var(--color-surface) 70%, transparent);
-	--shadow-glass: var(--glass-shadow);
+    --glass-bg: color-mix(in srgb, var(--color-surface) 70%, transparent);
+    --shadow-glass: var(--glass-shadow);
 }
 .glass {
-	background: var(--glass-bg);
-	-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-	backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-	border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
-	box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+    box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
 }
 :root[data-theme="dark"] .glass {
-	--glass-bg: color-mix(in srgb, var(--color-surface) 80%, transparent);
-	--glass-blur: 20px;
+    --glass-bg: color-mix(in srgb, var(--color-surface) 80%, transparent);
+    --glass-blur: 20px;
 }
 :root[data-theme="dim"] .glass {
-	--glass-bg: color-mix(in srgb, var(--color-surface) 75%, transparent);
-	--glass-blur: 18px;
+    --glass-bg: color-mix(in srgb, var(--color-surface) 75%, transparent);
+    --glass-blur: 18px;
 }
 @media (prefers-color-scheme: dark) {
-	:root[data-theme="system"] .glass {
-		--glass-bg: color-mix(in srgb, var(--color-surface) 80%, transparent);
-		--glass-blur: 20px;
-	}
+    :root[data-theme="system"] .glass {
+        --glass-bg: color-mix(in srgb, var(--color-surface) 80%, transparent);
+        --glass-blur: 20px;
+    }
 }
 @media (prefers-contrast-more: more) {
-	.glass {
-		background: var(--surface);
-		-webkit-backdrop-filter: none;
-		backdrop-filter: none;
-	}
+    .glass {
+        background: var(--surface);
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
 }
 @media (forced-colors: active) {
-	.glass {
-		box-shadow: none;
-		border: 1px solid CanvasText;
-	}
+    .glass {
+        box-shadow: none;
+        border: 1px solid CanvasText;
+    }
 }

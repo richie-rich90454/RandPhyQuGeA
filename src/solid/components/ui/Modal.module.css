@@ -1,114 +1,114 @@
 .modal {
-	position: fixed;
-	inset: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: rgba(11, 37, 64, 0.55);
-	backdrop-filter: blur(4px);
-	-webkit-backdrop-filter: blur(4px);
-	z-index: var(--z-modal);
-	padding: var(--space-4);
-	animation: backdrop-in var(--duration-normal) var(--ease-out);
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(11, 37, 64, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: var(--z-modal);
+    padding: var(--space-4);
+    animation: backdrop-in var(--duration-normal) var(--ease-out);
 }
 @keyframes backdrop-in {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 .show {
-	opacity: 1;
+    opacity: 1;
 }
 .content {
-	position: relative;
-	border-radius: var(--radius-lg);
-	max-width: 90vw;
-	max-height: 90vh;
-	width: 480px;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-	outline: none;
-	animation: modal-in var(--duration-slow) var(--ease-decelerated);
+    position: relative;
+    border-radius: var(--radius-lg);
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 480px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    outline: none;
+    animation: modal-in var(--duration-slow) var(--ease-decelerated);
 }
 @keyframes modal-in {
-	from {
-		opacity: 0;
-		transform: scale(0.96) translateY(8px);
-	}
-	to {
-		opacity: 1;
-		transform: scale(1) translateY(0);
-	}
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 .iconButton {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 32px;
-	height: 32px;
-	border-radius: var(--radius-md);
-	color: var(--text-muted);
-	font-size: var(--font-size-lg);
-	line-height: 1;
-	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		color var(--duration-fast) var(--ease-out);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-size: var(--font-size-lg);
+    line-height: 1;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
 }
 .iconButton:hover {
-	background: var(--surface-muted);
-	color: var(--text);
+    background: var(--surface-muted);
+    color: var(--text);
 }
 .iconButton:focus-visible {
-	outline: none;
-	box-shadow: var(--shadow-focus);
+    outline: none;
+    box-shadow: var(--shadow-focus);
 }
 .iconButton:active {
-	transform: scale(0.96);
+    transform: scale(0.96);
 }
 .header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-2);
-	padding: var(--space-3) var(--space-4);
-	border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
 }
 .title {
-	font-size: var(--font-size-lg);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text);
 }
 .body {
-	padding: var(--space-4);
-	overflow-y: auto;
-	flex: 1;
+    padding: var(--space-4);
+    overflow-y: auto;
+    flex: 1;
 }
 .footer {
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	gap: var(--space-2);
-	padding: var(--space-3) var(--space-4);
-	border-top: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--border-subtle);
 }
 @media (pointer: coarse) {
-	.iconButton {
-		width: 44px;
-		height: 44px;
-	}
+    .iconButton {
+        width: 44px;
+        height: 44px;
+    }
 }
 @media (prefers-reduced-motion: reduce) {
-	.modal {
-		animation: none;
-	}
-	.content {
-		animation: none;
-	}
-	.iconButton:active {
-		transform: none;
-	}
+    .modal {
+        animation: none;
+    }
+    .content {
+        animation: none;
+    }
+    .iconButton:active {
+        transform: none;
+    }
 }

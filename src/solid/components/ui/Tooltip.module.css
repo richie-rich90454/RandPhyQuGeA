@@ -1,23 +1,23 @@
 .content {
-	position: fixed;
-	z-index: 50;
-	max-width: 20rem;
-	border-radius: var(--radius-md);
-	border: 1px solid var(--border);
-	background: var(--surface-elevated);
-	padding: var(--space-2) var(--space-3);
-	font-size: var(--font-size-xs);
-	color: var(--text);
-	box-shadow: var(--shadow-md);
-	pointer-events: auto;
-	opacity: 0;
-	animation: tooltip-in var(--duration-fast) var(--ease-out) 200ms both;
+    position: fixed;
+    z-index: 50;
+    max-width: 20rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--surface-elevated);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+    color: var(--text);
+    box-shadow: var(--shadow-md);
+    pointer-events: auto;
+    opacity: 0;
+    animation: tooltip-in var(--duration-fast) var(--ease-out) 200ms both;
 }
 @keyframes tooltip-in {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }

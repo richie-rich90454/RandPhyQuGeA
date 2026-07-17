@@ -15,18 +15,18 @@ import styles from "./McqToggle.module.css";
  * MCQ/FRQ decoupling).
  */
 export function McqToggle(): JSX.Element {
-	let responseMode = useSettingsStore(s => s.defaultResponseMode);
-	let handleChange = (checked: boolean) => {
-		useSettingsStore.getState().setDefaultResponseMode(checked ? "mcq" : "frq");
-	};
-	return (
-		<ToolbarGroup label="Question format" class={styles.group}>
-			<Tooltip delay={300}>
-				<TooltipTrigger>
-					<Switch label="MCQ" checked={responseMode() === "mcq"} onCheckedChange={handleChange} class={styles.switch} />
-				</TooltipTrigger>
-				<TooltipContent side="bottom">Force multiple-choice questions</TooltipContent>
-			</Tooltip>
-		</ToolbarGroup>
-	);
+    let responseMode = useSettingsStore(s => s.defaultResponseMode);
+    let handleChange = (checked: boolean) => {
+        useSettingsStore.getState().setDefaultResponseMode(checked ? "mcq" : "frq");
+    };
+    return (
+        <ToolbarGroup label="Question format" class={styles.group}>
+            <Tooltip delay={300}>
+                <TooltipTrigger>
+                    <Switch label="MCQ" checked={responseMode() === "mcq"} onCheckedChange={handleChange} class={styles.switch} />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Force multiple-choice questions</TooltipContent>
+            </Tooltip>
+        </ToolbarGroup>
+    );
 }

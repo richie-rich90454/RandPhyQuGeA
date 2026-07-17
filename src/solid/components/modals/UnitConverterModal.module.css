@@ -1,138 +1,138 @@
 .unitConverter {
-	width: 560px;
-	max-height: 80vh;
+    width: 560px;
+    max-height: 80vh;
 }
 .grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr auto 1fr;
-	grid-template-areas: "value from swap to";
-	gap: var(--space-2);
-	align-items: end;
-	margin-bottom: var(--space-4);
+    display: grid;
+    grid-template-columns: 1fr 1fr auto 1fr;
+    grid-template-areas: "value from swap to";
+    gap: var(--space-2);
+    align-items: end;
+    margin-bottom: var(--space-4);
 }
 .valueField {
-	grid-area: value;
+    grid-area: value;
 }
 .fromField {
-	grid-area: from;
+    grid-area: from;
 }
 .toField {
-	grid-area: to;
+    grid-area: to;
 }
 .swapCell {
-	grid-area: swap;
+    grid-area: swap;
 }
 .field {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
-	min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
 }
 .label {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-muted);
 }
 .input,
 .select {
-	width: 100%;
-	padding: var(--space-2) var(--space-3);
-	font-size: var(--font-size-md);
-	color: var(--text);
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: var(--radius-md);
-	transition:
-		border-color 0.15s ease,
-		box-shadow 0.15s ease;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-md);
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
 }
 .input:focus,
 .select:focus {
-	outline: none;
-	border-color: var(--accent);
-	box-shadow: 0 0 0 3px var(--accent-ring, rgba(99, 102, 241, 0.25));
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring, rgba(99, 102, 241, 0.25));
 }
 .select:disabled {
-	opacity: 0.55;
-	cursor: not-allowed;
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 .swapCell {
-	display: flex;
-	align-items: flex-end;
-	justify-content: center;
-	padding-bottom: 2px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 2px;
 }
 .resultRow {
-	margin: 0 0 var(--space-3) 0;
-	padding: var(--space-3) var(--space-4);
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: var(--radius-md);
-	min-height: 64px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+    margin: 0 0 var(--space-3) 0;
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .resultText {
-	margin: 0;
-	display: flex;
-	align-items: baseline;
-	gap: var(--space-2);
-	font-size: var(--font-size-xl);
-	font-weight: var(--font-weight-bold);
-	color: var(--text);
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text);
 }
 .resultValue {
-	font-family: var(--font-mono, ui-monospace, monospace);
-	font-size: var(--font-size-2xl, 1.5rem);
-	letter-spacing: -0.01em;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: var(--font-size-2xl, 1.5rem);
+    letter-spacing: -0.01em;
 }
 .resultUnit {
-	font-size: var(--font-size-md);
-	color: var(--text-muted);
-	font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-md);
+    color: var(--text-muted);
+    font-weight: var(--font-weight-medium);
 }
 .resultError {
-	margin: 0;
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
-	text-align: center;
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    text-align: center;
 }
 .hint {
-	margin: 0;
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
-	line-height: 1.5;
+    margin: 0;
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    line-height: 1.5;
 }
 @media (prefers-reduced-motion: reduce) {
-	.input,
-	.select {
-		transition: none;
-	}
+    .input,
+    .select {
+        transition: none;
+    }
 }
 @media (max-width: 768px) {
-	.unitConverter {
-		width: 100%;
-	}
-	.grid {
-		grid-template-columns: 1fr 1fr;
-		grid-template-areas:
-			"value value"
-			"from to"
-			"swap swap";
-		justify-items: stretch;
-	}
-	.swapCell {
-		justify-content: center;
-	}
+    .unitConverter {
+        width: 100%;
+    }
+    .grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "value value"
+            "from to"
+            "swap swap";
+        justify-items: stretch;
+    }
+    .swapCell {
+        justify-content: center;
+    }
 }
 @media (max-width: 480px) {
-	.grid {
-		grid-template-columns: 1fr;
-		grid-template-areas:
-			"value"
-			"from"
-			"to"
-			"swap";
-	}
+    .grid {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "value"
+            "from"
+            "to"
+            "swap";
+    }
 }

@@ -11,14 +11,14 @@ import {PhysicsService} from "../../services/PhysicsService";
 import {AnalyticsService} from "../../services/AnalyticsService";
 import {useServiceProvider} from "../providers/ServiceProvider";
 export interface CreateSessionSnapshotOptions {
-	practiceStore?: SolidStore<PracticeState>;
-	uiStore?: SolidStore<UiState>;
-	sessionService?: ISessionService;
+    practiceStore?: SolidStore<PracticeState>;
+    uiStore?: SolidStore<UiState>;
+    sessionService?: ISessionService;
 }
 export interface CreateSessionSnapshotReturn {
-	snapshot: Accessor<SessionSnapshot | null>;
-	resume: () => void;
-	discard: () => void;
+    snapshot: Accessor<SessionSnapshot | null>;
+    resume: () => void;
+    discard: () => void;
 }
 /**
  * Check for a persisted unfinished session on mount and expose resume/discard
@@ -33,49 +33,49 @@ export interface CreateSessionSnapshotReturn {
  * from the {@link useServiceProvider} core.
  */
 export function createSessionSnapshot(options: CreateSessionSnapshotOptions = {}): CreateSessionSnapshotReturn {
-	let practice = options.practiceStore ?? usePracticeStore;
-	let ui = options.uiStore ?? useUiStore;
-	let cachedSessionService: ISessionService | null = null;
-	let resolveSessionService = (): ISessionService => {
-		if (options.sessionService) {
-			return options.sessionService;
-		}
-		if (!cachedSessionService) {
-			let {core} = useServiceProvider();
-			cachedSessionService = new SessionService(new PhysicsService(core), new AnalyticsService());
-		}
-		return cachedSessionService;
-	};
-	let [snapshot, setSnapshot] = createSignal<SessionSnapshot | null>(null);
-	let disposed = false;
-	onCleanup(() => {
-		disposed = true;
-	});
-	onMount(() => {
-		void (async () => {
-			let loaded = await resolveSessionService().loadSessionSnapshot();
-			if (!disposed && loaded && !loaded.session.isFinished) {
-				setSnapshot(loaded);
-				ui.getState().openModal("resume-session");
-			}
-		})();
-	});
-	let resume = () => {
-		let current = snapshot();
-		if (!current) {
-			return;
-		}
-		void resolveSessionService()
-			.resumeSession(current)
-			.then(session => {
-				if (!disposed) {
-					practice.getState().setSession(session);
-				}
-			});
-	};
-	let discard = () => {
-		resolveSessionService().clearSessionSnapshot();
-		setSnapshot(null);
-	};
-	return {snapshot, resume, discard};
+    let practice = options.practiceStore ?? usePracticeStore;
+    let ui = options.uiStore ?? useUiStore;
+    let cachedSessionService: ISessionService | null = null;
+    let resolveSessionService = (): ISessionService => {
+        if (options.sessionService) {
+            return options.sessionService;
+        }
+        if (!cachedSessionService) {
+            let {core} = useServiceProvider();
+            cachedSessionService = new SessionService(new PhysicsService(core), new AnalyticsService());
+        }
+        return cachedSessionService;
+    };
+    let [snapshot, setSnapshot] = createSignal<SessionSnapshot | null>(null);
+    let disposed = false;
+    onCleanup(() => {
+        disposed = true;
+    });
+    onMount(() => {
+        void (async () => {
+            let loaded = await resolveSessionService().loadSessionSnapshot();
+            if (!disposed && loaded && !loaded.session.isFinished) {
+                setSnapshot(loaded);
+                ui.getState().openModal("resume-session");
+            }
+        })();
+    });
+    let resume = () => {
+        let current = snapshot();
+        if (!current) {
+            return;
+        }
+        void resolveSessionService()
+            .resumeSession(current)
+            .then(session => {
+                if (!disposed) {
+                    practice.getState().setSession(session);
+                }
+            });
+    };
+    let discard = () => {
+        resolveSessionService().clearSessionSnapshot();
+        setSnapshot(null);
+    };
+    return {snapshot, resume, discard};
 }

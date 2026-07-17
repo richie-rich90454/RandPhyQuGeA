@@ -8,73 +8,73 @@ import {MatchingDistractorStrategy} from "./strategies/MatchingDistractorStrateg
 import {OrderingDistractorStrategy} from "./strategies/OrderingDistractorStrategy";
 /** Picks the right {@link ResponseFormatStrategy} per question type, generates distractors, dedupes against the correct answer, and scales to the requested count. */
 export class UniversalDistractorGenerator implements UniversalDistractorGeneratorLike {
-	private readonly strategies: Map<string, ResponseFormatStrategy>;
-	private readonly fallback: ResponseFormatStrategy;
-	/** Construct the generator. When `strategies` is omitted the five default strategies (NE/MC numeric, TF boolean, FB blank-token, SA short-answer-neighbor) are registered; the {@link ShortAnswerNeighborStrategy} is always installed as the fallback for unregistered question types. */
-	public constructor(strategies?: ResponseFormatStrategy[]) {
-		this.strategies = new Map();
-		this.fallback = new ShortAnswerNeighborStrategy();
-		if (strategies !== undefined) {
-			for (const s of strategies) {
-				this.register(s);
-			}
-		} else {
-			this.registerDefaults();
-		}
-	}
-	/** Register (or replace) the strategy for its `questionType` key (open-closed extension point). */
-	public register(strategy: ResponseFormatStrategy): void {
-		this.strategies.set(strategy.questionType, strategy);
-	}
-	/** Look up the strategy registered for `questionType`, or `undefined` when none is registered (the fallback is applied by {@link generate}). */
-	public get(questionType: string): ResponseFormatStrategy | undefined {
-		return this.strategies.get(questionType);
-	}
-	/** Generate up to `count` unique distractor strings for `context.template.question_type`, excluding `context.answer`. Selects the registered strategy (or the fallback), then dedupes raw output against the correct answer and itself, stopping once `count` unique items are collected. Distractors that are numerically equal to the canonical answer (but formatted differently, e.g. "5.0" vs "5") are also excluded when `context.answerValue` is a finite number. The returned array may be shorter than `count` when the strategy cannot produce enough unique distractors. */
-	public generate(context: DistractorContext, count: number, random: RandomGenerator): string[] {
-		const strategy = this.strategies.get(context.template.question_type) ?? this.fallback;
-		const raw = strategy.generateDistractors(context, count, random);
-		const seen: Set<string> = new Set([context.answer]);
-		const answerValue: number = context.answerValue;
-		const hasAnswerValue: boolean = Number.isFinite(answerValue);
-		const matchesAnswer = (d: string): boolean => {
-			if (seen.has(d)) {
-				return true;
-			}
-			if (hasAnswerValue) {
-				const parsed: number = Number(d);
-				if (Number.isFinite(parsed) && parsed === answerValue) {
-					return true;
-				}
-			}
-			return false;
-		};
-		const deduped: string[] = [];
-		for (const d of raw) {
-			if (matchesAnswer(d)) {
-				continue;
-			}
-			seen.add(d);
-			deduped.push(d);
-			if (deduped.length >= count) {
-				break;
-			}
-		}
-		return deduped;
-	}
-	/** Convenience factory returning a generator pre-loaded with the five default strategies. */
-	public static createDefault(): UniversalDistractorGenerator {
-		return new UniversalDistractorGenerator();
-	}
-	/** Register the built-in strategies: NE/MC numeric, TF boolean, FB blank-token, SA short-answer-neighbor. */
-	private registerDefaults(): void {
-		const numeric = new NumericDistractorStrategy();
-		this.strategies.set(QUESTION_TYPES.NE, numeric);
-		this.strategies.set(QUESTION_TYPES.MC, numeric);
-		this.strategies.set(QUESTION_TYPES.TF, new BooleanDistractorStrategy());
-		this.strategies.set(QUESTION_TYPES.FB, new BlankTokenDistractorStrategy());
-		this.strategies.set(QUESTION_TYPES.SA, new ShortAnswerNeighborStrategy());
-		this.strategies.set("MATCHING", new MatchingDistractorStrategy());
-		this.strategies.set("ORDERING", new OrderingDistractorStrategy());
-	}
+    private readonly strategies: Map<string, ResponseFormatStrategy>;
+    private readonly fallback: ResponseFormatStrategy;
+    /** Construct the generator. When `strategies` is omitted the five default strategies (NE/MC numeric, TF boolean, FB blank-token, SA short-answer-neighbor) are registered; the {@link ShortAnswerNeighborStrategy} is always installed as the fallback for unregistered question types. */
+    public constructor(strategies?: ResponseFormatStrategy[]) {
+        this.strategies = new Map();
+        this.fallback = new ShortAnswerNeighborStrategy();
+        if (strategies !== undefined) {
+            for (const s of strategies) {
+                this.register(s);
+            }
+        } else {
+            this.registerDefaults();
+        }
+    }
+    /** Register (or replace) the strategy for its `questionType` key (open-closed extension point). */
+    public register(strategy: ResponseFormatStrategy): void {
+        this.strategies.set(strategy.questionType, strategy);
+    }
+    /** Look up the strategy registered for `questionType`, or `undefined` when none is registered (the fallback is applied by {@link generate}). */
+    public get(questionType: string): ResponseFormatStrategy | undefined {
+        return this.strategies.get(questionType);
+    }
+    /** Generate up to `count` unique distractor strings for `context.template.question_type`, excluding `context.answer`. Selects the registered strategy (or the fallback), then dedupes raw output against the correct answer and itself, stopping once `count` unique items are collected. Distractors that are numerically equal to the canonical answer (but formatted differently, e.g. "5.0" vs "5") are also excluded when `context.answerValue` is a finite number. The returned array may be shorter than `count` when the strategy cannot produce enough unique distractors. */
+    public generate(context: DistractorContext, count: number, random: RandomGenerator): string[] {
+        const strategy = this.strategies.get(context.template.question_type) ?? this.fallback;
+        const raw = strategy.generateDistractors(context, count, random);
+        const seen: Set<string> = new Set([context.answer]);
+        const answerValue: number = context.answerValue;
+        const hasAnswerValue: boolean = Number.isFinite(answerValue);
+        const matchesAnswer = (d: string): boolean => {
+            if (seen.has(d)) {
+                return true;
+            }
+            if (hasAnswerValue) {
+                const parsed: number = Number(d);
+                if (Number.isFinite(parsed) && parsed === answerValue) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        const deduped: string[] = [];
+        for (const d of raw) {
+            if (matchesAnswer(d)) {
+                continue;
+            }
+            seen.add(d);
+            deduped.push(d);
+            if (deduped.length >= count) {
+                break;
+            }
+        }
+        return deduped;
+    }
+    /** Convenience factory returning a generator pre-loaded with the five default strategies. */
+    public static createDefault(): UniversalDistractorGenerator {
+        return new UniversalDistractorGenerator();
+    }
+    /** Register the built-in strategies: NE/MC numeric, TF boolean, FB blank-token, SA short-answer-neighbor. */
+    private registerDefaults(): void {
+        const numeric = new NumericDistractorStrategy();
+        this.strategies.set(QUESTION_TYPES.NE, numeric);
+        this.strategies.set(QUESTION_TYPES.MC, numeric);
+        this.strategies.set(QUESTION_TYPES.TF, new BooleanDistractorStrategy());
+        this.strategies.set(QUESTION_TYPES.FB, new BlankTokenDistractorStrategy());
+        this.strategies.set(QUESTION_TYPES.SA, new ShortAnswerNeighborStrategy());
+        this.strategies.set("MATCHING", new MatchingDistractorStrategy());
+        this.strategies.set("ORDERING", new OrderingDistractorStrategy());
+    }
 }

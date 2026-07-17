@@ -1,128 +1,128 @@
 .root {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-2);
-	cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
 }
 .disabled {
-	cursor: not-allowed;
-	opacity: 0.5;
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 .trackWrap {
-	position: relative;
-	display: inline-flex;
-	align-items: center;
-	width: 44px;
-	height: 24px;
-	flex-shrink: 0;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
 }
 .input {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	margin: 0;
-	opacity: 0;
-	overflow: hidden;
-	white-space: nowrap;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    opacity: 0;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .input:focus-visible + .track {
-	box-shadow: var(--shadow-focus);
+    box-shadow: var(--shadow-focus);
 }
 .track {
-	position: absolute;
-	inset: 0;
-	border-radius: var(--radius-full);
-	border: 1px solid var(--border);
-	background: var(--surface);
-	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		border-color var(--duration-fast) var(--ease-out);
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        border-color var(--duration-fast) var(--ease-out);
 }
 .trackOn {
-	border-color: var(--accent);
-	background: var(--accent);
+    border-color: var(--accent);
+    background: var(--accent);
 }
 .root:hover:not(.disabled) .track {
-	border-color: var(--border-strong);
+    border-color: var(--border-strong);
 }
 .root:hover:not(.disabled) .trackOn {
-	border-color: var(--accent-hover);
-	background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    background: var(--accent-hover);
 }
 .thumb {
-	position: absolute;
-	left: 2px;
-	top: 50%;
-	width: 20px;
-	height: 20px;
-	border-radius: var(--radius-full);
-	background: var(--surface);
-	box-shadow: var(--shadow-sm);
-	transform: translateY(-50%);
-	transition:
-		transform var(--duration-fast) var(--ease-out),
-		box-shadow var(--duration-fast) var(--ease-out);
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--radius-full);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-50%);
+    transition:
+        transform var(--duration-fast) var(--ease-out),
+        box-shadow var(--duration-fast) var(--ease-out);
 }
 .root:hover:not(.disabled) .thumb {
-	box-shadow: var(--micro-shadow-hover);
+    box-shadow: var(--micro-shadow-hover);
 }
 .root:active:not(.disabled) .thumb {
-	transform: translateY(-50%) scale(0.92);
+    transform: translateY(-50%) scale(0.92);
 }
 .thumbOn {
-	transform: translateY(-50%) translateX(20px);
+    transform: translateY(-50%) translateX(20px);
 }
 .root:active:not(.disabled) .thumbOn {
-	transform: translateY(-50%) translateX(20px) scale(0.92);
+    transform: translateY(-50%) translateX(20px) scale(0.92);
 }
 .text {
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 .label {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text);
 }
 .hint {
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
 }
 @media (pointer: coarse) {
-	.input {
-		width: 44px;
-		height: 44px;
-		left: 0;
-		top: 50%;
-		transform: translate(0, -50%);
-	}
+    .input {
+        width: 44px;
+        height: 44px;
+        left: 0;
+        top: 50%;
+        transform: translate(0, -50%);
+    }
 }
 @media (prefers-reduced-motion: reduce) {
-	.track {
-		transition:
-			background-color var(--duration-fast) var(--ease-out),
-			border-color var(--duration-fast) var(--ease-out);
-	}
-	.thumb {
-		transition: box-shadow var(--duration-fast) var(--ease-out);
-	}
-	.root:active:not(.disabled) .thumb {
-		transform: translateY(-50%);
-	}
-	.root:active:not(.disabled) .thumbOn {
-		transform: translateY(-50%) translateX(20px);
-	}
+    .track {
+        transition:
+            background-color var(--duration-fast) var(--ease-out),
+            border-color var(--duration-fast) var(--ease-out);
+    }
+    .thumb {
+        transition: box-shadow var(--duration-fast) var(--ease-out);
+    }
+    .root:active:not(.disabled) .thumb {
+        transform: translateY(-50%);
+    }
+    .root:active:not(.disabled) .thumbOn {
+        transform: translateY(-50%) translateX(20px);
+    }
 }
 @media (forced-colors: active) {
-	.track {
-		border: 1px solid CanvasText;
-	}
-	.trackOn {
-		background: Highlight;
-		border-color: Highlight;
-	}
-	.thumb {
-		border: 1px solid CanvasText;
-		box-shadow: none;
-	}
+    .track {
+        border: 1px solid CanvasText;
+    }
+    .trackOn {
+        background: Highlight;
+        border-color: Highlight;
+    }
+    .thumb {
+        border: 1px solid CanvasText;
+        box-shadow: none;
+    }
 }

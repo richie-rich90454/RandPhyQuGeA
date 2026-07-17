@@ -1,8 +1,8 @@
 import {createSignal, onCleanup} from "solid-js";
 import type {Accessor} from "solid-js";
 export interface CreateReducedMotionOptions {
-	/** CSS media query used to detect the OS reduced-motion preference. */
-	query?: string;
+    /** CSS media query used to detect the OS reduced-motion preference. */
+    query?: string;
 }
 /**
  * Subscribe to the OS `prefers-reduced-motion` preference and expose it as a
@@ -15,15 +15,15 @@ export interface CreateReducedMotionOptions {
  * Returns an {@link Accessor} that tracks the preference reactively.
  */
 export function createReducedMotion(options: CreateReducedMotionOptions = {}): Accessor<boolean> {
-	let query = options.query ?? "(prefers-reduced-motion: reduce)";
-	let mql = window.matchMedia(query);
-	let [reducedMotion, setReducedMotion] = createSignal<boolean>(mql.matches);
-	let handleChange = (event: MediaQueryListEvent) => {
-		setReducedMotion(event.matches);
-	};
-	mql.addEventListener("change", handleChange);
-	onCleanup(() => {
-		mql.removeEventListener("change", handleChange);
-	});
-	return reducedMotion;
+    let query = options.query ?? "(prefers-reduced-motion: reduce)";
+    let mql = window.matchMedia(query);
+    let [reducedMotion, setReducedMotion] = createSignal<boolean>(mql.matches);
+    let handleChange = (event: MediaQueryListEvent) => {
+        setReducedMotion(event.matches);
+    };
+    mql.addEventListener("change", handleChange);
+    onCleanup(() => {
+        mql.removeEventListener("change", handleChange);
+    });
+    return reducedMotion;
 }

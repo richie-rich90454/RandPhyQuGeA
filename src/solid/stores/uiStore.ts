@@ -11,19 +11,19 @@ import {createSolidStore} from "./createSolidStore";
 /** Identifiers for the modal overlays managed by the shell. */
 export type ModalId = "onboarding" | "help" | "shortcuts" | "settings" | "print" | "recommend" | "manage-data" | "resume-session" | "formulas" | "unit-converter" | "glossary";
 export interface UiState {
-	searchQuery: string;
-	activeModal: ModalId | null;
-	setSearchQuery: (query: string) => void;
-	openModal: (id: ModalId) => void;
-	closeModal: () => void;
-	replaceModal: (id: ModalId) => void;
+    searchQuery: string;
+    activeModal: ModalId | null;
+    setSearchQuery: (query: string) => void;
+    openModal: (id: ModalId) => void;
+    closeModal: () => void;
+    replaceModal: (id: ModalId) => void;
 }
 const uiStore = createStore<UiState>()(set => ({
-	searchQuery: "",
-	activeModal: null,
-	setSearchQuery: query => set({searchQuery: query}),
-	openModal: id => set({activeModal: id}),
-	closeModal: () => set({activeModal: null}),
-	replaceModal: id => set({activeModal: id}),
+    searchQuery: "",
+    activeModal: null,
+    setSearchQuery: query => set({searchQuery: query}),
+    openModal: id => set({activeModal: id}),
+    closeModal: () => set({activeModal: null}),
+    replaceModal: id => set({activeModal: id}),
 }));
 export const useUiStore = createSolidStore<UiState>(uiStore);

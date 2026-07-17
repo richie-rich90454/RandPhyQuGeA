@@ -164,16 +164,16 @@ import type {JSX} from "solid-js";
 import {splitProps} from "solid-js";
 import styles from "./MyComponent.module.css";
 export interface MyComponentProps {
-	label: string;
-	disabled?: boolean;
+    label: string;
+    disabled?: boolean;
 }
 export function MyComponent(props: MyComponentProps): JSX.Element {
-	let [local, rest] = splitProps(props, ["label", "disabled"]);
-	return (
-		<button class={styles.root} disabled={local.disabled} {...rest}>
-			{local.label}
-		</button>
-	);
+    let [local, rest] = splitProps(props, ["label", "disabled"]);
+    return (
+        <button class={styles.root} disabled={local.disabled} {...rest}>
+            {local.label}
+        </button>
+    );
 }
 ```
 

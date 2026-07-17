@@ -1,28 +1,28 @@
 .root {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: var(--space-3);
-	padding: var(--space-4);
-	text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    text-align: center;
 }
 .media {
-	display: inline-flex;
-	color: var(--text-muted);
+    display: inline-flex;
+    color: var(--text-muted);
 }
 .title {
-	font-size: var(--font-size-lg);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text);
-	margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text);
+    margin: 0;
 }
 .description {
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
-	max-width: 260px;
-	margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    max-width: 260px;
+    margin: 0;
 }
 .action {
-	margin-top: var(--space-2);
+    margin-top: var(--space-2);
 }

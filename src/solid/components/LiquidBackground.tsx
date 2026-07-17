@@ -3,8 +3,8 @@ import {Show} from "solid-js";
 import {useSettingsStore} from "../stores/settingsStore";
 import styles from "./LiquidBackground.module.css";
 export interface LiquidBackgroundProps {
-	/** Extra class appended to the root element. */
-	class?: string;
+    /** Extra class appended to the root element. */
+    class?: string;
 }
 /**
  * Pure-CSS liquid animated background.
@@ -21,16 +21,16 @@ export interface LiquidBackgroundProps {
  * for. The container is marked `aria-hidden` because it is purely decorative.
  */
 export function LiquidBackground(props: LiquidBackgroundProps): JSX.Element {
-	let reducedDataMode = useSettingsStore(s => s.reducedDataMode);
-	return (
-		<Show when={!reducedDataMode()} fallback={<div class={`${styles.root} ${styles.reducedData} ${props.class ?? ""}`} aria-hidden="true" />}>
-			<div class={`${styles.root} ${props.class ?? ""}`} aria-hidden="true">
-				<div class={`${styles.blob} ${styles.blob1}`} />
-				<div class={`${styles.blob} ${styles.blob2}`} />
-				<div class={`${styles.blob} ${styles.blob3}`} />
-				<div class={`${styles.blob} ${styles.blob4}`} />
-				<div class={styles.veil} />
-			</div>
-		</Show>
-	);
+    let reducedDataMode = useSettingsStore(s => s.reducedDataMode);
+    return (
+        <Show when={!reducedDataMode()} fallback={<div class={`${styles.root} ${styles.reducedData} ${props.class ?? ""}`} aria-hidden="true" />}>
+            <div class={`${styles.root} ${props.class ?? ""}`} aria-hidden="true">
+                <div class={`${styles.blob} ${styles.blob1}`} />
+                <div class={`${styles.blob} ${styles.blob2}`} />
+                <div class={`${styles.blob} ${styles.blob3}`} />
+                <div class={`${styles.blob} ${styles.blob4}`} />
+                <div class={styles.veil} />
+            </div>
+        </Show>
+    );
 }

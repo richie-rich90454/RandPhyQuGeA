@@ -1,34 +1,34 @@
 .root {
-	transition-property: opacity, transform;
-	transition-timing-function: var(--ease-standard);
-	transition-duration: var(--motion-duration, var(--duration-slow));
-	transition-delay: var(--motion-delay, 0ms);
+    transition-property: opacity, transform;
+    transition-timing-function: var(--ease-standard);
+    transition-duration: var(--motion-duration, var(--duration-slow));
+    transition-delay: var(--motion-delay, 0ms);
 }
 .fadeHidden {
-	opacity: 0;
+    opacity: 0;
 }
 .slideHidden {
-	opacity: 0;
-	transform: translateY(1rem);
+    opacity: 0;
+    transform: translateY(1rem);
 }
 .scaleHidden {
-	opacity: 0;
-	transform: scale(0.92);
+    opacity: 0;
+    transform: scale(0.92);
 }
 .visible {
-	opacity: 1;
-	transform: none;
+    opacity: 1;
+    transform: none;
 }
 @media (prefers-reduced-motion: reduce) {
-	.root {
-		transition-property: none;
-		transition-duration: 0ms;
-		transition-delay: 0ms;
-	}
-	.fadeHidden,
-	.slideHidden,
-	.scaleHidden {
-		opacity: 1;
-		transform: none;
-	}
+    .root {
+        transition-property: none;
+        transition-duration: 0ms;
+        transition-delay: 0ms;
+    }
+    .fadeHidden,
+    .slideHidden,
+    .scaleHidden {
+        opacity: 1;
+        transform: none;
+    }
 }

@@ -1,35 +1,35 @@
 .fallback {
-	padding: var(--space-6);
-	background: var(--error-surface);
-	border: 1px solid var(--error);
-	border-radius: var(--radius-lg);
-	text-align: center;
+    padding: var(--space-6);
+    background: var(--error-surface);
+    border: 1px solid var(--error);
+    border-radius: var(--radius-lg);
+    text-align: center;
 }
 .message {
-	font-size: var(--font-size-base);
-	color: var(--error);
-	margin-bottom: var(--space-4);
+    font-size: var(--font-size-base);
+    color: var(--error);
+    margin-bottom: var(--space-4);
 }
 .retry {
-	padding: var(--space-2) var(--space-4);
-	background: var(--primary);
-	color: var(--primary-contrast);
-	border: none;
-	border-radius: var(--radius-md);
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	cursor: pointer;
-	transition: background var(--duration-fast) var(--ease-standard);
+    padding: var(--space-2) var(--space-4);
+    background: var(--primary);
+    color: var(--primary-contrast);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-standard);
 }
 .retry:hover {
-	background: var(--primary-hover);
+    background: var(--primary-hover);
 }
 .exhausted {
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
 }
 @media (prefers-reduced-motion: reduce) {
-	.retry {
-		transition: none;
-	}
+    .retry {
+        transition: none;
+    }
 }

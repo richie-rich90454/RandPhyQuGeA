@@ -3,10 +3,10 @@ import type {Accessor} from "solid-js";
 import gsap from "gsap";
 export type GsapSetup = (ctx: gsap.Context) => void;
 export interface CreateGsapContextOptions {
-	/** Function receiving the GSAP context; GSAP calls recorded here are reverted on cleanup. */
-	setup: GsapSetup;
-	/** Element or selector scope for the context's selector lookups. */
-	scope?: Element | string;
+    /** Function receiving the GSAP context; GSAP calls recorded here are reverted on cleanup. */
+    setup: GsapSetup;
+    /** Element or selector scope for the context's selector lookups. */
+    scope?: Element | string;
 }
 /**
  * Wrap a GSAP animation setup in the Solid component lifecycle.
@@ -20,17 +20,17 @@ export interface CreateGsapContextOptions {
  * resolves to the `gsap.Context` once mounted (or `null` before/SSR).
  */
 export function createGsapContext(options: CreateGsapContextOptions): Accessor<gsap.Context | null> {
-	let [ctx, setCtx] = createSignal<gsap.Context | null>(null);
-	onMount(() => {
-		if (typeof window === "undefined") return;
-		let context = gsap.context(self => options.setup(self), options.scope);
-		setCtx(context);
-	});
-	onCleanup(() => {
-		let current = ctx();
-		if (current) {
-			current.revert();
-		}
-	});
-	return ctx;
+    let [ctx, setCtx] = createSignal<gsap.Context | null>(null);
+    onMount(() => {
+        if (typeof window === "undefined") return;
+        let context = gsap.context(self => options.setup(self), options.scope);
+        setCtx(context);
+    });
+    onCleanup(() => {
+        let current = ctx();
+        if (current) {
+            current.revert();
+        }
+    });
+    return ctx;
 }

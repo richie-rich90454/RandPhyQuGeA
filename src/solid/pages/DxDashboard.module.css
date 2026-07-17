@@ -1,282 +1,282 @@
 .root {
-	max-width: 1100px;
-	margin: 0 auto;
-	padding: var(--space-6) var(--space-4) var(--space-16);
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-4);
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-4) var(--space-16);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
 }
 .header {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2);
-	padding-bottom: var(--space-4);
-	border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
 }
 .backLink {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-1);
-	align-self: flex-start;
-	padding: var(--space-1) var(--space-2);
-	border-radius: var(--radius-sm);
-	color: var(--text-muted);
-	font-size: var(--font-size-sm);
-	background: transparent;
-	border: none;
-	cursor: pointer;
-	transition:
-		color var(--duration-fast) var(--ease-standard),
-		background-color var(--duration-fast) var(--ease-standard);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    align-self: flex-start;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition:
+        color var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard);
 }
 .backLink:hover {
-	color: var(--text);
-	background-color: var(--surface-muted);
+    color: var(--text);
+    background-color: var(--surface-muted);
 }
 .title {
-	font-size: var(--font-size-3xl);
-	letter-spacing: var(--letter-spacing-tight);
+    font-size: var(--font-size-3xl);
+    letter-spacing: var(--letter-spacing-tight);
 }
 .subtitle {
-	color: var(--text-muted);
-	font-size: var(--font-size-md);
+    color: var(--text-muted);
+    font-size: var(--font-size-md);
 }
 .statusRow {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2);
-	flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
 }
 .a11yToggle {
-	font-size: var(--font-size-xs);
-	color: var(--text-muted);
-	background: transparent;
-	border: 1px solid var(--border-subtle);
-	border-radius: var(--radius-sm);
-	padding: var(--space-1) var(--space-2);
-	cursor: pointer;
-	transition:
-		color var(--duration-fast) var(--ease-standard),
-		background-color var(--duration-fast) var(--ease-standard),
-		border-color var(--duration-fast) var(--ease-standard);
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: var(--space-1) var(--space-2);
+    cursor: pointer;
+    transition:
+        color var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard);
 }
 .a11yToggle:hover {
-	color: var(--text);
-	background: var(--surface);
-	border-color: var(--accent);
+    color: var(--text);
+    background: var(--surface);
+    border-color: var(--accent);
 }
 .a11yToggle:focus-visible {
-	outline: 2px solid var(--accent);
-	outline-offset: 2px;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 @media (prefers-reduced-motion: reduce) {
-	.a11yToggle {
-		transition: none;
-	}
+    .a11yToggle {
+        transition: none;
+    }
 }
 .grid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: var(--space-4);
-	align-items: start;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+    align-items: start;
 }
 .card {
-	display: flex;
-	flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 .envList {
-	margin: 0;
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
 }
 .envRow {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
-	padding: var(--space-2) var(--space-3);
-	background: var(--surface-muted);
-	border-radius: var(--radius-sm);
-	border-left: 3px solid var(--border-subtle);
-	transition:
-		border-color var(--duration-fast) var(--ease-standard),
-		background-color var(--duration-fast) var(--ease-standard);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-muted);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--border-subtle);
+    transition:
+        border-color var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard);
 }
 .envRow:hover {
-	border-left-color: var(--accent);
-	background: var(--surface);
+    border-left-color: var(--accent);
+    background: var(--surface);
 }
 .envLabel {
-	font-size: var(--font-size-xs);
-	color: var(--text-subtle);
-	text-transform: uppercase;
-	letter-spacing: var(--letter-spacing-wide);
+    font-size: var(--font-size-xs);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
 }
 .envValue {
-	margin: 0;
-	font-size: var(--font-size-sm);
-	color: var(--text);
-	word-break: break-word;
-	font-family: var(--font-mono);
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text);
+    word-break: break-word;
+    font-family: var(--font-mono);
 }
 .metricsGrid {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: var(--space-3);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
 }
 .metricCell {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: var(--space-1);
-	padding: var(--space-3);
-	background: var(--surface-muted);
-	border-radius: var(--radius-md);
-	border: 1px solid var(--border-subtle);
-	transition:
-		border-color var(--duration-fast) var(--ease-standard),
-		background-color var(--duration-fast) var(--ease-standard),
-		transform var(--duration-fast) var(--ease-standard);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    background: var(--surface-muted);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    transition:
+        border-color var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-fast) var(--ease-standard),
+        transform var(--duration-fast) var(--ease-standard);
 }
 .metricCell:hover {
-	border-color: var(--accent);
-	background: var(--surface);
-	transform: translateY(-2px);
+    border-color: var(--accent);
+    background: var(--surface);
+    transform: translateY(-2px);
 }
 .metricValue {
-	font-size: var(--font-size-2xl);
-	font-weight: var(--font-weight-semibold);
-	color: var(--accent);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--accent);
 }
 .metricLabel {
-	font-size: var(--font-size-xs);
-	color: var(--text-subtle);
-	text-transform: uppercase;
-	letter-spacing: var(--letter-spacing-wide);
+    font-size: var(--font-size-xs);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
 }
 .benchActions {
-	display: flex;
-	align-items: center;
-	gap: var(--space-3);
-	flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
 }
 .benchStatus {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2);
-	color: var(--text-muted);
-	font-size: var(--font-size-sm);
-	padding: var(--space-1) var(--space-3);
-	background: var(--surface-muted);
-	border-radius: var(--radius-full);
-	border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    padding: var(--space-1) var(--space-3);
+    background: var(--surface-muted);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-subtle);
 }
 .budgetActions {
-	display: flex;
-	align-items: center;
-	gap: var(--space-3);
-	flex-wrap: wrap;
-	margin-bottom: var(--space-3);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
 }
 .errorBlock {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2);
-	margin-top: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
 }
 .errorText {
-	margin: 0;
-	padding: var(--space-2) var(--space-3);
-	background: var(--error-surface);
-	color: var(--error);
-	border-radius: var(--radius-sm);
-	font-family: var(--font-mono);
-	font-size: var(--font-size-xs);
-	white-space: pre-wrap;
-	word-break: break-word;
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    background: var(--error-surface);
+    color: var(--error);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 .benchTable {
-	width: 100%;
-	margin-top: var(--space-3);
-	border-collapse: collapse;
-	font-size: var(--font-size-sm);
+    width: 100%;
+    margin-top: var(--space-3);
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
 }
 .benchTable th,
 .benchTable td {
-	padding: var(--space-2) var(--space-3);
-	text-align: left;
-	border-bottom: 1px solid var(--border-subtle);
+    padding: var(--space-2) var(--space-3);
+    text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
 }
 .benchTable th {
-	font-size: var(--font-size-xs);
-	color: var(--text-subtle);
-	text-transform: uppercase;
-	letter-spacing: var(--letter-spacing-wide);
-	font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-xs);
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wide);
+    font-weight: var(--font-weight-medium);
 }
 .benchTable tbody tr:nth-child(even) {
-	background: var(--surface-muted);
+    background: var(--surface-muted);
 }
 .benchTable tbody tr {
-	transition: background-color var(--duration-fast) var(--ease-standard);
+    transition: background-color var(--duration-fast) var(--ease-standard);
 }
 .benchTable tbody tr:hover {
-	background: var(--accent-surface);
+    background: var(--accent-surface);
 }
 .benchTable tbody tr:last-child td {
-	border-bottom: none;
+    border-bottom: none;
 }
 .cellNum {
-	font-family: var(--font-mono);
-	text-align: right;
-	white-space: nowrap;
+    font-family: var(--font-mono);
+    text-align: right;
+    white-space: nowrap;
 }
 .cellTime {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
-	align-items: stretch;
-	min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    align-items: stretch;
+    min-width: 140px;
 }
 .cellTimeValue {
-	font-family: var(--font-mono);
-	text-align: right;
-	white-space: nowrap;
-	color: var(--text);
-	font-weight: var(--font-weight-medium);
+    font-family: var(--font-mono);
+    text-align: right;
+    white-space: nowrap;
+    color: var(--text);
+    font-weight: var(--font-weight-medium);
 }
 .cellTimeBar {
-	display: block;
-	height: 4px;
-	border-radius: var(--radius-full);
-	background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
-	min-width: 4px;
-	transition: width var(--duration-slow) var(--ease-standard);
+    display: block;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+    min-width: 4px;
+    transition: width var(--duration-slow) var(--ease-standard);
 }
 @media (max-width: 900px) {
-	.grid {
-		grid-template-columns: 1fr;
-	}
+    .grid {
+        grid-template-columns: 1fr;
+    }
 }
 @media (max-width: 640px) {
-	.root {
-		padding: var(--space-4) var(--space-3) var(--space-12);
-	}
-	.metricsGrid {
-		grid-template-columns: 1fr;
-	}
-	.cellTime {
-		min-width: 100px;
-	}
+    .root {
+        padding: var(--space-4) var(--space-3) var(--space-12);
+    }
+    .metricsGrid {
+        grid-template-columns: 1fr;
+    }
+    .cellTime {
+        min-width: 100px;
+    }
 }
 @media (prefers-reduced-motion: reduce) {
-	.envRow,
-	.metricCell,
-	.benchTable tbody tr,
-	.cellTimeBar {
-		transition: none;
-	}
-	.metricCell:hover {
-		transform: none;
-	}
+    .envRow,
+    .metricCell,
+    .benchTable tbody tr,
+    .cellTimeBar {
+        transition: none;
+    }
+    .metricCell:hover {
+        transform: none;
+    }
 }

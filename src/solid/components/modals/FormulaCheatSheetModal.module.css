@@ -1,189 +1,189 @@
 .formulas {
-	width: 720px;
-	max-height: 80vh;
+    width: 720px;
+    max-height: 80vh;
 }
 .controls {
-	display: flex;
-	gap: var(--space-3);
-	margin-bottom: var(--space-3);
-	flex-wrap: wrap;
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    flex-wrap: wrap;
 }
 .searchField {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
-	flex: 2 1 240px;
-	min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 2 1 240px;
+    min-width: 200px;
 }
 .topicField {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
-	flex: 1 1 160px;
-	min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1 1 160px;
+    min-width: 140px;
 }
 .searchLabel,
 .topicLabel {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-muted);
 }
 .searchInput,
 .topicSelect {
-	width: 100%;
-	padding: var(--space-2) var(--space-3);
-	font-size: var(--font-size-md);
-	color: var(--text);
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: var(--radius-md);
-	transition:
-		border-color 0.15s ease,
-		box-shadow 0.15s ease;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-md);
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
 }
 .searchInput:focus,
 .topicSelect:focus {
-	outline: none;
-	border-color: var(--accent);
-	box-shadow: 0 0 0 3px var(--accent-ring, rgba(99, 102, 241, 0.25));
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring, rgba(99, 102, 241, 0.25));
 }
 .resultCount {
-	margin: 0 0 var(--space-3) 0;
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
 }
 .formulaList {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-3);
-	max-height: 55vh;
-	overflow-y: auto;
-	padding-right: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-height: 55vh;
+    overflow-y: auto;
+    padding-right: var(--space-1);
 }
 .formulaItem {
-	margin: 0;
-	padding: var(--space-3) var(--space-4);
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: var(--radius-md);
-	transition:
-		border-color 0.15s ease,
-		transform 0.15s ease;
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition:
+        border-color 0.15s ease,
+        transform 0.15s ease;
 }
 .formulaItem:hover {
-	border-color: var(--accent);
-	transform: translateY(-1px);
+    border-color: var(--accent);
+    transform: translateY(-1px);
 }
 .formulaHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-2);
-	margin-bottom: var(--space-2);
-	flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    flex-wrap: wrap;
 }
 .formulaName {
-	margin: 0;
-	font-size: var(--font-size-md);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text);
-	flex: 1 1 auto;
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text);
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .formulaTopic {
-	flex-shrink: 0;
-	padding: var(--space-1) var(--space-2);
-	font-size: var(--font-size-xs);
-	font-weight: var(--font-weight-medium);
-	color: var(--accent);
-	background: var(--accent-soft, rgba(99, 102, 241, 0.12));
-	border-radius: var(--radius-sm);
-	text-transform: capitalize;
+    flex-shrink: 0;
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--accent);
+    background: var(--accent-soft, rgba(99, 102, 241, 0.12));
+    border-radius: var(--radius-sm);
+    text-transform: capitalize;
 }
 .formulaExpression {
-	margin: 0 0 var(--space-2) 0;
-	padding: var(--space-2) var(--space-3);
-	background: var(--surface-strong, rgba(0, 0, 0, 0.04));
-	border-radius: var(--radius-sm);
-	overflow-x: auto;
-	text-align: center;
+    margin: 0 0 var(--space-2) 0;
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-strong, rgba(0, 0, 0, 0.04));
+    border-radius: var(--radius-sm);
+    overflow-x: auto;
+    text-align: center;
 }
 .formulaDescription {
-	margin: 0 0 var(--space-2) 0;
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
-	line-height: 1.5;
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    line-height: 1.5;
 }
 .variables {
-	margin: 0;
-	display: flex;
-	align-items: baseline;
-	gap: var(--space-2);
-	flex-wrap: wrap;
+    margin: 0;
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    flex-wrap: wrap;
 }
 .variablesLabel {
-	font-size: var(--font-size-xs);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 .variablesList {
-	margin: 0;
-	font-size: var(--font-size-sm);
-	color: var(--text);
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text);
 }
 .variable {
-	padding: var(--space-1) var(--space-2);
-	font-family: var(--font-mono, ui-monospace, monospace);
-	font-size: var(--font-size-xs);
-	color: var(--text);
-	background: var(--surface-strong, rgba(0, 0, 0, 0.04));
-	border-radius: var(--radius-sm);
+    padding: var(--space-1) var(--space-2);
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: var(--font-size-xs);
+    color: var(--text);
+    background: var(--surface-strong, rgba(0, 0, 0, 0.04));
+    border-radius: var(--radius-sm);
 }
 .variableSeparator {
-	color: var(--text-muted);
+    color: var(--text-muted);
 }
 @media (prefers-reduced-motion: reduce) {
-	.formulaItem {
-		transition: none;
-	}
-	.formulaItem:hover {
-		transform: none;
-	}
-	.searchInput,
-	.topicSelect {
-		transition: none;
-	}
+    .formulaItem {
+        transition: none;
+    }
+    .formulaItem:hover {
+        transform: none;
+    }
+    .searchInput,
+    .topicSelect {
+        transition: none;
+    }
 }
 @media (max-width: 768px) {
-	.formulas {
-		width: 100%;
-	}
-	.formulaList {
-		max-height: 50vh;
-	}
+    .formulas {
+        width: 100%;
+    }
+    .formulaList {
+        max-height: 50vh;
+    }
 }
 @media (max-width: 480px) {
-	.controls {
-		flex-direction: column;
-	}
-	.searchField,
-	.topicField {
-		flex: 1 1 auto;
-		min-width: 0;
-	}
-	.formulaHeader {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-	.formulaTopic {
-		align-self: flex-start;
-	}
+    .controls {
+        flex-direction: column;
+    }
+    .searchField,
+    .topicField {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    .formulaHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .formulaTopic {
+        align-self: flex-start;
+    }
 }

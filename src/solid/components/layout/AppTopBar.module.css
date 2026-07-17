@@ -1,63 +1,63 @@
 .bar {
-	position: sticky;
-	top: 0;
-	z-index: var(--z-sticky);
-	height: 64px;
-	border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+    height: 64px;
+    border-bottom: 1px solid var(--border);
 }
 .inner {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-3);
-	max-width: var(--app-max-width);
-	height: 100%;
-	margin: 0 auto;
-	padding: 0 var(--space-5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    max-width: var(--app-max-width);
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 var(--space-5);
 }
 .wordmark {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-2);
-	color: var(--text);
-	text-decoration: none;
-	font-weight: var(--font-weight-bold);
-	font-size: var(--font-size-md);
-	letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-md);
+    letter-spacing: -0.01em;
 }
 .wordmark:hover {
-	color: var(--accent);
+    color: var(--accent);
 }
 .icon {
-	width: 24px;
-	height: 24px;
-	color: var(--accent);
-	flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    color: var(--accent);
+    flex-shrink: 0;
 }
 .text {
-	margin: 0;
-	white-space: nowrap;
+    margin: 0;
+    white-space: nowrap;
 }
 .actions {
-	display: flex;
-	align-items: center;
+    display: flex;
+    align-items: center;
 }
 @media (max-width: 1024px) {
-	.inner {
-		padding: 0 var(--space-4);
-	}
+    .inner {
+        padding: 0 var(--space-4);
+    }
 }
 @media (max-width: 768px) {
-	.inner {
-		padding: 0 var(--space-3);
-	}
-	.wordmark {
-		font-size: var(--font-size-sm);
-	}
+    .inner {
+        padding: 0 var(--space-3);
+    }
+    .wordmark {
+        font-size: var(--font-size-sm);
+    }
 }
 @media (max-width: 480px) {
-	.inner {
-		padding: 0 var(--space-2);
-		gap: var(--space-2);
-	}
+    .inner {
+        padding: 0 var(--space-2);
+        gap: var(--space-2);
+    }
 }

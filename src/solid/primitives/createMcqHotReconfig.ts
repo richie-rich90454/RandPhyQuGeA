@@ -12,9 +12,9 @@ import {useServiceProvider} from "../providers/ServiceProvider";
 import {QUESTION_TYPES} from "../../types/models";
 import type {QuestionType} from "../../types/models";
 export interface CreateMcqHotReconfigOptions {
-	practiceStore?: SolidStore<PracticeState>;
-	settingsStore?: SolidStore<SettingsState>;
-	sessionService?: ISessionService;
+    practiceStore?: SolidStore<PracticeState>;
+    settingsStore?: SolidStore<SettingsState>;
+    sessionService?: ISessionService;
 }
 /**
  * Hot-swap the current question between multiple-choice and short-answer when
@@ -32,61 +32,61 @@ export interface CreateMcqHotReconfigOptions {
  * from the {@link useServiceProvider} core.
  */
 export function createMcqHotReconfig(options: CreateMcqHotReconfigOptions = {}): void {
-	let practice = options.practiceStore ?? usePracticeStore;
-	let settings = options.settingsStore ?? useSettingsStore;
-	let responseMode = settings(s => s.defaultResponseMode);
-	let mcqEnabled = () => responseMode() === "mcq";
-	let cachedSessionService: ISessionService | null = null;
-	let resolveSessionService = (): ISessionService => {
-		if (options.sessionService) {
-			return options.sessionService;
-		}
-		if (!cachedSessionService) {
-			let {core} = useServiceProvider();
-			cachedSessionService = new SessionService(new PhysicsService(core), new AnalyticsService());
-		}
-		return cachedSessionService;
-	};
-	let generation = 0;
-	let prevMcqEnabled: boolean | undefined = undefined;
-	let disposed = false;
-	onCleanup(() => {
-		disposed = true;
-	});
-	createEffect(() => {
-		let enabled = mcqEnabled();
-		if (prevMcqEnabled === undefined) {
-			prevMcqEnabled = enabled;
-			return;
-		}
-		if (enabled === prevMcqEnabled) {
-			return;
-		}
-		prevMcqEnabled = enabled;
-		let state = practice.getState();
-		let session = state.session;
-		let currentQuestion = selectCurrentQuestion(state);
-		if (!session || !currentQuestion || session.isFinished || !session.isActive) {
-			return;
-		}
-		let targetType: QuestionType = enabled ? QUESTION_TYPES.MC : QUESTION_TYPES.SA;
-		if (currentQuestion.question_type === targetType) {
-			return;
-		}
-		let myGen = ++generation;
-		void (async () => {
-			await resolveSessionService().regenerateCurrentQuestionAs(targetType);
-			if (disposed || myGen !== generation) {
-				return;
-			}
-			let updatedSession = resolveSessionService().getSession();
-			practice.setState({
-				session: updatedSession,
-				userAnswer: "",
-				selectedChoiceIndex: -1,
-				showFeedback: false,
-				lastResult: null,
-			});
-		})();
-	});
+    let practice = options.practiceStore ?? usePracticeStore;
+    let settings = options.settingsStore ?? useSettingsStore;
+    let responseMode = settings(s => s.defaultResponseMode);
+    let mcqEnabled = () => responseMode() === "mcq";
+    let cachedSessionService: ISessionService | null = null;
+    let resolveSessionService = (): ISessionService => {
+        if (options.sessionService) {
+            return options.sessionService;
+        }
+        if (!cachedSessionService) {
+            let {core} = useServiceProvider();
+            cachedSessionService = new SessionService(new PhysicsService(core), new AnalyticsService());
+        }
+        return cachedSessionService;
+    };
+    let generation = 0;
+    let prevMcqEnabled: boolean | undefined = undefined;
+    let disposed = false;
+    onCleanup(() => {
+        disposed = true;
+    });
+    createEffect(() => {
+        let enabled = mcqEnabled();
+        if (prevMcqEnabled === undefined) {
+            prevMcqEnabled = enabled;
+            return;
+        }
+        if (enabled === prevMcqEnabled) {
+            return;
+        }
+        prevMcqEnabled = enabled;
+        let state = practice.getState();
+        let session = state.session;
+        let currentQuestion = selectCurrentQuestion(state);
+        if (!session || !currentQuestion || session.isFinished || !session.isActive) {
+            return;
+        }
+        let targetType: QuestionType = enabled ? QUESTION_TYPES.MC : QUESTION_TYPES.SA;
+        if (currentQuestion.question_type === targetType) {
+            return;
+        }
+        let myGen = ++generation;
+        void (async () => {
+            await resolveSessionService().regenerateCurrentQuestionAs(targetType);
+            if (disposed || myGen !== generation) {
+                return;
+            }
+            let updatedSession = resolveSessionService().getSession();
+            practice.setState({
+                session: updatedSession,
+                userAnswer: "",
+                selectedChoiceIndex: -1,
+                showFeedback: false,
+                lastResult: null,
+            });
+        })();
+    });
 }

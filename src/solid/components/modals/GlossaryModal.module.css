@@ -1,188 +1,188 @@
 .glossary {
-	width: 720px;
-	max-height: 80vh;
+    width: 720px;
+    max-height: 80vh;
 }
 .controls {
-	display: flex;
-	gap: var(--space-3);
-	margin-bottom: var(--space-3);
-	flex-wrap: wrap;
+    display: flex;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    flex-wrap: wrap;
 }
 .searchField {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
-	flex: 2 1 240px;
-	min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 2 1 240px;
+    min-width: 200px;
 }
 .categoryField {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-1);
-	flex: 1 1 160px;
-	min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    flex: 1 1 160px;
+    min-width: 140px;
 }
 .searchLabel,
 .categoryLabel {
-	font-size: var(--font-size-sm);
-	font-weight: var(--font-weight-medium);
-	color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-muted);
 }
 .searchInput,
 .categorySelect {
-	width: 100%;
-	padding: var(--space-2) var(--space-3);
-	font-size: var(--font-size-md);
-	color: var(--text);
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: var(--radius-md);
-	transition:
-		border-color 0.15s ease,
-		box-shadow 0.15s ease;
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-md);
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
 }
 .searchInput:focus,
 .categorySelect:focus {
-	outline: none;
-	border-color: var(--accent);
-	box-shadow: 0 0 0 3px var(--accent-ring, rgba(99, 102, 241, 0.25));
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-ring, rgba(99, 102, 241, 0.25));
 }
 .resultCount {
-	margin: 0 0 var(--space-3) 0;
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
+    margin: 0 0 var(--space-3) 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
 }
 .termList {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-3);
-	max-height: 55vh;
-	overflow-y: auto;
-	padding-right: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-height: 55vh;
+    overflow-y: auto;
+    padding-right: var(--space-1);
 }
 .termItem {
-	margin: 0;
-	padding: var(--space-3) var(--space-4);
-	background: var(--surface);
-	border: 1px solid var(--border);
-	border-radius: var(--radius-md);
-	transition:
-		border-color 0.15s ease,
-		transform 0.15s ease;
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition:
+        border-color 0.15s ease,
+        transform 0.15s ease;
 }
 .termItem:hover {
-	border-color: var(--accent);
-	transform: translateY(-1px);
+    border-color: var(--accent);
+    transform: translateY(-1px);
 }
 .termHeader {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-2);
-	margin-bottom: var(--space-2);
-	flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    flex-wrap: wrap;
 }
 .termName {
-	margin: 0;
-	font-size: var(--font-size-md);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text);
-	flex: 1 1 auto;
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text);
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .termSymbol {
-	flex-shrink: 0;
-	padding: var(--space-1) var(--space-2);
-	font-size: var(--font-size-md);
-	color: var(--text);
-	background: var(--surface-strong, rgba(0, 0, 0, 0.04));
-	border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-md);
+    color: var(--text);
+    background: var(--surface-strong, rgba(0, 0, 0, 0.04));
+    border-radius: var(--radius-sm);
 }
 .termDefinition {
-	margin: 0 0 var(--space-2) 0;
-	font-size: var(--font-size-sm);
-	color: var(--text-muted);
-	line-height: 1.5;
+    margin: 0 0 var(--space-2) 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-muted);
+    line-height: 1.5;
 }
 .termMeta {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2);
-	flex-wrap: wrap;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-wrap: wrap;
 }
 .termCategory {
-	flex-shrink: 0;
-	padding: var(--space-1) var(--space-2);
-	font-size: var(--font-size-xs);
-	font-weight: var(--font-weight-medium);
-	color: var(--accent);
-	background: var(--accent-soft, rgba(99, 102, 241, 0.12));
-	border-radius: var(--radius-sm);
-	text-transform: capitalize;
+    flex-shrink: 0;
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    color: var(--accent);
+    background: var(--accent-soft, rgba(99, 102, 241, 0.12));
+    border-radius: var(--radius-sm);
+    text-transform: capitalize;
 }
 .relatedLabel {
-	font-size: var(--font-size-xs);
-	font-weight: var(--font-weight-semibold);
-	color: var(--text-muted);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 .relatedList {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-	display: inline-flex;
-	flex-wrap: wrap;
-	gap: 0;
-	align-items: baseline;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0;
+    align-items: baseline;
 }
 .relatedItem {
-	font-size: var(--font-size-xs);
-	color: var(--text);
+    font-size: var(--font-size-xs);
+    color: var(--text);
 }
 .relatedSeparator {
-	color: var(--text-muted);
+    color: var(--text-muted);
 }
 @media (prefers-reduced-motion: reduce) {
-	.termItem {
-		transition: none;
-	}
-	.termItem:hover {
-		transform: none;
-	}
-	.searchInput,
-	.categorySelect {
-		transition: none;
-	}
+    .termItem {
+        transition: none;
+    }
+    .termItem:hover {
+        transform: none;
+    }
+    .searchInput,
+    .categorySelect {
+        transition: none;
+    }
 }
 @media (max-width: 768px) {
-	.glossary {
-		width: 100%;
-	}
-	.termList {
-		max-height: 50vh;
-	}
+    .glossary {
+        width: 100%;
+    }
+    .termList {
+        max-height: 50vh;
+    }
 }
 @media (max-width: 480px) {
-	.controls {
-		flex-direction: column;
-	}
-	.searchField,
-	.categoryField {
-		flex: 1 1 auto;
-		min-width: 0;
-	}
-	.termHeader {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-	.termSymbol {
-		align-self: flex-start;
-	}
+    .controls {
+        flex-direction: column;
+    }
+    .searchField,
+    .categoryField {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    .termHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .termSymbol {
+        align-self: flex-start;
+    }
 }

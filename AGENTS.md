@@ -16,7 +16,7 @@ The formatting rules applied to the provided code files are as follows:
 - Example:
     ```typescript
     function factorial(n: number): number {
-    	// code
+        // code
     }
     ```
 - Closing braces `}` are placed on a new line, aligned with the indentation level of the opening statement.
@@ -28,11 +28,11 @@ The formatting rules applied to the provided code files are as follows:
 - Example:
     ```typescript
     if (condition) {
-    	// code
+        // code
     } else if (anotherCondition) {
-    	// code
+        // code
     } else {
-    	// code
+        // code
     }
     ```
 
@@ -65,8 +65,8 @@ The formatting rules applied to the provided code files are as follows:
 - Example (multi-line):
     ```typescript
     let answer = {
-    	correct: "even",
-    	alternate: "even",
+        correct: "even",
+        alternate: "even",
     };
     ```
 
@@ -87,13 +87,13 @@ The formatting rules applied to the provided code files are as follows:
 - Example:
     ```typescript
     switch (type) {
-    	case "basic":
-    		// code
-    		break;
-    	case "equation": {
-    		// code
-    		break;
-    	}
+        case "basic":
+            // code
+            break;
+        case "equation": {
+            // code
+            break;
+        }
     }
     ```
 

@@ -6,12 +6,12 @@ import {useSettingsStore} from "../../stores/settingsStore";
 import type {PracticeMode} from "../../../types/models";
 import styles from "./ControlToolbarBottom.module.css";
 export interface ControlToolbarBottomProps {
-	/** Controls rendered when the active mode is Single. Supplied by the caller. */
-	singleControls?: JSXElement;
-	/** Controls rendered when the active mode is Mental. Supplied by the caller. */
-	mentalControls?: JSXElement;
-	/** Extra class for the row. */
-	class?: string;
+    /** Controls rendered when the active mode is Single. Supplied by the caller. */
+    singleControls?: JSXElement;
+    /** Controls rendered when the active mode is Mental. Supplied by the caller. */
+    mentalControls?: JSXElement;
+    /** Extra class for the row. */
+    class?: string;
 }
 /**
  * Bottom row of the control toolbar.
@@ -31,16 +31,16 @@ export interface ControlToolbarBottomProps {
  * full width. The glassmorphism surface comes from the `.glass` utility (4.3a).
  */
 export function ControlToolbarBottom(props: ControlToolbarBottomProps): JSX.Element {
-	let isActive = usePracticeStore(selectIsActive);
-	let sessionMode = usePracticeStore(selectMode);
-	let defaultMode = useSettingsStore(s => s.defaultMode);
-	let mode = createMemo<PracticeMode>(() => (isActive() ? sessionMode() : defaultMode()));
-	let modeClass = () => (mode() === "Mental" ? styles.mental : styles.single);
-	return (
-		<ToolbarRow position="bottom" class={`glass ${styles.row} ${modeClass()} ${props.class ?? ""}`}>
-			<Show when={mode() === "Single"} fallback={props.mentalControls}>
-				{props.singleControls}
-			</Show>
-		</ToolbarRow>
-	);
+    let isActive = usePracticeStore(selectIsActive);
+    let sessionMode = usePracticeStore(selectMode);
+    let defaultMode = useSettingsStore(s => s.defaultMode);
+    let mode = createMemo<PracticeMode>(() => (isActive() ? sessionMode() : defaultMode()));
+    let modeClass = () => (mode() === "Mental" ? styles.mental : styles.single);
+    return (
+        <ToolbarRow position="bottom" class={`glass ${styles.row} ${modeClass()} ${props.class ?? ""}`}>
+            <Show when={mode() === "Single"} fallback={props.mentalControls}>
+                {props.singleControls}
+            </Show>
+        </ToolbarRow>
+    );
 }

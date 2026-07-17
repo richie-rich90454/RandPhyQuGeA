@@ -6,13 +6,13 @@ import {useSettingsStore} from "../../stores/settingsStore";
 import type {PracticeMode} from "../../../types/models";
 import styles from "./ModeSelector.module.css";
 interface ModeOption {
-	id: PracticeMode;
-	label: string;
-	description: string;
+    id: PracticeMode;
+    label: string;
+    description: string;
 }
 const MODES: readonly ModeOption[] = [
-	{id: "Single", label: "Single", description: "Practice one question at a time"},
-	{id: "Mental", label: "Mental", description: "Timed mental math session"},
+    {id: "Single", label: "Single", description: "Practice one question at a time"},
+    {id: "Mental", label: "Mental", description: "Timed mental math session"},
 ];
 /**
  * Single/Mental mode toggle rendered as a Toolbar.
@@ -26,26 +26,26 @@ const MODES: readonly ModeOption[] = [
  * `getState()` so handlers always read the latest store reference.
  */
 export function ModeSelector(): JSX.Element {
-	let mode = useSettingsStore(s => s.defaultMode);
-	let selectMode = (id: PracticeMode) => {
-		useSettingsStore.getState().setDefaultMode(id);
-	};
-	return (
-		<Toolbar label="Practice mode" class={styles.toolbar}>
-			<For each={MODES}>
-				{option => {
-					return (
-						<Tooltip delay={300}>
-							<TooltipTrigger>
-								<ToolbarItem active={mode() === option.id} onClick={() => selectMode(option.id)}>
-									{option.label}
-								</ToolbarItem>
-							</TooltipTrigger>
-							<TooltipContent side="bottom">{option.description}</TooltipContent>
-						</Tooltip>
-					);
-				}}
-			</For>
-		</Toolbar>
-	);
+    let mode = useSettingsStore(s => s.defaultMode);
+    let selectMode = (id: PracticeMode) => {
+        useSettingsStore.getState().setDefaultMode(id);
+    };
+    return (
+        <Toolbar label="Practice mode" class={styles.toolbar}>
+            <For each={MODES}>
+                {option => {
+                    return (
+                        <Tooltip delay={300}>
+                            <TooltipTrigger>
+                                <ToolbarItem active={mode() === option.id} onClick={() => selectMode(option.id)}>
+                                    {option.label}
+                                </ToolbarItem>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom">{option.description}</TooltipContent>
+                        </Tooltip>
+                    );
+                }}
+            </For>
+        </Toolbar>
+    );
 }

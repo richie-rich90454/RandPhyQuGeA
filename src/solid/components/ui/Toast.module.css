@@ -1,116 +1,116 @@
 .stack {
-	position: fixed;
-	bottom: var(--space-4);
-	right: var(--space-4);
-	z-index: var(--z-toast);
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2);
-	pointer-events: none;
+    position: fixed;
+    bottom: var(--space-4);
+    right: var(--space-4);
+    z-index: var(--z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    pointer-events: none;
 }
 .toast {
-	position: relative;
-	pointer-events: auto;
-	display: flex;
-	align-items: center;
-	gap: var(--space-2);
-	min-width: 280px;
-	max-width: 420px;
-	padding: var(--space-2) var(--space-3);
-	border-radius: var(--radius-md);
-	background: var(--surface);
-	box-shadow: var(--shadow-lg);
-	color: var(--text);
-	overflow: hidden;
-	animation: toast-in var(--duration-normal) var(--ease-decelerated);
+    position: relative;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 280px;
+    max-width: 420px;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
+    color: var(--text);
+    overflow: hidden;
+    animation: toast-in var(--duration-normal) var(--ease-decelerated);
 }
 @keyframes toast-in {
-	from {
-		opacity: 0;
-		transform: translateY(100%);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 .toast svg {
-	flex-shrink: 0;
+    flex-shrink: 0;
 }
 .message {
-	flex: 1;
-	margin: 0;
-	font-size: var(--font-size-sm);
-	color: var(--text);
+    flex: 1;
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text);
 }
 .close {
-	flex-shrink: 0;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 24px;
-	height: 24px;
-	border: none;
-	border-radius: var(--radius-sm);
-	background: transparent;
-	color: var(--text-muted);
-	cursor: pointer;
-	font-size: var(--font-size-md);
-	line-height: 1;
-	transition:
-		background-color var(--duration-fast) var(--ease-out),
-		color var(--duration-fast) var(--ease-out);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: var(--font-size-md);
+    line-height: 1;
+    transition:
+        background-color var(--duration-fast) var(--ease-out),
+        color var(--duration-fast) var(--ease-out);
 }
 .close:hover {
-	background: var(--surface-muted);
-	color: var(--text);
+    background: var(--surface-muted);
+    color: var(--text);
 }
 .close:active {
-	transform: scale(0.92);
+    transform: scale(0.92);
 }
 .close:focus-visible {
-	outline: none;
-	box-shadow: var(--shadow-focus);
+    outline: none;
+    box-shadow: var(--shadow-focus);
 }
 .progress {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 3px;
-	transform-origin: left;
-	opacity: 0.8;
-	animation: progress-shrink var(--toast-duration, 4000ms) linear forwards;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    transform-origin: left;
+    opacity: 0.8;
+    animation: progress-shrink var(--toast-duration, 4000ms) linear forwards;
 }
 @keyframes progress-shrink {
-	from {
-		transform: scaleX(1);
-	}
-	to {
-		transform: scaleX(0);
-	}
+    from {
+        transform: scaleX(1);
+    }
+    to {
+        transform: scaleX(0);
+    }
 }
 @media (max-width: 640px) {
-	.stack {
-		left: var(--space-4);
-		right: var(--space-4);
-		align-items: center;
-	}
-	.toast {
-		min-width: 0;
-		width: 100%;
-		max-width: 100%;
-	}
+    .stack {
+        left: var(--space-4);
+        right: var(--space-4);
+        align-items: center;
+    }
+    .toast {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+    }
 }
 @media (prefers-reduced-motion: reduce) {
-	.toast {
-		animation: none;
-	}
-	.close:active {
-		transform: none;
-	}
-	.progress {
-		animation-duration: var(--toast-duration, 4000ms);
-		animation-timing-function: steps(60);
-	}
+    .toast {
+        animation: none;
+    }
+    .close:active {
+        transform: none;
+    }
+    .progress {
+        animation-duration: var(--toast-duration, 4000ms);
+        animation-timing-function: steps(60);
+    }
 }
