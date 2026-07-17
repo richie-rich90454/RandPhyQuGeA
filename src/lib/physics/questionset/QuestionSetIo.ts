@@ -1,4 +1,7 @@
 import {type QuestionSet, QuestionSetStore} from "./QuestionSet";
+function isRecord(v: unknown): v is Record<string, unknown> {
+    return typeof v === "object" && v !== null;
+}
 /**
  * JSON import/export for question sets.
  *
@@ -44,16 +47,16 @@ export class QuestionSetIo {
             for (const tag of s.tags) {
                 store.addTag(fresh.id, tag, now);
             }
-            created.push(store.get(fresh.id) as QuestionSet);
+            created.push(fresh);
         }
         return created;
     }
     /** Validate the parsed envelope shape and return a typed export. */
     private validate(parsed: unknown): QuestionSetExport {
-        if (typeof parsed !== "object" || parsed === null) {
+        if (!isRecord(parsed)) {
             throw new Error("Invalid question-set file: payload is not an object");
         }
-        const obj: Record<string, unknown> = parsed as Record<string, unknown>;
+        const obj: Record<string, unknown> = parsed;
         const version: unknown = obj["version"];
         if (typeof version !== "number") {
             throw new Error("Invalid question-set file: missing version");
@@ -75,10 +78,10 @@ export class QuestionSetIo {
     }
     /** Validate a single question set object. `templateIds` and `tags` are deduplicated (preserving first-occurrence order) so the returned set honors the {@link QuestionSet} no-duplicates invariant. */
     private validateSet(s: unknown): QuestionSet {
-        if (typeof s !== "object" || s === null) {
+        if (!isRecord(s)) {
             throw new Error("Invalid question set: not an object");
         }
-        const obj: Record<string, unknown> = s as Record<string, unknown>;
+        const obj: Record<string, unknown> = s;
         const id: unknown = obj["id"];
         if (typeof id !== "string") {
             throw new Error("Invalid question set: missing id");

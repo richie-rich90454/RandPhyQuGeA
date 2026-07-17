@@ -7,6 +7,9 @@
  * `pq:` prefix are included for forward compatibility. Pure-TS, no storage
  * dependencies.
  */
+function isRecord(v: unknown): v is Record<string, unknown> {
+    return typeof v === "object" && v !== null;
+}
 /** Schema version for the share-link payload. */
 export const SHARE_LINK_VERSION: number = 1;
 /** State captured in a share link. */
@@ -93,10 +96,10 @@ export class ShareLinkCodec {
     }
     /** Validate the parsed payload shape and return a typed state. */
     private validate(parsed: unknown): ShareableQuestionState {
-        if (typeof parsed !== "object" || parsed === null) {
+        if (!isRecord(parsed)) {
             throw new Error("Invalid share link: payload is not an object");
         }
-        const obj: Record<string, unknown> = parsed as Record<string, unknown>;
+        const obj: Record<string, unknown> = parsed;
         const v: unknown = obj["v"];
         if (typeof v !== "number") {
             throw new Error("Invalid share link: missing version");
@@ -106,13 +109,13 @@ export class ShareLinkCodec {
             throw new Error("Invalid share link: missing templateId");
         }
         const variables: unknown = obj["variables"];
-        if (typeof variables !== "object" || variables === null) {
+        if (!isRecord(variables)) {
             throw new Error("Invalid share link: missing variables");
         }
         const result: ShareableQuestionState = {
             v,
             templateId,
-            variables: variables as Record<string, unknown>,
+            variables,
         };
         const responseMode: unknown = obj["responseMode"];
         if (typeof responseMode === "string") {

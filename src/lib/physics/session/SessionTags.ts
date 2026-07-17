@@ -86,7 +86,7 @@ export class SessionTags {
         if (set === undefined) {
             return [];
         }
-        return Array.from(set).sort();
+        return Array.from(set).toSorted();
     }
     /** Return the session ids carrying `tag` (sorted, fresh array). */
     public sessionsForTag(tag: string): string[] {
@@ -94,7 +94,7 @@ export class SessionTags {
         if (bucket === undefined) {
             return [];
         }
-        return Array.from(bucket).sort();
+        return Array.from(bucket).toSorted();
     }
     /** Record a single answered question for `sessionId` (creating the session when needed). */
     public recordResult(sessionId: string, correct: boolean, timeMs: number): void {
@@ -146,7 +146,7 @@ export class SessionTags {
     }
     /** Return all tags currently in use (sorted, fresh array). */
     public allTags(): string[] {
-        return Array.from(this.tagIndex.keys()).sort();
+        return Array.from(this.tagIndex.keys()).toSorted();
     }
     /** Return true when `sessionId` is known. */
     public hasSession(sessionId: string): boolean {
